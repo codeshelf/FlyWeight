@@ -1,0 +1,1605 @@
+<PE_PROJECT_SETTINGS_DOCUMENTATION>
+<PE_product_version v="version 2.97 for Freescale HC(S)08"/>
+<PE_core_version v="Processor Expert Version 0374"/>
+
+<CPU_Bean name="Cpu" type="MC9S08GT60_44">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="Cpu"/>
+<CPU_type v="MC9S08GT60CFB"/>
+
+<group name="Clock settings">
+
+<group name="Internal Clock">
+<Internal_oscillator_frequency__kHz_ v="243"/>
+
+<boolgroup name="Initialize trim value" v="yes">
+<Trim_value_address v="65470"/>
+
+</boolgroup>
+
+</group>
+
+<boolgroup name="External Clock" v="Enabled">
+<Oscillator_frequency__MHz_ v="4"/>
+<External_Clock_Source v="External oscillator"/>
+<Xtal_range v="0 - 40 MHz"/>
+
+</boolgroup>
+
+<group name="Low-power modes settings">
+
+<enumgroup name="STOP instruction enabled" v="no">
+
+</enumgroup>
+
+</group>
+
+</group>
+<Maskable_CPU_interrupts v="interrupts enabled"/>
+
+<group name="Internal peripherals">
+
+<boolgroup name="BDM pin support" v="Enabled">
+<BDM_pin v="PTG0_BKGD_MS"/>
+<BDM_pin_signal v=""/>
+
+</boolgroup>
+
+<boolgroup name="LVD module" v="Enabled">
+
+<enumgroup name="LVD operation" v="Reset">
+
+</enumgroup>
+<Enable_in_stop_mode v="yes"/>
+<Low_voltage_detect_voltage v="Low trip point"/>
+<Low_voltage_warning_voltage v="Low trip point"/>
+
+</boolgroup>
+
+<group name="FLASH">
+
+<enumgroup name="Security state" v="Disabled">
+
+</enumgroup>
+
+<boolgroup name="Backdoor key mechanism" v="Disabled" />
+<Protection v="Disabled"/>
+<Vector_redirection v="no"/>
+
+</group>
+
+<group name="I/O module">
+
+<group name="PORT A">
+<Slew_rate_control_for_PTA0 v="no"/>
+<Slew_rate_control_for_PTA1 v="no"/>
+<Slew_rate_control_for_PTA2 v="no"/>
+<Slew_rate_control_for_PTA3 v="no"/>
+<Slew_rate_control_for_PTA4 v="no"/>
+<Slew_rate_control_for_PTA5 v="no"/>
+<Slew_rate_control_for_PTA6 v="no"/>
+<Slew_rate_control_for_PTA7 v="no"/>
+
+</group>
+
+<group name="PORT B">
+<Slew_rate_control_for_PTB0 v="no"/>
+<Slew_rate_control_for_PTB1 v="no"/>
+<Slew_rate_control_for_PTB2 v="no"/>
+<Slew_rate_control_for_PTB3 v="no"/>
+<Slew_rate_control_for_PTB4 v="no"/>
+<Slew_rate_control_for_PTB5 v="no"/>
+<Slew_rate_control_for_PTB6 v="no"/>
+<Slew_rate_control_for_PTB7 v="no"/>
+
+</group>
+
+<group name="PORT C">
+<Slew_rate_control_for_PTC0 v="no"/>
+<Slew_rate_control_for_PTC1 v="no"/>
+<Slew_rate_control_for_PTC2 v="no"/>
+<Slew_rate_control_for_PTC3 v="no"/>
+<Slew_rate_control_for_PTC4 v="no"/>
+<Slew_rate_control_for_PTC5 v="no"/>
+<Slew_rate_control_for_PTC6 v="no"/>
+
+</group>
+
+<group name="PORT D">
+<Slew_rate_control_for_PTD0 v="no"/>
+<Slew_rate_control_for_PTD1 v="no"/>
+<Slew_rate_control_for_PTD3 v="no"/>
+<Slew_rate_control_for_PTD4 v="no"/>
+
+</group>
+
+<group name="PORT E">
+<Slew_rate_control_for_PTE0 v="no"/>
+<Slew_rate_control_for_PTE1 v="no"/>
+<Slew_rate_control_for_PTE2 v="no"/>
+<Slew_rate_control_for_PTE3 v="no"/>
+<Slew_rate_control_for_PTE4 v="no"/>
+<Slew_rate_control_for_PTE5 v="no"/>
+
+</group>
+
+<group name="PORT G">
+<Slew_rate_control_for_PTG0 v="no"/>
+<Slew_rate_control_for_PTG1 v="no"/>
+<Slew_rate_control_for_PTG2 v="no"/>
+
+</group>
+
+</group>
+
+</group>
+
+<group name="CPU interrupts">
+
+<boolgroup name="Clock monitor" v="Enabled">
+<Interrupt v="Vicg"/>
+
+</boolgroup>
+
+<boolgroup name="Generate SWI interrupt handler" v="Disabled" />
+
+</group>
+
+<group name="Enabled speed modes">
+
+<boolgroup name="High speed mode" v="Enabled">
+<High_speed_clock v="Internal Clock"/>
+<Clock_divider v="Auto selected prescaler"/>
+<Internal_bus_clock v="19.995428571429"/>
+<Fixed_frequency_clock v="19.995428571429"/>
+
+<boolgroup name="FLL clock" v="Enabled">
+<FLL_clock_frequency v="39.990857142857"/>
+<Loss_of_FLL_lock v="Interrupt"/>
+<Loss_of_clock v="Interrupt"/>
+
+</boolgroup>
+
+</boolgroup>
+
+<boolgroup name="Low speed mode" v="Enabled">
+<Low_speed_clock v="Internal Clock"/>
+<Clock_divider v="Auto selected prescaler"/>
+<Internal_bus_clock v="4"/>
+<Fixed_frequency_clock v="4"/>
+
+<boolgroup name="FLL clock" v="Disabled" />
+
+</boolgroup>
+
+<boolgroup name="Slow speed mode" v="Disabled" />
+
+</group>
+</Properties>
+
+<Methods>
+<SetHighSpeed v="generate code"/>
+<SetLowSpeed v="generate code"/>
+<SetSlowSpeed v="don&apos;t generate code"/>
+<GetSpeedMode v="don&apos;t generate code"/>
+<SetIntVect v="don&apos;t generate code"/>
+<GetIntVect v="don&apos;t generate code"/>
+<EnableInt v="generate code"/>
+<DisableInt v="generate code"/>
+<GetResetSource v="don&apos;t generate code"/>
+<SetWaitMode v="don&apos;t generate code"/>
+<SetStopMode v="don&apos;t generate code"/>
+<GetLowVoltageFlag v="don&apos;t generate code"/>
+<ClearLowVoltageFlag v="don&apos;t generate code"/>
+<GetLowVoltageWarningFlag v="don&apos;t generate code"/>
+<ClearLowVoltageWarningFlag v="don&apos;t generate code"/>
+<GetPartialPowerDownFlag v="don&apos;t generate code"/>
+<ClearPartialPowerDownFlag v="don&apos;t generate code"/>
+<SetPowerDownMode v="don&apos;t generate code"/>
+<GetIdentification v="don&apos;t generate code"/>
+<SetFilterValue v="don&apos;t generate code"/>
+<SetBackdoorKey v="don&apos;t generate code"/>
+<Delay100US v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="OnReset" v="don&apos;t generate code" />
+
+<event name="OnSwINT" v="don&apos;t generate code" />
+
+<event name="OnClockMonitor" v="don&apos;t generate code" />
+
+<event name="OnLvdINT" v="don&apos;t generate code" />
+</Events>
+<Compiler v="Metrowerks HCS08 C Compiler"/>
+
+<CompilerProperties>
+<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Generate_macros v="yes"/>
+
+<group name="User initialization">
+<User_data_declarations v="(string list)"/>
+<User_code_before_PE_initialization v="(string list)"/>
+<User_code_after_PE_initialization v="(string list)"/>
+
+</group>
+<Memory_model v="Small"/>
+
+<boolgroup name="Generate PRM file" v="yes">
+
+<enumgroup name="Stack specification" v="size">
+<Stack_size v="128"/>
+
+</enumgroup>
+<Set_memory_areas_default v="Click to set default &gt;"/>
+
+<list name="ROM/RAM Areas" v="6">
+
+<group name="Memory Area0">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="ROM"/>
+<Address v="6188"/>
+<Size v="59268"/>
+<Qualifier v="READ_ONLY"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area1">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="Z_RAM"/>
+<Address v="128"/>
+<Size v="32"/>
+<Qualifier v="READ_WRITE"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area2">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="RAM"/>
+<Address v="160"/>
+<Size v="4064"/>
+<Qualifier v="READ_WRITE"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area3">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="InterruptVectors_ROM"/>
+<Address v="65484"/>
+<Size v="52"/>
+<Qualifier v="READ_ONLY"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area4">
+
+<boolgroup name="ROM/RAM Area" v="Disabled" />
+
+</group>
+
+<group name="Memory Area5">
+
+<boolgroup name="ROM/RAM Area" v="Disabled" />
+
+</group>
+
+</list>
+
+</boolgroup>
+</CompilerProperties>
+</CPU_Bean>
+
+<CPU_Bean name="Cpu" type="MC9S08GT60_48">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="Cpu"/>
+<CPU_type v="MC9S08GT60CFD"/>
+
+<group name="Clock settings">
+
+<group name="Internal Clock">
+<Internal_oscillator_frequency__kHz_ v="243"/>
+
+<boolgroup name="Initialize trim value" v="yes">
+<Trim_value_address v="65470"/>
+
+</boolgroup>
+
+</group>
+
+<boolgroup name="External Clock" v="Enabled">
+<Oscillator_frequency__MHz_ v="4"/>
+<External_Clock_Source v="External oscillator"/>
+<Xtal_range v="0 - 40 MHz"/>
+
+</boolgroup>
+
+<group name="Low-power modes settings">
+
+<enumgroup name="STOP instruction enabled" v="no">
+
+</enumgroup>
+
+</group>
+
+</group>
+<Maskable_CPU_interrupts v="interrupts enabled"/>
+
+<group name="Internal peripherals">
+
+<boolgroup name="BDM pin support" v="Enabled">
+<BDM_pin v="PTG0_BKGD_MS"/>
+<BDM_pin_signal v=""/>
+
+</boolgroup>
+
+<boolgroup name="LVD module" v="Enabled">
+
+<enumgroup name="LVD operation" v="Reset">
+
+</enumgroup>
+<Enable_in_stop_mode v="yes"/>
+<Low_voltage_detect_voltage v="Low trip point"/>
+<Low_voltage_warning_voltage v="Low trip point"/>
+
+</boolgroup>
+
+<group name="FLASH">
+
+<enumgroup name="Security state" v="Disabled">
+
+</enumgroup>
+
+<boolgroup name="Backdoor key mechanism" v="Disabled" />
+<Protection v="Disabled"/>
+<Vector_redirection v="no"/>
+
+</group>
+
+<group name="I/O module">
+
+<group name="PORT A">
+<Slew_rate_control_for_PTA0 v="no"/>
+<Slew_rate_control_for_PTA1 v="no"/>
+<Slew_rate_control_for_PTA2 v="no"/>
+<Slew_rate_control_for_PTA3 v="no"/>
+<Slew_rate_control_for_PTA4 v="no"/>
+<Slew_rate_control_for_PTA5 v="no"/>
+<Slew_rate_control_for_PTA6 v="no"/>
+<Slew_rate_control_for_PTA7 v="no"/>
+
+</group>
+
+<group name="PORT B">
+<Slew_rate_control_for_PTB0 v="no"/>
+<Slew_rate_control_for_PTB1 v="no"/>
+<Slew_rate_control_for_PTB2 v="no"/>
+<Slew_rate_control_for_PTB3 v="no"/>
+<Slew_rate_control_for_PTB4 v="no"/>
+<Slew_rate_control_for_PTB5 v="no"/>
+<Slew_rate_control_for_PTB6 v="no"/>
+<Slew_rate_control_for_PTB7 v="no"/>
+
+</group>
+
+<group name="PORT C">
+<Slew_rate_control_for_PTC0 v="no"/>
+<Slew_rate_control_for_PTC1 v="no"/>
+<Slew_rate_control_for_PTC2 v="no"/>
+<Slew_rate_control_for_PTC3 v="no"/>
+<Slew_rate_control_for_PTC4 v="no"/>
+<Slew_rate_control_for_PTC5 v="no"/>
+<Slew_rate_control_for_PTC6 v="no"/>
+<Slew_rate_control_for_PTC7 v="no"/>
+
+</group>
+
+<group name="PORT D">
+<Slew_rate_control_for_PTD0 v="no"/>
+<Slew_rate_control_for_PTD1 v="no"/>
+<Slew_rate_control_for_PTD2 v="no"/>
+<Slew_rate_control_for_PTD3 v="no"/>
+<Slew_rate_control_for_PTD4 v="no"/>
+
+</group>
+
+<group name="PORT E">
+<Slew_rate_control_for_PTE0 v="no"/>
+<Slew_rate_control_for_PTE1 v="no"/>
+<Slew_rate_control_for_PTE2 v="no"/>
+<Slew_rate_control_for_PTE3 v="no"/>
+<Slew_rate_control_for_PTE4 v="no"/>
+<Slew_rate_control_for_PTE5 v="no"/>
+
+</group>
+
+<group name="PORT G">
+<Slew_rate_control_for_PTG0 v="no"/>
+<Slew_rate_control_for_PTG1 v="no"/>
+<Slew_rate_control_for_PTG2 v="no"/>
+<Slew_rate_control_for_PTG3 v="no"/>
+
+</group>
+
+</group>
+
+</group>
+
+<group name="CPU interrupts">
+
+<boolgroup name="Clock monitor" v="Enabled">
+<Interrupt v="Vicg"/>
+
+</boolgroup>
+
+<boolgroup name="Generate SWI interrupt handler" v="Disabled" />
+
+</group>
+
+<group name="Enabled speed modes">
+
+<boolgroup name="High speed mode" v="Enabled">
+<High_speed_clock v="Internal Clock"/>
+<Clock_divider v="1"/>
+<Internal_bus_clock v="19.995428571429"/>
+<Fixed_frequency_clock v="19.995428571429"/>
+
+<boolgroup name="FLL clock" v="Enabled">
+<FLL_clock_frequency v="39.990857142857"/>
+<Loss_of_FLL_lock v="Interrupt"/>
+<Loss_of_clock v="Interrupt"/>
+
+</boolgroup>
+
+</boolgroup>
+
+<boolgroup name="Low speed mode" v="Enabled">
+<Low_speed_clock v="Internal Clock"/>
+<Clock_divider v="Auto selected prescaler"/>
+<Internal_bus_clock v="3.888000000000"/>
+<Fixed_frequency_clock v="3.888000000000"/>
+
+<boolgroup name="FLL clock" v="Enabled">
+<FLL_clock_frequency v="31.104000000000"/>
+<Loss_of_FLL_lock v="Interrupt"/>
+<Loss_of_clock v="Interrupt"/>
+
+</boolgroup>
+
+</boolgroup>
+
+<boolgroup name="Slow speed mode" v="Disabled" />
+
+</group>
+</Properties>
+
+<Methods>
+<SetHighSpeed v="generate code"/>
+<SetLowSpeed v="generate code"/>
+<SetSlowSpeed v="don&apos;t generate code"/>
+<GetSpeedMode v="don&apos;t generate code"/>
+<SetIntVect v="don&apos;t generate code"/>
+<GetIntVect v="don&apos;t generate code"/>
+<EnableInt v="generate code"/>
+<DisableInt v="generate code"/>
+<GetResetSource v="don&apos;t generate code"/>
+<SetWaitMode v="don&apos;t generate code"/>
+<SetStopMode v="don&apos;t generate code"/>
+<GetLowVoltageFlag v="don&apos;t generate code"/>
+<ClearLowVoltageFlag v="don&apos;t generate code"/>
+<GetLowVoltageWarningFlag v="don&apos;t generate code"/>
+<ClearLowVoltageWarningFlag v="don&apos;t generate code"/>
+<GetPartialPowerDownFlag v="don&apos;t generate code"/>
+<ClearPartialPowerDownFlag v="don&apos;t generate code"/>
+<SetPowerDownMode v="don&apos;t generate code"/>
+<GetIdentification v="don&apos;t generate code"/>
+<SetFilterValue v="don&apos;t generate code"/>
+<SetBackdoorKey v="don&apos;t generate code"/>
+<Delay100US v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="OnReset" v="don&apos;t generate code" />
+
+<event name="OnSwINT" v="don&apos;t generate code" />
+
+<event name="OnClockMonitor" v="don&apos;t generate code" />
+
+<event name="OnLvdINT" v="don&apos;t generate code" />
+</Events>
+<Compiler v="Metrowerks HCS08 C Compiler"/>
+
+<CompilerProperties>
+<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Generate_macros v="yes"/>
+
+<group name="User initialization">
+<User_data_declarations v="(string list)"/>
+<User_code_before_PE_initialization v="(string list)"/>
+<User_code_after_PE_initialization v="(string list)"/>
+
+</group>
+<Memory_model v="Small"/>
+
+<boolgroup name="Generate PRM file" v="yes">
+
+<enumgroup name="Stack specification" v="size">
+<Stack_size v="128"/>
+
+</enumgroup>
+<Set_memory_areas_default v="Click to set default &gt;"/>
+
+<list name="ROM/RAM Areas" v="6">
+
+<group name="Memory Area0">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="ROM"/>
+<Address v="6188"/>
+<Size v="59268"/>
+<Qualifier v="READ_ONLY"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area1">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="Z_RAM"/>
+<Address v="128"/>
+<Size v="32"/>
+<Qualifier v="READ_WRITE"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area2">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="RAM"/>
+<Address v="160"/>
+<Size v="4064"/>
+<Qualifier v="READ_WRITE"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area3">
+
+<boolgroup name="ROM/RAM Area" v="Enabled">
+<Name v="InterruptVectors_ROM"/>
+<Address v="65484"/>
+<Size v="52"/>
+<Qualifier v="READ_ONLY"/>
+
+</boolgroup>
+
+</group>
+
+<group name="Memory Area4">
+
+<boolgroup name="ROM/RAM Area" v="Disabled" />
+
+</group>
+
+<group name="Memory Area5">
+
+<boolgroup name="ROM/RAM Area" v="Disabled" />
+
+</group>
+
+</list>
+
+</boolgroup>
+</CompilerProperties>
+</CPU_Bean>
+
+<Bean name="TickTimer" type="TimerInt">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="TickTimer"/>
+<Timer v="TPM21"/>
+<Counter v="TPM2"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vtpm2ch1"/>
+<Interrupt_priority v="medium priority"/>
+
+</boolgroup>
+<Prescaler v="Auto selected prescaler"/>
+<Interrupt_period init="1000 Hz" runtime_settings="interval" low="100 Hz" high="555.429 kHz" />
+<Same_period_in_modes v="yes"/>
+<Bean_uses_entire_timer v="no"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="no"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetPeriodMode v="don&apos;t generate code"/>
+<SetPeriodTicks16 v="don&apos;t generate code"/>
+<SetPeriodTicks32 v="don&apos;t generate code"/>
+<SetPeriodUS v="don&apos;t generate code"/>
+<SetPeriodMS v="don&apos;t generate code"/>
+<SetPeriodSec v="don&apos;t generate code"/>
+<SetPeriodReal v="don&apos;t generate code"/>
+<SetFreqHz v="generate code"/>
+<SetFreqkHz v="don&apos;t generate code"/>
+<SetFreqMHz v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnInterrupt" v="generate code">
+<Event_procedure_name v="TickTimerInt"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+<Bean name="SW1Int" type="ExtInt">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="SW1Int"/>
+<Pin v="PTA2_KBI1P2"/>
+<Pin_signal v=""/>
+<Pull_resistor v="pull up"/>
+<Generate_interrupt_on v="low level"/>
+<Invert_interrupt_trigger_condition v="no"/>
+<Interrupt v="Vkeyboard1"/>
+<Interrupt_priority v="medium priority"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="generate code"/>
+<Disable v="don&apos;t generate code"/>
+<GetVal v="don&apos;t generate code"/>
+<SetEdge v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="OnInterrupt" v="generate code">
+<Event_procedure_name v="SW1Int_OnInterrupt"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+<Bean name="SW2" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SW2"/>
+<Pin_for_I_O v="PTA3_KBI1P3"/>
+<Pin_signal v=""/>
+<Pull_resistor v="pull up"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input"/>
+
+<group name="Initialization">
+<Init__direction v="Input"/>
+<Init__value v="0"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="don&apos;t generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="don&apos;t generate code"/>
+<SetVal v="don&apos;t generate code"/>
+<NegVal v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SW3" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SW3"/>
+<Pin_for_I_O v="PTA4_KBI1P4"/>
+<Pin_signal v=""/>
+<Pull_resistor v="pull up"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input"/>
+
+<group name="Initialization">
+<Init__direction v="Input"/>
+<Init__value v="0"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="don&apos;t generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="don&apos;t generate code"/>
+<SetVal v="don&apos;t generate code"/>
+<NegVal v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SW4" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SW4"/>
+<Pin_for_I_O v="PTA5_KBI1P5"/>
+<Pin_signal v=""/>
+<Pull_resistor v="pull up"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input"/>
+
+<group name="Initialization">
+<Init__direction v="Input"/>
+<Init__value v="0"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="don&apos;t generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="don&apos;t generate code"/>
+<SetVal v="don&apos;t generate code"/>
+<NegVal v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="LED1" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="LED1"/>
+<Pin_for_I_O v="PTD0_TPM1CH0"/>
+<Pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input/Output"/>
+
+<group name="Initialization">
+<Init__direction v="Output"/>
+<Init__value v="1"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="don&apos;t generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="generate code"/>
+<SetVal v="generate code"/>
+<NegVal v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="LED2" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="LED2"/>
+<Pin_for_I_O v="PTD1_TPM1CH1"/>
+<Pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input/Output"/>
+
+<group name="Initialization">
+<Init__direction v="Output"/>
+<Init__value v="1"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="don&apos;t generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="generate code"/>
+<SetVal v="generate code"/>
+<NegVal v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="LED3" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="LED3"/>
+<Pin_for_I_O v="PTD3_TPM2CH0"/>
+<Pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+<Open_drain v="no open drain"/>
+<Direction v="Input/Output"/>
+
+<group name="Initialization">
+<Init__direction v="Output"/>
+<Init__value v="1"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="don&apos;t generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="generate code"/>
+<SetVal v="generate code"/>
+<NegVal v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="LED4" type="BitIO">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="LED4"/>
+<Pin_for_I_O v="PTD4_TPM2CH1"/>
+<Pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+<Open_drain v="no open drain"/>
+<Direction v="Output"/>
+
+<group name="Initialization">
+<Init__direction v="Output"/>
+<Init__value v="1"/>
+
+</group>
+<Safe_mode v="yes"/>
+<Optimization_for v="speed"/>
+</Properties>
+
+<Methods>
+<GetDir v="don&apos;t generate code"/>
+<SetDir v="don&apos;t generate code"/>
+<SetInput v="don&apos;t generate code"/>
+<SetOutput v="don&apos;t generate code"/>
+<GetVal v="don&apos;t generate code"/>
+<PutVal v="don&apos;t generate code"/>
+<ClrVal v="generate code"/>
+<SetVal v="generate code"/>
+<NegVal v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="UART" type="AsynchroSerial">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="UART"/>
+<Channel v="SCI1"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vsci1err"/>
+<Interrupt_RxD v="Vsci1rx"/>
+<Interrupt_RxD_priority v="medium priority"/>
+<Interrupt_TxD v="Vsci1tx"/>
+<Interrupt_TxD_priority v="medium priority"/>
+<Input_buffer_size v="250"/>
+<Output_buffer_size v="250"/>
+
+<group name="Handshake">
+
+<boolgroup name="CTS" v="Disabled" />
+
+<boolgroup name="RTS" v="Enabled">
+<HW_support_required v="no"/>
+<RTS_Pin v="PTA1_KBI1P1"/>
+<RTS_pin_signal v=""/>
+<RTS_enabled v="1"/>
+
+</boolgroup>
+
+</group>
+
+</boolgroup>
+
+<group name="Settings">
+<Parity v="none"/>
+<Width v="8 bits"/>
+<Stop_bit v="1"/>
+
+<enumgroup name="SCI output mode" v="Normal">
+
+</enumgroup>
+
+<boolgroup name="Receiver" v="Enabled">
+<RxD v="PTE1_RxD1"/>
+<RxD_pin_signal v=""/>
+
+</boolgroup>
+
+<boolgroup name="Transmitter" v="Enabled">
+<TxD v="PTE0_TxD1"/>
+<TxD_pin_signal v=""/>
+
+</boolgroup>
+<Baud_rate v="57600 baud"/>
+<Break_signal v="Disabled"/>
+<Wakeup_condition v="Idle line wakeup"/>
+<Stop_in_wait_mode v="no"/>
+<Idle_line_mode v="starts after start bit"/>
+
+</group>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<RecvChar v="generate code"/>
+<SendChar v="generate code"/>
+<RecvBlock v="generate code"/>
+<SendBlock v="generate code"/>
+<ClearRxBuf v="generate code"/>
+<ClearTxBuf v="generate code"/>
+<CharsInRxBuf v="don&apos;t generate code"/>
+<GetCharsInRxBuf v="generate code"/>
+<CharsInTxBuf v="don&apos;t generate code"/>
+<GetCharsInTxBuf v="generate code"/>
+<SetBaudRateMode v="don&apos;t generate code"/>
+<GetError v="don&apos;t generate code"/>
+<GetBreak v="don&apos;t generate code"/>
+<SetBreak v="don&apos;t generate code"/>
+<TurnTxOn v="don&apos;t generate code"/>
+<TurnTxOff v="don&apos;t generate code"/>
+<TurnRxOn v="don&apos;t generate code"/>
+<TurnRxOff v="don&apos;t generate code"/>
+<SetIdle v="don&apos;t generate code"/>
+<LoopMode v="don&apos;t generate code"/>
+<Standby v="don&apos;t generate code"/>
+<SetDirection v="don&apos;t generate code"/>
+<GetRxIdle v="don&apos;t generate code"/>
+<GetTxComplete v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnError" v="generate code">
+<Event_procedure_name v="UART_OnError"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnRxChar" v="generate code">
+<Event_procedure_name v="UART_OnRxChar"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnTxChar" v="generate code">
+<Event_procedure_name v="UART_OnTxChar"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnFullRxBuf" v="generate code">
+<Event_procedure_name v="UART_OnFullRxBuf"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnFreeTxBuf" v="generate code">
+<Event_procedure_name v="UART_OnFreeTxBuf"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnBreak" v="don&apos;t generate code" />
+
+<event name="OnIdle" v="don&apos;t generate code" />
+
+<event name="OnTxComplete" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="USB" type="AsynchroSerial">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="USB"/>
+<Channel v="SCI2"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vsci2err"/>
+<Interrupt_RxD v="Vsci2rx"/>
+<Interrupt_RxD_priority v="medium priority"/>
+<Interrupt_TxD v="Vsci2tx"/>
+<Interrupt_TxD_priority v="medium priority"/>
+<Input_buffer_size v="0"/>
+<Output_buffer_size v="0"/>
+
+<group name="Handshake">
+
+<boolgroup name="CTS" v="Disabled" />
+
+<boolgroup name="RTS" v="Enabled">
+<HW_support_required v="no"/>
+<RTS_Pin v="PTA7_KBI1P7"/>
+<RTS_pin_signal v=""/>
+<RTS_enabled v="1"/>
+
+</boolgroup>
+
+</group>
+
+</boolgroup>
+
+<group name="Settings">
+<Parity v="none"/>
+<Width v="8 bits"/>
+<Stop_bit v="1"/>
+
+<enumgroup name="SCI output mode" v="Normal">
+
+</enumgroup>
+
+<boolgroup name="Receiver" v="Enabled">
+<RxD v="PTC1_RxD2"/>
+<RxD_pin_signal v=""/>
+
+</boolgroup>
+
+<boolgroup name="Transmitter" v="Enabled">
+<TxD v="PTC0_TxD2"/>
+<TxD_pin_signal v=""/>
+
+</boolgroup>
+<Baud_rate v="57600 baud"/>
+<Break_signal v="Disabled"/>
+<Wakeup_condition v="Idle line wakeup"/>
+<Stop_in_wait_mode v="no"/>
+<Idle_line_mode v="starts after start bit"/>
+
+</group>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<RecvChar v="generate code"/>
+<SendChar v="generate code"/>
+<RecvBlock v="don&apos;t generate code"/>
+<SendBlock v="don&apos;t generate code"/>
+<ClearRxBuf v="don&apos;t generate code"/>
+<ClearTxBuf v="don&apos;t generate code"/>
+<CharsInRxBuf v="don&apos;t generate code"/>
+<GetCharsInRxBuf v="generate code"/>
+<CharsInTxBuf v="don&apos;t generate code"/>
+<GetCharsInTxBuf v="generate code"/>
+<SetBaudRateMode v="don&apos;t generate code"/>
+<GetError v="don&apos;t generate code"/>
+<GetBreak v="don&apos;t generate code"/>
+<SetBreak v="don&apos;t generate code"/>
+<TurnTxOn v="don&apos;t generate code"/>
+<TurnTxOff v="don&apos;t generate code"/>
+<TurnRxOn v="don&apos;t generate code"/>
+<TurnRxOff v="don&apos;t generate code"/>
+<SetIdle v="don&apos;t generate code"/>
+<LoopMode v="don&apos;t generate code"/>
+<Standby v="don&apos;t generate code"/>
+<SetDirection v="don&apos;t generate code"/>
+<GetRxIdle v="don&apos;t generate code"/>
+<GetTxComplete v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnError" v="generate code">
+<Event_procedure_name v="USB_OnError"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnRxChar" v="generate code">
+<Event_procedure_name v="USB_OnRxChar"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnTxChar" v="generate code">
+<Event_procedure_name v="USB_OnTxChar"/>
+<Priority v="same as interrupt"/>
+
+</event>
+
+<event name="OnFullRxBuf" v="don&apos;t generate code" />
+
+<event name="OnFreeTxBuf" v="don&apos;t generate code" />
+
+<event name="OnBreak" v="don&apos;t generate code" />
+
+<event name="OnIdle" v="don&apos;t generate code" />
+
+<event name="OnTxComplete" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="MC13191" type="SynchroMaster">
+<Enabled v="N"/>
+<Template v="SPIMaster"/>
+
+<Properties>
+<Bean_name v="MC13191"/>
+<Channel v="SPI1"/>
+
+<boolgroup name="Interrupt service/event" v="Disabled" />
+
+<group name="Settings">
+<Bidirectional_mode v="Disabled"/>
+
+<boolgroup name="Input pin" v="Enabled">
+<Pin v="PTE3_MISO1"/>
+<Pin_signal v=""/>
+
+</boolgroup>
+
+<boolgroup name="Output pin" v="Enabled">
+<Pin v="PTE4_MOSI1"/>
+<Pin_signal v=""/>
+
+</boolgroup>
+
+<group name="Clock pin">
+<Pin v="PTE5_SPSCK1"/>
+<Pin_signal v=""/>
+
+</group>
+
+<boolgroup name="Slave select pin" v="Disabled" />
+<Clock_edge sel_value="rising edge" v="rising or falling edge"/>
+<Shift_clock_rate v="9.998 MHz"/>
+<Empty_character v="0"/>
+<Ignore_empty_char_ v="no"/>
+<Send_MSB_first v="yes"/>
+<Shift_clock_idle_polarity v="Low"/>
+<Fault_mode v="Disabled"/>
+<Stop_in_wait_mode v="no"/>
+
+</group>
+
+<group name="Initialization">
+<Direction_in_init_ v="Input"/>
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<RecvChar v="generate code"/>
+<SendChar v="generate code"/>
+<RecvBlock v="don&apos;t generate code"/>
+<SendBlock v="don&apos;t generate code"/>
+<ClearRxBuf v="don&apos;t generate code"/>
+<ClearTxBuf v="don&apos;t generate code"/>
+<CharsInRxBuf v="generate code"/>
+<GetCharsInRxBuf v="generate code"/>
+<CharsInTxBuf v="don&apos;t generate code"/>
+<GetCharsInTxBuf v="don&apos;t generate code"/>
+<SetBaudRateMode v="don&apos;t generate code"/>
+<SetShiftClockPolarity v="generate code"/>
+<SetIdleClockPolarity v="generate code"/>
+<GetError v="don&apos;t generate code"/>
+<SetDir v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnRxChar" v="don&apos;t generate code" />
+
+<event name="OnTxChar" v="don&apos;t generate code" />
+
+<event name="OnFullRxBuf" v="don&apos;t generate code" />
+
+<event name="OnFreeTxBuf" v="don&apos;t generate code" />
+
+<event name="OnError" v="don&apos;t generate code" />
+
+<event name="OnFault" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="SWI" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="SWI"/>
+<Interrupt_vector v="Vswi"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="vPortYield"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="PWM1" type="PWM">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="PWM1"/>
+<PWM_or_PPG_timer v="TPM12"/>
+<Duty_compare v=""/>
+<Output_pin v="PTD2_TPM1CH2"/>
+<Output_pin_signal v=""/>
+<Counter v=""/>
+
+<boolgroup name="Interrupt service/event" v="Disabled" />
+<Prescaler v="Auto selected prescaler"/>
+<Period v="14.829 Hz"/>
+<Starting_pulse_width v="8000 Hz"/>
+<Initial_polarity v="low"/>
+<Iterations_before_action_event v="1"/>
+<Same_period_in_modes v="no"/>
+<Bean_uses_entire_timer v="no"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean enabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetRatio8 v="don&apos;t generate code"/>
+<SetRatio16 v="generate code"/>
+<SetDutyTicks16 v="don&apos;t generate code"/>
+<SetDutyTicks32 v="don&apos;t generate code"/>
+<SetDutyUS v="generate code"/>
+<SetDutyMS v="generate code"/>
+<SetDutySec v="don&apos;t generate code"/>
+<SetDutyReal v="don&apos;t generate code"/>
+<SetValue v="don&apos;t generate code"/>
+<ClrValue v="don&apos;t generate code"/>
+<SetDutyMode v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnEnd" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="MC13191IRQ" type="InterruptVector">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="MC13191IRQ"/>
+<Interrupt_vector v="Virq"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="vMC13191IRQ"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="AudioService" type="TimerInt">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="AudioService"/>
+<Timer v="TPM10"/>
+<Counter v="TPM1"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vtpm1ch0"/>
+<Interrupt_priority v="medium priority"/>
+
+</boolgroup>
+<Prescaler v="Auto selected prescaler"/>
+<Interrupt_period v="120 kHz"/>
+<Same_period_in_modes v="yes"/>
+<Bean_uses_entire_timer v="no"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetPeriodMode v="don&apos;t generate code"/>
+<SetPeriodTicks16 v="don&apos;t generate code"/>
+<SetPeriodTicks32 v="don&apos;t generate code"/>
+<SetPeriodUS v="don&apos;t generate code"/>
+<SetPeriodMS v="don&apos;t generate code"/>
+<SetPeriodSec v="don&apos;t generate code"/>
+<SetPeriodReal v="don&apos;t generate code"/>
+<SetFreqHz v="don&apos;t generate code"/>
+<SetFreqkHz v="don&apos;t generate code"/>
+<SetFreqMHz v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnInterrupt" v="generate code">
+<Event_procedure_name v="AudioService_OnInterrupt"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+<Bean name="AudioOut" type="PWM">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="AudioOut"/>
+<PWM_or_PPG_timer v="TPM10"/>
+<Duty_compare v=""/>
+<Output_pin v="PTD0_TPM1CH0"/>
+<Output_pin_signal v=""/>
+<Counter v="TPM1"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vtpm1ch0"/>
+<Interrupt_on_duty v=""/>
+<Interrupt_overflow v="Vtpm1ovf"/>
+<Interrupt_priority v="medium priority"/>
+
+</boolgroup>
+<Prescaler v="Auto selected prescaler"/>
+<Period v="124 kHz"/>
+<Starting_pulse_width v="124 kHz"/>
+<Initial_polarity v="low"/>
+<Iterations_before_action_event v="1"/>
+<Same_period_in_modes v="no"/>
+<Bean_uses_entire_timer v="no"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetRatio8 v="don&apos;t generate code"/>
+<SetRatio16 v="generate code"/>
+<SetDutyTicks16 v="don&apos;t generate code"/>
+<SetDutyTicks32 v="don&apos;t generate code"/>
+<SetDutyUS v="don&apos;t generate code"/>
+<SetDutyMS v="don&apos;t generate code"/>
+<SetDutySec v="don&apos;t generate code"/>
+<SetDutyReal v="don&apos;t generate code"/>
+<SetValue v="don&apos;t generate code"/>
+<ClrValue v="don&apos;t generate code"/>
+<SetDutyMode v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnEnd" v="generate code">
+<Event_procedure_name v="AudioOut_OnEnd"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+</PE_PROJECT_SETTINGS_DOCUMENTATION>
