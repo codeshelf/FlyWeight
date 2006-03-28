@@ -4,11 +4,11 @@
 void xbeeInit(void) {
 
 	// On the GB60, the following do not have pins but are still active on the die and need to be set as outputs.
-	PTGDD |=0xF0; 
-	PTGD &= ~0xF0; 
-	PTDDD |= 0xE0; 
-	PTDD &= ~0xE0; 
-	PTEDD |= 0xC0; 
+	PTGDD |= 0xF0;
+	PTGD &= ~0xF0;
+	PTDDD |= 0xE0;
+	PTDD &= ~0xE0;
+	PTEDD |= 0xC0;
 	PTED &= ~0xC0;
 	PTAPE |= 0x2; //Module ID Pin (Low – XBee-PRO, High – XBee)
 	PTADD |= 0x10; //VDDA_VREF – A/D Reads referenced from VREF (external) voltage. PTAD &= ~0x10;

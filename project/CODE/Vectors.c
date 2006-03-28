@@ -89,7 +89,7 @@ void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
          pwmISR,                       /* Int.no. 20 Vtpm1ch0 (at FFF4)              Used */
 #else
          Cpu_Interrupt,                /* Int.no. 20 Vtpm1ch0 (at FFF4)              Unassigned */
-#end
+#endif
          Cpu_OnClockMonitorInt,        /* Int.no. 21 Vicg (at FFF6)                  Used */
          Cpu_Interrupt,                /* Int.no. 22 Vlvd (at FFF8)                  Unassigned */
          IRQIsr,                       /* Int.no. 23 Virq (at FFFA)                  Unassigned */

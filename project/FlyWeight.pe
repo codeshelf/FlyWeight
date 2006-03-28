@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=83
+ProjectModificationStamp=87
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=107
+ProjectCompNumb=116
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -25,7 +25,7 @@ Line=Vectors
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -1876,7 +1876,7 @@ MC9S08GT60CFB
 
 [MC9S08GT60_48:Cpu]
 CompNumb=40
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -3823,7 +3823,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -3977,7 +3977,7 @@ Value=No
 [Configuration]
 CompNumb=103
 NodeName=XBee Remote
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=30
 
 [BoolList_FpgaConfig]
@@ -4828,7 +4828,7 @@ LastUserSel=never
 
 [BitIO:SW2]
 CompNumb=56
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5073,7 +5073,7 @@ List=Event
 
 [BitIO:SW3]
 CompNumb=54
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5318,7 +5318,7 @@ List=Event
 
 [BitIO:SW4]
 CompNumb=57
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5563,7 +5563,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5808,7 +5808,7 @@ List=Event
 
 [BitIO:LED2]
 CompNumb=42
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6053,7 +6053,7 @@ List=Event
 
 [BitIO:LED3]
 CompNumb=43
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6298,7 +6298,7 @@ List=Event
 
 [BitIO:LED4]
 CompNumb=44
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6543,7 +6543,7 @@ List=Event
 
 [AsynchroSerial:UART]
 CompNumb=58
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0
@@ -7996,7 +7996,7 @@ LastUserSel=no
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0
@@ -9449,7 +9449,7 @@ LastUserSel=no
 
 [SynchroMaster:MC13191]
 CompNumb=59
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0
@@ -10393,7 +10393,7 @@ List=Event
 
 [PWM:PWM1]
 CompNumb=71
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=SIGNAL
 Comment=0
@@ -10434,13 +10434,13 @@ Value=
 ItemSymbol=Tmr
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=TPM1
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=Ovf
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=TPM1free
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=IntService
@@ -10455,7 +10455,7 @@ List=GrupItem
 ItemSymbol=CmpInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm1ch2
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInt1
@@ -10467,7 +10467,7 @@ SharedPrphMode=No
 ItemSymbol=OvfInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm1ovf
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInitPriority
@@ -11050,7 +11050,7 @@ LastUserSel=never
 
 [InterruptVector:MC13191IRQ]
 CompNumb=87
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11597,7 +11597,7 @@ LastUserSel=always
 
 [PWM:AudioOut]
 CompNumb=106
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=SIGNAL
 Comment=0
