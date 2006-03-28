@@ -1,3 +1,12 @@
+/*
+	FlyWeight
+	© Copyright 2005, 2006 Jeffrey B. Williams
+	All rights reserved
+	
+	$Id$
+	$Name$	
+*/
+
 #include "xbeeinit.h"
 #include "smac_MC9S08GT60.h"
 
