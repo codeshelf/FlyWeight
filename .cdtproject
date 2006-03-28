@@ -49,14 +49,14 @@
 </profile>
 </item>
 <item id="org.eclipse.cdt.core.pathentry">
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
-<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
-<pathentry kind="prj" path="/SMAC"/>
 <pathentry kind="inc" path="" include="project/CODE" system="true" base-path="FlyWeight"/>
 <pathentry kind="inc" path="" include="Source/include" system="true" base-path="FreeRTOS"/>
 <pathentry kind="inc" path="" include="Demo/common/include" system="true" base-path="FreeRTOS"/>
 <pathentry kind="inc" path="" include="Source/portable/CodeWarrior/HCS08" system="true" base-path="FreeRTOS"/>
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
+<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+<pathentry kind="prj" path="/SMAC"/>
 </item>
 <item id="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
