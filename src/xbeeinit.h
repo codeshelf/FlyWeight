@@ -7,9 +7,9 @@
 	$Name$	
 */
 
-#ifndef XBEEINIT
-#define XBEEINIT
+#ifndef XBEEINIT_H
+#define XBEEINIT_H
 
 void xbeeInit(void);
 
-#endif  // XBEEINIT
+#endif  // XBEEINIT_H

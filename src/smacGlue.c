@@ -7,53 +7,54 @@
 	$Name$	
 */
 
-#include <stdlib.h>
+#include "smacGlue.h"
 
-/* Scheduler include files. */
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "pub_def.h"
+xQueueHandle	gRadioReceiveQueue = NULL;
+ERadioState		gRadioState = eRadioReceive;
 
-xQueueHandle	gRadioReceiveQueue;
-
-void initMC13191(xQueueHandle inRadioReceiveQueue) {
-
+void initSMACRadioQueueGlue(xQueueHandle inRadioReceiveQueue) {
 	gRadioReceiveQueue = inRadioReceiveQueue;
-
 };
 
-/*-----------------------------------------------------------*/
+// --------------------------------------------------------------------------
+// The SMAC calls MCPSDataIndication() during an ISR when it receives data from the radio.
+// We intercept that here, and patch the message over to the radio task's queue.
+// In FreeRTOS we can't RTI or task switch during and ISR, so we need to keep this
+// short and sweet.  (And let a swapped-in task deal with this during a context switch.)
 
 #pragma CODE_SEG __NEAR_SEG NON_BANKED 
-//#pragma NO_ENTRY
-//#pragma NO_EXIT
-//#pragma NO_FRAME
-//#pragma NO_ENTRY
-//#pragma NO_RETURN
 void MCPSDataIndication(tRxPacket *gsRxPacket) {
 
-	/* Send the incremented value down the queue.  The button push task is
-	blocked waiting for the data.  As the button push task is high priority
-	it will wake and a context switch should be performed before leaving
-	the ISR. */
-
-	if ( xQueueSendFromISR( gRadioReceiveQueue, &gsRxPacket, pdFALSE ) ) {
-		/* NOTE: This macro can only be used if there are no local
-		variables defined.  This function uses a static variable so it's
-		use is permitted.  If the variable were not static portYIELD() 
-		would have to be used in it's place. */ 
-		//portTASK_SWITCH_FROM_ISR();
-		//portYIELD();
-		//__asm( "rti" );
+	// If we haven't initialized the radio receive queue then cause a debug trap.
+	if (gRadioReceiveQueue == NULL)
+		__asm ("BGND");
+	
+	// Set the state of the radio at this time.  (The value gets copied into the msg.)
+	gRadioState = eRadioReceive;
+	
+	// Send the message to the radio task's queue.
+	if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
 	}
 };
 
 #pragma CODE_SEG DEFAULT
 
-/*-----------------------------------------------------------*/
+// --------------------------------------------------------------------------
+
+// The SMAC calls MLMEMC13192ResetIndication() during an ISR when it can't receive data from the radio.
+// We intercept that here, and patch the message over to the radio task's queue.
+// In FreeRTOS we can't RTI or task switch during and ISR, so we need to keep this
+// short and sweet.  (And let a swapped-in task deal with this during a context switch.)
 
 void MLMEMC13192ResetIndication() {
-}
+	// If we haven't initialized the radio receive queue then cause a debug trap.
+	if (gRadioReceiveQueue == NULL)
+		__asm ("BGND");
+	
+	// Set the state of the radio at this time.  (The value gets copied into the msg.)
+	gRadioState = eRadioReset;
 
-;
+	// Send the message to the radio task's queue.
+	if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+	}
+};

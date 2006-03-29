@@ -822,13 +822,6 @@
             <FILELIST>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -896,13 +889,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
@@ -969,13 +955,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Startup.cmd</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -1142,13 +1121,15 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
@@ -1201,11 +1182,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -1247,11 +1223,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>FlyWeight_Settings.xml</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -1372,6 +1343,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>Gateway.ini</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -2143,13 +2119,6 @@
             <FILELIST>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -2224,13 +2193,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
@@ -2269,13 +2231,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Startup.cmd</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -2477,13 +2432,15 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
@@ -2541,11 +2498,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -2567,11 +2519,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>SARD.map</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -2717,6 +2664,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>Gateway.ini</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -3416,7 +3368,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"APPNAME=""gate""" -Ms</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"APPNAME=""gate""" -Ms -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -3488,13 +3440,6 @@
             <FILELIST>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3562,13 +3507,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
@@ -3635,13 +3573,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Startup.cmd</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3815,13 +3746,141 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW1Int.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>UART.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PWM1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191IRQ.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
@@ -3874,11 +3933,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -3920,11 +3974,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>FlyWeight_Settings.xml</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -4050,6 +4099,101 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>EVBGateway.map</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW1Int.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>UART.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PWM1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191IRQ.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainGateway.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -4749,7 +4893,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DXBEE -DANTENNA_SWITCH -D"APPNAME=""remt""" -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont=</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DXBEE -DANTENNA_SWITCH -D"APPNAME=""remt""" -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -4821,13 +4965,6 @@
             <FILELIST>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -4895,13 +5032,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
@@ -5164,25 +5294,48 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>remoteMain.c</PATH>
+                    <PATH>pwmISR.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>pwmISR.c</PATH>
+                    <PATH>mainRemote.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>xbeeinit.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>smacGlue.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
             </FILELIST>
             <LINKORDER>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>burner.bbl</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>HCS08.ini</PATH>
@@ -5231,11 +5384,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>RTOSDemo.sig</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -5425,12 +5573,32 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>remoteMain.c</PATH>
+                    <PATH>pwmISR.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>pwmISR.c</PATH>
+                    <PATH>mainRemote.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>xbeeinit.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>smacGlue.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -5480,15 +5648,15 @@
             </GROUP>
             <GROUP><NAME>FlyWeight</NAME>
                 <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>remoteMain.c</PATH>
+                    <PATH>mainGateway.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>main.c</PATH>
+                    <PATH>mainRemote.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -5498,15 +5666,57 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>smacGlue.c</PATH>
+                    <PATH>xbeeinit.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>xbeeInit.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>smacGlue.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </GROUP>
@@ -5635,12 +5845,6 @@
         </GROUP>
         <GROUP><NAME>Prm</NAME>
             <FILEREF>
-                <TARGETNAME>EVB Remote</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>burner.bbl</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
                 <TARGETNAME>SARD (DIG536-2)</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>RTOSDemo.PRM</PATH>
@@ -5759,25 +5963,91 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>XBee Remote</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>TickTimer.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>XBee Remote</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>SW1Int.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
-        </GROUP>
-        <GROUP><NAME>Doc</NAME>
             <FILEREF>
-                <TARGETNAME>EVB Remote</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>RTOSDemo.sig</PATH>
+                <PATH>SW2.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>SW3.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>SW4.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED1.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED2.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED3.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED4.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>UART.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>USB.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>MC13191.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>PWM1.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>MC13191IRQ.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+        </GROUP>
+        <GROUP><NAME>Doc</NAME>
             <FILEREF>
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
