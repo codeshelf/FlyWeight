@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 4:38 PM
+**     Date/Time : 3/30/2006, 9:54 AM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 57600baud
+**             Init baud rate          : 38400baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -44,7 +44,7 @@
 **         ----------------------------------------------------------
 **            Input   |     3                |  PTC1_RxD2
 **            Output  |     2                |  PTC0_TxD2
-**             RTS    |     42               |  PTA7_KBI1P7
+**             RTS    |     41               |  PTA6_KBI1P6
 **         ----------------------------------------------------------
 **
 **             Note: RTS pin is NOT supported by hardware.
@@ -54,8 +54,10 @@
 **     Contents  :
 **         RecvChar        - byte USB_RecvChar(USB_TComData *Chr);
 **         SendChar        - byte USB_SendChar(USB_TComData Chr);
+**         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
+**         ClearRxBuf      - byte USB_ClearRxBuf(void);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
-**         GetCharsInTxBuf - word USB_GetCharsInTxBuf(void);
+**         Standby         - void USB_Standby(bool State);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -79,50 +81,20 @@
 #define OVERRUN_ERR      0x01          /* Overrun error flag bit   */
 #define COMMON_ERR       0x02          /* Common error of RX       */
 #define CHAR_IN_RX       0x04          /* Char is in RX buffer     */
-#define FULL_TX          0x08          /* Full transmit buffer     */
+#define FULL_RX          0x08          /* Full receive buffer      */
+#define FULL_TX          0x10          /* Full transmit buffer     */
 
 static byte SerFlag;                   /* Flags for serial communication */
                                        /* Bit 0 - Overrun error */
                                        /* Bit 1 - Common error of RX */
                                        /* Bit 2 - Char in RX buffer */
-                                       /* Bit 3 - Full TX buffer */
-static bool EnMode;                    /* Enable/Disable SCI in speed mode */
-static USB_TComData BufferRead;        /* Input char for SCI commmunication */
+                                       /* Bit 3 - Full RX buffer */
+                                       /* Bit 4 - Full TX buffer */
+byte USB_InpLen;                       /* Length of the input buffer content */
+static byte InpIndxR;                  /* Index for reading from input buffer */
+static byte InpIndxW;                  /* Index for writing to input buffer */
+static USB_TComData InpBuffer[USB_INP_BUF_SIZE]; /* Input buffer for SCI commmunication */
 
-
-/*
-** ===================================================================
-**     Method      :  HWEnDi (bean AsynchroSerial)
-**
-**     Description :
-**         Enables or disables the peripheral(s) associated with the bean.
-**         The method is called automatically as a part of the Enable and 
-**         Disable methods and several internal methods.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-static void HWEnDi(void)
-{
-  if(EnMode) {                         /* Enable device? */
-    SCI2BDH = 0x00;                    /* Set high divisor register (enable device) */
-    SCI2BDL = 0x16;                    /* Set low divisor register (enable device) */
-      /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
-    SCI2C3 |= 0x0F;                    /* Enable error interrupts */
-    SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
-    if(!(SerFlag & CHAR_IN_RX))        /* Is any char in the receive buffer? */
-      /* PTAD: PTAD7=0 */
-      PTAD &= ~0x80;                   /* Set RTS to the low level */
-  }
-  else {
-    /* PTAD: PTAD7=1 */
-    PTAD |= 0x80;                      /* Set RTS to the high level */
-    /* SCI2C3: ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
-    SCI2C3 &= ~0x0F;                   /* Disable error interrupts */
-    SCI2C2 &= ( (~SCI2C2_RE_MASK) & (~SCI2C2_TE_MASK) & (~SCI2C2_TIE_MASK) & (~SCI2C2_RIE_MASK)); /*  Disable receiver, Disable transmitter, Disable transmit interrupt, Disable receiver interrupt */
-    SCI2BDH = 0x00;                    /* Set high divisor register to zero (disable device) */
-    SCI2BDL = 0x00;                    /* Set low divisor register to zero (disable device) */
-  }
-}
 
 /*
 ** ===================================================================
@@ -167,17 +139,20 @@ byte USB_RecvChar(USB_TComData *Chr)
 {
   byte Result = ERR_OK;                /* Return error code */
 
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
-  if(!(SerFlag & CHAR_IN_RX))          /* Is any char in RX buffer? */
-    return ERR_RXEMPTY;                /* If no then error */
-  EnterCritical();                     /* Save the PS register */
-  *Chr = BufferRead;                   /* Received char */
-  /* PTAD: PTAD7=0 */
-  PTAD &= ~0x80;                       /* Set RTS to the low level */
-  Result = (byte)((SerFlag & (OVERRUN_ERR|COMMON_ERR))?ERR_COMMON:ERR_OK);
-  SerFlag &= ~(OVERRUN_ERR|COMMON_ERR|CHAR_IN_RX); /* Clear all errors in the status variable */
-  ExitCritical();                      /* Restore the PS register */
+  if(USB_InpLen > 0) {                 /* Is number of received chars greater than 0? */
+    EnterCritical();                   /* Save the PS register */
+    USB_InpLen--;                      /* Decrease number of received chars */
+    *Chr = InpBuffer[InpIndxR];        /* Received char */
+    if (++InpIndxR >= USB_INP_BUF_SIZE) /* Is the index out of the buffer? */
+      InpIndxR = 0;                    /* Set the index to the start of the buffer */
+    if(USB_InpLen <= USB_RTS_BUF_SIZE)
+      RTS_ON;                   /* Set RTS to the low level */
+    Result = (byte)((SerFlag & (OVERRUN_ERR|COMMON_ERR|FULL_RX))?ERR_COMMON:ERR_OK);
+    SerFlag &= ~(OVERRUN_ERR|COMMON_ERR|FULL_RX|CHAR_IN_RX); /* Clear all errors in the status variable */
+    ExitCritical();                    /* Restore the PS register */
+  } else {
+    return ERR_RXEMPTY;                /* Receiver is empty */
+  }
   return Result;                       /* Return error code */
 }
 
@@ -213,8 +188,6 @@ byte USB_RecvChar(USB_TComData *Chr)
 */
 byte USB_SendChar(USB_TComData Chr)
 {
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   if(SerFlag & FULL_TX)                /* Is any char is in TX buffer */
     return ERR_TXFULL;                 /* If yes then error */
   EnterCritical();                     /* Save the PS register */
@@ -222,6 +195,94 @@ byte USB_SendChar(USB_TComData Chr)
   SCI2D = (byte)Chr;                   /* Store char to transmitter register */
   SCI2C2_TIE = 1;                      /* Enable transmit interrupt */
   SerFlag |= FULL_TX;                  /* Set the flag "full TX buffer" */
+  ExitCritical();                      /* Restore the PS register */
+  return ERR_OK;                       /* OK */
+}
+
+/*
+** ===================================================================
+**     Method      :  USB_RecvBlock (bean AsynchroSerial)
+**
+**     Description :
+**         If any data is received, this method returns the block of
+**         the data and its length (and incidental error), otherwise
+**         it returns an error code (it does not wait for data).
+**         This method is available only if non-zero length of the
+**         input buffer is defined and the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method only sets the selected DMA channel. Then the
+**         status of the DMA transfer can be checked using
+**         GetCharsInRxBuf method. See an example of a typical usage
+**         for details about communication using DMA.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**       * Ptr             - Pointer to the block of received data
+**         Size            - Size of the block
+**       * Rcv             - Pointer to real number of the received
+**                           data
+**     Returns     :
+**         ---             - Error code, possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
+**                           ERR_RXEMPTY - No data in receiver
+**                           ERR_VALUE - Parameter is out of range.
+**                           ERR_COMMON - common error occurred (the
+**                           GetError method can be used for error
+**                           specification)
+**                           DMA mode:
+**                           If DMA controller is available on the
+**                           selected CPU and the receiver is
+**                           configured to use DMA controller then
+**                           only ERR_OK, ERR_RXEMPTY, and ERR_SPEED
+**                           error codes can be returned from this
+**                           method.
+** ===================================================================
+*/
+byte USB_RecvBlock(USB_TComData *Ptr, word Size, word *Rcv)
+{
+  word count;                          /* Number of received chars */
+  byte result = ERR_OK;                /* Last error */
+
+  for(count = 0; count < Size; count++) {
+    result = USB_RecvChar(Ptr++);
+    if(result != ERR_OK) {             /* Receiving given number of chars */
+      break;                           /* Break data block receiving */
+    }
+  }
+  *Rcv = count;                        /* Return number of received chars */
+  return result;                       /* Return last error code*/
+}
+
+/*
+** ===================================================================
+**     Method      :  USB_ClearRxBuf (bean AsynchroSerial)
+**
+**     Description :
+**         Clears the receive buffer.
+**         This method is available only if non-zero length of the
+**         input buffer is defined and the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method only stops selected DMA channel.
+**     Parameters  : None
+**     Returns     :
+**         ---             - Error code, possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
+** ===================================================================
+*/
+byte USB_ClearRxBuf(void)
+{
+  EnterCritical();                     /* Save the PS register */
+  USB_InpLen = 0;                      /* Set number of chars in the transmit buffer to 0 */
+  InpIndxR = InpIndxW = 0;             /* Reset indices */
   ExitCritical();                      /* Restore the PS register */
   return ERR_OK;                       /* OK */
 }
@@ -245,34 +306,11 @@ byte USB_SendChar(USB_TComData Chr)
 **                           buffer.
 ** ===================================================================
 */
-word USB_GetCharsInRxBuf(void)
-{
-  return (SerFlag & CHAR_IN_RX) != 0;  /* Return number of chars in receive buffer */
-}
-
 /*
-** ===================================================================
-**     Method      :  USB_GetCharsInTxBuf (bean AsynchroSerial)
-**
-**     Description :
-**         Returns the number of characters in the output buffer.
-**         This method is available only if the transmitter property
-**         is enabled.
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the transmitter is configured to use DMA controller then
-**         this method returns the number of characters in the
-**         transmit buffer.
-**     Parameters  : None
-**     Returns     :
-**         ---             - The number of characters in the output
-**                           buffer.
-** ===================================================================
+word USB_GetCharsInRxBuf(void)
+
+**      This method is implemented as a macro. See header module. **
 */
-word USB_GetCharsInTxBuf(void)
-{
-  return (SerFlag & FULL_TX) != 0;     /* Return number of chars in the transmitter buffer */
-}
 
 /*
 ** ===================================================================
@@ -294,26 +332,28 @@ ISR(USB_InterruptRx)
   byte StatReg = getReg(SCI2S1);
   byte OnFlags = 0;                    /* Temporary variable for flags */
 
-  PTAD |= 0x80;
   Data = SCI2D;                        /* Read data from the receiver */
-  if(SerFlag & CHAR_IN_RX) {           /* Is any char already present in the receive buffer? */
-    SerFlag |= OVERRUN_ERR;            /* If yes then set flag OVERRUN_ERR */
+  if(USB_InpLen < USB_INP_BUF_SIZE) {  /* Is number of bytes in the receive buffer lower than size of buffer? */
+    USB_InpLen++;                      /* Increse number of chars in the receive buffer */
+    InpBuffer[InpIndxW] = Data;        /* Save received char to the receive buffer */
+    if (++InpIndxW >= USB_INP_BUF_SIZE) /* Is the index out of the buffer? */
+      InpIndxW = 0;                    /* Set the index to the start of the buffer */
+    OnFlags |= ON_RX_CHAR;             /* Set flag "OnRXChar" */
+  } else {
+  	// JBW/GW - fix overflow bug.
+    OnFlags |= ON_FULL_RX;                /* If yes then set flag buffer overflow */
   }
-  if(!(SerFlag & OVERRUN_ERR )) {      /* Is an overrun detected? */
-    BufferRead = Data;
-    SerFlag |= CHAR_IN_RX;             /* Set flag "char in RX buffer" */
-    OnFlags |= ON_RX_CHAR;             /* Set flag "OnRxChar" */
-  }
-  else
-    OnFlags |= ON_ERROR;               /* Set flag "OnError" */
-  if(OnFlags & ON_ERROR) {             /* Was error flag detect? */
-    USB_OnError();                     /* If yes then invoke user event */
-  }
-  else {
     if(OnFlags & ON_RX_CHAR) {         /* Is OnRxChar flag set? */
       USB_OnRxChar();                  /* If yes then invoke user event */
     }
-  }
+    if(OnFlags & ON_FULL_RX) {         /* Is OnFullRxBuf flag set? */
+      USB_OnFullRxBuf();               /* If yes then invoke user event */
+    }
+  if(USB_InpLen < USB_RTS_BUF_SIZE)    /* Is number of chars in the receive buffer lower than size of the RTS buffer? */
+    /* PTAD: PTAD6=0 */
+    RTS_ON;                     /* Set RTS to low level */
+  else
+    RTS_OFF;
 }
 
 /*
@@ -358,10 +398,27 @@ ISR(USB_InterruptError)
     SerFlag |= COMMON_ERR;             /* If yes then set an internal flag */
     }
   SCI2D;                               /* Dummy read of data register - clear error bits */
-  if(SerFlag & (COMMON_ERR)) {         /* Was any error set? */
-    USB_OnError();                     /* If yes then invoke user event */
-  }
 }
+
+/*
+** ===================================================================
+**     Method      :  USB_Standby (bean AsynchroSerial)
+**
+**     Description :
+**         Puts the receiver into a standby state.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**         State           - Switch standby state
+**                           TRUE - Standby state
+**                           FALSE - Normal operation
+**     Returns     : Nothing
+** ===================================================================
+*/
+/*
+void USB_Standby(bool State)
+
+**      This method is implemented as a macro in the header module. **
+*/
 
 /*
 ** ===================================================================
@@ -377,47 +434,23 @@ ISR(USB_InterruptError)
 void USB_Init(void)
 {
   SerFlag = 0;                         /* Reset flags */
+  USB_InpLen = 0;                      /* No char in the receive buffer */
+  InpIndxR = InpIndxW = 0;             /* Reset indices */
   /* SCI2C1: LOOPS=0,SCISWAI=0,RSRC=0,M=0,WAKE=0,ILT=0,PE=0,PT=0 */
   setReg8(SCI2C1, 0x00);               /* Configure the SCI */ 
   /* SCI2C3: R8=0,T8=0,TXDIR=0,??=0,ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
   setReg8(SCI2C3, 0x00);               /* Disable error interrupts */ 
   /* SCI2C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
   setReg8(SCI2C2, 0x00);               /* Disable all interrupts */ 
-  USB_SetHigh();                       /* Initial speed CPU mode is high */
-}
+  SCI2BDH = 0x00;                      /* Set high divisor register (enable device) */
+  SCI2BDL = 0x42;                      /* Set low divisor register (enable device) */
+      /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
+  SCI2C3 |= 0x0F;                      /* Enable error interrupts */
+  SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
 
-/*
-** ===================================================================
-**     Method      :  USB_SetHigh (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the High speed mode. The method is 
-**         called automatically as s part of the CPU SetHighSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-void USB_SetHigh(void)
-{
-  EnMode = TRUE;                       /* Set the flag "device enabled" in the actual speed CPU mode */
-  HWEnDi();                            /* Enable/disable device according to status flags */
-}
-
-/*
-** ===================================================================
-**     Method      :  USB_SetLow (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the Low speed mode. The method is 
-**         called automatically as a part of the CPU SetLowSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-void USB_SetLow(void)
-{
-  EnMode = FALSE;                      /* Set the flag "device disabled" in the actual speed CPU mode */
-  HWEnDi();                            /* Enable/disable device according to status flags */
+  // JBW/GW - Enable RTS
+  RTS_PORTENABLE;
+  RTS_PORTDIRECTION;
 }
 
 

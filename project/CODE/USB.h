@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 4:38 PM
+**     Date/Time : 3/29/2006, 2:38 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 57600baud
+**             Init baud rate          : 38400baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -44,7 +44,7 @@
 **         ----------------------------------------------------------
 **            Input   |     3                |  PTC1_RxD2
 **            Output  |     2                |  PTC0_TxD2
-**             RTS    |     42               |  PTA7_KBI1P7
+**             RTS    |     41               |  PTA6_KBI1P6
 **         ----------------------------------------------------------
 **
 **             Note: RTS pin is NOT supported by hardware.
@@ -54,8 +54,10 @@
 **     Contents  :
 **         RecvChar        - byte USB_RecvChar(USB_TComData *Chr);
 **         SendChar        - byte USB_SendChar(USB_TComData Chr);
+**         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
+**         ClearRxBuf      - byte USB_ClearRxBuf(void);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
-**         GetCharsInTxBuf - word USB_GetCharsInTxBuf(void);
+**         Standby         - void USB_Standby(bool State);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -103,8 +105,18 @@
   typedef byte USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
 #endif
 
-#define USB_RTS_BUF_SIZE 1             /* Number of characters in rcv. buffer when RTS signal gets activated */
+#define USB_INP_BUF_SIZE 122           /* Input buffer size */
+#define USB_RTS_BUF_SIZE 120           /* Number of characters in rcv. buffer when RTS signal gets activated */
 
+//#define RTS_ON			PTAD |= 0x40
+//#define RTS_OFF			PTAD &= ~0x40
+#define RTS_ON  __asm bclr 6,0x00 //PTA6
+#define RTS_OFF __asm bset 6,0x00 //PTA6
+#define RTS_PORTENABLE      __asm bclr 6,0x01 // PTA6 - PTAPE
+#define RTS_PORTDIRECTION   __asm bset 6,0x03 // PTA6 - PTADD
+
+
+extern byte USB_InpLen;                /* Length of the input buffer content */
 
 byte USB_RecvChar(USB_TComData *Chr);
 /*
@@ -179,7 +191,76 @@ byte USB_SendChar(USB_TComData Chr);
 ** ===================================================================
 */
 
-word USB_GetCharsInRxBuf(void);
+byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
+/*
+** ===================================================================
+**     Method      :  USB_RecvBlock (bean AsynchroSerial)
+**
+**     Description :
+**         If any data is received, this method returns the block of
+**         the data and its length (and incidental error), otherwise
+**         it returns an error code (it does not wait for data).
+**         This method is available only if non-zero length of the
+**         input buffer is defined and the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method only sets the selected DMA channel. Then the
+**         status of the DMA transfer can be checked using
+**         GetCharsInRxBuf method. See an example of a typical usage
+**         for details about communication using DMA.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**       * Ptr             - Pointer to the block of received data
+**         Size            - Size of the block
+**       * Rcv             - Pointer to real number of the received
+**                           data
+**     Returns     :
+**         ---             - Error code, possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
+**                           ERR_RXEMPTY - No data in receiver
+**                           ERR_VALUE - Parameter is out of range.
+**                           ERR_COMMON - common error occurred (the
+**                           GetError method can be used for error
+**                           specification)
+**                           DMA mode:
+**                           If DMA controller is available on the
+**                           selected CPU and the receiver is
+**                           configured to use DMA controller then
+**                           only ERR_OK, ERR_RXEMPTY, and ERR_SPEED
+**                           error codes can be returned from this
+**                           method.
+** ===================================================================
+*/
+
+byte USB_ClearRxBuf(void);
+/*
+** ===================================================================
+**     Method      :  USB_ClearRxBuf (bean AsynchroSerial)
+**
+**     Description :
+**         Clears the receive buffer.
+**         This method is available only if non-zero length of the
+**         input buffer is defined and the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method only stops selected DMA channel.
+**     Parameters  : None
+**     Returns     :
+**         ---             - Error code, possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
+** ===================================================================
+*/
+
+#define USB_GetCharsInRxBuf() \
+(USB_InpLen)                           /* Return number of chars in receive buffer */
 /*
 ** ===================================================================
 **     Method      :  USB_GetCharsInRxBuf (bean AsynchroSerial)
@@ -200,24 +281,20 @@ word USB_GetCharsInRxBuf(void);
 ** ===================================================================
 */
 
-word USB_GetCharsInTxBuf(void);
+#define USB_Standby(State)\
+  (SCI2C2_RWU = (State)? 1:0)
 /*
 ** ===================================================================
-**     Method      :  USB_GetCharsInTxBuf (bean AsynchroSerial)
+**     Method      :  USB_Standby (bean AsynchroSerial)
 **
 **     Description :
-**         Returns the number of characters in the output buffer.
-**         This method is available only if the transmitter property
-**         is enabled.
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the transmitter is configured to use DMA controller then
-**         this method returns the number of characters in the
-**         transmit buffer.
-**     Parameters  : None
-**     Returns     :
-**         ---             - The number of characters in the output
-**                           buffer.
+**         Puts the receiver into a standby state.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**         State           - Switch standby state
+**                           TRUE - Standby state
+**                           FALSE - Normal operation
+**     Returns     : Nothing
 ** ===================================================================
 */
 
@@ -267,32 +344,6 @@ void USB_Init(void);
 **         Initializes the associated peripheral(s) and the bean's 
 **         internal variables. The method is called automatically as a 
 **         part of the application initialization code.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-
-void USB_SetHigh(void);
-/*
-** ===================================================================
-**     Method      :  USB_SetHigh (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the High speed mode. The method is 
-**         called automatically as s part of the CPU SetHighSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-
-void USB_SetLow(void);
-/*
-** ===================================================================
-**     Method      :  USB_SetLow (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the Low speed mode. The method is 
-**         called automatically as a part of the CPU SetLowSpeed method.
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
 */

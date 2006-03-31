@@ -12,7 +12,7 @@
 #include "task.h"
 #include "queue.h"
 #include "simple_mac.h"
-#include "SW1Int.h"
+#include "USB.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -21,8 +21,8 @@
 // Local variables.
 
 /* The queue used to send data from the radio to the radio receive task. */
-static xQueueHandle xRadioTransmitQueue;
-static xQueueHandle xRadioReceiveQueue;
+xQueueHandle xRadioTransmitQueue;
+xQueueHandle xRadioReceiveQueue;
 
 UINT8 gu8RTxMode;
 extern UINT8 gLED1;
@@ -31,41 +31,44 @@ extern UINT8 gLED3;
 extern UINT8 gLED4;
 extern xQueueHandle xLEDBlinkQueue;
 
+// Radio input buffer
+RadioBufferStruct	gRadioBuffer[BUFFER_COUNT];
+BufferCntType		gCurRadioBufferNum = 0;
 
 // --------------------------------------------------------------------------
 
 void vRadioTransmitTask( void *pvParameters ) {
-	tTxPacket gsTxPacket;
-	tRxPacket gsRxPacket;
-	UINT8 gau8TxDataBuffer[16] = APPNAME;
-	UINT8 gau8RxDataBuffer[16];
+	tTxPacket		gsTxPacket;
+	BufferCntType	bufferNum;
 
-	byte	*msgP;
-
-	gsRxPacket.u8MaxDataLength = 0;
-	gsRxPacket.pu8Data = &gau8RxDataBuffer[0];
-	gsRxPacket.u8MaxDataLength = 16;    /* Arbitrary, bigger than xXyYzZ format. */
-	gsRxPacket.u8Status = 0;                /* initialize status to 0. */
-
-	gsTxPacket.pu8Data = &gau8TxDataBuffer[0]; /* Set the pointer to point to the tx_buffer */
-
-	xRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
+	xRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, sizeof(gCurRadioBufferNum));
 
 	for (;;) {
-		gsTxPacket.u8DataLength = 4;    /* Initialize the gsTxPacket global */
-		MCPSDataRequest(&gsTxPacket);
 
-		if (xQueueSend(xLEDBlinkQueue, &gLED1, pdFALSE)) {}
-
-		MLMERXEnableRequest(&gsRxPacket, 0L);
-
-		if ( xQueueReceive( xRadioTransmitQueue, &msgP, portTICK_RATE_MS * 1000 ) == pdPASS ) {
-			vTaskDelay(portTICK_RATE_MS * 100);
+		// Turn the SCi back on by taking RX out of standby.
+		RTS_ON;
+		
+		// Wait until the SCi controller signals us that we have a full buffer to transmit.
+		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 1000 ) == pdPASS ) {
+			// Transmit the buffer.
+			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
+			gsTxPacket.u8DataLength = USB_INP_BUF_SIZE;
+			MCPSDataRequest(&gsTxPacket);
+		} else {
+			// Transmit the buffer.
+			gsTxPacket.pu8Data = "IDLE";
+			gsTxPacket.u8DataLength = 4;
+			//MCPSDataRequest(&gsTxPacket);
 		}
-
-		MLMERXDisableRequest();
+		
+		// Turn the SCi back on by clearing the RX buffer.
+		//USB_ClearRxBuf();
+		
+		// Blink LED1 to let us know we succeeded in transmitting the buffer.
+		if (xQueueSend(xLEDBlinkQueue, &gLED1, pdFALSE)) {
+		
+		}
 	}
-
 }
 
 // --------------------------------------------------------------------------
@@ -80,9 +83,8 @@ void vRadioReceiveTask( void *pvParameters ) {
 	initSMACRadioQueueGlue(xRadioReceiveQueue);
 
 	if ( xRadioReceiveQueue ) {
+	
 		/* Now the queue is created it is safe to enable the radio receive interrupt. */
-		SW1Int_Enable();
-
 		for ( ;; ) {
 			/* Simply wait for data to arrive from the button push interrupt. */
 

@@ -19,6 +19,7 @@
 #include "simple_mac.h"
 #include "gatewayRadioTask.h"
 #include "ledBlinkTask.h"
+#include "CPU.h"
 
 // --------------------------------------------------------------------------
 
@@ -33,7 +34,6 @@ void vMain( void ) {
 	xbeeInit();
 #endif
 	MLMEMC13192PAOutputAdjust(MAX_POWER);    //Set MAX power setting
-
 	if (MLMESetChannelRequest(15) == SUCCESS) {}
 
 	/* Start the task that will handle the radio */

@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 4:38 PM
+**     Date/Time : 3/29/2006, 2:38 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI1
 **
 **         Protocol
-**             Init baud rate          : 57600baud
+**             Init baud rate          : 38400baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -401,32 +401,6 @@ void UART_Init(void);
 **         Initializes the associated peripheral(s) and the bean's 
 **         internal variables. The method is called automatically as a 
 **         part of the application initialization code.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-
-void UART_SetHigh(void);
-/*
-** ===================================================================
-**     Method      :  UART_SetHigh (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the High speed mode. The method is 
-**         called automatically as s part of the CPU SetHighSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-
-void UART_SetLow(void);
-/*
-** ===================================================================
-**     Method      :  UART_SetLow (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the Low speed mode. The method is 
-**         called automatically as a part of the CPU SetLowSpeed method.
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
 */

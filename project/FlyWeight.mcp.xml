@@ -871,13 +871,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Vectors.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -1163,11 +1156,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>IO_Map.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -2168,13 +2156,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>RTOSDemo.PRM</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -2474,11 +2455,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>IO_Map.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -3489,13 +3465,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Vectors.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3748,20 +3717,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>TickTimer.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SW1Int.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>SW2.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3825,20 +3780,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>MC13191.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PWM1.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>MC13191IRQ.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3879,6 +3820,20 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -3914,11 +3869,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>IO_Map.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -4103,16 +4053,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>TickTimer.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SW1Int.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>SW2.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -4158,16 +4098,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>MC13191.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PWM1.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>MC13191IRQ.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -4194,6 +4124,16 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ledBlinkTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -4914,7 +4854,7 @@
 
                 <!-- Settings for "Panel for Linker for HC08" panel -->
                 <SETTING><NAME>Panel for Linker for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Fa -WmsgSd1100 -WmsgSd1823 -WmsgSd1912</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Fa -M -WmsgSd1100 -WmsgSd1823 -WmsgSd1912</VALUE></SETTING>
                     <SETTING><NAME>LinkParameterFilename</NAME><VALUE>out.prm</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>OutputFilename</NAME><VALUE>EVBRemote.abs</VALUE></SETTING>
@@ -5008,13 +4948,6 @@
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>IO_Map.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -5280,20 +5213,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>TickTimer.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SW1Int.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>pwmISR.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -5334,6 +5253,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191IRQ.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -5369,11 +5309,6 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>IO_Map.C</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>PE_Timer.C</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -5563,16 +5498,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>TickTimer.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SW1Int.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>pwmISR.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -5599,6 +5524,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>remoteRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191IRQ.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -5696,18 +5636,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>ledBlinkTask.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>ledBlinkTask.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
                     <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>remoteRadioTask.h</PATH>
@@ -5717,6 +5645,18 @@
                     <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>remoteRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </GROUP>
@@ -5947,12 +5887,6 @@
             <FILEREF>
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>PE_Timer.C</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Remote</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
                 <PATH>SWI.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
@@ -5960,18 +5894,6 @@
                 <TARGETNAME>XBee Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>AudioOut.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>TickTimer.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>SW1Int.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
@@ -6031,19 +5953,19 @@
             <FILEREF>
                 <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>MC13191.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>PWM1.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
                 <PATH>MC13191IRQ.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>PE_Timer.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>TickTimer.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>

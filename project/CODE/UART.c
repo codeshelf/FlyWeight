@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 4:38 PM
+**     Date/Time : 3/29/2006, 2:59 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI1
 **
 **         Protocol
-**             Init baud rate          : 57600baud
+**             Init baud rate          : 38400baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -94,7 +94,6 @@ static byte SerFlag;                   /* Flags for serial communication */
                                        /* Bit 3 - Interrupt is in progress */
                                        /* Bit 4 - Full RX buffer */
                                        /* Bit 5 - Full TX buffer */
-static bool EnMode;                    /* Enable/Disable SCI in speed mode */
 byte UART_InpLen;                      /* Length of the input buffer content */
 static byte InpIndxR;                  /* Index for reading from input buffer */
 static byte InpIndxW;                  /* Index for writing to input buffer */
@@ -104,40 +103,6 @@ static byte OutIndxR;                  /* Index for reading from output buffer *
 static byte OutIndxW;                  /* Index for writing to output buffer */
 static UART_TComData OutBuffer[UART_OUT_BUF_SIZE]; /* Output buffer for SCI commmunication */
 
-
-/*
-** ===================================================================
-**     Method      :  HWEnDi (bean AsynchroSerial)
-**
-**     Description :
-**         Enables or disables the peripheral(s) associated with the bean.
-**         The method is called automatically as a part of the Enable and 
-**         Disable methods and several internal methods.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-static void HWEnDi(void)
-{
-  if(EnMode) {                         /* Enable device? */
-    SCI1BDH = 0x00;                    /* Set high divisor register (enable device) */
-    SCI1BDL = 0x16;                    /* Set low divisor register (enable device) */
-      /* SCI1C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
-    SCI1C3 |= 0x0F;                    /* Enable error interrupts */
-    SCI1C2 |= ( SCI1C2_TE_MASK | SCI1C2_RE_MASK | SCI1C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
-    if(UART_InpLen < UART_RTS_BUF_SIZE) /* Is number of chars in the receive buffer lower than size of the RTS buffer? */
-      /* PTAD: PTAD1=0 */
-      PTAD &= ~0x02;                   /* Set RTS to the low level */
-  }
-  else {
-    /* PTAD: PTAD1=1 */
-    PTAD |= 0x02;                      /* Set RTS to the high level */
-    /* SCI1C3: ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
-    SCI1C3 &= ~0x0F;                   /* Disable error interrupts */
-    SCI1C2 &= ( (~SCI1C2_RE_MASK) & (~SCI1C2_TE_MASK) & (~SCI1C2_TIE_MASK) & (~SCI1C2_RIE_MASK)); /*  Disable receiver, Disable transmitter, Disable transmit interrupt, Disable receiver interrupt */
-    SCI1BDH = 0x00;                    /* Set high divisor register to zero (disable device) */
-    SCI1BDL = 0x00;                    /* Set low divisor register to zero (disable device) */
-  }
-}
 
 /*
 ** ===================================================================
@@ -182,8 +147,6 @@ byte UART_RecvChar(UART_TComData *Chr)
 {
   byte Result = ERR_OK;                /* Return error code */
 
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   if(UART_InpLen > 0) {                /* Is number of received chars greater than 0? */
     EnterCritical();                   /* Save the PS register */
     UART_InpLen--;                     /* Decrease number of received chars */
@@ -233,8 +196,6 @@ byte UART_RecvChar(UART_TComData *Chr)
 */
 byte UART_SendChar(UART_TComData Chr)
 {
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   if(UART_OutLen == UART_OUT_BUF_SIZE) /* Is number of chars in buffer is the same as a size of the transmit buffer */
     return ERR_TXFULL;                 /* If yes then error */
   EnterCritical();                     /* Save the PS register */
@@ -295,8 +256,6 @@ byte UART_RecvBlock(UART_TComData *Ptr, word Size, word *Rcv)
   word count;                          /* Number of received chars */
   byte result = ERR_OK;                /* Last error */
 
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   for(count = 0; count < Size; count++) {
     result = UART_RecvChar(Ptr++);
     if(result != ERR_OK) {             /* Receiving given number of chars */
@@ -343,8 +302,6 @@ byte UART_SendBlock(UART_TComData * Ptr, word Size, word *Snd)
   word count;                          /* Number of sent chars */
   byte result = ERR_OK;                /* Last error */
 
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   for(count = 0; count < Size; count++) {
     result = UART_SendChar(*Ptr++);
     if(result != ERR_OK) {             /* Sending given number of chars */
@@ -378,8 +335,6 @@ byte UART_SendBlock(UART_TComData * Ptr, word Size, word *Snd)
 */
 byte UART_ClearRxBuf(void)
 {
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   EnterCritical();                     /* Save the PS register */
   UART_InpLen = 0;                     /* Set number of chars in the transmit buffer to 0 */
   InpIndxR = InpIndxW = 0;             /* Reset indices */
@@ -410,8 +365,6 @@ byte UART_ClearRxBuf(void)
 */
 byte UART_ClearTxBuf(void)
 {
-  if(!EnMode)                          /* Is the device disabled in the actual speed CPU mode? */
-    return ERR_SPEED;                  /* If yes then error */
   EnterCritical();                     /* Save the PS register */
   UART_OutLen = 0;                     /* Set number of chars in the receive buffer to 0 */
   OutIndxR = OutIndxW = 0;             /* Reset indices */
@@ -602,41 +555,11 @@ void UART_Init(void)
   setReg8(SCI1C3, 0x00);               /* Disable error interrupts */ 
   /* SCI1C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
   setReg8(SCI1C2, 0x00);               /* Disable all interrupts */ 
-  UART_SetHigh();                      /* Initial speed CPU mode is high */
-}
-
-/*
-** ===================================================================
-**     Method      :  UART_SetHigh (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the High speed mode. The method is 
-**         called automatically as s part of the CPU SetHighSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-void UART_SetHigh(void)
-{
-  EnMode = TRUE;                       /* Set the flag "device enabled" in the actual speed CPU mode */
-  HWEnDi();                            /* Enable/disable device according to status flags */
-}
-
-/*
-** ===================================================================
-**     Method      :  UART_SetLow (bean AsynchroSerial)
-**
-**     Description :
-**         The method reconfigures the bean and its selected peripheral(s)
-**         when the CPU is switched to the Low speed mode. The method is 
-**         called automatically as a part of the CPU SetLowSpeed method.
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-void UART_SetLow(void)
-{
-  EnMode = FALSE;                      /* Set the flag "device disabled" in the actual speed CPU mode */
-  HWEnDi();                            /* Enable/disable device according to status flags */
+  SCI1BDH = 0x00;                      /* Set high divisor register (enable device) */
+  SCI1BDL = 0x21;                      /* Set low divisor register (enable device) */
+      /* SCI1C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
+  SCI1C3 |= 0x0F;                      /* Enable error interrupts */
+  SCI1C2 |= ( SCI1C2_TE_MASK | SCI1C2_RE_MASK | SCI1C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
 }
 
 

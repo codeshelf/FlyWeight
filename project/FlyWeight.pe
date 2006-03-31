@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=90
+ProjectModificationStamp=140
 
 [Options]
 EventsDirectory=CODE\
@@ -16,16 +16,15 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=122
+ProjectCompNumb=134
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
-DontWriteGeneratedModules=1
-Line=Vectors
+DontWriteGeneratedModules=0
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -1125,19 +1124,19 @@ List=Method
 ItemSymbol=SetHighSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=always
+LastUserSel=never
 UsrMethodName=SetHighSpeed
 [ItemState]
 ItemSymbol=SetLowSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=always
+LastUserSel=never
 UsrMethodName=SetLowSpeed
 [ItemState]
 ItemSymbol=SetSlowSpeed
@@ -1150,12 +1149,12 @@ LastUserSel=never
 UsrMethodName=SetSlowSpeed
 [ItemState]
 ItemSymbol=GetSpeedMode
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Index=1
 Value=No
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 UsrMethodName=GetSpeedMode
 [ItemState]
 ItemSymbol=SetIntVect
@@ -1876,7 +1875,7 @@ MC9S08GT60CFB
 
 [MC9S08GT60_48:Cpu]
 CompNumb=40
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -1939,8 +1938,8 @@ Base=3
 ItemSymbol=ECLK
 ReadOnly=No
 UserReadOnly=No
-Value=Yes
-Expanded=Yes
+Value=No
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -1948,7 +1947,7 @@ List=GrupItem
 ItemSymbol=Xtal
 ReadOnly=No
 UserReadOnly=No
-Value=4
+Value=16
 [ItemState]
 ItemSymbol=EXtalSrc
 ReadOnly=No
@@ -2013,7 +2012,7 @@ ItemSymbol=BDMPinEnable
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -2057,7 +2056,7 @@ ItemSymbol=LVD
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -2712,14 +2711,14 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=HighRTIClockSel
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 
 [EndOfChilds]
-Value=Auto selected prescaler
+Value=IntOsc
 [ItemState]
 ItemSymbol=HighTPM1ClockSel
 ReadOnly=Yes
@@ -2781,7 +2780,7 @@ Value=Yes
 ItemSymbol=LowSpeed
 ReadOnly=No
 UserReadOnly=No
-Value=Yes
+Value=No
 Expanded=No
 
 [Childs]
@@ -2790,7 +2789,7 @@ List=GrupItem
 ItemSymbol=LowSpeedClock
 ReadOnly=No
 UserReadOnly=No
-Value=Internal Clock
+Value=External Clock
 [ItemState]
 ItemSymbol=LowClkdiv
 ReadOnly=No
@@ -2800,12 +2799,12 @@ UserReadOnly=No
 List=GrupItem
 
 [EndOfChilds]
-Value=Auto selected prescaler
+Value=1
 [ItemState]
 ItemSymbol=LowBusClock
 ReadOnly=No
 UserReadOnly=No
-Value=3.888000000000
+Value=4
 [ItemState]
 ItemSymbol=ClkSrcSelectionLowGrp
 ReadOnly=No
@@ -2850,13 +2849,13 @@ Value=BusClkTPM2
 ItemSymbol=LowFixedClk
 ReadOnly=Yes
 UserReadOnly=No
-Value=3.888000000000
+Value=4
 [ItemState]
 ItemSymbol=PLLselectLow
 ReadOnly=No
 UserReadOnly=No
-Value=Yes
-Expanded=Yes
+Value=No
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -2864,7 +2863,7 @@ List=GrupItem
 ItemSymbol=PLLvalueLow
 ReadOnly=Yes
 UserReadOnly=No
-Value=31.104000000000
+Value=64
 [ItemState]
 ItemSymbol=LossLockLow
 ReadOnly=No
@@ -2909,7 +2908,7 @@ Value=Auto selected prescaler
 ItemSymbol=SlowBusClock
 ReadOnly=No
 UserReadOnly=No
-Value=4
+Value=15.552000000000
 [ItemState]
 ItemSymbol=ClkSrcSelectionSlowGrp
 ReadOnly=No
@@ -2954,13 +2953,13 @@ Value=BusClkTPM2
 ItemSymbol=SlowFixedClk
 ReadOnly=Yes
 UserReadOnly=No
-Value=4
+Value=15.552000000000
 [ItemState]
 ItemSymbol=PLLselectSlow
 ReadOnly=No
 UserReadOnly=No
-Value=No
-Expanded=No
+Value=Yes
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -2968,7 +2967,7 @@ List=GrupItem
 ItemSymbol=PLLvalueSlow
 ReadOnly=Yes
 UserReadOnly=No
-Value=16
+Value=31.104000000000
 [ItemState]
 ItemSymbol=LossLockSlow
 ReadOnly=No
@@ -2994,19 +2993,19 @@ List=Method
 ItemSymbol=SetHighSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=always
+LastUserSel=never
 UsrMethodName=SetHighSpeed
 [ItemState]
 ItemSymbol=SetLowSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=always
+LastUserSel=never
 UsrMethodName=SetLowSpeed
 [ItemState]
 ItemSymbol=SetSlowSpeed
@@ -3019,12 +3018,12 @@ LastUserSel=never
 UsrMethodName=SetSlowSpeed
 [ItemState]
 ItemSymbol=GetSpeedMode
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Index=1
 Value=No
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 UsrMethodName=GetSpeedMode
 [ItemState]
 ItemSymbol=SetIntVect
@@ -3369,7 +3368,7 @@ Index=0
 ItemSymbol=C_GenerateLINKFILE
 ReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -3738,7 +3737,7 @@ AsmBitsFormat=HEX
 DestDebugger=none
 xxxxxxxxxxxxxxxx=
 MC9S08GT60CFD
- 4.00000000000000E+0000
+ 0.00000000000000E+0000
  2.43000000000000E+0002
 ..@start
 ..@end
@@ -3753,7 +3752,7 @@ TargetCPU=40
 Count=0
 
 [BoolList_BeanConfig]
-Count=17
+Count=18
 ItemId0=25
 Value0=Yes
 ItemId1=26
@@ -3788,6 +3787,8 @@ ItemId15=105
 Value15=No
 ItemId16=106
 Value16=No
+ItemId17=126
+Value17=No
 
 [BoolList_TaskConfig]
 Count=0
@@ -3823,22 +3824,22 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
 Count=0
 
 [BoolList_BeanConfig]
-Count=17
+Count=18
 ItemId0=87
 Value0=Yes
 ItemId1=71
-Value1=Yes
+Value1=No
 ItemId2=60
 Value2=Yes
 ItemId3=59
-Value3=Yes
+Value3=No
 ItemId4=70
 Value4=Yes
 ItemId5=58
@@ -3858,13 +3859,15 @@ Value11=Yes
 ItemId12=56
 Value12=Yes
 ItemId13=26
-Value13=Yes
+Value13=No
 ItemId14=25
 Value14=Yes
 ItemId15=105
 Value15=No
 ItemId16=106
 Value16=No
+ItemId17=126
+Value17=No
 
 [BoolList_TaskConfig]
 Count=0
@@ -3907,7 +3910,7 @@ TargetCPU=30
 Count=0
 
 [BoolList_BeanConfig]
-Count=17
+Count=18
 ItemId0=60
 Value0=Yes
 ItemId1=59
@@ -3942,6 +3945,8 @@ ItemId15=105
 Value15=No
 ItemId16=106
 Value16=No
+ItemId17=126
+Value17=No
 
 [BoolList_TaskConfig]
 Count=0
@@ -3977,16 +3982,16 @@ Value=No
 [Configuration]
 CompNumb=103
 NodeName=XBee Remote
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=30
 
 [BoolList_FpgaConfig]
 Count=0
 
 [BoolList_BeanConfig]
-Count=17
+Count=18
 ItemId0=87
-Value0=No
+Value0=Yes
 ItemId1=71
 Value1=No
 ItemId2=60
@@ -4012,13 +4017,15 @@ Value11=No
 ItemId12=56
 Value12=No
 ItemId13=26
-Value13=Yes
+Value13=No
 ItemId14=25
 Value14=Yes
 ItemId15=105
 Value15=No
 ItemId16=106
 Value16=Yes
+ItemId17=126
+Value17=No
 
 [BoolList_TaskConfig]
 Count=0
@@ -4051,6 +4058,268 @@ ReadOnly=No
 Index=1
 Value=No
 
+[Init_RTI_HCS08:RTI1]
+CompNumb=126
+CompEnabled=No
+GenCodeMode=CHECK_n_WRITE
+IconName=PERIPHINSP
+Comment=0
+Template=
+BeanVersion=01.030
+
+[Properties]
+List=Property
+[ItemState]
+ItemSymbol=DeviceName
+ReadOnly=No
+UserReadOnly=No
+Value=RTI1
+[ItemState]
+ItemSymbol=PeriphDevice
+ReadOnly=No
+UserReadOnly=No
+Value=RTI
+SharedPrphMode=No
+[ItemState]
+ItemSymbol=Settings
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ClockSettings
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ClockSelect
+ReadOnly=No
+UserReadOnly=No
+Index=0
+Value=Yes
+[ItemState]
+ItemSymbol=Prescaler
+ReadOnly=No
+UserReadOnly=No
+Index=6
+[ItemState]
+ItemSymbol=Period
+ReadOnly=Yes
+UserReadOnly=No
+Value=512 ms
+
+[EndOfChilds]
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Interrupts
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=Interrupt
+ReadOnly=Yes
+UserReadOnly=No
+Value=Vrti
+SharedPrphMode=No
+[ItemState]
+ItemSymbol=RealTimeInt
+ReadOnly=No
+UserReadOnly=No
+Index=0
+Value=Yes
+[ItemState]
+ItemSymbol=ISRName
+ReadOnly=No
+UserReadOnly=No
+Value=vPortTickInterrupt
+[ItemState]
+ItemSymbol=Symbol
+ReadOnly=Yes
+UserReadOnly=No
+Value=RTIfree
+SharedPrphMode=No
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Initialization
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=NON_MCU_INIT
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=InitEnable
+ReadOnly=No
+UserReadOnly=No
+Index=0
+Value=Yes
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=EnableModule
+ReadOnly=Yes
+UserReadOnly=No
+Index=0
+Value=Yes
+
+[EndOfChilds]
+
+[Methods]
+List=Method
+[ItemState]
+ItemSymbol=Init
+ReadOnly=Yes
+UserReadOnly=No
+Index=0
+Value=Yes
+LastSelection=No
+LastUserSel=always
+UsrMethodName=Init
+
+[Events]
+List=Event
+
+[InterruptVector:SWI]
+CompNumb=60
+CompEnabled=Yes
+GenCodeMode=CHECK_n_WRITE
+IconName=PERIPHINSP
+Comment=0
+Template=
+BeanVersion=02.022
+
+[Properties]
+List=Property
+[ItemState]
+ItemSymbol=DeviceName
+ReadOnly=No
+UserReadOnly=No
+Value=SWI
+[ItemState]
+ItemSymbol=Vector
+ReadOnly=No
+UserReadOnly=No
+Value=Vswi
+SharedPrphMode=No
+[ItemState]
+ItemSymbol=InitPriority
+ReadOnly=No
+UserReadOnly=No
+Value=medium priority
+[ItemState]
+ItemSymbol=ShrInt
+ReadOnly=Yes
+UserReadOnly=No
+Value=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=IntSrc
+ReadOnly=No
+UserReadOnly=No
+Value=RTIfree
+SharedPrphMode=No
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Handle
+ReadOnly=No
+UserReadOnly=No
+Value=vPortYield
+[ItemState]
+ItemSymbol=AllowDuplicates
+ReadOnly=No
+UserReadOnly=No
+Index=1
+Value=No
+
+[Methods]
+List=Method
+
+[Events]
+List=Event
+
+[InterruptVector:MC13191IRQ]
+CompNumb=87
+CompEnabled=Yes
+GenCodeMode=CHECK_n_WRITE
+IconName=PERIPHINSP
+Comment=0
+Template=
+BeanVersion=02.022
+
+[Properties]
+List=Property
+[ItemState]
+ItemSymbol=DeviceName
+ReadOnly=No
+UserReadOnly=No
+Value=MC13191IRQ
+[ItemState]
+ItemSymbol=Vector
+ReadOnly=No
+UserReadOnly=No
+Value=Virq
+SharedPrphMode=No
+[ItemState]
+ItemSymbol=InitPriority
+ReadOnly=No
+UserReadOnly=No
+Value=medium priority
+[ItemState]
+ItemSymbol=ShrInt
+ReadOnly=Yes
+UserReadOnly=No
+Value=No
+Expanded=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=IntSrc
+ReadOnly=No
+UserReadOnly=No
+Value=IRQ
+SharedPrphMode=No
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Handle
+ReadOnly=No
+UserReadOnly=No
+Value=IRQIsr
+[ItemState]
+ItemSymbol=AllowDuplicates
+ReadOnly=No
+UserReadOnly=No
+Index=1
+Value=No
+
+[Methods]
+List=Method
+
+[Events]
+List=Event
+
 [TimerInt:TickTimer]
 CompNumb=25
 CompEnabled=Yes
@@ -4071,7 +4340,7 @@ Value=TickTimer
 ItemSymbol=_Cmp
 ReadOnly=No
 UserReadOnly=No
-Value=TPM21
+Value=TPM20
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=Tmr
@@ -4092,7 +4361,7 @@ List=GrupItem
 ItemSymbol=CmpInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vtpm2ch1
+Value=Vtpm2ch0
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInitPriority
@@ -4245,8 +4514,8 @@ Index=0
 ItemSymbol=SameValuesInAllModes
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 [ItemState]
 ItemSymbol=EntireTimer
 ReadOnly=No
@@ -4488,7 +4757,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -4503,10 +4772,10 @@ Value=TickTimer_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -4521,7 +4790,7 @@ Value=TickTimer_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnInterrupt
 ReadOnly=Yes
@@ -4535,7 +4804,7 @@ List=GrupItem
 ItemSymbol=Name
 ReadOnly=No
 UserReadOnly=No
-Value=TickTimerInt
+Value=TimerInt
 [ItemState]
 ItemSymbol=Priority
 ReadOnly=No
@@ -4548,7 +4817,7 @@ LastUserSel=always
 
 [ExtInt:SW1Int]
 CompNumb=26
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=EXTINT
 Comment=0
@@ -4828,7 +5097,7 @@ LastUserSel=never
 
 [BitIO:SW2]
 CompNumb=56
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5073,7 +5342,7 @@ List=Event
 
 [BitIO:SW3]
 CompNumb=54
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5318,7 +5587,7 @@ List=Event
 
 [BitIO:SW4]
 CompNumb=57
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5563,7 +5832,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -5808,7 +6077,7 @@ List=Event
 
 [BitIO:LED2]
 CompNumb=42
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6053,7 +6322,7 @@ List=Event
 
 [BitIO:LED3]
 CompNumb=43
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6298,7 +6567,7 @@ List=Event
 
 [BitIO:LED4]
 CompNumb=44
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6543,7 +6812,7 @@ List=Event
 
 [AsynchroSerial:UART]
 CompNumb=58
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0
@@ -6770,7 +7039,7 @@ ItemSymbol=RTSsupport
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -6879,7 +7148,7 @@ ItemSymbol=Receiver
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -6927,7 +7196,7 @@ ItemSymbol=Transmitter
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -6974,9 +7243,9 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=57600 baud
+Value=38400 baud
 RuntimeSetting=0
-InitValue=57600 baud
+InitValue=38400 baud
 Precision=1.5
 PrecInProc=Yes
 LowLimit=
@@ -7748,7 +8017,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -7763,10 +8032,10 @@ Value=UART_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -7781,7 +8050,7 @@ Value=UART_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnError
 ReadOnly=No
@@ -7996,8 +8265,8 @@ LastUserSel=no
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
-GenCodeMode=CHECK_n_WRITE
+CompEnabled=Yes
+GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
 Template=
@@ -8148,7 +8417,7 @@ Value=Yes
 ItemSymbol=InpBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=0
+Value=125
 Base=2
 [ItemState]
 ItemSymbol=OutBufferSize
@@ -8183,7 +8452,7 @@ Value=No
 ItemSymbol=Cts
 ReadOnly=No
 UserReadOnly=No
-Value=PTA6_KBI1P6
+Value=PTA7_KBI1P7
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CtsSignal
@@ -8223,7 +8492,7 @@ ItemSymbol=RTSsupport
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -8237,18 +8506,18 @@ Value=No
 ItemSymbol=Rts
 ReadOnly=No
 UserReadOnly=No
-Value=PTA7_KBI1P7
+Value=PTA6_KBI1P6
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=RTSpinSignal
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=RTS
 [ItemState]
 ItemSymbol=RtsBufferSize
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
-Value=1
+Value=125
 Base=2
 
 [EndOfChilds]
@@ -8332,7 +8601,7 @@ ItemSymbol=Receiver
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -8346,7 +8615,7 @@ SharedPrphMode=No
 ItemSymbol=RxDpinSignal
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=RX
 [ItemState]
 ItemSymbol=DSPgrp1000
 ReadOnly=No
@@ -8380,7 +8649,7 @@ ItemSymbol=Transmitter
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -8394,7 +8663,7 @@ SharedPrphMode=No
 ItemSymbol=TxDpinSignal
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=TX
 [ItemState]
 ItemSymbol=DSPgrp100
 ReadOnly=No
@@ -8427,9 +8696,9 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=57600 baud
+Value=38400 baud
 RuntimeSetting=0
-InitValue=57600 baud
+InitValue=38400 baud
 Precision=1.5
 PrecInProc=Yes
 LowLimit=
@@ -8714,7 +8983,7 @@ Value=Yes
 ItemSymbol=_SpeedGrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -8797,12 +9066,12 @@ LastUserSel=yes
 UsrMethodName=SendChar
 [ItemState]
 ItemSymbol=RecvBlock
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=yes
 UsrMethodName=RecvBlock
 [ItemState]
 ItemSymbol=SendBlock
@@ -8815,12 +9084,12 @@ LastUserSel=never
 UsrMethodName=SendBlock
 [ItemState]
 ItemSymbol=ClearRxBuf
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=yes
 UsrMethodName=ClearRxBuf
 [ItemState]
 ItemSymbol=ClearTxBuf
@@ -8862,10 +9131,10 @@ UsrMethodName=CharsInTxBuf
 ItemSymbol=GetCharsInTxBuf
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=yes
+LastUserSel=no
 UsrMethodName=GetCharsInTxBuf
 [ItemState]
 ItemSymbol=SetBaudRateMode
@@ -9031,10 +9300,10 @@ List=GrupItem
 ItemSymbol=Standby
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=No
-LastUserSel=no
+LastUserSel=yes
 UsrMethodName=Standby
 
 [EndOfChilds]
@@ -9201,7 +9470,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -9216,10 +9485,10 @@ Value=USB_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -9234,13 +9503,13 @@ Value=USB_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnError
 ReadOnly=No
 UserReadOnly=No
-Value=Yes
-Expanded=Yes
+Value=No
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -9257,7 +9526,7 @@ Value=same as interrupt
 
 [EndOfChilds]
 LastSelection=Yes
-LastUserSel=yes
+LastUserSel=no
 [ItemState]
 ItemSymbol=OnRxChar
 ReadOnly=No
@@ -9306,10 +9575,10 @@ LastSelection=Yes
 LastUserSel=yes
 [ItemState]
 ItemSymbol=OnFullRxBuf
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
-Value=No
-Expanded=No
+Value=Yes
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -9326,7 +9595,7 @@ Value=same as interrupt
 
 [EndOfChilds]
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=yes
 [ItemState]
 ItemSymbol=OnFreeTxBuf
 ReadOnly=Yes
@@ -10147,7 +10416,7 @@ UserReadOnly=Yes
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -10162,10 +10431,10 @@ Value=MC13191_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -10180,7 +10449,7 @@ Value=MC13191_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnRxChar
 ReadOnly=Yes
@@ -10329,68 +10598,6 @@ LastUserSel=never
 
 [EndOfChilds]
 
-[InterruptVector:SWI]
-CompNumb=60
-CompEnabled=Yes
-GenCodeMode=CHECK_n_WRITE
-IconName=PERIPHINSP
-Comment=0
-Template=
-BeanVersion=02.022
-
-[Properties]
-List=Property
-[ItemState]
-ItemSymbol=DeviceName
-ReadOnly=No
-UserReadOnly=No
-Value=SWI
-[ItemState]
-ItemSymbol=Vector
-ReadOnly=No
-UserReadOnly=No
-Value=Vswi
-SharedPrphMode=No
-[ItemState]
-ItemSymbol=InitPriority
-ReadOnly=No
-UserReadOnly=No
-Value=medium priority
-[ItemState]
-ItemSymbol=ShrInt
-ReadOnly=Yes
-UserReadOnly=No
-Value=No
-Expanded=Yes
-
-[Childs]
-List=GrupItem
-[ItemState]
-ItemSymbol=IntSrc
-ReadOnly=No
-UserReadOnly=No
-Value=RTIfree
-SharedPrphMode=No
-
-[EndOfChilds]
-[ItemState]
-ItemSymbol=Handle
-ReadOnly=No
-UserReadOnly=No
-Value=vPortYield
-[ItemState]
-ItemSymbol=AllowDuplicates
-ReadOnly=No
-UserReadOnly=No
-Index=1
-Value=No
-
-[Methods]
-List=Method
-
-[Events]
-List=Event
-
 [PWM:PWM1]
 CompNumb=71
 CompEnabled=No
@@ -10411,7 +10618,7 @@ Value=PWM1
 ItemSymbol=_Compare
 ReadOnly=No
 UserReadOnly=No
-Value=TPM12
+Value=TPM20
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=_Compare1
@@ -10423,7 +10630,7 @@ SharedPrphMode=No
 ItemSymbol=Out
 ReadOnly=No
 UserReadOnly=No
-Value=PTD2_TPM1CH2
+Value=PTD3_TPM2CH0
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=OutPinSignal
@@ -10434,13 +10641,13 @@ Value=
 ItemSymbol=Tmr
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=TPM2
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=Ovf
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=TPM2free
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=IntService
@@ -10455,7 +10662,7 @@ List=GrupItem
 ItemSymbol=CmpInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm2ch0
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInt1
@@ -10467,7 +10674,7 @@ SharedPrphMode=No
 ItemSymbol=OvfInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm2ovf
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInitPriority
@@ -10990,7 +11197,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -11005,10 +11212,10 @@ Value=PWM1_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -11023,7 +11230,7 @@ Value=PWM1_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnEnd
 ReadOnly=Yes
@@ -11047,68 +11254,6 @@ Value=same as interrupt
 [EndOfChilds]
 LastSelection=Yes
 LastUserSel=never
-
-[InterruptVector:MC13191IRQ]
-CompNumb=87
-CompEnabled=No
-GenCodeMode=CHECK_n_WRITE
-IconName=PERIPHINSP
-Comment=0
-Template=
-BeanVersion=02.022
-
-[Properties]
-List=Property
-[ItemState]
-ItemSymbol=DeviceName
-ReadOnly=No
-UserReadOnly=No
-Value=MC13191IRQ
-[ItemState]
-ItemSymbol=Vector
-ReadOnly=No
-UserReadOnly=No
-Value=Virq
-SharedPrphMode=No
-[ItemState]
-ItemSymbol=InitPriority
-ReadOnly=No
-UserReadOnly=No
-Value=medium priority
-[ItemState]
-ItemSymbol=ShrInt
-ReadOnly=Yes
-UserReadOnly=No
-Value=No
-Expanded=No
-
-[Childs]
-List=GrupItem
-[ItemState]
-ItemSymbol=IntSrc
-ReadOnly=No
-UserReadOnly=No
-Value=IRQ
-SharedPrphMode=No
-
-[EndOfChilds]
-[ItemState]
-ItemSymbol=Handle
-ReadOnly=No
-UserReadOnly=No
-Value=vMC13191IRQ
-[ItemState]
-ItemSymbol=AllowDuplicates
-ReadOnly=No
-UserReadOnly=No
-Index=1
-Value=No
-
-[Methods]
-List=Method
-
-[Events]
-List=Event
 
 [TimerInt:AudioService]
 CompNumb=105
@@ -11537,7 +11682,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -11552,10 +11697,10 @@ Value=AudioService_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -11570,7 +11715,7 @@ Value=AudioService_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnInterrupt
 ReadOnly=Yes
@@ -11597,7 +11742,7 @@ LastUserSel=always
 
 [PWM:AudioOut]
 CompNumb=106
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=SIGNAL
 Comment=0
@@ -12194,7 +12339,7 @@ UserReadOnly=No
 Value=Events
 [ItemState]
 ItemSymbol=BeforeNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -12209,10 +12354,10 @@ Value=AudioOut_BeforeNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=AfterNewSpeed
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 Value=No
 Expanded=No
@@ -12227,7 +12372,7 @@ Value=AudioOut_AfterNewSpeed
 
 [EndOfChilds]
 LastSelection=No
-LastUserSel=no
+LastUserSel=never
 [ItemState]
 ItemSymbol=OnEnd
 ReadOnly=No

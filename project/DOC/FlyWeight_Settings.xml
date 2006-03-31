@@ -3,7 +3,7 @@
 <PE_core_version v="Processor Expert Version 0374"/>
 
 <CPU_Bean name="Cpu" type="MC9S08GT60_44">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="Cpu"/>
@@ -180,8 +180,8 @@
 </Properties>
 
 <Methods>
-<SetHighSpeed v="generate code"/>
-<SetLowSpeed v="generate code"/>
+<SetHighSpeed v="don&apos;t generate code"/>
+<SetLowSpeed v="don&apos;t generate code"/>
 <SetSlowSpeed v="don&apos;t generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
@@ -306,7 +306,7 @@
 </CPU_Bean>
 
 <CPU_Bean name="Cpu" type="MC9S08GT60_48">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="Cpu"/>
@@ -324,12 +324,7 @@
 
 </group>
 
-<boolgroup name="External Clock" v="Enabled">
-<Oscillator_frequency__MHz_ v="4"/>
-<External_Clock_Source v="External oscillator"/>
-<Xtal_range v="0 - 40 MHz"/>
-
-</boolgroup>
+<boolgroup name="External Clock" v="Disabled" />
 
 <group name="Low-power modes settings">
 
@@ -470,20 +465,7 @@
 
 </boolgroup>
 
-<boolgroup name="Low speed mode" v="Enabled">
-<Low_speed_clock v="Internal Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
-<Internal_bus_clock v="3.888000000000"/>
-<Fixed_frequency_clock v="3.888000000000"/>
-
-<boolgroup name="FLL clock" v="Enabled">
-<FLL_clock_frequency v="31.104000000000"/>
-<Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
-
-</boolgroup>
-
-</boolgroup>
+<boolgroup name="Low speed mode" v="Disabled" />
 
 <boolgroup name="Slow speed mode" v="Disabled" />
 
@@ -491,8 +473,8 @@
 </Properties>
 
 <Methods>
-<SetHighSpeed v="generate code"/>
-<SetLowSpeed v="generate code"/>
+<SetHighSpeed v="don&apos;t generate code"/>
+<SetLowSpeed v="don&apos;t generate code"/>
 <SetSlowSpeed v="don&apos;t generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
@@ -616,22 +598,102 @@
 </CompilerProperties>
 </CPU_Bean>
 
+<Bean name="RTI1" type="Init_RTI">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="RTI1"/>
+<Device v="RTI"/>
+
+<group name="Settings">
+
+<group name="Clock settings">
+<Clock_select v="Internal oscilator"/>
+<Prescaler v="16384"/>
+<Period v="512 ms"/>
+
+</group>
+
+</group>
+
+<group name="Interrupts">
+<Interrupt v="Vrti"/>
+<Real_Time_Interrupt v="Enabled"/>
+<ISR_name v="vPortTickInterrupt"/>
+
+</group>
+
+<group name="Initialization">
+<Call_Init_method v="yes"/>
+<Enable_module v="yes"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Init v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SWI" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="SWI"/>
+<Interrupt_vector v="Vswi"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="vPortYield"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="MC13191IRQ" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="MC13191IRQ"/>
+<Interrupt_vector v="Virq"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="IRQIsr"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
 <Bean name="TickTimer" type="TimerInt">
 <Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="TickTimer"/>
-<Timer v="TPM21"/>
+<Timer v="TPM20"/>
 <Counter v="TPM2"/>
 
 <boolgroup name="Interrupt service/event" v="Enabled">
-<Interrupt v="Vtpm2ch1"/>
+<Interrupt v="Vtpm2ch0"/>
 <Interrupt_priority v="medium priority"/>
 
 </boolgroup>
 <Prescaler v="Auto selected prescaler"/>
 <Interrupt_period init="1000 Hz" runtime_settings="interval" low="100 Hz" high="555.429 kHz" />
-<Same_period_in_modes v="yes"/>
+<Same_period_in_modes v="no"/>
 <Bean_uses_entire_timer v="no"/>
 
 <group name="Initialization">
@@ -673,7 +735,7 @@
 <event name="AfterNewSpeed" v="don&apos;t generate code" />
 
 <event name="OnInterrupt" v="generate code">
-<Event_procedure_name v="TickTimerInt"/>
+<Event_procedure_name v="TimerInt"/>
 <Priority v="same as interrupt"/>
 
 </event>
@@ -681,7 +743,7 @@
 </Bean>
 
 <Bean name="SW1Int" type="ExtInt">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="SW1Int"/>
@@ -718,7 +780,7 @@
 </Bean>
 
 <Bean name="SW2" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW2"/>
@@ -754,7 +816,7 @@
 </Bean>
 
 <Bean name="SW3" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW3"/>
@@ -790,7 +852,7 @@
 </Bean>
 
 <Bean name="SW4" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW4"/>
@@ -826,7 +888,7 @@
 </Bean>
 
 <Bean name="LED1" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED1"/>
@@ -862,7 +924,7 @@
 </Bean>
 
 <Bean name="LED2" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED2"/>
@@ -898,7 +960,7 @@
 </Bean>
 
 <Bean name="LED3" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED3"/>
@@ -934,7 +996,7 @@
 </Bean>
 
 <Bean name="LED4" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED4"/>
@@ -970,7 +1032,7 @@
 </Bean>
 
 <Bean name="UART" type="AsynchroSerial">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="UART"/>
@@ -1021,7 +1083,7 @@
 <TxD_pin_signal v=""/>
 
 </boolgroup>
-<Baud_rate v="57600 baud"/>
+<Baud_rate v="38400 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>
@@ -1120,7 +1182,7 @@
 </Bean>
 
 <Bean name="USB" type="AsynchroSerial">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="USB"/>
@@ -1132,7 +1194,7 @@
 <Interrupt_RxD_priority v="medium priority"/>
 <Interrupt_TxD v="Vsci2tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
-<Input_buffer_size v="0"/>
+<Input_buffer_size v="125"/>
 <Output_buffer_size v="0"/>
 
 <group name="Handshake">
@@ -1141,9 +1203,9 @@
 
 <boolgroup name="RTS" v="Enabled">
 <HW_support_required v="no"/>
-<RTS_Pin v="PTA7_KBI1P7"/>
-<RTS_pin_signal v=""/>
-<RTS_enabled v="1"/>
+<RTS_Pin v="PTA6_KBI1P6"/>
+<RTS_pin_signal v="RTS"/>
+<RTS_enabled v="125"/>
 
 </boolgroup>
 
@@ -1162,16 +1224,16 @@
 
 <boolgroup name="Receiver" v="Enabled">
 <RxD v="PTC1_RxD2"/>
-<RxD_pin_signal v=""/>
+<RxD_pin_signal v="RX"/>
 
 </boolgroup>
 
 <boolgroup name="Transmitter" v="Enabled">
 <TxD v="PTC0_TxD2"/>
-<TxD_pin_signal v=""/>
+<TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="57600 baud"/>
+<Baud_rate v="38400 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>
@@ -1200,14 +1262,14 @@
 <DisableEvent v="don&apos;t generate code"/>
 <RecvChar v="generate code"/>
 <SendChar v="generate code"/>
-<RecvBlock v="don&apos;t generate code"/>
+<RecvBlock v="generate code"/>
 <SendBlock v="don&apos;t generate code"/>
-<ClearRxBuf v="don&apos;t generate code"/>
+<ClearRxBuf v="generate code"/>
 <ClearTxBuf v="don&apos;t generate code"/>
 <CharsInRxBuf v="don&apos;t generate code"/>
 <GetCharsInRxBuf v="generate code"/>
 <CharsInTxBuf v="don&apos;t generate code"/>
-<GetCharsInTxBuf v="generate code"/>
+<GetCharsInTxBuf v="don&apos;t generate code"/>
 <SetBaudRateMode v="don&apos;t generate code"/>
 <GetError v="don&apos;t generate code"/>
 <GetBreak v="don&apos;t generate code"/>
@@ -1218,7 +1280,7 @@
 <TurnRxOff v="don&apos;t generate code"/>
 <SetIdle v="don&apos;t generate code"/>
 <LoopMode v="don&apos;t generate code"/>
-<Standby v="don&apos;t generate code"/>
+<Standby v="generate code"/>
 <SetDirection v="don&apos;t generate code"/>
 <GetRxIdle v="don&apos;t generate code"/>
 <GetTxComplete v="don&apos;t generate code"/>
@@ -1231,11 +1293,7 @@
 
 <event name="AfterNewSpeed" v="don&apos;t generate code" />
 
-<event name="OnError" v="generate code">
-<Event_procedure_name v="USB_OnError"/>
-<Priority v="same as interrupt"/>
-
-</event>
+<event name="OnError" v="don&apos;t generate code" />
 
 <event name="OnRxChar" v="generate code">
 <Event_procedure_name v="USB_OnRxChar"/>
@@ -1249,7 +1307,11 @@
 
 </event>
 
-<event name="OnFullRxBuf" v="don&apos;t generate code" />
+<event name="OnFullRxBuf" v="generate code">
+<Event_procedure_name v="USB_OnFullRxBuf"/>
+<Priority v="same as interrupt"/>
+
+</event>
 
 <event name="OnFreeTxBuf" v="don&apos;t generate code" />
 
@@ -1362,36 +1424,16 @@
 </Events>
 </Bean>
 
-<Bean name="SWI" type="InterruptVector">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="SWI"/>
-<Interrupt_vector v="Vswi"/>
-<Interrupt_priority v="medium priority"/>
-
-<boolgroup name="Shared interrupt" v="no" />
-<ISR_name v="vPortYield"/>
-<Allow_duplicate_ISR_names v="no"/>
-</Properties>
-
-<Methods>
-</Methods>
-
-<Events>
-</Events>
-</Bean>
-
 <Bean name="PWM1" type="PWM">
 <Enabled v="N"/>
 
 <Properties>
 <Bean_name v="PWM1"/>
-<PWM_or_PPG_timer v="TPM12"/>
+<PWM_or_PPG_timer v="TPM20"/>
 <Duty_compare v=""/>
-<Output_pin v="PTD2_TPM1CH2"/>
+<Output_pin v="PTD3_TPM2CH0"/>
 <Output_pin_signal v=""/>
-<Counter v=""/>
+<Counter v="TPM2"/>
 
 <boolgroup name="Interrupt service/event" v="Disabled" />
 <Prescaler v="Auto selected prescaler"/>
@@ -1442,26 +1484,6 @@
 <event name="AfterNewSpeed" v="don&apos;t generate code" />
 
 <event name="OnEnd" v="don&apos;t generate code" />
-</Events>
-</Bean>
-
-<Bean name="MC13191IRQ" type="InterruptVector">
-<Enabled v="N"/>
-
-<Properties>
-<Bean_name v="MC13191IRQ"/>
-<Interrupt_vector v="Virq"/>
-<Interrupt_priority v="medium priority"/>
-
-<boolgroup name="Shared interrupt" v="no" />
-<ISR_name v="vMC13191IRQ"/>
-<Allow_duplicate_ISR_names v="no"/>
-</Properties>
-
-<Methods>
-</Methods>
-
-<Events>
 </Events>
 </Bean>
 
@@ -1530,7 +1552,7 @@
 </Bean>
 
 <Bean name="AudioOut" type="PWM">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="AudioOut"/>

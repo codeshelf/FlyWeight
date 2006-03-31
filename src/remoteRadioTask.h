@@ -21,7 +21,7 @@
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
 #define RADIO_QUEUE_SIZE		4
 #define BUFFER_COUNT			RADIO_QUEUE_SIZE
-#define BUFFER_SIZE				125
+#define BUFFER_SIZE				122
 
 // --------------------------------------------------------------------------
 // Typedefs

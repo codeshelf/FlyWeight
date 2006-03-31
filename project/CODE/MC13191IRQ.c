@@ -6,7 +6,7 @@
 **     Beantype  : InterruptVector
 **     Version   : Bean 02.022, Driver 01.06, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 4:38 PM
+**     Date/Time : 3/29/2006, 3:51 PM
 **     Abstract  :
 **         This bean "InterruptVector" gives an access to interrupt vector.
 **         The purpose of this bean is to allocate the interrupt vector
@@ -15,7 +15,7 @@
 **         The interrupt handling routines must be implemented by the user.
 **     Settings  :
 **         Interrupt vector            : Virq
-**         Handle name                 : vMC13191IRQ
+**         Handle name                 : IRQIsr
 **         Interrupt request reg.      : IRQSC     [0014]
 **         Interrupt enable reg.       : IRQSC     [0014]
 **     Contents  :
@@ -48,7 +48,7 @@
 **
 ** ###################################################################
 
-ISR(vMC13191IRQ)
+ISR(IRQIsr)
 {
 }
 */

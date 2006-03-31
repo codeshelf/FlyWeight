@@ -6,7 +6,7 @@
 **     Beantype  : PWM
 **     Version   : Bean 02.098, Driver 01.09, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/27/2006, 12:06 PM
+**     Date/Time : 3/29/2006, 3:50 PM
 **     Abstract  :
 **         This bean implements a pulse-width modulation generator
 **         that generates signal with variable duty and fixed cycle. 

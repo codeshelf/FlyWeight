@@ -34,7 +34,8 @@
 #define FREERTOS_CONFIG_H
 
 #include <hidef.h>			/* common defines and macros */
-#include "TickTimer.h"
+#include "PE_Types.h"
+#include "IO_Map.h"
 
 /*-----------------------------------------------------------
  * Application specific definitions.
@@ -48,12 +49,15 @@
 
 #define configUSE_PREEMPTION		1
 #define configUSE_IDLE_HOOK			1
-#define configTICK_RATE_HZ			( ( portTickType ) 1000 )
+// This project is largely for Freescale SMAC which is for MCUs tied to a MC1319x radio that provides
+// external osc of 16MHz then using an RTI multiple of that rate.  The result is a 1.024ms quantum.
+// Hence 1000/1024 = 976.5.
+#define configTICK_RATE_HZ			( ( portTickType ) 977 )
 #define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 4 )
 #define configMINIMAL_STACK_SIZE	( ( unsigned portSHORT ) 80 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( 2048 ) )
 #define configMAX_TASK_NAME_LEN		( 1 )
-#define configUSE_TRACE_FACILITY	1
+#define configUSE_TRACE_FACILITY	0
 #define configUSE_16_BIT_TICKS		1
 #define configIDLE_SHOULD_YIELD		1
 
