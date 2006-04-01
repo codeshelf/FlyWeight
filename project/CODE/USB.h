@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/29/2006, 2:38 PM
+**     Date/Time : 3/31/2006, 1:06 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 38400baud
+**             Init baud rate          : 19200baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -57,7 +57,6 @@
 **         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
 **         ClearRxBuf      - byte USB_ClearRxBuf(void);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
-**         Standby         - void USB_Standby(bool State);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -105,16 +104,8 @@
   typedef byte USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
 #endif
 
-#define USB_INP_BUF_SIZE 122           /* Input buffer size */
-#define USB_RTS_BUF_SIZE 120           /* Number of characters in rcv. buffer when RTS signal gets activated */
-
-//#define RTS_ON			PTAD |= 0x40
-//#define RTS_OFF			PTAD &= ~0x40
-#define RTS_ON  __asm bclr 6,0x00 //PTA6
-#define RTS_OFF __asm bset 6,0x00 //PTA6
-#define RTS_PORTENABLE      __asm bclr 6,0x01 // PTA6 - PTAPE
-#define RTS_PORTDIRECTION   __asm bset 6,0x03 // PTA6 - PTADD
-
+#define USB_INP_BUF_SIZE 20            /* Input buffer size */
+#define USB_RTS_BUF_SIZE 10            /* Number of characters in rcv. buffer when RTS signal gets activated */
 
 extern byte USB_InpLen;                /* Length of the input buffer content */
 
@@ -278,23 +269,6 @@ byte USB_ClearRxBuf(void);
 **     Returns     :
 **         ---             - The number of characters in the input
 **                           buffer.
-** ===================================================================
-*/
-
-#define USB_Standby(State)\
-  (SCI2C2_RWU = (State)? 1:0)
-/*
-** ===================================================================
-**     Method      :  USB_Standby (bean AsynchroSerial)
-**
-**     Description :
-**         Puts the receiver into a standby state.
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**         State           - Switch standby state
-**                           TRUE - Standby state
-**                           FALSE - Normal operation
-**     Returns     : Nothing
 ** ===================================================================
 */
 

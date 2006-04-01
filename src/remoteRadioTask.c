@@ -12,6 +12,7 @@
 #include "task.h"
 #include "queue.h"
 #include "simple_mac.h"
+#include "ledBlinkTask.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -25,11 +26,16 @@ static xQueueHandle gRadioReceiveQueue;
 
 tTxPacket	gsTxPacket;
 tRxPacket	gsRxPacket;
-UINT8		gau8TxDataBuffer[16] = APPNAME;
-UINT8		gau8RxDataBuffer[16];
+
+extern UINT8 gLED1;
+extern UINT8 gLED2;
+extern UINT8 gLED3;
+extern UINT8 gLED4;
+extern xQueueHandle xLEDBlinkQueue;
+
 
 // Radio input buffer
-RadioBufferStruct	gRadioBuffer[BUFFER_COUNT];
+RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
 BufferCntType		gCurRadioBufferNum = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
 BufferOffsetType	gCurPWMOffset = 0;
@@ -40,7 +46,7 @@ void vRadioReceiveTask(void *pvParameters) {
 	ERadioState radioState;
 
 	// Create the radio queue that will handle incoming radio packets.
-	gRadioReceiveQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
+	gRadioReceiveQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(ERadioState));
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
 
 	if (gRadioReceiveQueue) {
@@ -49,12 +55,12 @@ void vRadioReceiveTask(void *pvParameters) {
 			// Setup for the first receive cycle.
 			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
 			gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = BUFFER_SIZE;
+			gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
 			gsRxPacket.u8Status = 0;
 			MLMERXEnableRequest(&gsRxPacket, 0L);
 			
 			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &radioState, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
 				
 				if (radioState == eRadioReset) {
 					// We just received a reset from the radio.
@@ -71,16 +77,22 @@ void vRadioReceiveTask(void *pvParameters) {
 					
 					// Setup for the next receive cycle.
 					gCurRadioBufferNum++;
-					if (gCurRadioBufferNum > (BUFFER_COUNT - 1))
+					if (gCurRadioBufferNum > (ASYNC_BUFFER_COUNT - 1))
 						gCurRadioBufferNum = 0;
 						
 					gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
 					gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
-					gsRxPacket.u8MaxDataLength = BUFFER_SIZE;
+					gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
 					gsRxPacket.u8Status = 0;
 					MLMERXEnableRequest(&gsRxPacket, 0L);
+					
 				}
 			}
+			
+			// Blink LED2 to let us know we succeeded in transmitting the buffer.
+			if (xQueueSend(xLEDBlinkQueue, &gLED2, pdFALSE)) {
+			
+			}	
 		}
 	}
 
@@ -92,12 +104,8 @@ void vRadioReceiveTask(void *pvParameters) {
 
 void vRadioTransmitTask(void *pvParameters) {
 	byte		msgP = 0;
-
-	gsRxPacket.u8MaxDataLength = 0;
-	gsRxPacket.pu8Data = &gau8RxDataBuffer[0];
-	gsRxPacket.u8MaxDataLength = 16;
-	gsRxPacket.u8Status = 0;
-
+	UINT8		gau8TxDataBuffer[16];
+	
 	gsTxPacket.u8DataLength = 0;
 	gsTxPacket.pu8Data = &gau8TxDataBuffer[0]; /* Set the pointer to point to the tx_buffer */
 

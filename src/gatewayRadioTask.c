@@ -32,28 +32,32 @@ extern UINT8 gLED4;
 extern xQueueHandle xLEDBlinkQueue;
 
 // Radio input buffer
-RadioBufferStruct	gRadioBuffer[BUFFER_COUNT];
+RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
 BufferCntType		gCurRadioBufferNum = 0;
 
 // --------------------------------------------------------------------------
 
 void vRadioTransmitTask( void *pvParameters ) {
-	tTxPacket		gsTxPacket;
-	BufferCntType	bufferNum;
+	static tTxPacket		gsTxPacket;
+	static BufferCntType	bufferNum;
 
 	xRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, sizeof(gCurRadioBufferNum));
 
+	// Turn the SCi back on by taking RX out of standby.
+	RTS_PORTENABLE;
+	RTS_PORTDIRECTION;
+	RTS_ON;
+		
 	for (;;) {
 
-		// Turn the SCi back on by taking RX out of standby.
-		RTS_ON;
-		
 		// Wait until the SCi controller signals us that we have a full buffer to transmit.
-		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 1000 ) == pdPASS ) {
+		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
+			//RTS_OFF;
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
-			gsTxPacket.u8DataLength = USB_INP_BUF_SIZE;
+			gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			MCPSDataRequest(&gsTxPacket);
+			//RTS_ON;
 		} else {
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = "IDLE";

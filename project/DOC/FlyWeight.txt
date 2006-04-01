@@ -127,7 +127,30 @@ Module "USB"       (bean AsynchroSerial)
    - USB_GetCharsInRxBuf -Returns the number of characters in the input buffer. This method is available only if the receiver 
                 property is enabled.  DMA mode:  If DMA controller is available on the selected CPU and the receiver is 
                 configured to use DMA controller then this method returns the number of characters in the receive buffer.
-   - USB_Standby -Puts the receiver into a standby state.
+
+Module "MC13191"   (bean SPIMaster)
+   - MC13191_RecvChar -If any data is received, this method returns one character, otherwise it returns an error code (it does 
+                not wait for data).  DMA mode:  If DMA controller is available on selected CPU and receiver is configured to 
+                use DMA controller then this method only sets the selected DMA channel. Status of the DMA transfer can then be 
+                checked using method GetCharsInRxBuf. See typical usage for details about communication using DMA.
+   - MC13191_SendChar -Sends one character to the channel.  DMA mode:  If DMA controller is available on the selected CPU and 
+                the transmitter is configured to use DMA controller then this method only sets the selected DMA channel. The 
+                status of the DMA transfer can then be checked using GetCharsInTxBuf method. See the typical usage for details 
+                about communication using DMA.
+   - MC13191_CharsInRxBuf -Returns the number of characters in the input buffer.  Note: If the Interrupt service is disabled, 
+                and the Ignore empty character is set to yes, and a character has been received, then this method returns 1 
+                although it was an empty character.  (deprecated method)  DMA mode:  If DMA controller is available on the 
+                selected CPU and the receiver is configured to use DMA controller then this method returns the number of 
+                characters in the receive buffer.
+   - MC13191_GetCharsInRxBuf -Returns the number of characters in the input buffer.  Note: If the Interrupt service is disabled,
+                and the Ignore empty character is set to yes, and a character has been received, then this method returns 1 
+                although it was an empty character.  DMA mode:  If DMA controller is available on the selected CPU and the 
+                receiver is configured to use DMA controller then this method returns the number of characters in the receive 
+                buffer.
+   - MC13191_SetShiftClockPolarity -Sets the shift clock polarity at runtime. Output data will be shifted on the selected edge 
+                polarity.
+   - MC13191_SetIdleClockPolarity -Sets the idle clock polarity at runtime. If the communication does not run, the clock signal 
+                will have required level.
 
 Module "Cpu"       (bean MC9S08GT60_48)
    - Cpu_EnableInt -Enables maskable interrupts

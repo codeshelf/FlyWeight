@@ -11,35 +11,7 @@
 #define REMOTERADIOTASK_H
 
 // Project includes
-#include "PE_Types.h"
-#include "smacGlue.h"
-
-// --------------------------------------------------------------------------
-// Definitions
-
-// Priorities assigned to demo application tasks.
-#define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
-#define RADIO_QUEUE_SIZE		4
-#define BUFFER_COUNT			RADIO_QUEUE_SIZE
-#define BUFFER_SIZE				122
-
-// --------------------------------------------------------------------------
-// Typedefs
-
-typedef int		BufferCntType;
-typedef int		BufferOffsetType;
-typedef byte	BufferStorageType;
-typedef enum {
-	eBufferStateUnknown,
-	eBufferStateEmpty,
-	eBufferStateFull
-} BufferStatusType;
-
-typedef struct {
-	BufferStatusType		bufferStatus;
-	BufferStorageType		bufferStorage[BUFFER_SIZE];
-} RadioBufferStruct;
-//typedef RadioBufferStruct *RadioBufferPtrType;
+#include "radioCommon.h"
 
 // --------------------------------------------------------------------------
 // Functions prototypes.

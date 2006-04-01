@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/30/2006, 9:54 AM
+**     Date/Time : 3/31/2006, 1:06 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 38400baud
+**             Init baud rate          : 19200baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -57,7 +57,6 @@
 **         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
 **         ClearRxBuf      - byte USB_ClearRxBuf(void);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
-**         Standby         - void USB_Standby(bool State);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -146,7 +145,7 @@ byte USB_RecvChar(USB_TComData *Chr)
     if (++InpIndxR >= USB_INP_BUF_SIZE) /* Is the index out of the buffer? */
       InpIndxR = 0;                    /* Set the index to the start of the buffer */
     if(USB_InpLen <= USB_RTS_BUF_SIZE)
-      RTS_ON;                   /* Set RTS to the low level */
+      PTAD &= ~0x40;                   /* Set RTS to the low level */
     Result = (byte)((SerFlag & (OVERRUN_ERR|COMMON_ERR|FULL_RX))?ERR_COMMON:ERR_OK);
     SerFlag &= ~(OVERRUN_ERR|COMMON_ERR|FULL_RX|CHAR_IN_RX); /* Clear all errors in the status variable */
     ExitCritical();                    /* Restore the PS register */
@@ -332,6 +331,7 @@ ISR(USB_InterruptRx)
   byte StatReg = getReg(SCI2S1);
   byte OnFlags = 0;                    /* Temporary variable for flags */
 
+  PTAD |= 0x40;
   Data = SCI2D;                        /* Read data from the receiver */
   if(USB_InpLen < USB_INP_BUF_SIZE) {  /* Is number of bytes in the receive buffer lower than size of buffer? */
     USB_InpLen++;                      /* Increse number of chars in the receive buffer */
@@ -340,8 +340,7 @@ ISR(USB_InterruptRx)
       InpIndxW = 0;                    /* Set the index to the start of the buffer */
     OnFlags |= ON_RX_CHAR;             /* Set flag "OnRXChar" */
   } else {
-  	// JBW/GW - fix overflow bug.
-    OnFlags |= ON_FULL_RX;                /* If yes then set flag buffer overflow */
+    SerFlag |= FULL_RX;                /* If yes then set flag buffer overflow */
   }
     if(OnFlags & ON_RX_CHAR) {         /* Is OnRxChar flag set? */
       USB_OnRxChar();                  /* If yes then invoke user event */
@@ -351,9 +350,7 @@ ISR(USB_InterruptRx)
     }
   if(USB_InpLen < USB_RTS_BUF_SIZE)    /* Is number of chars in the receive buffer lower than size of the RTS buffer? */
     /* PTAD: PTAD6=0 */
-    RTS_ON;                     /* Set RTS to low level */
-  else
-    RTS_OFF;
+    PTAD &= ~0x40;                     /* Set RTS to low level */
 }
 
 /*
@@ -402,26 +399,6 @@ ISR(USB_InterruptError)
 
 /*
 ** ===================================================================
-**     Method      :  USB_Standby (bean AsynchroSerial)
-**
-**     Description :
-**         Puts the receiver into a standby state.
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**         State           - Switch standby state
-**                           TRUE - Standby state
-**                           FALSE - Normal operation
-**     Returns     : Nothing
-** ===================================================================
-*/
-/*
-void USB_Standby(bool State)
-
-**      This method is implemented as a macro in the header module. **
-*/
-
-/*
-** ===================================================================
 **     Method      :  USB_Init (bean AsynchroSerial)
 **
 **     Description :
@@ -443,14 +420,10 @@ void USB_Init(void)
   /* SCI2C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
   setReg8(SCI2C2, 0x00);               /* Disable all interrupts */ 
   SCI2BDH = 0x00;                      /* Set high divisor register (enable device) */
-  SCI2BDL = 0x42;                      /* Set low divisor register (enable device) */
+  SCI2BDL = 0x41;                      /* Set low divisor register (enable device) */
       /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
   SCI2C3 |= 0x0F;                      /* Enable error interrupts */
   SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
-
-  // JBW/GW - Enable RTS
-  RTS_PORTENABLE;
-  RTS_PORTDIRECTION;
 }
 
 

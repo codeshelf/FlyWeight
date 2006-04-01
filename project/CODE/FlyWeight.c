@@ -38,6 +38,7 @@
 #include "LED4.h"
 #include "UART.h"
 #include "USB.h"
+#include "MC13191.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

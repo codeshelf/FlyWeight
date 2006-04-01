@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/29/2006, 3:51 PM
+**     Date/Time : 3/31/2006, 5:18 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -36,6 +36,7 @@
 #include "LED4.h"
 #include "UART.h"
 #include "USB.h"
+#include "MC13191.h"
 extern void _EntryPoint(void);
 
 void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */

@@ -40,7 +40,7 @@ BF_LicensedOnly=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[464|92|800|501]
+Rect=[443|90|800|501]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -90,7 +90,7 @@ FindScope=FROM_CURSOR
 FindHistory=0
 ReplaceHistory=0
 OpenFilesCount=0
-SelFile=C:\eclipsework-3.1\FlyWeight\project\Code\USB.c
+SelFile=
 SelLine=-1
 FileHistory=8
 HistoryItem1=E:\PE\TestPE2\CODE\Vectors.c.C

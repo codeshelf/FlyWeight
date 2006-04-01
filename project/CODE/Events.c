@@ -14,6 +14,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "gatewayRadioTask.h"
+#include "simple_mac.h"
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle xRadioTransmitQueue;
@@ -67,13 +68,13 @@ void SW1Int_OnInterrupt(void)
 ** ===================================================================
 */
 // Radio input buffer
-extern RadioBufferStruct	gRadioBuffer[BUFFER_COUNT];
+extern RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
 extern BufferCntType		gCurRadioBufferNum;
 
 #ifdef __USB
 void  USB_OnFullRxBuf(void)
 {
-	word	bytesReceived;
+/*	word	bytesReceived;
 	byte	err;
 	
 	RTS_OFF;
@@ -92,42 +93,8 @@ void  USB_OnFullRxBuf(void)
 	if (gCurRadioBufferNum > (BUFFER_COUNT - 1))
 		gCurRadioBufferNum = 0;
 	gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
-
+*/
 }
-#endif
-
-/*
-** ===================================================================
-**     Event       :  USB_OnRxChar (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called after a correct character is
-**         received. 
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this event is disabled. Only OnFullRxBuf method can be
-**         used in DMA mode.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-#ifdef __USB
-#endif
-
-/*
-** ===================================================================
-**     Event       :  USB_OnTxChar (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called after a character is transmitted.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-#ifdef __USB
 #endif
 
 /*
@@ -170,10 +137,45 @@ void TimerInt(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
+#ifdef __USB
+BufferOffsetType	gRcvPos = 0;
+
 void  USB_OnRxChar(void)
 {
-  /* Write your code here ... */
+//	static tTxPacket		gsTxPacket;
+//	static BufferCntType	bufferNum;
+
+	byte err;
+	
+	// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
+	err = USB_RecvChar((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+	
+	if (err == ERR_OK) {
+		gRcvPos++;
+		if (gRcvPos > ASYNC_BUFFER_SIZE - 1) {
+			gRcvPos = 0;
+			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+			
+			//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
+		//	gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
+			//MCPSDataRequest(&gsTxPacket);
+
+			// Send the buffer pointer to the transmit task's queue.
+			if (xQueueSendFromISR(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
+			
+			}
+			
+			// Setup for the next transmit cycle.
+			if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
+				gCurRadioBufferNum = 0;
+			else
+				gCurRadioBufferNum++;
+				
+			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
+		}
+	}
 }
+#endif
 
 /*
 ** ===================================================================

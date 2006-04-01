@@ -1194,7 +1194,7 @@
 <Interrupt_RxD_priority v="medium priority"/>
 <Interrupt_TxD v="Vsci2tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
-<Input_buffer_size v="125"/>
+<Input_buffer_size v="20"/>
 <Output_buffer_size v="0"/>
 
 <group name="Handshake">
@@ -1205,7 +1205,7 @@
 <HW_support_required v="no"/>
 <RTS_Pin v="PTA6_KBI1P6"/>
 <RTS_pin_signal v="RTS"/>
-<RTS_enabled v="125"/>
+<RTS_enabled v="10"/>
 
 </boolgroup>
 
@@ -1233,7 +1233,7 @@
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="38400 baud"/>
+<Baud_rate v="19200 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>
@@ -1280,7 +1280,7 @@
 <TurnRxOff v="don&apos;t generate code"/>
 <SetIdle v="don&apos;t generate code"/>
 <LoopMode v="don&apos;t generate code"/>
-<Standby v="generate code"/>
+<Standby v="don&apos;t generate code"/>
 <SetDirection v="don&apos;t generate code"/>
 <GetRxIdle v="don&apos;t generate code"/>
 <GetTxComplete v="don&apos;t generate code"/>
@@ -1324,7 +1324,7 @@
 </Bean>
 
 <Bean name="MC13191" type="SynchroMaster">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 <Template v="SPIMaster"/>
 
 <Properties>

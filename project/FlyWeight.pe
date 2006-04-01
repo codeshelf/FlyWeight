@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=140
+ProjectModificationStamp=147
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=134
+ProjectCompNumb=139
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -221,7 +221,7 @@ List=EnmGrpItm
 ItemSymbol=LVDIntName
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vlvd
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -3745,7 +3745,7 @@ MC9S08GT60CFD
 [Configuration]
 CompNumb=27
 NodeName=EVB Remote
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -3756,7 +3756,7 @@ Count=18
 ItemId0=25
 Value0=Yes
 ItemId1=26
-Value1=Yes
+Value1=No
 ItemId2=41
 Value2=Yes
 ItemId3=42
@@ -3780,7 +3780,7 @@ Value11=Yes
 ItemId12=70
 Value12=Yes
 ItemId13=71
-Value13=Yes
+Value13=No
 ItemId14=87
 Value14=Yes
 ItemId15=105
@@ -3824,7 +3824,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -8266,7 +8266,7 @@ LastUserSel=no
 [AsynchroSerial:USB]
 CompNumb=70
 CompEnabled=Yes
-GenCodeMode=DONT_WRITE
+GenCodeMode=ALWAYS_WRITE
 IconName=PHONE
 Comment=0
 Template=
@@ -8417,7 +8417,7 @@ Value=Yes
 ItemSymbol=InpBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=125
+Value=20
 Base=2
 [ItemState]
 ItemSymbol=OutBufferSize
@@ -8492,7 +8492,7 @@ ItemSymbol=RTSsupport
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -8517,7 +8517,7 @@ Value=RTS
 ItemSymbol=RtsBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=125
+Value=10
 Base=2
 
 [EndOfChilds]
@@ -8696,9 +8696,9 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=38400 baud
+Value=19200 baud
 RuntimeSetting=0
-InitValue=38400 baud
+InitValue=19200 baud
 Precision=1.5
 PrecInProc=Yes
 LowLimit=
@@ -9300,10 +9300,10 @@ List=GrupItem
 ItemSymbol=Standby
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=yes
+LastUserSel=no
 UsrMethodName=Standby
 
 [EndOfChilds]
@@ -9718,7 +9718,7 @@ LastUserSel=no
 
 [SynchroMaster:MC13191]
 CompNumb=59
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0

@@ -750,7 +750,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"APPNAME=""remt""" -Ms</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"APPNAME=""remt""" -Ms -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -1116,10 +1116,122 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>mainGateway.c</PATH>
+                    <PATH>MC13191IRQ.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>UART.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainRemote.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
                 </FILE>
             </FILELIST>
             <LINKORDER>
@@ -1335,7 +1447,87 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>mainGateway.c</PATH>
+                    <PATH>MC13191IRQ.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>UART.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC13191.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>PE_Timer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>mainRemote.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>ledBlinkTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -2420,6 +2612,13 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -2645,6 +2844,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>mainGateway.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -3834,6 +4038,13 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -4134,6 +4345,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>TickTimer.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -5274,6 +5490,13 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -5541,6 +5764,11 @@
                     <PATH>PE_Timer.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
             </LINKORDER>
         </TARGET>
     </TARGETLIST>
@@ -5588,13 +5816,13 @@
             </GROUP>
             <GROUP><NAME>FlyWeight</NAME>
                 <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <TARGETNAME>SARD (DIG536-2)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>mainGateway.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>mainRemote.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
@@ -5603,12 +5831,6 @@
                     <TARGETNAME>XBee Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>pwmISR.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>xbeeinit.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -5624,39 +5846,27 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>radioCommon.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
                     <TARGETNAME>EVB Gateway</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>gatewayRadioTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>gatewayRadioTask.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>remoteRadioTask.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>remoteRadioTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ledBlinkTask.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>ledBlinkTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </GROUP>
@@ -5732,6 +5942,12 @@
                                 <TARGETNAME>EVB Remote</TARGETNAME>
                                 <PATHTYPE>Name</PATHTYPE>
                                 <PATH>port_config_MC13192EVB.h</PATH>
+                                <PATHFORMAT>Windows</PATHFORMAT>
+                            </FILEREF>
+                            <FILEREF>
+                                <TARGETNAME>SARD (DIG536-2)</TARGETNAME>
+                                <PATHTYPE>Name</PATHTYPE>
+                                <PATH>port_config_SARD.h</PATH>
                                 <PATHFORMAT>Windows</PATHFORMAT>
                             </FILEREF>
                             <FILEREF>
@@ -5897,75 +6113,81 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>SW2.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>SW3.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>SW4.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>LED1.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>LED2.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>LED3.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>LED4.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>UART.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>USB.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>MC13191IRQ.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>PE_Timer.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>TickTimer.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Remote</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>MC13191.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>
