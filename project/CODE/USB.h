@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 1:40 AM
+**     Date/Time : 4/3/2006, 4:45 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -52,11 +52,8 @@
 **
 **
 **     Contents  :
-**         RecvChar        - byte USB_RecvChar(USB_TComData *Chr);
-**         SendChar        - byte USB_SendChar(USB_TComData Chr);
-**         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
-**         ClearRxBuf      - byte USB_ClearRxBuf(void);
-**         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
+**         RecvChar - byte USB_RecvChar(USB_TComData *Chr);
+**         SendChar - byte USB_SendChar(USB_TComData Chr);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -104,9 +101,11 @@
   typedef byte USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
 #endif
 
-#define USB_INP_BUF_SIZE 20            /* Input buffer size */
-#define USB_RTS_BUF_SIZE 10            /* Number of characters in rcv. buffer when RTS signal gets activated */
+#define USB_INP_BUF_SIZE 160           /* Input buffer size */
+#define USB_OUT_BUF_SIZE 20            /* Output buffer size */
+#define USB_RTS_BUF_SIZE 150           /* Number of characters in rcv. buffer when RTS signal gets activated */
 
+extern byte USB_OutLen;                /* Length of the output buffer content */
 extern byte USB_InpLen;                /* Length of the input buffer content */
 
 byte USB_RecvChar(USB_TComData *Chr);
@@ -179,96 +178,6 @@ byte USB_SendChar(USB_TComData Chr);
 **                           ERR_SPEED - This device does not work in
 **                           the active speed mode
 **                           ERR_TXFULL - Transmitter is full
-** ===================================================================
-*/
-
-byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
-/*
-** ===================================================================
-**     Method      :  USB_RecvBlock (bean AsynchroSerial)
-**
-**     Description :
-**         If any data is received, this method returns the block of
-**         the data and its length (and incidental error), otherwise
-**         it returns an error code (it does not wait for data).
-**         This method is available only if non-zero length of the
-**         input buffer is defined and the receiver property is
-**         enabled.
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this method only sets the selected DMA channel. Then the
-**         status of the DMA transfer can be checked using
-**         GetCharsInRxBuf method. See an example of a typical usage
-**         for details about communication using DMA.
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**       * Ptr             - Pointer to the block of received data
-**         Size            - Size of the block
-**       * Rcv             - Pointer to real number of the received
-**                           data
-**     Returns     :
-**         ---             - Error code, possible codes:
-**                           ERR_OK - OK
-**                           ERR_SPEED - This device does not work in
-**                           the active speed mode
-**                           ERR_RXEMPTY - No data in receiver
-**                           ERR_VALUE - Parameter is out of range.
-**                           ERR_COMMON - common error occurred (the
-**                           GetError method can be used for error
-**                           specification)
-**                           DMA mode:
-**                           If DMA controller is available on the
-**                           selected CPU and the receiver is
-**                           configured to use DMA controller then
-**                           only ERR_OK, ERR_RXEMPTY, and ERR_SPEED
-**                           error codes can be returned from this
-**                           method.
-** ===================================================================
-*/
-
-byte USB_ClearRxBuf(void);
-/*
-** ===================================================================
-**     Method      :  USB_ClearRxBuf (bean AsynchroSerial)
-**
-**     Description :
-**         Clears the receive buffer.
-**         This method is available only if non-zero length of the
-**         input buffer is defined and the receiver property is
-**         enabled.
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this method only stops selected DMA channel.
-**     Parameters  : None
-**     Returns     :
-**         ---             - Error code, possible codes:
-**                           ERR_OK - OK
-**                           ERR_SPEED - This device does not work in
-**                           the active speed mode
-** ===================================================================
-*/
-
-#define USB_GetCharsInRxBuf() \
-(USB_InpLen)                           /* Return number of chars in receive buffer */
-/*
-** ===================================================================
-**     Method      :  USB_GetCharsInRxBuf (bean AsynchroSerial)
-**
-**     Description :
-**         Returns the number of characters in the input buffer.
-**         This method is available only if the receiver property is
-**         enabled.
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this method returns the number of characters in the
-**         receive buffer.
-**     Parameters  : None
-**     Returns     :
-**         ---             - The number of characters in the input
-**                           buffer.
 ** ===================================================================
 */
 

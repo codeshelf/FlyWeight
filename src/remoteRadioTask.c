@@ -13,7 +13,10 @@
 #include "queue.h"
 #include "simple_mac.h"
 #include "ledBlinkTask.h"
+//#include "WatchDog.h"
+#include "AudioLoader.h"
 //#include "AudioOut.h"
+#include "USB.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -33,6 +36,7 @@ extern UINT8 gLED1;
 extern UINT8 gLED2;
 extern UINT8 gLED3;
 extern UINT8 gLED4;
+extern UINT8 gu8RTxMode;
 //extern xQueueHandle xLEDBlinkQueue;
 
 
@@ -54,26 +58,36 @@ void vRadioReceiveTask(void *pvParameters) {
 	
 		// Start the audio processing.
 		//AudioOut_Enable();
+		AudioLoader_Enable();
 		PWM_Init();
 	
 		for (;;) {
 
-			// Setup for the next receive cycle.
-			while (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull)
-				;
+			//WatchDog_Clear();
 			
+			// Wait until the radio is ready.
+			//while (gu8RTxMode != IDLE_MODE)
+			//	;
+			
+			// Setup for the next receive cycle.
+			//while (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull)
+			//	;
+			
+			//USB_SendChar(gCurRadioBufferNum);
 			gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
 			gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
 			gsRxPacket.u8Status = 0;
 			MLMERXEnableRequest(&gsRxPacket, 0L);
 			
 			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
+			if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 30) == pdPASS) {
 				
+				//USB_SendChar(gCurRadioBufferNum);
 				if (radioState == eRadioReset) {
 					// We just received a reset from the radio.
 					
 				} else if (radioState == eRadioReceive) {
+					
 					// We just received a valid packet.
 					gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
 					
@@ -92,12 +106,6 @@ void vRadioReceiveTask(void *pvParameters) {
 				}
 			}
 			
-/*			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
-			gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
-			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, 0L);
-*/					
 			// Blink LED2 to let us know we succeeded in transmitting the buffer.
 //			if (xQueueSend(xLEDBlinkQueue, &gLED2, pdFALSE)) {
 //			
@@ -121,6 +129,9 @@ void vRadioTransmitTask(void *pvParameters) {
 	gRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
 
 	for ( ;; ) {
+
+		//WatchDog_Clear();
+
 		gsTxPacket.u8DataLength = 4;    /* Initialize the gsTxPacket global */
 		MCPSDataRequest(&gsTxPacket);
 

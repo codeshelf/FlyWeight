@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=247
+ProjectModificationStamp=281
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=150
+ProjectCompNumb=153
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -1871,6 +1871,12 @@ MC9S08GT60CFB
  4.00000000000000E+0000
  2.43000000000000E+0002
 ..@start
+PTD0_TPM1CH0
+PTD2_TPM1CH2
+General purpose IO, Port D, bit 0, TPM 1 channel 0
+TPM10
+TPM12
+TPM 1 channel 0
 ..@end
 
 [MC9S08GT60_48:Cpu]
@@ -3745,7 +3751,7 @@ MC9S08GT60CFD
 [Configuration]
 CompNumb=27
 NodeName=EVB Remote
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -3758,7 +3764,7 @@ Value0=Yes
 ItemId1=26
 Value1=No
 ItemId2=41
-Value2=No
+Value2=Yes
 ItemId3=42
 Value3=Yes
 ItemId4=43
@@ -3824,7 +3830,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -3839,7 +3845,7 @@ Value1=Yes
 ItemId2=70
 Value2=Yes
 ItemId3=58
-Value3=Yes
+Value3=No
 ItemId4=44
 Value4=Yes
 ItemId5=43
@@ -3863,7 +3869,7 @@ Value13=No
 ItemId14=126
 Value14=No
 ItemId15=142
-Value15=Yes
+Value15=No
 ItemId16=148
 Value16=No
 ItemId17=149
@@ -5832,7 +5838,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 Comment=0
@@ -6812,7 +6818,7 @@ List=Event
 
 [AsynchroSerial:UART]
 CompNumb=58
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PHONE
 Comment=0
@@ -8417,13 +8423,13 @@ Value=Yes
 ItemSymbol=InpBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=20
+Value=160
 Base=2
 [ItemState]
 ItemSymbol=OutBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=0
+Value=20
 Base=2
 [ItemState]
 ItemSymbol=_HandshakeGrp
@@ -8517,7 +8523,7 @@ Value=RTS
 ItemSymbol=RtsBufferSize
 ReadOnly=No
 UserReadOnly=No
-Value=10
+Value=150
 Base=2
 
 [EndOfChilds]
@@ -8601,7 +8607,7 @@ ItemSymbol=Receiver
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -8649,7 +8655,7 @@ ItemSymbol=Transmitter
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -9068,37 +9074,37 @@ UsrMethodName=SendChar
 ItemSymbol=RecvBlock
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=Yes
-LastUserSel=yes
+LastUserSel=no
 UsrMethodName=RecvBlock
 [ItemState]
 ItemSymbol=SendBlock
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
 Index=1
 Value=No
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=no
 UsrMethodName=SendBlock
 [ItemState]
 ItemSymbol=ClearRxBuf
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=Yes
-LastUserSel=yes
+LastUserSel=no
 UsrMethodName=ClearRxBuf
 [ItemState]
 ItemSymbol=ClearTxBuf
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
 Index=1
 Value=No
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=no
 UsrMethodName=ClearTxBuf
 [ItemState]
 ItemSymbol=CharsInRxBuf
@@ -9113,10 +9119,10 @@ UsrMethodName=CharsInRxBuf
 ItemSymbol=GetCharsInRxBuf
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 LastSelection=No
-LastUserSel=yes
+LastUserSel=no
 UsrMethodName=GetCharsInRxBuf
 [ItemState]
 ItemSymbol=CharsInTxBuf
@@ -9508,8 +9514,8 @@ LastUserSel=never
 ItemSymbol=OnError
 ReadOnly=No
 UserReadOnly=No
-Value=No
-Expanded=No
+Value=Yes
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -9526,7 +9532,7 @@ Value=same as interrupt
 
 [EndOfChilds]
 LastSelection=Yes
-LastUserSel=no
+LastUserSel=yes
 [ItemState]
 ItemSymbol=OnRxChar
 ReadOnly=No
@@ -9598,10 +9604,10 @@ LastSelection=Yes
 LastUserSel=yes
 [ItemState]
 ItemSymbol=OnFreeTxBuf
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
-Value=No
-Expanded=No
+Value=Yes
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -9618,7 +9624,7 @@ Value=same as interrupt
 
 [EndOfChilds]
 LastSelection=Yes
-LastUserSel=never
+LastUserSel=yes
 [ItemState]
 ItemSymbol=OnBreak
 ReadOnly=Yes
@@ -9736,13 +9742,13 @@ Value=AudioOut
 ItemSymbol=_Compare
 ReadOnly=No
 UserReadOnly=No
-Value=TPM10
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=_Compare1
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=TPM10PPG
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=Out
@@ -9759,13 +9765,13 @@ Value=
 ItemSymbol=Tmr
 ReadOnly=Yes
 UserReadOnly=No
-Value=TPM1
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=Ovf
 ReadOnly=Yes
 UserReadOnly=No
-Value=TPM1free
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=IntService
@@ -9780,19 +9786,19 @@ List=GrupItem
 ItemSymbol=CmpInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vtpm1ch0
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInt1
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm1ch0
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=OvfInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vtpm1ovf
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=CmpInitPriority
@@ -10567,7 +10573,7 @@ ItemSymbol=SpeedGrp
 ReadOnly=No
 UserReadOnly=No
 Value=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -10704,7 +10710,7 @@ LastUserSel=never
 
 [TimerInt:AudioLoader]
 CompNumb=148
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=TMRCNTR
 Comment=0
@@ -10916,8 +10922,8 @@ List=GrupItem
 ItemSymbol=InitEnable
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 [ItemState]
 ItemSymbol=InitEnableEvent
 ReadOnly=No
@@ -10997,10 +11003,10 @@ List=Method
 ItemSymbol=Enable
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=No
-LastUserSel=no
+LastUserSel=yes
 UsrMethodName=Enable
 [ItemState]
 ItemSymbol=Disable
@@ -11189,7 +11195,7 @@ LastUserSel=always
 
 [Init_TPM_HCS08:PWM]
 CompNumb=149
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11275,7 +11281,7 @@ List=GrupItem
 ItemSymbol=CptrCmprDev0
 ReadOnly=No
 UserReadOnly=No
-Value=TPM10
+Value=TPM12
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=ChSettings0
@@ -11336,7 +11342,7 @@ List=GrupItem
 ItemSymbol=ChannelPin0
 ReadOnly=No
 UserReadOnly=No
-Value=PTD0_TPM1CH0
+Value=PTD2_TPM1CH2
 SharedPrphMode=No
 PortType=PPG
 [ItemState]
@@ -11371,7 +11377,7 @@ List=GrupItem
 ItemSymbol=ChInterrupt0
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vtpm1ch0
+Value=Vtpm1ch2
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=ChannelIntEn0
@@ -11413,7 +11419,7 @@ List=GrupItem
 ItemSymbol=SrcPin
 ReadOnly=No
 UserReadOnly=No
-Value=PTD0_TPM1CH0
+Value=PTD2_TPM1CH2
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=SrcPinSignal

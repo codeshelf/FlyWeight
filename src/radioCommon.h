@@ -19,7 +19,7 @@
 
 // Priorities assigned to demo application tasks.
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
-#define RADIO_QUEUE_SIZE		3
+#define RADIO_QUEUE_SIZE		8
 
 #define ASYNC_BUFFER_COUNT			RADIO_QUEUE_SIZE
 #define ASYNC_BUFFER_SIZE			121

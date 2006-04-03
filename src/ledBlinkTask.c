@@ -13,6 +13,7 @@
 #include "queue.h"
 #include "pub_def.h"
 #include "gatewayRadioTask.h"
+//#include "WatchDog.h"
 
 UINT8 gLED1 = 1;
 UINT8 gLED2 = 2;
@@ -29,8 +30,10 @@ void vLEDBlinkTask( void *pvParameters ) {
 
 	if ( xLEDBlinkQueue ) {
 		for ( ;; ) {
-			/* Simply wait for data to arrive from the button push interrupt. */
+			//WatchDog_Clear();
 
+			// When another task wants to blink it sends us a message with the LED number to blink.
+			// Turn that LED on for 100ms and turn it off.
 			if ( xQueueReceive( xLEDBlinkQueue, &ledNum, portMAX_DELAY ) == pdPASS ) {
 				LEDOn(ledNum);
 				vTaskDelay(portTICK_RATE_MS * 100);

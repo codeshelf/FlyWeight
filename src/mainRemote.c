@@ -26,6 +26,7 @@
 
 void vMain( void ) {
 
+//	WatchDog_Clear();
 	MCUInit();
 	MC13192Init();
 	MLMESetMC13192ClockRate(0);
@@ -36,13 +37,14 @@ void vMain( void ) {
 	if (MLMESetChannelRequest(15) == SUCCESS) {}
 
 	/* Start the task that will handle the radio */
-	xTaskCreate( vRadioTransmitTask, (const signed portCHAR * const) "RadioTransmit", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
+//	xTaskCreate( vRadioTransmitTask, (const signed portCHAR * const) "RadioTransmit", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
 	xTaskCreate( vRadioReceiveTask, (const signed portCHAR * const) "RadioReceive", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
 #if  defined(MC13192EVB) || defined (MC13192SARD)
-	xTaskCreate( vLEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
+//	xTaskCreate( vLEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
 #endif
 
 	/* All the tasks have been created - start the scheduler. */
+//	WatchDog_Clear();
 	vTaskStartScheduler();
 
 	/* Should not reach here! */

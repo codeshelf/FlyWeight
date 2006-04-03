@@ -6,7 +6,7 @@
 **     Beantype  : TimerInt
 **     Version   : Bean 02.110, Driver 01.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 1:40 AM
+**     Date/Time : 4/3/2006, 4:24 PM
 **     Abstract  :
 **         This bean "TimerInt" implements a periodic interrupt.
 **         When the bean and its events are enabled, the "OnInterrupt"
@@ -17,7 +17,7 @@
 **     Settings  :
 **         Timer name                  : TPM2 (16-bit)
 **         Compare name                : TPM20
-**         Counter shared              : Yes
+**         Counter shared              : No
 **
 **         High speed mode
 **             Prescaler               : divide-by-4

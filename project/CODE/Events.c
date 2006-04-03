@@ -128,33 +128,33 @@ void  USB_OnRxChar(void)
 
 	byte err;
 	
-	// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
-	err = USB_RecvChar((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
-	
-	if (err == ERR_OK) {
-		gRcvPos++;
-		if (gRcvPos > ASYNC_BUFFER_SIZE - 1) {
-			gRcvPos = 0;
-			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
-			
-			//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
-			//gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
-			//MCPSDataRequest(&gsTxPacket);
+	// If the next buffer is not ready then we need to pause receiving.
+	if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull) {
 
-			// Send the buffer pointer to the transmit task's queue.
-			if (xQueueSendFromISR(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
-			
-			}
-			
-			// Setup for the next transmit cycle.
-			if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
-				gCurRadioBufferNum = 0;
-			else
-				gCurRadioBufferNum++;
+		// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
+		err = USB_RecvChar((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+//		USB_SendChar(gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+		
+		if (err == ERR_OK) {
+			gRcvPos++;
+			if (gRcvPos > ASYNC_BUFFER_SIZE - 1) {
+				gRcvPos = 0;
+				gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
 				
-			// If the next buffer is not ready then we need to pause receiving.
-			if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateEmpty)
-				RTS_OFF;
+				//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
+				//gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
+				//MCPSDataRequest(&gsTxPacket);
+
+				// Send the buffer pointer to the transmit task's queue.
+				if (xQueueSendFromISR(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
+				}
+				
+				// Setup for the next transmit cycle.
+				if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
+					gCurRadioBufferNum = 0;
+				else
+					gCurRadioBufferNum++;
+			}
 		}
 	}
 }
@@ -226,7 +226,7 @@ void AudioOut_OnEnd(void)
 #ifdef __AudioLoader
 
 static UINT8			gPWMDutyCycle;
-static BufferCntType	gCurPWMRadioBufferNum;
+static BufferCntType	gCurPWMRadioBufferNum = 0;
 
 void AudioLoader_OnInterrupt(void)
 {
@@ -246,12 +246,12 @@ void AudioLoader_OnInterrupt(void)
 		//AudioOut_Disable();
 		//AudioOut_SetRatio8(gPWMDutyCycle);
 		TPM1C0V = gPWMDutyCycle;
-		USB_SendChar(gPWMDutyCycle);
+		//USB_SendChar(gPWMDutyCycle);
 		//AudioOut_Enable();
 		
 		// Increment the buffer pointers.
 		gCurPWMOffset++;
-		if (gCurPWMOffset >= ASYNC_BUFFER_SIZE - 1) {
+		if (gCurPWMOffset >= ASYNC_BUFFER_SIZE - 2) {
 			
 			gCurPWMOffset = 2;
 			gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateEmpty;
@@ -300,9 +300,9 @@ void  USB_OnFullRxBuf(void)
 
 /*
 ** ===================================================================
-**     Event       :  UART_OnError (module Events)
+**     Event       :  USB_OnError (module Events)
 **
-**     From bean   :  UART [AsynchroSerial]
+**     From bean   :  USB [AsynchroSerial]
 **     Description :
 **         This event is called when a channel error (not the error
 **         returned by a given method) occurs. The errors can be
@@ -311,70 +311,16 @@ void  USB_OnFullRxBuf(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void  UART_OnError(void)
+void  USB_OnError(void)
 {
   /* Write your code here ... */
 }
 
 /*
 ** ===================================================================
-**     Event       :  UART_OnRxChar (module Events)
+**     Event       :  USB_OnFreeTxBuf (module Events)
 **
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called after a correct character is
-**         received. 
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this event is disabled. Only OnFullRxBuf method can be
-**         used in DMA mode.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void  UART_OnRxChar(void)
-{
-  /* Write your code here ... */
-}
-
-/*
-** ===================================================================
-**     Event       :  UART_OnTxChar (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called after a character is transmitted.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void  UART_OnTxChar(void)
-{
-  /* Write your code here ... */
-}
-
-/*
-** ===================================================================
-**     Event       :  UART_OnFullRxBuf (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called when the input buffer is full.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void  UART_OnFullRxBuf(void)
-{
-  /* Write your code here ... */
-}
-
-/*
-** ===================================================================
-**     Event       :  UART_OnFreeTxBuf (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
+**     From bean   :  USB [AsynchroSerial]
 **     Description :
 **         This event is called after the last character in output
 **         buffer is transmitted.
@@ -382,7 +328,7 @@ void  UART_OnFullRxBuf(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void  UART_OnFreeTxBuf(void)
+void  USB_OnFreeTxBuf(void)
 {
   /* Write your code here ... */
 }

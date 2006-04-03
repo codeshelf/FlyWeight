@@ -37,13 +37,11 @@
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
+#include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
 #include "LED4.h"
-#include "UART.h"
 #include "USB.h"
-#include "AudioLoader.h"
-#include "PWM.h"
 
 void SW1Int_OnInterrupt(void);
 /*
@@ -148,12 +146,12 @@ void USB_OnFullRxBuf(void);
 ** ===================================================================
 */
 
-void UART_OnError(void);
+void USB_OnError(void);
 /*
 ** ===================================================================
-**     Event       :  UART_OnError (module Events)
+**     Event       :  USB_OnError (module Events)
 **
-**     From bean   :  UART [AsynchroSerial]
+**     From bean   :  USB [AsynchroSerial]
 **     Description :
 **         This event is called when a channel error (not the error
 **         returned by a given method) occurs. The errors can be
@@ -163,57 +161,12 @@ void UART_OnError(void);
 ** ===================================================================
 */
 
-void UART_OnRxChar(void);
+void USB_OnFreeTxBuf(void);
 /*
 ** ===================================================================
-**     Event       :  UART_OnRxChar (module Events)
+**     Event       :  USB_OnFreeTxBuf (module Events)
 **
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called after a correct character is
-**         received. 
-**         DMA mode:
-**         If DMA controller is available on the selected CPU and
-**         the receiver is configured to use DMA controller then
-**         this event is disabled. Only OnFullRxBuf method can be
-**         used in DMA mode.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void UART_OnTxChar(void);
-/*
-** ===================================================================
-**     Event       :  UART_OnTxChar (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called after a character is transmitted.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void UART_OnFullRxBuf(void);
-/*
-** ===================================================================
-**     Event       :  UART_OnFullRxBuf (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
-**     Description :
-**         This event is called when the input buffer is full.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void UART_OnFreeTxBuf(void);
-/*
-** ===================================================================
-**     Event       :  UART_OnFreeTxBuf (module Events)
-**
-**     From bean   :  UART [AsynchroSerial]
+**     From bean   :  USB [AsynchroSerial]
 **     Description :
 **         This event is called after the last character in output
 **         buffer is transmitted.

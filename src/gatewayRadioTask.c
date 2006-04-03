@@ -56,21 +56,22 @@ void vRadioTransmitTask( void *pvParameters ) {
 		// Wait until the SCi controller signals us that we have a full buffer to transmit.
 		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
 
+			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
+			RTS_ON;
+
 			// Now we need to wait to make the OTA baud rate 11K. (11KB/S / 121B)ms
-			//vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 14);
+			vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 14);
 			
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			MCPSDataRequest(&gsTxPacket);
-			
-			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
-			RTS_ON;
+			gRadioBuffer[bufferNum].bufferStatus = eBufferStateEmpty;			
 		} else {
-			// Transmit the buffer.
-			gsTxPacket.pu8Data = "IDLE";
-			gsTxPacket.u8DataLength = 4;
-			//MCPSDataRequest(&gsTxPacket);
+			
+			// Check to see if the buffer is free, so that we can get data again.
+			if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull)
+				RTS_ON;
 		}
 		
 		// Turn the SCi back on by clearing the RX buffer.

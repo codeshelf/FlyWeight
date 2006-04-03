@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 1:43 AM
+**     Date/Time : 4/3/2006, 4:24 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -37,13 +37,11 @@
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
+#include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
 #include "LED4.h"
-#include "UART.h"
 #include "USB.h"
-#include "AudioLoader.h"
-#include "PWM.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
@@ -176,20 +174,16 @@ void PE_low_level_init(void)
   /* Common initialization of the CPU registers */
   /* PTAPE: PTAPE5=1,PTAPE4=1,PTAPE3=1 */
   setReg8Bits(PTAPE, 0x38);             
-  /* PTAD: PTAD6=1,PTAD1=1 */
-  setReg8Bits(PTAD, 0x42);              
-  /* PTADD: PTADD6=1,PTADD5=0,PTADD4=0,PTADD3=0,PTADD1=1 */
-  clrSetReg8Bits(PTADD, 0x38, 0x42);    
-  /* PTDD: PTDD4=1,PTDD3=1,PTDD1=1 */
-  setReg8Bits(PTDD, 0x1A);              
+  /* PTAD: PTAD6=1 */
+  setReg8Bits(PTAD, 0x40);              
+  /* PTADD: PTADD6=1,PTADD5=0,PTADD4=0,PTADD3=0 */
+  clrSetReg8Bits(PTADD, 0x38, 0x40);    
+  /* PTDD: PTDD4=1,PTDD3=1,PTDD1=1,PTDD0=1 */
+  setReg8Bits(PTDD, 0x1B);              
   /* PTDPE: PTDPE4=0,PTDPE3=0,PTDPE1=0,PTDPE0=0 */
   clrReg8Bits(PTDPE, 0x1B);             
-  /* PTDDD: PTDDD4=1,PTDDD3=1,PTDDD1=1 */
-  setReg8Bits(PTDDD, 0x1A);             
-  /* PTEDD: PTEDD1=0,PTEDD0=1 */
-  clrSetReg8Bits(PTEDD, 0x02, 0x01);    
-  /* PTED: PTED0=1 */
-  setReg8Bits(PTED, 0x01);              
+  /* PTDDD: PTDDD4=1,PTDDD3=1,PTDDD1=1,PTDDD0=1 */
+  setReg8Bits(PTDDD, 0x1B);             
   /* PTCDD: PTCDD1=0,PTCDD0=1 */
   clrSetReg8Bits(PTCDD, 0x02, 0x01);    
   /* PTCD: PTCD0=1 */
@@ -212,22 +206,15 @@ void PE_low_level_init(void)
   /* ### BitIO "SW2" init code ... */
   /* ### BitIO "SW3" init code ... */
   /* ### BitIO "SW4" init code ... */
+  /* ### BitIO "LED1" init code ... */
+  Shadow_PTD |= 0x01;                  /* Initialize pin shadow variable bit */
   /* ### BitIO "LED2" init code ... */
   Shadow_PTD |= 0x02;                  /* Initialize pin shadow variable bit */
   /* ### BitIO "LED3" init code ... */
   Shadow_PTD |= 0x08;                  /* Initialize pin shadow variable bit */
   /* ### BitIO "LED4" init code ... */
-  /* ### Asynchro serial "UART" init code ... */
-  UART_Init();
   /* ### Asynchro serial "USB" init code ... */
   USB_Init();
-  /* ### TimerInt "AudioLoader" init code ... */
-  AudioLoader_Init();
-  /* ### Init_TPM "PWM" init code ... */
-    PWM_Init();
- /* Common peripheral initialization - ENABLE */
-  /* TPM2SC: CLKSB=0,CLKSA=1 */
-  clrSetReg8Bits(TPM2SC, 0x10, 0x08);   
   __EI();                              /* Enable interrupts */
 }
 

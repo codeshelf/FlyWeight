@@ -11,36 +11,36 @@ StartupPrj=C:\eclipsework-3.1\FlyWeight\project\FlyWeight.pe
 [AppPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[492|281|318|530]
+Rect=[476|273|318|530]
 
 [CpuPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[0|72|457|446]
+Rect=[-16|64|457|446]
 CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[675|813|564|149]
+Rect=[659|805|564|149]
 
 [ResourceMeter]
 Status=hiden
 WindowState=NORMAL
-Rect=[457|815|457|149]
+Rect=[441|807|457|149]
 
 [BeanSelector]
 Status=Visible
 WindowState=NORMAL
-Rect=[0|518|457|446]
+Rect=[4|527|457|446]
 BF_ForTgtCpuOnly=Yes
 BF_LicensedOnly=Yes
 
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[457|97|800|501]
+Rect=[441|89|800|501]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -58,7 +58,7 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[914|72|478|790]
+Rect=[898|64|478|790]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
@@ -90,7 +90,7 @@ FindScope=FROM_CURSOR
 FindHistory=0
 ReplaceHistory=0
 OpenFilesCount=0
-SelFile=
+SelFile=C:\eclipsework-3.1\FlyWeight\src\gatewayRadioTask.c
 SelLine=-1
 FileHistory=8
 HistoryItem1=E:\PE\TestPE2\CODE\Vectors.c.C
