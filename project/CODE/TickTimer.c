@@ -6,7 +6,7 @@
 **     Beantype  : TimerInt
 **     Version   : Bean 02.110, Driver 01.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/29/2006, 3:51 PM
+**     Date/Time : 4/3/2006, 1:40 AM
 **     Abstract  :
 **         This bean "TimerInt" implements a periodic interrupt.
 **         When the bean and its events are enabled, the "OnInterrupt"
@@ -17,7 +17,7 @@
 **     Settings  :
 **         Timer name                  : TPM2 (16-bit)
 **         Compare name                : TPM20
-**         Counter shared              : No
+**         Counter shared              : Yes
 **
 **         High speed mode
 **             Prescaler               : divide-by-4
@@ -76,6 +76,7 @@
 #pragma MESSAGE DISABLE C4002          /* Disable warning C4002 "Result not used" */
 
 static bool EnUser;                    /* Enable device by user */
+static word CmpVal;                    /* Value periodicly addded to compare register */
 static word CmpHighVal;                /* Compare register value for high speed CPU mode */
 /*
 ** ===================================================================
@@ -91,10 +92,11 @@ static word CmpHighVal;                /* Compare register value for high speed 
 static void HWEnDi(void)
 {
   if (EnUser) {
-    TPM2SC |= 0x08;                    /* Run counter (set CLKSB:CLKSA) */
+    TPM2C0V=TPM2CNT + CmpVal;          /* Count current value for the compare register */
+    TPM2C0SC_CH0F = 0;                 /* Reset request flag and */
+    TPM2C0SC_CH0IE = 1;                /* Enable interrupt by compare register */
   } else {
-    TPM2SC &= 0x67;                    /* Stop counter (CLKSB:CLKSA = 00) */
-    TPM2CNTH = 0x00;                   /* Clear counter register */
+    TPM2C0SC_CH0IE = 0;                /* Disable interrupt by compare register */
   }
 }
 
@@ -179,8 +181,10 @@ void TickTimer_Init(void)
   EnUser=FALSE;                        /* Disable device */
   /* TPM2SC: TOF=0,TOIE=0,CPWMS=0,CLKSB=0,CLKSA=0,PS2=0,PS1=0,PS0=0 */
   setReg8(TPM2SC, 0x00);                
-  /* TPM2C0SC: CH0F=0,CH0IE=1,MS0B=0,MS0A=1,ELS0B=0,ELS0A=0,??=0,??=0 */
-  setReg8(TPM2C0SC, 0x50);              
+  /* TPM2MOD: BIT7=0,BIT6=0,BIT5=0,BIT4=0,BIT3=0,BIT2=0,BIT1=0,BIT0=0 */
+  setReg8(TPM2MOD, 0x00);               
+  /* TPM2C0SC: CH0F=0,CH0IE=0,MS0B=0,MS0A=1,ELS0B=0,ELS0A=0,??=0,??=0 */
+  setReg8(TPM2C0SC, 0x10);              
   TickTimer_SetCV(CmpHighVal);         /* Store appropriate value to the compare register according to the value of mode identifier if selected High speed CPU mode */
   TickTimer_SetPV(0x0A);               /* Set prescaler */
   HWEnDi();
@@ -198,6 +202,7 @@ void TickTimer_Init(void)
 */
 ISR(TickTimer_Interrupt)
 {
+  TPM2C0V+=CmpVal;                     /* Count and save new value to the compare register */
   TPM2C0SC_CH0F = 0;                   /* Reset compare interrupt request flag */
   TimerInt();                          /* Invoke user event */
 }
@@ -214,8 +219,8 @@ ISR(TickTimer_Interrupt)
 */
 static void TickTimer_SetCV(word Val)
 {
-  TPM2C0V = Val;                       /* Store given value to the compare register */
-  TPM2MOD = Val;                       /* and to the modulo register */
+  TPM2C0V = TPM2CNT + Val;             /* Count and save new value to the compare register */
+  CmpVal = Val;                        /* Store result to the variable CmpVal */
 }
 
 /* END TickTimer. */

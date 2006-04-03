@@ -37,13 +37,13 @@
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
-#include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
 #include "LED4.h"
 #include "UART.h"
 #include "USB.h"
-#include "MC13191.h"
+#include "AudioLoader.h"
+#include "PWM.h"
 
 void SW1Int_OnInterrupt(void);
 /*
@@ -58,19 +58,6 @@ void SW1Int_OnInterrupt(void);
 **     Returns     : Nothing
 ** ===================================================================
 */
-void USB_OnFullRxBuf(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnFullRxBuf (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when the input buffer is full.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
 void TimerInt(void);
 /*
 ** ===================================================================
@@ -105,6 +92,36 @@ void USB_OnRxChar(void);
 ** ===================================================================
 */
 
+void AudioOut_OnEnd(void);
+/*
+** ===================================================================
+**     Event       :  AudioOut_OnEnd (module Events)
+**
+**     From bean   :  AudioOut [PWM]
+**     Description :
+**         This event is called when the specified number of cycles
+**         has been generated. (Only when the bean is enabled -
+**         Enable and the events are enabled - EnableEvent).
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void AudioLoader_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  AudioLoader_OnInterrupt (module Events)
+**
+**     From bean   :  AudioLoader [TimerInt]
+**     Description :
+**         When a timer interrupt occurs this event is called (only
+**         when the bean is enabled - "Enable" and the events are
+**         enabled - "EnableEvent").
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
 void USB_OnTxChar(void);
 /*
 ** ===================================================================
@@ -113,6 +130,19 @@ void USB_OnTxChar(void);
 **     From bean   :  USB [AsynchroSerial]
 **     Description :
 **         This event is called after a character is transmitted.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void USB_OnFullRxBuf(void);
+/*
+** ===================================================================
+**     Event       :  USB_OnFullRxBuf (module Events)
+**
+**     From bean   :  USB [AsynchroSerial]
+**     Description :
+**         This event is called when the input buffer is full.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

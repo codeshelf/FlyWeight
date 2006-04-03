@@ -29,15 +29,6 @@ Module "SW4"       (bean BitIO)
                 read and returned. If the direction is [output] then the last written value is returned (see <Safe mode> 
                 property for limitations).
 
-Module "LED1"      (bean BitIO)
-   - LED1_SetDir -Sets a pin direction (available only if the direction = _[input/output]_).
-   - LED1_ClrVal -Clears (set to zero) the Input/Output bean. It is the same as [PutVal(FALSE)]. (Method is available only if 
-                the direction = _[output]_ or _[input/output]_).
-   - LED1_SetVal -Sets (to one) the Input/Output bean. It is the same as [PutVal(TRUE)]. (Method is available only if the 
-                direction = _[output]_ or _[input/output]_).
-   - LED1_NegVal -Negates (inverts) the Input/Output bean. It is the same as [PutVal(!GetVal())]. (Method is available only if 
-                the direction = _[output]_ or _[input/output]_).
-
 Module "LED2"      (bean BitIO)
    - LED2_SetDir -Sets a pin direction (available only if the direction = _[input/output]_).
    - LED2_ClrVal -Clears (set to zero) the Input/Output bean. It is the same as [PutVal(FALSE)]. (Method is available only if 
@@ -128,29 +119,12 @@ Module "USB"       (bean AsynchroSerial)
                 property is enabled.  DMA mode:  If DMA controller is available on the selected CPU and the receiver is 
                 configured to use DMA controller then this method returns the number of characters in the receive buffer.
 
-Module "MC13191"   (bean SPIMaster)
-   - MC13191_RecvChar -If any data is received, this method returns one character, otherwise it returns an error code (it does 
-                not wait for data).  DMA mode:  If DMA controller is available on selected CPU and receiver is configured to 
-                use DMA controller then this method only sets the selected DMA channel. Status of the DMA transfer can then be 
-                checked using method GetCharsInRxBuf. See typical usage for details about communication using DMA.
-   - MC13191_SendChar -Sends one character to the channel.  DMA mode:  If DMA controller is available on the selected CPU and 
-                the transmitter is configured to use DMA controller then this method only sets the selected DMA channel. The 
-                status of the DMA transfer can then be checked using GetCharsInTxBuf method. See the typical usage for details 
-                about communication using DMA.
-   - MC13191_CharsInRxBuf -Returns the number of characters in the input buffer.  Note: If the Interrupt service is disabled, 
-                and the Ignore empty character is set to yes, and a character has been received, then this method returns 1 
-                although it was an empty character.  (deprecated method)  DMA mode:  If DMA controller is available on the 
-                selected CPU and the receiver is configured to use DMA controller then this method returns the number of 
-                characters in the receive buffer.
-   - MC13191_GetCharsInRxBuf -Returns the number of characters in the input buffer.  Note: If the Interrupt service is disabled,
-                and the Ignore empty character is set to yes, and a character has been received, then this method returns 1 
-                although it was an empty character.  DMA mode:  If DMA controller is available on the selected CPU and the 
-                receiver is configured to use DMA controller then this method returns the number of characters in the receive 
-                buffer.
-   - MC13191_SetShiftClockPolarity -Sets the shift clock polarity at runtime. Output data will be shifted on the selected edge 
-                polarity.
-   - MC13191_SetIdleClockPolarity -Sets the idle clock polarity at runtime. If the communication does not run, the clock signal 
-                will have required level.
+Module "AudioLoader" (bean TimerInt)
+
+Module "PWM"       (bean Init_TPM_HCS08)
+   - PWM_Init -This method initializes registers of the TPM module according to this Peripheral Initialization Bean settings. 
+                Call this method in the user code to initialize the module. By default, the method is called by PE 
+                automatically; see "Call Init method" property of the bean for more details.
 
 Module "Cpu"       (bean MC9S08GT60_48)
    - Cpu_EnableInt -Enables maskable interrupts

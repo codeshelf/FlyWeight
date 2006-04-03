@@ -16,6 +16,13 @@
 #include "gatewayRadioTask.h"
 #include "simple_mac.h"
 
+// Radio input buffer
+extern RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
+extern BufferCntType		gCurRadioBufferNum;
+
+//static int				gPulseNum = 0;
+static BufferOffsetType	gCurPWMOffset = 2;
+
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle xRadioTransmitQueue;
 
@@ -67,34 +74,8 @@ void SW1Int_OnInterrupt(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-// Radio input buffer
-extern RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
-extern BufferCntType		gCurRadioBufferNum;
 
 #ifdef __USB
-void  USB_OnFullRxBuf(void)
-{
-/*	word	bytesReceived;
-	byte	err;
-	
-	RTS_OFF;
-	
-	// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
-	err = USB_RecvBlock((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage, BUFFER_SIZE, &bytesReceived);
-	gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
-	
-	// Send the buffer pointer to the transmit task's queue.
-	if (xQueueSend(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
-	
-	}
-	
-	// Setup for the next transmit cycle.
-	gCurRadioBufferNum++;
-	if (gCurRadioBufferNum > (BUFFER_COUNT - 1))
-		gCurRadioBufferNum = 0;
-	gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
-*/
-}
 #endif
 
 /*
@@ -157,7 +138,7 @@ void  USB_OnRxChar(void)
 			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
 			
 			//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
-		//	gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
+			//gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			//MCPSDataRequest(&gsTxPacket);
 
 			// Send the buffer pointer to the transmit task's queue.
@@ -171,12 +152,120 @@ void  USB_OnRxChar(void)
 			else
 				gCurRadioBufferNum++;
 				
-			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateEmpty;
+			// If the next buffer is not ready then we need to pause receiving.
+			if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateEmpty)
+				RTS_OFF;
 		}
 	}
 }
 #endif
 
+/*
+** ===================================================================
+**     Event       :  AudioOut_OnEnd (module Events)
+**
+**     From bean   :  AudioOut [PWM]
+**     Description :
+**         This event is called when the specified number of cycles
+**         has been generated. (Only when the bean is enabled -
+**         Enable and the events are enabled - EnableEvent).
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+#ifdef __AudioOut
+
+#define PWM_MULTIPLIER	8
+
+static byte				gPWMDutyCycle;
+static BufferCntType	gCurPWMRadioBufferNum;
+
+void AudioOut_OnEnd(void)
+{
+	DisableInterrupts
+
+	// It's OK if the variable overflows - we just want to get every 8th pulse.
+//	if (gPulseNum++ % PWM_MULTIPLIER == 0) {
+		// Load in the next value from the correct PWM buffer.
+		gPWMDutyCycle = gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+		// "Shift up" from 2's complement to positive decimal values.
+		gPWMDutyCycle += 0x80;
+		//AudioOut_Disable();
+		AudioOut_SetRatio8(gPWMDutyCycle);
+		//AudioOut_Enable();
+		
+		// Increment the buffer pointers.
+		gCurPWMOffset += 1;
+		if (gCurPWMOffset > ASYNC_BUFFER_SIZE) {
+			gCurPWMOffset = 2;
+			
+			if (gCurPWMRadioBufferNum >= ASYNC_BUFFER_COUNT - 1)
+				gCurPWMRadioBufferNum = 0;
+			else
+				gCurPWMRadioBufferNum++;
+		}
+//	}
+
+	EnableInterrupts
+}
+#endif
+
+/*
+** ===================================================================
+**     Event       :  AudioLoader_OnInterrupt (module Events)
+**
+**     From bean   :  AudioLoader [TimerInt]
+**     Description :
+**         When a timer interrupt occurs this event is called (only
+**         when the bean is enabled - "Enable" and the events are
+**         enabled - "EnableEvent").
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+#ifdef __AudioLoader
+
+static UINT8			gPWMDutyCycle;
+static BufferCntType	gCurPWMRadioBufferNum;
+
+void AudioLoader_OnInterrupt(void)
+{
+	DisableInterrupts
+
+	// It's OK if the variable overflows - we just want to get every 8th pulse.
+	if (gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateFull) {
+	
+		TPM1C0V = 0;
+		
+	} else {
+		
+		// Load in the next value from the correct PWM buffer.
+		gPWMDutyCycle = gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+		// "Shift up" from 2's complement to positive decimal values.
+		//gPWMDutyCycle += 0x80;
+		//AudioOut_Disable();
+		//AudioOut_SetRatio8(gPWMDutyCycle);
+		TPM1C0V = gPWMDutyCycle;
+		USB_SendChar(gPWMDutyCycle);
+		//AudioOut_Enable();
+		
+		// Increment the buffer pointers.
+		gCurPWMOffset++;
+		if (gCurPWMOffset >= ASYNC_BUFFER_SIZE - 1) {
+			
+			gCurPWMOffset = 2;
+			gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateEmpty;
+			
+			if (gCurPWMRadioBufferNum >= ASYNC_BUFFER_COUNT - 1)
+				gCurPWMRadioBufferNum = 0;
+			else
+				gCurPWMRadioBufferNum++;
+		}
+	}
+	
+	EnableInterrupts
+}
+#endif
 /*
 ** ===================================================================
 **     Event       :  USB_OnTxChar (module Events)
@@ -189,6 +278,22 @@ void  USB_OnRxChar(void)
 ** ===================================================================
 */
 void  USB_OnTxChar(void)
+{
+  /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  USB_OnFullRxBuf (module Events)
+**
+**     From bean   :  USB [AsynchroSerial]
+**     Description :
+**         This event is called when the input buffer is full.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void  USB_OnFullRxBuf(void)
 {
   /* Write your code here ... */
 }

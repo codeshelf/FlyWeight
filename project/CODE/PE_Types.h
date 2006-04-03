@@ -6,7 +6,7 @@
 **     Beantype  : PE_Types
 **     Version   : Driver 01.06
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/29/2006, 3:51 PM
+**     Date/Time : 4/3/2006, 1:40 AM
 **     Abstract  :
 **         PE_Types.h - contains definitions of basic types,
 **         register access macros and hardware specific macros

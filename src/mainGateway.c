@@ -20,6 +20,7 @@
 #include "gatewayRadioTask.h"
 #include "ledBlinkTask.h"
 #include "CPU.h"
+#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
 
@@ -51,10 +52,6 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-	/* Yield in case cooperative scheduling is being used. */
-#if configUSE_PREEMPTION == 0
-	{
-		taskYIELD();
-	}
-#endif
+	// Clear the watchdog timer.
+	WatchDog_Clear();
 }

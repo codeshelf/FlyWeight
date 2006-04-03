@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/31/2006, 5:18 PM
+**     Date/Time : 4/3/2006, 1:43 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -30,13 +30,13 @@
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
-#include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
 #include "LED4.h"
 #include "UART.h"
 #include "USB.h"
-#include "MC13191.h"
+#include "AudioLoader.h"
+#include "PWM.h"
 extern void _EntryPoint(void);
 
 void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
@@ -55,7 +55,7 @@ void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
          Cpu_Interrupt,                /* Int.no. 12 Reserved12 (at FFE4)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 13 Reserved13 (at FFE6)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 14 Reserved14 (at FFE8)            Unassigned */
-         Cpu_Interrupt,                /* Int.no. 15 Vtpm2ch1 (at FFEA)              Unassigned */
+         AudioLoader_Interrupt,        /* Int.no. 15 Vtpm2ch1 (at FFEA)              Used */
          TickTimer_Interrupt,          /* Int.no. 16 Vtpm2ch0 (at FFEC)              Used */
          Cpu_Interrupt,                /* Int.no. 17 Vtpm1ovf (at FFEE)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 18 Vtpm1ch2 (at FFF0)              Unassigned */

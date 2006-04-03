@@ -40,6 +40,8 @@ BufferCntType		gCurRadioBufferNum = 0;
 void vRadioTransmitTask( void *pvParameters ) {
 	static tTxPacket		gsTxPacket;
 	static BufferCntType	bufferNum;
+	portTickType			lastTickCount;
+	const portTickType		frequency = 10;
 
 	xRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, sizeof(gCurRadioBufferNum));
 
@@ -48,16 +50,22 @@ void vRadioTransmitTask( void *pvParameters ) {
 	RTS_PORTDIRECTION;
 	RTS_ON;
 		
+	lastTickCount = xTaskGetTickCount();
 	for (;;) {
 
 		// Wait until the SCi controller signals us that we have a full buffer to transmit.
 		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
-			//RTS_OFF;
+
+			// Now we need to wait to make the OTA baud rate 11K. (11KB/S / 121B)ms
+			//vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 14);
+			
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			MCPSDataRequest(&gsTxPacket);
-			//RTS_ON;
+			
+			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
+			RTS_ON;
 		} else {
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = "IDLE";

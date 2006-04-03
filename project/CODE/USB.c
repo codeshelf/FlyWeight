@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/31/2006, 1:06 PM
+**     Date/Time : 4/3/2006, 1:40 AM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 19200baud
+**             Init baud rate          : 115200baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -420,7 +420,7 @@ void USB_Init(void)
   /* SCI2C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
   setReg8(SCI2C2, 0x00);               /* Disable all interrupts */ 
   SCI2BDH = 0x00;                      /* Set high divisor register (enable device) */
-  SCI2BDL = 0x41;                      /* Set low divisor register (enable device) */
+  SCI2BDL = 0x0B;                      /* Set low divisor register (enable device) */
       /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
   SCI2C3 |= 0x0F;                      /* Enable error interrupts */
   SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */

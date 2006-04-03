@@ -19,7 +19,7 @@
 
 // Priorities assigned to demo application tasks.
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
-#define RADIO_QUEUE_SIZE		4
+#define RADIO_QUEUE_SIZE		3
 
 #define ASYNC_BUFFER_COUNT			RADIO_QUEUE_SIZE
 #define ASYNC_BUFFER_SIZE			121
@@ -45,7 +45,7 @@ typedef enum {
 
 typedef struct {
 	BufferStatusType		bufferStatus;
-	BufferStorageType		bufferStorage[ASYNC_BUFFER_SIZE];
+	BufferStorageType		bufferStorage[ASYNC_BUFFER_SIZE+2];
 } RadioBufferStruct;
 //typedef RadioBufferStruct *RadioBufferPtrType;
 

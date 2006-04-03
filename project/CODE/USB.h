@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/31/2006, 1:06 PM
+**     Date/Time : 4/3/2006, 1:40 AM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 19200baud
+**             Init baud rate          : 115200baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
