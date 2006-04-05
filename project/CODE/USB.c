@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 4:24 PM
+**     Date/Time : 4/3/2006, 10:15 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -52,8 +52,9 @@
 **
 **
 **     Contents  :
-**         RecvChar - byte USB_RecvChar(USB_TComData *Chr);
-**         SendChar - byte USB_SendChar(USB_TComData Chr);
+**         RecvChar        - byte USB_RecvChar(USB_TComData *Chr);
+**         SendChar        - byte USB_SendChar(USB_TComData Chr);
+**         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -201,6 +202,31 @@ byte USB_SendChar(USB_TComData Chr)
   ExitCritical();                      /* Restore the PS register */
   return ERR_OK;                       /* OK */
 }
+
+/*
+** ===================================================================
+**     Method      :  USB_GetCharsInRxBuf (bean AsynchroSerial)
+**
+**     Description :
+**         Returns the number of characters in the input buffer.
+**         This method is available only if the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method returns the number of characters in the
+**         receive buffer.
+**     Parameters  : None
+**     Returns     :
+**         ---             - The number of characters in the input
+**                           buffer.
+** ===================================================================
+*/
+/*
+word USB_GetCharsInRxBuf(void)
+
+**      This method is implemented as a macro. See header module. **
+*/
 
 /*
 ** ===================================================================

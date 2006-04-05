@@ -15,6 +15,8 @@
 #include "LED3.h"
 #include "LED4.h"
 
+#define LED_BLINK_QUEUE_SIZE		20
+
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 

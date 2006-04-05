@@ -6,7 +6,7 @@
 **     Beantype  : PE_Timer
 **     Version   : Driver 01.02
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 4:24 PM
+**     Date/Time : 4/3/2006, 10:15 PM
 **     Abstract  :
 **         This module "PE_Timer" implements internal methods and definitions
 **         used by beans working with timers.

@@ -1186,7 +1186,7 @@
 <Interrupt_RxD_priority v="medium priority"/>
 <Interrupt_TxD v="Vsci2tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
-<Input_buffer_size v="160"/>
+<Input_buffer_size v="175"/>
 <Output_buffer_size v="20"/>
 
 <group name="Handshake">
@@ -1197,7 +1197,7 @@
 <HW_support_required v="no"/>
 <RTS_Pin v="PTA6_KBI1P6"/>
 <RTS_pin_signal v="RTS"/>
-<RTS_enabled v="150"/>
+<RTS_enabled v="125"/>
 
 </boolgroup>
 
@@ -1259,7 +1259,7 @@
 <ClearRxBuf v="don&apos;t generate code"/>
 <ClearTxBuf v="don&apos;t generate code"/>
 <CharsInRxBuf v="don&apos;t generate code"/>
-<GetCharsInRxBuf v="don&apos;t generate code"/>
+<GetCharsInRxBuf v="generate code"/>
 <CharsInTxBuf v="don&apos;t generate code"/>
 <GetCharsInTxBuf v="don&apos;t generate code"/>
 <SetBaudRateMode v="don&apos;t generate code"/>

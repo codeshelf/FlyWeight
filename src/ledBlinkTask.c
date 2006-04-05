@@ -26,7 +26,7 @@ xQueueHandle xLEDBlinkQueue;
 void vLEDBlinkTask( void *pvParameters ) {
 	UINT8	ledNum;
 
-	xLEDBlinkQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
+	xLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
 
 	if ( xLEDBlinkQueue ) {
 		for ( ;; ) {

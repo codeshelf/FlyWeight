@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 4:45 PM
+**     Date/Time : 4/3/2006, 10:59 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -52,8 +52,9 @@
 **
 **
 **     Contents  :
-**         RecvChar - byte USB_RecvChar(USB_TComData *Chr);
-**         SendChar - byte USB_SendChar(USB_TComData Chr);
+**         RecvChar        - byte USB_RecvChar(USB_TComData *Chr);
+**         SendChar        - byte USB_SendChar(USB_TComData Chr);
+**         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -101,9 +102,9 @@
   typedef byte USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
 #endif
 
-#define USB_INP_BUF_SIZE 160           /* Input buffer size */
+#define USB_INP_BUF_SIZE 175           /* Input buffer size */
 #define USB_OUT_BUF_SIZE 20            /* Output buffer size */
-#define USB_RTS_BUF_SIZE 150           /* Number of characters in rcv. buffer when RTS signal gets activated */
+#define USB_RTS_BUF_SIZE 125           /* Number of characters in rcv. buffer when RTS signal gets activated */
 
 extern byte USB_OutLen;                /* Length of the output buffer content */
 extern byte USB_InpLen;                /* Length of the input buffer content */
@@ -178,6 +179,28 @@ byte USB_SendChar(USB_TComData Chr);
 **                           ERR_SPEED - This device does not work in
 **                           the active speed mode
 **                           ERR_TXFULL - Transmitter is full
+** ===================================================================
+*/
+
+#define USB_GetCharsInRxBuf() \
+(USB_InpLen)                           /* Return number of chars in receive buffer */
+/*
+** ===================================================================
+**     Method      :  USB_GetCharsInRxBuf (bean AsynchroSerial)
+**
+**     Description :
+**         Returns the number of characters in the input buffer.
+**         This method is available only if the receiver property is
+**         enabled.
+**         DMA mode:
+**         If DMA controller is available on the selected CPU and
+**         the receiver is configured to use DMA controller then
+**         this method returns the number of characters in the
+**         receive buffer.
+**     Parameters  : None
+**     Returns     :
+**         ---             - The number of characters in the input
+**                           buffer.
 ** ===================================================================
 */
 

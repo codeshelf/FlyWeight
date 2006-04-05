@@ -77,6 +77,9 @@ Module "USB"       (bean AsynchroSerial)
                 transmitter is configured to use DMA controller then this method only sets selected DMA channel. Then the 
                 status of the DMA transfer can be checked using  GetCharsInTxBuf method. See an example of a typical usage for 
                 details about communication using DMA.
+   - USB_GetCharsInRxBuf -Returns the number of characters in the input buffer. This method is available only if the receiver 
+                property is enabled.  DMA mode:  If DMA controller is available on the selected CPU and the receiver is 
+                configured to use DMA controller then this method returns the number of characters in the receive buffer.
 
 Module "Cpu"       (bean MC9S08GT60_48)
    - Cpu_EnableInt -Enables maskable interrupts

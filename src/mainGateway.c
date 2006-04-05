@@ -39,8 +39,8 @@ void vMain( void ) {
 
 	/* Start the task that will handle the radio */
 	xTaskCreate( vRadioTransmitTask, (const signed portCHAR * const) "RadioTransmit", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
-	xTaskCreate( vRadioReceiveTask, (const signed portCHAR * const) "RadioReceive", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
-	xTaskCreate( vLEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
+	//xTaskCreate( vRadioReceiveTask, (const signed portCHAR * const) "RadioReceive", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, NULL );
+	xTaskCreate( vLEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, LED_BLINK_PRIORITY, NULL );
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();

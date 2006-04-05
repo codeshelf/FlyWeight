@@ -14,6 +14,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "gatewayRadioTask.h"
+#include "ledBlinkTask.h"
 #include "simple_mac.h"
 
 // Radio input buffer
@@ -119,7 +120,16 @@ void TimerInt(void)
 ** ===================================================================
 */
 #ifdef __USB
+
+extern USBStateType gUSBState;
+extern UINT8 gLED1;
+extern UINT8 gLED2;
+extern UINT8 gLED3;
+extern UINT8 gLED4;
+extern xQueueHandle xLEDBlinkQueue;
+
 BufferOffsetType	gRcvPos = 0;
+int maxChars;
 
 void  USB_OnRxChar(void)
 {
@@ -128,35 +138,62 @@ void  USB_OnRxChar(void)
 
 	byte err;
 	
-	// If the next buffer is not ready then we need to pause receiving.
-	if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull) {
-
-		// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
-		err = USB_RecvChar((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
-//		USB_SendChar(gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+//	DisableInterrupts;
+	
+	maxChars = 0;
+	
+	while (USB_GetCharsInRxBuf()) {
 		
-		if (err == ERR_OK) {
-			gRcvPos++;
-			if (gRcvPos > ASYNC_BUFFER_SIZE - 1) {
-				gRcvPos = 0;
-				gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+		// Don't process more than five at a time.
+		if (maxChars++ > 5)
+			break;
+		
+		// If the next buffer is not ready then we need to pause receiving.
+		if (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull) {
+		
+			// Blink LED1 to let us know we succeeded in transmitting the buffer.
+			if (uxQueueMessagesWaiting(xLEDBlinkQueue) < LED_BLINK_QUEUE_SIZE) {
+				if (xQueueSendFromISR(xLEDBlinkQueue, &gLED2, pdFALSE)) {
 				
-				//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
-				//gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
-				//MCPSDataRequest(&gsTxPacket);
-
-				// Send the buffer pointer to the transmit task's queue.
-				if (xQueueSendFromISR(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
 				}
-				
-				// Setup for the next transmit cycle.
-				if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
-					gCurRadioBufferNum = 0;
-				else
-					gCurRadioBufferNum++;
+			}
+			
+			// The buffer isn't ready, so let's leave and wait for the buffers to clear
+			break;
+			
+		} else {
+
+			// Copy the contents of the buffer.  (Bummer! Should just return the pointer to the buffer.)
+			err = USB_RecvChar((byte*) &gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+	//		USB_SendChar(gRadioBuffer[gCurRadioBufferNum].bufferStorage[gRcvPos]);
+			
+			if (err == ERR_OK) {
+				gRcvPos++;
+				if (gRcvPos > ASYNC_BUFFER_SIZE - 1) {
+					gRcvPos = 0;
+					gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+					
+					//gsTxPacket.pu8Data = gRadioBuffer[gCurRadioBufferNum].bufferStorage;
+					//gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
+					//MCPSDataRequest(&gsTxPacket);
+
+					// Send the buffer pointer to the transmit task's queue.
+					if (uxQueueMessagesWaiting(xRadioTransmitQueue) < RADIO_QUEUE_SIZE) {
+						if (xQueueSendFromISR(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
+						}
+					}
+					
+					// Setup for the next transmit cycle.
+					if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
+						gCurRadioBufferNum = 0;
+					else
+						gCurRadioBufferNum++;
+				}
 			}
 		}
 	}
+	
+//	EnableInterrupts;
 }
 #endif
 
@@ -182,7 +219,7 @@ static BufferCntType	gCurPWMRadioBufferNum;
 
 void AudioOut_OnEnd(void)
 {
-	DisableInterrupts
+	//DisableInterrupts
 
 	// It's OK if the variable overflows - we just want to get every 8th pulse.
 //	if (gPulseNum++ % PWM_MULTIPLIER == 0) {
@@ -206,7 +243,7 @@ void AudioOut_OnEnd(void)
 		}
 //	}
 
-	EnableInterrupts
+	//EnableInterrupts
 }
 #endif
 
@@ -230,7 +267,7 @@ static BufferCntType	gCurPWMRadioBufferNum = 0;
 
 void AudioLoader_OnInterrupt(void)
 {
-	DisableInterrupts
+	//DisableInterrupts
 
 	// It's OK if the variable overflows - we just want to get every 8th pulse.
 	if (gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateFull) {
@@ -263,7 +300,7 @@ void AudioLoader_OnInterrupt(void)
 		}
 	}
 	
-	EnableInterrupts
+	//EnableInterrupts
 }
 #endif
 /*

@@ -30,6 +30,7 @@ extern UINT8 gLED2;
 extern UINT8 gLED3;
 extern UINT8 gLED4;
 extern xQueueHandle xLEDBlinkQueue;
+extern USBStateType gUSBState;
 
 // Radio input buffer
 RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
@@ -57,21 +58,22 @@ void vRadioTransmitTask( void *pvParameters ) {
 		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
 
 			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
-			RTS_ON;
+			USB_START;
 
-			// Now we need to wait to make the OTA baud rate 11K. (11KB/S / 121B)ms
-			vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 14);
-			
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			MCPSDataRequest(&gsTxPacket);
-			gRadioBuffer[bufferNum].bufferStatus = eBufferStateEmpty;			
+						
+			// Now we need to wait to make the OTA baud rate 11K. (11KB/S / 121B)ms
+			vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 15);
+			gRadioBuffer[bufferNum].bufferStatus = eBufferStateEmpty;
+			
 		} else {
 			
 			// Check to see if the buffer is free, so that we can get data again.
 			if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull)
-				RTS_ON;
+				USB_START;
 		}
 		
 		// Turn the SCi back on by clearing the RX buffer.

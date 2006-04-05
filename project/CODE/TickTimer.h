@@ -6,7 +6,7 @@
 **     Beantype  : TimerInt
 **     Version   : Bean 02.110, Driver 01.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 4:24 PM
+**     Date/Time : 4/3/2006, 10:15 PM
 **     Abstract  :
 **         This bean "TimerInt" implements a periodic interrupt.
 **         When the bean and its events are enabled, the "OnInterrupt"
