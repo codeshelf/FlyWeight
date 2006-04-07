@@ -52,7 +52,7 @@
 // This project is largely for Freescale SMAC which is for MCUs tied to a MC1319x radio that provides
 // external osc of 16MHz then using an RTI multiple of that rate.  The result is a 1.024ms quantum.
 // Hence 1000/1024 = 976.5.
-#define configTICK_RATE_HZ			( ( portTickType ) 977 )
+#define configTICK_RATE_HZ			( ( portTickType ) 1000 )
 #define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 4 )
 #define configMINIMAL_STACK_SIZE	( ( unsigned portSHORT ) 80 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( 2048 ) )

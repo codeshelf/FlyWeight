@@ -8,9 +8,11 @@
 */
 
 #include "smacGlue.h"
+#include "radioCommon.h"
+//#include "USB.h"
 
-xQueueHandle	gRadioReceiveQueue = NULL;
-ERadioState		gRadioState = eRadioReceive;
+extern xQueueHandle	gRadioReceiveQueue;
+ERadioState			gRadioState = eRadioReceive;
 
 void initSMACRadioQueueGlue(xQueueHandle inRadioReceiveQueue) {
 	gRadioReceiveQueue = inRadioReceiveQueue;
@@ -22,22 +24,42 @@ void initSMACRadioQueueGlue(xQueueHandle inRadioReceiveQueue) {
 // In FreeRTOS we can't RTI or task switch during and ISR, so we need to keep this
 // short and sweet.  (And let a swapped-in task deal with this during a context switch.)
 
-#pragma CODE_SEG __NEAR_SEG NON_BANKED 
 void MCPSDataIndication(tRxPacket *gsRxPacket) {
 
-	// If we haven't initialized the radio receive queue then cause a debug trap.
-	if (gRadioReceiveQueue == NULL)
-		__asm ("BGND");
+
+    if (gsRxPacket->u8Status == SUCCESS) {
+
+/*		gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+
+		//USB_SendChar('R');
+		//USB_SendChar(gCurRadioBufferNum);
+
+		if (gUsedBuffers < ASYNC_BUFFER_COUNT)
+			gUsedBuffers++;
+		
+		//if (xQueueSend( gRadioTransmitQueue, NULL, pdFALSE )) {}
+		
+		// We don't really do anything here since 
+		// the PWM audio processor is working at interrupt
+		// to get bytes out of the buffer.
+		
+		// Setup for the next receive cycle.
+		if (gCurRadioBufferNum >= (ASYNC_BUFFER_COUNT - 1))
+			gCurRadioBufferNum = 0;
+		else
+			gCurRadioBufferNum++;
+
+*/
+		// If we haven't initialized the radio receive queue then cause a debug trap.
+		if (gRadioReceiveQueue == NULL)
+			__asm ("BGND");
 	
-	// Set the state of the radio at this time.  (The value gets copied into the msg.)
-	gRadioState = eRadioReceive;
-	
-	// Send the message to the radio task's queue.
-	if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+		// Send the message to the radio task's queue.
+		if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+		}
 	}
 };
 
-#pragma CODE_SEG DEFAULT
 
 // --------------------------------------------------------------------------
 
@@ -48,13 +70,13 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 
 void MLMEMC13192ResetIndication() {
 	// If we haven't initialized the radio receive queue then cause a debug trap.
-	if (gRadioReceiveQueue == NULL)
-		__asm ("BGND");
+	//if (gRadioReceiveQueue == NULL)
+	//	__asm ("BGND");
 	
 	// Set the state of the radio at this time.  (The value gets copied into the msg.)
 	gRadioState = eRadioReset;
 
 	// Send the message to the radio task's queue.
-	if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
-	}
+	//if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+	//}
 };

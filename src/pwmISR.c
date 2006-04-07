@@ -10,12 +10,13 @@
 
 // Every eight pulses load in a new duty cycle.
 
-int gPulseNum = 0;
+#include "FreeRTOS.h"
+#include "task.h"
+#include "radioCommon.h"
 
-void interrupt pwmISR( void )
-{
-	// It's OK if the variable overflows - we just want to get every 8th pulse.
-	if (gPulseNum++ % 8 == 0) {
-	
-	}
+void interrupt audioOutISR( void ) {
+
+	if (TPM2C1V < TPM2CNT) {
+		TPM2C1V = TPM2CNT + 0x0564;
+	}	
 }

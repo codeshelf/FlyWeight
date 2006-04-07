@@ -30,7 +30,6 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "PE_Timer.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "TickTimer.h"
@@ -41,7 +40,8 @@
 #include "LED2.h"
 #include "LED3.h"
 #include "LED4.h"
-#include "USB.h"
+#include "AudioLoader.h"
+#include "PWM.h"
 
 void SW1Int_OnInterrupt(void);
 /*
@@ -115,61 +115,6 @@ void AudioLoader_OnInterrupt(void);
 **         When a timer interrupt occurs this event is called (only
 **         when the bean is enabled - "Enable" and the events are
 **         enabled - "EnableEvent").
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void USB_OnTxChar(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnTxChar (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called after a character is transmitted.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void USB_OnFullRxBuf(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnFullRxBuf (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when the input buffer is full.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void USB_OnError(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnError (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when a channel error (not the error
-**         returned by a given method) occurs. The errors can be
-**         read using <GetError> method.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void USB_OnFreeTxBuf(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnFreeTxBuf (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called after the last character in output
-**         buffer is transmitted.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

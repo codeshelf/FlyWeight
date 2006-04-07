@@ -8,6 +8,7 @@
 */
 
 #include "gatewayRadioTask.h"
+#include "ledBlinkTask.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -20,16 +21,7 @@
 
 // Local variables.
 
-/* The queue used to send data from the radio to the radio receive task. */
-xQueueHandle xRadioTransmitQueue;
-xQueueHandle xRadioReceiveQueue;
-
 UINT8 gu8RTxMode;
-extern UINT8 gLED1;
-extern UINT8 gLED2;
-extern UINT8 gLED3;
-extern UINT8 gLED4;
-extern xQueueHandle xLEDBlinkQueue;
 extern USBStateType gUSBState;
 
 // Radio input buffer
@@ -39,12 +31,10 @@ BufferCntType		gCurRadioBufferNum = 0;
 // --------------------------------------------------------------------------
 
 void vRadioTransmitTask( void *pvParameters ) {
-	static tTxPacket		gsTxPacket;
-	static BufferCntType	bufferNum;
+	tTxPacket				gsTxPacket;
+	BufferCntType			bufferNum;
 	portTickType			lastTickCount;
-	const portTickType		frequency = 10;
-
-	xRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, sizeof(gCurRadioBufferNum));
+	const portTickType		bufferTimeMS = 20;
 
 	// Turn the SCi back on by taking RX out of standby.
 	RTS_PORTENABLE;
@@ -57,23 +47,25 @@ void vRadioTransmitTask( void *pvParameters ) {
 		// Wait until the SCi controller signals us that we have a full buffer to transmit.
 		if ( xQueueReceive( xRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
 
-			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
-			USB_START;
-
 			// Transmit the buffer.
 			gsTxPacket.pu8Data = gRadioBuffer[bufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = ASYNC_BUFFER_SIZE;
 			MCPSDataRequest(&gsTxPacket);
 						
-			// Now we need to wait to make the OTA baud rate 11K. (11KB/S / 121B)ms
-			vTaskDelayUntil(&lastTickCount, portTICK_RATE_MS * 15);
+			// Wait until the we've sent the right number of packets per second.
+			vTaskDelayUntil(&lastTickCount, bufferTimeMS);
+			
+			//
 			gRadioBuffer[bufferNum].bufferStatus = eBufferStateEmpty;
 			
+			// At least one buffer got freed, so if we were pausing on serial IO this will resume.
+			//USB_START;
+
 		} else {
 			
 			// Check to see if the buffer is free, so that we can get data again.
-			if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull)
-				USB_START;
+			//if (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull)
+			//	USB_START;
 		}
 		
 		// Turn the SCi back on by clearing the RX buffer.
@@ -92,11 +84,6 @@ void vRadioReceiveTask( void *pvParameters ) {
 	byte	*packetDataP;
 
 	// The radio receive task will return a pointer to a radio data packet.
-
-	/* Create the queue used by the producer and consumer. */
-	xRadioReceiveQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
-	initSMACRadioQueueGlue(xRadioReceiveQueue);
-
 	if ( xRadioReceiveQueue ) {
 	
 		/* Now the queue is created it is safe to enable the radio receive interrupt. */
@@ -112,6 +99,38 @@ void vRadioReceiveTask( void *pvParameters ) {
 
 		}
 
+	}
+
+	/* Will only get here if the queue could not be created. */
+	for ( ;; );
+}
+
+// --------------------------------------------------------------------------
+
+void vSerialReceiveTask( void *pvParameters ) {
+
+	UINT16	bytesReceived;
+	
+	for ( ;; ) {
+
+		// Check if there is enough data in the serial buffer to fill the next *empty* transmit queue.
+		if ((USB_GetCharsInRxBuf() >= ASYNC_BUFFER_SIZE) && (gRadioBuffer[gCurRadioBufferNum].bufferStatus != eBufferStateFull)) {
+			
+			USB_RecvBlock((USB_TComData *) &gRadioBuffer[gCurRadioBufferNum].bufferStorage, ASYNC_BUFFER_SIZE, &bytesReceived);
+			
+			// Mark the transmit buffer full.
+			gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+			
+			// Now send the buffer to the transmit queue.
+			if (xQueueSend(xRadioTransmitQueue, &gCurRadioBufferNum, pdFALSE)) {
+			}
+
+			// Now advance the transmit buffer.
+			if (gCurRadioBufferNum == (ASYNC_BUFFER_COUNT - 1))
+				gCurRadioBufferNum = 0;
+			else
+				gCurRadioBufferNum++;
+		}
 	}
 
 	/* Will only get here if the queue could not be created. */

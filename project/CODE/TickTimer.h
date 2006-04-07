@@ -6,7 +6,7 @@
 **     Beantype  : TimerInt
 **     Version   : Bean 02.110, Driver 01.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2006, 10:15 PM
+**     Date/Time : 4/7/2006, 1:29 AM
 **     Abstract  :
 **         This bean "TimerInt" implements a periodic interrupt.
 **         When the bean and its events are enabled, the "OnInterrupt"
@@ -17,13 +17,13 @@
 **     Settings  :
 **         Timer name                  : TPM2 (16-bit)
 **         Compare name                : TPM20
-**         Counter shared              : No
+**         Counter shared              : Yes
 **
 **         High speed mode
 **             Prescaler               : divide-by-4
 **             Clock                   : 4998857 Hz
 **           Initial period/frequency
-**             Xtal ticks              : 243
+**             Xtal ticks              : 8000
 **             microseconds            : 1000
 **             milliseconds            : 1
 **             seconds (real)          : 0.0010000
@@ -31,7 +31,7 @@
 **             kHz                     : 1
 **
 **         Runtime setting             : period/frequency interval (continual setting)
-**             ticks                   : 1 to 2430 ticks
+**             ticks                   : 15 to 80000 ticks
 **             microseconds            : 2 to 10000 microseconds
 **             milliseconds            : 1 to 10 milliseconds
 **             seconds (real)          : 0.0000018 to 0.0100001 seconds
@@ -54,8 +54,7 @@
 **         Flip-flop registers
 **              Mode                   : TPM2C0SC  [0065]
 **     Contents  :
-**         Enable    - byte TickTimer_Enable(void);
-**         SetFreqHz - byte TickTimer_SetFreqHz(word Freq);
+**         Enable - byte TickTimer_Enable(void);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -76,11 +75,8 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "PE_Timer.h"
 #include "Cpu.h"
 
-#define TickTimer_SFHzMin  0x64        /* Lower bound of interval for method SetFreqHz */
-#define TickTimer_SFHzMax  0xFFFF      /* Upper bound of interval for method SetFreqHz */
 
 byte TickTimer_Enable(void);
 /*
@@ -96,32 +92,6 @@ byte TickTimer_Enable(void);
 **                           ERR_OK - OK
 **                           ERR_SPEED - This device does not work in
 **                           the active speed mode
-** ===================================================================
-*/
-
-byte TickTimer_SetFreqHz(word Freq);
-/*
-** ===================================================================
-**     Method      :  TickTimer_SetFreqHz (bean TimerInt)
-**
-**     Description :
-**         This method sets the new frequency of the generated
-**         events. The frequency is expressed in Hz as a 16-bit
-**         unsigned integer number.
-**         This method is available only if the runtime setting type
-**         'from interval' is selected in the Timing dialog box in
-**         the Runtime setting area.
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**         Freq            - Frequency to set [in Hz]
-**                      (100 to 65535 Hz)
-**     Returns     :
-**         ---             - Error code, possible codes:
-**                           ERR_OK - OK
-**                           ERR_SPEED - This device does not work in
-**                           the active speed mode
-**                           ERR_MATH - Overflow during evaluation
-**                           ERR_RANGE - Parameter out of range
 ** ===================================================================
 */
 

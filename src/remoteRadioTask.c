@@ -15,8 +15,7 @@
 #include "ledBlinkTask.h"
 //#include "WatchDog.h"
 #include "AudioLoader.h"
-//#include "AudioOut.h"
-#include "USB.h"
+//#include "USB.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -26,8 +25,8 @@
 // Local variables.
 
 // The queue used to send data from the radio to the radio receive task.
-static xQueueHandle gRadioTransmitQueue;
-static xQueueHandle gRadioReceiveQueue;
+xQueueHandle gRadioTransmitQueue = NULL;
+xQueueHandle gRadioReceiveQueue = NULL;
 
 tTxPacket	gsTxPacket;
 tRxPacket	gsRxPacket;
@@ -44,73 +43,79 @@ extern UINT8 gu8RTxMode;
 // There's a 2-byte ID on the front of every packet.
 RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
 BufferCntType		gCurRadioBufferNum = 0;
+BufferCntType		gUsedBuffers;
 
 // --------------------------------------------------------------------------
 
 void vRadioReceiveTask(void *pvParameters) {
-	ERadioState radioState;
+	ERadioState		radioState;
+	portTickType	lastTick;
 
-	// Create the radio queue that will handle incoming radio packets.
-	gRadioReceiveQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(ERadioState));
-	initSMACRadioQueueGlue(gRadioReceiveQueue);
+	// Start the audio processing.
+	AudioLoader_Enable();
+	PWM_Init();
 
-	if (gRadioReceiveQueue) {
-	
-		// Start the audio processing.
-		//AudioOut_Enable();
-		AudioLoader_Enable();
-		PWM_Init();
-	
-		for (;;) {
+	for (;;) {
 
-			//WatchDog_Clear();
-			
-			// Wait until the radio is ready.
-			//while (gu8RTxMode != IDLE_MODE)
-			//	;
-			
-			// Setup for the next receive cycle.
-			//while (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull)
-			//	;
+		//WatchDog_Clear();
+		
+		// Wait until the radio is ready.
+		while (gu8RTxMode != IDLE_MODE)
+			;//vTaskDelay(2);
+		
+		// Setup for the next receive cycle.
+		lastTick = xTaskGetTickCount();
+		while (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull)
+			;//vTaskDelay(2);
+		//USB_SendChar(xTaskGetTickCount() - lastTick);
+		
+		//USB_SendChar(gCurRadioBufferNum);
+		gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
+		gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
+		gsRxPacket.u8Status = 0;
+		MLMERXEnableRequest(&gsRxPacket, 0L);
+		
+		//USB_SendChar(xTaskGetTickCount() - lastTick);
+		//lastTick = xTaskGetTickCount();
+		
+		// Wait until we receive a queue message from the radio receive ISR.
+		if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
 			
 			//USB_SendChar(gCurRadioBufferNum);
-			gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
-			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, 0L);
-			
-			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 30) == pdPASS) {
+			if (radioState == eRadioReset) {
+				// We just received a reset from the radio.
 				
-				//USB_SendChar(gCurRadioBufferNum);
-				if (radioState == eRadioReset) {
-					// We just received a reset from the radio.
-					
-				} else if (radioState == eRadioReceive) {
-					
-					// We just received a valid packet.
+			} else if (radioState == eRadioReceive) {
+				
+				// We just received a valid packet.
+				// We don't really do anything here since 
+				// the PWM audio processor is working at interrupt
+				// to get bytes out of the buffer.
+								
+				// The buffers are a shared, critical resource, so we have to protect them before we update.
+				EnterCritical();
+				
 					gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
 					
-					//if (xQueueSend( gRadioTransmitQueue, NULL, pdFALSE )) {}
-					
-					// We don't really do anything here since 
-					// the PWM audio processor is working at interrupt
-					// to get bytes out of the buffer.
-					
-					// Setup for the next receive cycle.
+					// Advance to the next buffer.
 					if (gCurRadioBufferNum >= (ASYNC_BUFFER_COUNT - 1))
 						gCurRadioBufferNum = 0;
 					else
 						gCurRadioBufferNum++;
-						
-				}
+					
+					// Account for the number of used buffers.
+					if (gUsedBuffers < ASYNC_BUFFER_COUNT)
+						gUsedBuffers++;
+					
+				ExitCritical();
+				
 			}
-			
-			// Blink LED2 to let us know we succeeded in transmitting the buffer.
-//			if (xQueueSend(xLEDBlinkQueue, &gLED2, pdFALSE)) {
-//			
-//			}	
 		}
+		
+		// Blink LED2 to let us know we succeeded in receiving a packet buffer.
+		if (xQueueSend(xLEDBlinkQueue, &gLED2, pdFALSE)) {
+		
+		}	
 	}
 
 	/* Will only get here if the queue could not be created. */
@@ -125,8 +130,6 @@ void vRadioTransmitTask(void *pvParameters) {
 	
 	gsTxPacket.u8DataLength = 0;
 	gsTxPacket.pu8Data = &gau8TxDataBuffer[0]; /* Set the pointer to point to the tx_buffer */
-
-	gRadioTransmitQueue = xQueueCreate(RADIO_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
 
 	for ( ;; ) {
 

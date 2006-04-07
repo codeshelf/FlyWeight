@@ -31,7 +31,7 @@ WindowState=NORMAL
 Rect=[441|807|457|149]
 
 [BeanSelector]
-Status=Visible
+Status=hiden
 WindowState=NORMAL
 Rect=[4|527|457|446]
 BF_ForTgtCpuOnly=Yes
@@ -90,7 +90,7 @@ FindScope=FROM_CURSOR
 FindHistory=0
 ReplaceHistory=0
 OpenFilesCount=0
-SelFile=C:\eclipsework-3.1\FlyWeight\project\CODE\Events.c
+SelFile=
 SelLine=-1
 FileHistory=8
 HistoryItem1=E:\PE\TestPE2\CODE\Vectors.c.C

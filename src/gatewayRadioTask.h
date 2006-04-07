@@ -18,6 +18,7 @@
 
 void vRadioTransmitTask( void *pvParameters );
 void vRadioReceiveTask( void *pvParameters );
+void vSerialReceiveTask( void *pvParameters );
 
 #endif GATEWAYRADIOTASK_H
 

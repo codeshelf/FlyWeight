@@ -6,7 +6,7 @@
 **     Beantype  : BitIO
 **     Version   : Bean 02.066, Driver 03.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 3/29/2006, 2:38 PM
+**     Date/Time : 4/7/2006, 1:02 AM
 **     Abstract  :
 **         This bean "BitIO" implements an one-bit input/output.
 **         It uses one bit/pin of a port.
@@ -59,7 +59,6 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "PE_Timer.h"
 #include "Cpu.h"
 
 

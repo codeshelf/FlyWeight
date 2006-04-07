@@ -10,9 +10,6 @@ Module "MC13191IRQ" (bean InterruptVector)
 
 Module "TickTimer" (bean TimerInt)
    - TickTimer_Enable -Enables the bean - it starts the timer. Events may be generated ("DisableEvent"/"EnableEvent").
-   - TickTimer_SetFreqHz -This method sets the new frequency of the generated events. The frequency is expressed in [Hz] as a 
-                16-bit unsigned integer number. This method is available only if the runtime setting type 'from interval' is 
-                selected in the <Timing dialog box> in the Runtime setting area.
 
 Module "SW2"       (bean BitIO)
    - SW2_GetVal -Returns the value of the Input/Output bean. If the direction is [input] then the input value of the pin is 
@@ -64,22 +61,14 @@ Module "LED4"      (bean BitIO)
    - LED4_NegVal -Negates (inverts) the Input/Output bean. It is the same as [PutVal(!GetVal())]. (Method is available only if 
                 the direction = _[output]_ or _[input/output]_).
 
-Module "USB"       (bean AsynchroSerial)
-   - USB_RecvChar -If any data is received, this method returns one character, otherwise it returns an error code (it does not 
-                wait for data). This method is enabled only if the receiver property is enabled.   DMA mode:  If DMA controller 
-                is available on the selected CPU and the receiver is configured to use DMA controller then this method only 
-                sets the selected DMA channel. Then the status of the DMA transfer can be checked using GetCharsInRxBuf method. 
-                See an example of a typical usage for details about the communication using DMA.
-   - USB_SendChar -Sends one character to the channel. If the bean is temporarily disabled (Disable method) SendChar method 
-                only stores data into an output buffer. In case of a zero output buffer size, only one character can be stored. 
-                Enabling the bean (Enable method) starts the transmission of the stored data. This method is available only if 
-                the transmitter property is enabled.  DMA mode:  If DMA controller is available on the selected CPU and the 
-                transmitter is configured to use DMA controller then this method only sets selected DMA channel. Then the 
-                status of the DMA transfer can be checked using  GetCharsInTxBuf method. See an example of a typical usage for 
-                details about communication using DMA.
-   - USB_GetCharsInRxBuf -Returns the number of characters in the input buffer. This method is available only if the receiver 
-                property is enabled.  DMA mode:  If DMA controller is available on the selected CPU and the receiver is 
-                configured to use DMA controller then this method returns the number of characters in the receive buffer.
+Module "AudioLoader" (bean TimerInt)
+   - AudioLoader_Enable -Enables the bean - it starts the timer. Events may be generated ("DisableEvent"/"EnableEvent").
+   - AudioLoader_Disable -Disables the bean - it stops the timer. No events will be generated.
+
+Module "PWM"       (bean Init_TPM_HCS08)
+   - PWM_Init -This method initializes registers of the TPM module according to this Peripheral Initialization Bean settings. 
+                Call this method in the user code to initialize the module. By default, the method is called by PE 
+                automatically; see "Call Init method" property of the bean for more details.
 
 Module "Cpu"       (bean MC9S08GT60_48)
    - Cpu_EnableInt -Enables maskable interrupts

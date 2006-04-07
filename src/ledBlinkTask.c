@@ -19,14 +19,12 @@ UINT8 gLED1 = 1;
 UINT8 gLED2 = 2;
 UINT8 gLED3 = 3;
 UINT8 gLED4 = 4;
-xQueueHandle xLEDBlinkQueue;
+extern xQueueHandle xLEDBlinkQueue;
 
 // --------------------------------------------------------------------------
 
 void vLEDBlinkTask( void *pvParameters ) {
 	UINT8	ledNum;
-
-	xLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(unsigned portBASE_TYPE));
 
 	if ( xLEDBlinkQueue ) {
 		for ( ;; ) {
