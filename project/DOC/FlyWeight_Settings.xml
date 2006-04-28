@@ -318,14 +318,16 @@
 
 <boolgroup name="External Clock" v="Enabled">
 <Oscillator_frequency__MHz_ v="8"/>
-<External_Clock_Source v="External crystal"/>
-<Xtal_range v="1MHz-16MHz"/>
+<External_Clock_Source v="External oscillator"/>
+<Xtal_range v="0 - 40 MHz"/>
 
 </boolgroup>
 
 <group name="Low-power modes settings">
 
-<enumgroup name="STOP instruction enabled" v="no">
+<enumgroup name="STOP instruction enabled" v="yes">
+<Power_down_control v="STOP3 - Standby mode"/>
+<Enable_Oscillator_in_Off_Mode v="yes"/>
 
 </enumgroup>
 
@@ -448,13 +450,13 @@
 <group name="Enabled speed modes">
 
 <boolgroup name="High speed mode" v="Enabled">
-<High_speed_clock v="Internal Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
-<Internal_bus_clock v="19.995428571429"/>
-<Fixed_frequency_clock v="19.995428571429"/>
+<High_speed_clock v="External Clock"/>
+<Clock_divider v="1"/>
+<Internal_bus_clock v="16"/>
+<Fixed_frequency_clock v="4"/>
 
 <boolgroup name="FLL clock" v="Enabled">
-<FLL_clock_frequency v="39.990857142857"/>
+<FLL_clock_frequency v="32"/>
 <Loss_of_FLL_lock v="Interrupt"/>
 <Loss_of_clock v="Interrupt"/>
 
@@ -594,187 +596,6 @@
 </boolgroup>
 </CompilerProperties>
 </CPU_Bean>
-
-<Bean name="RTI1" type="Init_RTI">
-<Enabled v="N"/>
-
-<Properties>
-<Bean_name v="RTI1"/>
-<Device v="RTI"/>
-
-<group name="Settings">
-
-<group name="Clock settings">
-<Clock_select v="Internal oscilator"/>
-<Prescaler v="256"/>
-<Period v="8 ms"/>
-
-</group>
-
-</group>
-
-<group name="Interrupts">
-<Interrupt v="Vrti"/>
-<Real_Time_Interrupt v="Enabled"/>
-<ISR_name v="vPortTickInterrupt"/>
-
-</group>
-
-<group name="Initialization">
-<Call_Init_method v="yes"/>
-<Enable_module v="yes"/>
-
-</group>
-</Properties>
-
-<Methods>
-<Init v="generate code"/>
-</Methods>
-
-<Events>
-</Events>
-</Bean>
-
-<Bean name="SWI" type="InterruptVector">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="SWI"/>
-<Interrupt_vector v="Vswi"/>
-<Interrupt_priority v="medium priority"/>
-
-<boolgroup name="Shared interrupt" v="no" />
-<ISR_name v="vPortYield"/>
-<Allow_duplicate_ISR_names v="no"/>
-</Properties>
-
-<Methods>
-</Methods>
-
-<Events>
-</Events>
-</Bean>
-
-<Bean name="MC13191IRQ" type="InterruptVector">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="MC13191IRQ"/>
-<Interrupt_vector v="Virq"/>
-<Interrupt_priority v="medium priority"/>
-
-<boolgroup name="Shared interrupt" v="no" />
-<ISR_name v="IRQIsr"/>
-<Allow_duplicate_ISR_names v="no"/>
-</Properties>
-
-<Methods>
-</Methods>
-
-<Events>
-</Events>
-</Bean>
-
-<Bean name="TickTimer" type="TimerInt">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="TickTimer"/>
-<Timer v="TPM20"/>
-<Counter v="TPM2"/>
-
-<boolgroup name="Interrupt service/event" v="Enabled">
-<Interrupt v="Vtpm2ch0"/>
-<Interrupt_priority v="medium priority"/>
-
-</boolgroup>
-<Prescaler v="Auto selected prescaler"/>
-<Interrupt_period init="1000 Hz" runtime_settings="interval" low="100 Hz" high="555.429 kHz" />
-<Same_period_in_modes v="no"/>
-<Bean_uses_entire_timer v="no"/>
-
-<group name="Initialization">
-<Enabled_in_init__code v="no"/>
-<Events_enabled_in_init_ v="yes"/>
-
-</group>
-
-<group name="CPU clock/speed selection">
-<High_speed_mode v="This bean enabled"/>
-<Low_speed_mode v="This bean disabled"/>
-<Slow_speed_mode v="This bean disabled"/>
-
-</group>
-</Properties>
-
-<Methods>
-<Enable v="generate code"/>
-<Disable v="don&apos;t generate code"/>
-<EnableEvent v="don&apos;t generate code"/>
-<DisableEvent v="don&apos;t generate code"/>
-<SetPeriodMode v="don&apos;t generate code"/>
-<SetPeriodTicks16 v="don&apos;t generate code"/>
-<SetPeriodTicks32 v="don&apos;t generate code"/>
-<SetPeriodUS v="don&apos;t generate code"/>
-<SetPeriodMS v="don&apos;t generate code"/>
-<SetPeriodSec v="don&apos;t generate code"/>
-<SetPeriodReal v="don&apos;t generate code"/>
-<SetFreqHz v="don&apos;t generate code"/>
-<SetFreqkHz v="don&apos;t generate code"/>
-<SetFreqMHz v="don&apos;t generate code"/>
-</Methods>
-
-<Events>
-<Event_module_name v="Events"/>
-
-<event name="BeforeNewSpeed" v="don&apos;t generate code" />
-
-<event name="AfterNewSpeed" v="don&apos;t generate code" />
-
-<event name="OnInterrupt" v="generate code">
-<Event_procedure_name v="TimerInt"/>
-<Priority v="same as interrupt"/>
-
-</event>
-</Events>
-</Bean>
-
-<Bean name="SW1Int" type="ExtInt">
-<Enabled v="N"/>
-
-<Properties>
-<Bean_name v="SW1Int"/>
-<Pin v="PTA2_KBI1P2"/>
-<Pin_signal v=""/>
-<Pull_resistor v="pull up"/>
-<Generate_interrupt_on v="low level"/>
-<Invert_interrupt_trigger_condition v="no"/>
-<Interrupt v="Vkeyboard1"/>
-<Interrupt_priority v="medium priority"/>
-
-<group name="Initialization">
-<Enabled_in_init__code v="yes"/>
-
-</group>
-</Properties>
-
-<Methods>
-<Enable v="generate code"/>
-<Disable v="don&apos;t generate code"/>
-<GetVal v="don&apos;t generate code"/>
-<SetEdge v="don&apos;t generate code"/>
-</Methods>
-
-<Events>
-<Event_module_name v="Events"/>
-
-<event name="OnInterrupt" v="generate code">
-<Event_procedure_name v="SW1Int_OnInterrupt"/>
-<Priority v="same as interrupt"/>
-
-</event>
-</Events>
-</Bean>
 
 <Bean name="SW2" type="BitIO">
 <Enabled v="Y"/>
@@ -993,7 +814,7 @@
 </Bean>
 
 <Bean name="LED4" type="BitIO">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="LED4"/>
@@ -1022,6 +843,360 @@
 <ClrVal v="generate code"/>
 <SetVal v="generate code"/>
 <NegVal v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="RTI1" type="Init_RTI">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="RTI1"/>
+<Device v="RTI"/>
+
+<group name="Settings">
+
+<group name="Clock settings">
+<Clock_select v="External clock"/>
+<Prescaler v="8192"/>
+<Period v="1.024 ms"/>
+
+</group>
+
+</group>
+
+<group name="Interrupts">
+<Interrupt v="Vrti"/>
+<Real_Time_Interrupt v="Enabled"/>
+<ISR_name v="testRTI"/>
+
+</group>
+
+<group name="Initialization">
+<Call_Init_method v="no"/>
+<Enable_module v="yes"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Init v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SWI" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="SWI"/>
+<Interrupt_vector v="Vswi"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="vPortYield"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="MC13191IRQ" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="MC13191IRQ"/>
+<Interrupt_vector v="Virq"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="IRQIsr"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="WatchDog" type="WatchDog">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="WatchDog"/>
+<WatchDog_device v="COPFree"/>
+<WatchDog_action v="Reset CPU"/>
+
+<boolgroup name="Output pin" v="Disabled" />
+<Prescaler v="COP"/>
+<Period v="13.110 ms"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="yes"/>
+
+</group>
+
+<boolgroup name="CPU clock/speed selection" v="Ignored" />
+</Properties>
+
+<Methods>
+<Enable v="don&apos;t generate code"/>
+<Disable v="don&apos;t generate code"/>
+<Clear v="generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnWatchDog" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="TickTimer" type="TimerInt">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="TickTimer"/>
+<Timer v="TPM20"/>
+<Counter v="TPM2"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vtpm2ch0"/>
+<Interrupt_priority v="medium priority"/>
+
+</boolgroup>
+<Prescaler v="Auto selected prescaler"/>
+<Interrupt_period init="1000 Hz" runtime_settings="interval" low="100 Hz" high="555.429 kHz" />
+<Same_period_in_modes v="no"/>
+<Bean_uses_entire_timer v="no"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="no"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="generate code"/>
+<Disable v="don&apos;t generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetPeriodMode v="don&apos;t generate code"/>
+<SetPeriodTicks16 v="don&apos;t generate code"/>
+<SetPeriodTicks32 v="don&apos;t generate code"/>
+<SetPeriodUS v="don&apos;t generate code"/>
+<SetPeriodMS v="don&apos;t generate code"/>
+<SetPeriodSec v="don&apos;t generate code"/>
+<SetPeriodReal v="don&apos;t generate code"/>
+<SetFreqHz v="don&apos;t generate code"/>
+<SetFreqkHz v="don&apos;t generate code"/>
+<SetFreqMHz v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnInterrupt" v="generate code">
+<Event_procedure_name v="TimerInt"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+<Bean name="AudioLoader" type="TimerInt">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="AudioLoader"/>
+<Timer v="TPM21"/>
+<Counter v="TPM2"/>
+
+<boolgroup name="Interrupt service/event" v="Enabled">
+<Interrupt v="Vtpm2ch1"/>
+<Interrupt_priority v="medium priority"/>
+
+</boolgroup>
+<Prescaler v="Auto selected prescaler"/>
+<Interrupt_period v="7.4 kHz"/>
+<Same_period_in_modes v="yes"/>
+<Bean_uses_entire_timer v="yes"/>
+
+<group name="Initialization">
+<Enabled_in_init__code v="no"/>
+<Events_enabled_in_init_ v="yes"/>
+
+</group>
+
+<group name="CPU clock/speed selection">
+<High_speed_mode v="This bean enabled"/>
+<Low_speed_mode v="This bean disabled"/>
+<Slow_speed_mode v="This bean disabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Enable v="generate code"/>
+<Disable v="generate code"/>
+<EnableEvent v="don&apos;t generate code"/>
+<DisableEvent v="don&apos;t generate code"/>
+<SetPeriodMode v="don&apos;t generate code"/>
+<SetPeriodTicks16 v="don&apos;t generate code"/>
+<SetPeriodTicks32 v="don&apos;t generate code"/>
+<SetPeriodUS v="don&apos;t generate code"/>
+<SetPeriodMS v="don&apos;t generate code"/>
+<SetPeriodSec v="don&apos;t generate code"/>
+<SetPeriodReal v="don&apos;t generate code"/>
+<SetFreqHz v="don&apos;t generate code"/>
+<SetFreqkHz v="don&apos;t generate code"/>
+<SetFreqMHz v="don&apos;t generate code"/>
+</Methods>
+
+<Events>
+<Event_module_name v="Events"/>
+
+<event name="BeforeNewSpeed" v="don&apos;t generate code" />
+
+<event name="AfterNewSpeed" v="don&apos;t generate code" />
+
+<event name="OnInterrupt" v="generate code">
+<Event_procedure_name v="AudioLoader_OnInterrupt"/>
+<Priority v="same as interrupt"/>
+
+</event>
+</Events>
+</Bean>
+
+<Bean name="PWM" type="Init_TPM">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="PWM"/>
+<Device v="TPM1"/>
+
+<group name="Settings">
+
+<group name="Clock settings">
+<Clock_source_select v="Bus rate clock"/>
+<Prescaler v="1"/>
+<Modulo_counter v="255"/>
+<Period v="16 us"/>
+
+</group>
+
+<list name="Channels" v="1">
+
+<group name="Channel0">
+<Capture_compare_device v="TPM12"/>
+
+<group name="Settings">
+
+<enumgroup name="Mode" v="PWM">
+<PWM_output_action v="Clear output on compare"/>
+<Channel_compare_value v="0"/>
+<Channel_duty v="0 us"/>
+
+</enumgroup>
+
+</group>
+
+<boolgroup name="Pin" v="Used">
+<Channel_pin v="PTD2_TPM1CH2"/>
+<Channel_pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+
+</boolgroup>
+
+<group name="Interrupt">
+
+<group name="Channel Interrupt">
+<Interrupt v="Vtpm1ch2"/>
+<Channel_Interrupt v="Disabled"/>
+<ISR_name v=""/>
+
+</group>
+
+</group>
+
+</group>
+
+</list>
+
+</group>
+
+<group name="Pins">
+
+<boolgroup name="External clock source" v="Disabled" />
+
+</group>
+
+<group name="Interrupts">
+
+<group name="Overflow Interrupt">
+<Interrupt v="Vtpm1ovf"/>
+<Overflow_Interrupt v="Disabled"/>
+<ISR_name v="audioOutISR"/>
+
+</group>
+
+</group>
+
+<group name="Initialization">
+<Call_Init_method v="no"/>
+<Enable_module v="yes"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Init v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="AudioOut" type="InterruptVector">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="AudioOut"/>
+<Interrupt_vector v="Vtpm2ovf"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="AudioLoader_OnInterrupt"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
 </Methods>
 
 <Events>
@@ -1179,7 +1354,7 @@
 </Bean>
 
 <Bean name="USB" type="AsynchroSerial">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="USB"/>
@@ -1230,7 +1405,7 @@
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="115200 baud"/>
+<Baud_rate v="57600 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>
@@ -1309,196 +1484,6 @@
 <event name="OnIdle" v="don&apos;t generate code" />
 
 <event name="OnTxComplete" v="don&apos;t generate code" />
-</Events>
-</Bean>
-
-<Bean name="WatchDog" type="WatchDog">
-<Enabled v="N"/>
-
-<Properties>
-<Bean_name v="WatchDog"/>
-<WatchDog_device v="COPFree"/>
-<WatchDog_action v="Reset CPU"/>
-
-<boolgroup name="Output pin" v="Disabled" />
-<Prescaler v="COP"/>
-<Period v="13.110 ms"/>
-
-<group name="Initialization">
-<Enabled_in_init__code v="yes"/>
-
-</group>
-
-<boolgroup name="CPU clock/speed selection" v="Ignored" />
-</Properties>
-
-<Methods>
-<Enable v="don&apos;t generate code"/>
-<Disable v="don&apos;t generate code"/>
-<Clear v="generate code"/>
-</Methods>
-
-<Events>
-<Event_module_name v="Events"/>
-
-<event name="BeforeNewSpeed" v="don&apos;t generate code" />
-
-<event name="AfterNewSpeed" v="don&apos;t generate code" />
-
-<event name="OnWatchDog" v="don&apos;t generate code" />
-</Events>
-</Bean>
-
-<Bean name="AudioLoader" type="TimerInt">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="AudioLoader"/>
-<Timer v="TPM21"/>
-<Counter v="TPM2"/>
-
-<boolgroup name="Interrupt service/event" v="Enabled">
-<Interrupt v="Vtpm2ch1"/>
-<Interrupt_priority v="medium priority"/>
-
-</boolgroup>
-<Prescaler v="Auto selected prescaler"/>
-<Interrupt_period v="7.4 kHz"/>
-<Same_period_in_modes v="yes"/>
-<Bean_uses_entire_timer v="no"/>
-
-<group name="Initialization">
-<Enabled_in_init__code v="no"/>
-<Events_enabled_in_init_ v="yes"/>
-
-</group>
-
-<group name="CPU clock/speed selection">
-<High_speed_mode v="This bean enabled"/>
-<Low_speed_mode v="This bean disabled"/>
-<Slow_speed_mode v="This bean disabled"/>
-
-</group>
-</Properties>
-
-<Methods>
-<Enable v="generate code"/>
-<Disable v="generate code"/>
-<EnableEvent v="don&apos;t generate code"/>
-<DisableEvent v="don&apos;t generate code"/>
-<SetPeriodMode v="don&apos;t generate code"/>
-<SetPeriodTicks16 v="don&apos;t generate code"/>
-<SetPeriodTicks32 v="don&apos;t generate code"/>
-<SetPeriodUS v="don&apos;t generate code"/>
-<SetPeriodMS v="don&apos;t generate code"/>
-<SetPeriodSec v="don&apos;t generate code"/>
-<SetPeriodReal v="don&apos;t generate code"/>
-<SetFreqHz v="don&apos;t generate code"/>
-<SetFreqkHz v="don&apos;t generate code"/>
-<SetFreqMHz v="don&apos;t generate code"/>
-</Methods>
-
-<Events>
-<Event_module_name v="Events"/>
-
-<event name="BeforeNewSpeed" v="don&apos;t generate code" />
-
-<event name="AfterNewSpeed" v="don&apos;t generate code" />
-
-<event name="OnInterrupt" v="generate code">
-<Event_procedure_name v="AudioLoader_OnInterrupt"/>
-<Priority v="same as interrupt"/>
-
-</event>
-</Events>
-</Bean>
-
-<Bean name="PWM" type="Init_TPM">
-<Enabled v="Y"/>
-
-<Properties>
-<Bean_name v="PWM"/>
-<Device v="TPM1"/>
-
-<group name="Settings">
-
-<group name="Clock settings">
-<Clock_source_select v="Bus rate clock"/>
-<Prescaler v="1"/>
-<Modulo_counter v="255"/>
-<Period v="12.802926383104 us"/>
-
-</group>
-
-<list name="Channels" v="1">
-
-<group name="Channel0">
-<Capture_compare_device v="TPM12"/>
-
-<group name="Settings">
-
-<enumgroup name="Mode" v="PWM">
-<PWM_output_action v="Clear output on compare"/>
-<Channel_compare_value v="0"/>
-<Channel_duty v="0 us"/>
-
-</enumgroup>
-
-</group>
-
-<boolgroup name="Pin" v="Used">
-<Channel_pin v="PTD2_TPM1CH2"/>
-<Channel_pin_signal v=""/>
-<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
-
-</boolgroup>
-
-<group name="Interrupt">
-
-<group name="Channel Interrupt">
-<Interrupt v="Vtpm1ch2"/>
-<Channel_Interrupt v="Disabled"/>
-<ISR_name v=""/>
-
-</group>
-
-</group>
-
-</group>
-
-</list>
-
-</group>
-
-<group name="Pins">
-
-<boolgroup name="External clock source" v="Disabled" />
-
-</group>
-
-<group name="Interrupts">
-
-<group name="Overflow Interrupt">
-<Interrupt v="Vtpm1ovf"/>
-<Overflow_Interrupt v="Disabled"/>
-<ISR_name v="audioOutISR"/>
-
-</group>
-
-</group>
-
-<group name="Initialization">
-<Call_Init_method v="no"/>
-<Enable_module v="yes"/>
-
-</group>
-</Properties>
-
-<Methods>
-<Init v="generate code"/>
-</Methods>
-
-<Events>
 </Events>
 </Bean>
 

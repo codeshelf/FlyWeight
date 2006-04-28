@@ -14,11 +14,12 @@
 #include "simple_mac.h"
 #include "ledBlinkTask.h"
 //#include "WatchDog.h"
-#include "AudioLoader.h"
+//#include "AudioLoader.h"
 //#include "USB.h"
 
 // SMAC includes
 #include "pub_def.h"
+//#include "PWM1.h"
 #include "PWM.h"
 
 // --------------------------------------------------------------------------
@@ -52,7 +53,14 @@ void vRadioReceiveTask(void *pvParameters) {
 	portTickType	lastTick;
 
 	// Start the audio processing.
-	AudioLoader_Enable();
+	//AudioLoader_Enable();
+	
+	// Setup the TPM2 timer.
+	TPM2SC = 0b01001000;
+	// 16MHz bus clock with a 7.4kHz interrupt freq.
+	TPM2MOD = MASTER_TPM2_RATE;	
+	
+	//PWM1_Enable();
 	PWM_Init();
 
 	for (;;) {

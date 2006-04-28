@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/7/2006, 1:29 AM
+**     Date/Time : 4/28/2006, 12:52 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -31,18 +31,18 @@
 
 #pragma MESSAGE DISABLE C4002 /* WARNING C4002: Result not used is ignored */
 
-#include "SWI.h"
-#include "MC13191IRQ.h"
-#include "TickTimer.h"
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
-#include "LED4.h"
-#include "AudioLoader.h"
+#include "RTI1.h"
+#include "SWI.h"
+#include "MC13191IRQ.h"
 #include "PWM.h"
+#include "AudioOut.h"
+#include "USB.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
@@ -130,23 +130,37 @@ void Cpu_EnableInt(void)
 */
 extern void _Startup(void);            /* Forward declaration of external startup function declared in file Start12.c */
 
+/* User declarations */
+#include "pub_def.h"
+#include "mcu_hw_config.h"
+#include "MC13192_hw_config.h"
+#include "simple_mac.h"
+
+
 #pragma NO_FRAME
 #pragma NO_EXIT
 void _EntryPoint(void)
 {
+
+  /*** User code before PE initialization ***/
+        MCUInit();
+        MC13192Init();
+        MLMESetMC13192ClockRate(1);
+  /*** End of user code before PE initialization ***/
+
   /* ### MC9S08GT60_48 "Cpu" init code ... */
   /*  PE initialization code after reset */
   /*  System clock initialization */
-  /* SOPT: COPE=0,COPT=1,STOPE=0,??=1,??=0,??=0,BKGDPE=1,??=1 */
-  setReg8(SOPT, 0x53);                  
+  /* SOPT: COPE=0,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
+  setReg8(SOPT, 0x73);                  
   /* SPMSC1: LVDF=0,LVDACK=0,LVDIE=0,LVDRE=1,LVDSE=1,LVDE=1,??=0,??=0 */
   setReg8(SPMSC1, 0x1C);                
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
   setReg8(SPMSC2, 0x00);                
-  /* ICGC1: ??=0,RANGE=1,REFS=1,CLKS1=0,CLKS0=1,OSCSTEN=1,??=0,??=0 */
-  setReg8(ICGC1, 0x6C);                 
-  /* ICGC2: LOLRE=0,MFD2=1,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
-  setReg8(ICGC2, 0x70);                 
+  /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,??=0,??=0 */
+  setReg8(ICGC1, 0x5C);                 
+  /* ICGC2: LOLRE=0,MFD2=0,MFD1=0,MFD0=0,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
+  setReg8(ICGC2, 0x00);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
   }
@@ -174,14 +188,20 @@ void PE_low_level_init(void)
   /* Common initialization of the CPU registers */
   /* PTAPE: PTAPE5=1,PTAPE4=1,PTAPE3=1 */
   setReg8Bits(PTAPE, 0x38);             
-  /* PTADD: PTADD5=0,PTADD4=0,PTADD3=0 */
-  clrReg8Bits(PTADD, 0x38);             
-  /* PTDD: PTDD4=1,PTDD3=1,PTDD1=1,PTDD0=1 */
-  setReg8Bits(PTDD, 0x1B);              
-  /* PTDPE: PTDPE4=0,PTDPE3=0,PTDPE2=0,PTDPE1=0,PTDPE0=0 */
-  clrReg8Bits(PTDPE, 0x1F);             
-  /* PTDDD: PTDDD4=1,PTDDD3=1,PTDDD1=1,PTDDD0=1 */
-  setReg8Bits(PTDDD, 0x1B);             
+  /* PTAD: PTAD6=1 */
+  setReg8Bits(PTAD, 0x40);              
+  /* PTADD: PTADD6=1,PTADD5=0,PTADD4=0,PTADD3=0 */
+  clrSetReg8Bits(PTADD, 0x38, 0x40);    
+  /* PTDD: PTDD3=1,PTDD1=1,PTDD0=1 */
+  setReg8Bits(PTDD, 0x0B);              
+  /* PTDPE: PTDPE3=0,PTDPE2=0,PTDPE1=0,PTDPE0=0 */
+  clrReg8Bits(PTDPE, 0x0F);             
+  /* PTDDD: PTDDD3=1,PTDDD1=1,PTDDD0=1 */
+  setReg8Bits(PTDDD, 0x0B);             
+  /* PTCDD: PTCDD1=0,PTCDD0=1 */
+  clrSetReg8Bits(PTCDD, 0x02, 0x01);    
+  /* PTCD: PTCD0=1 */
+  setReg8Bits(PTCD, 0x01);              
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -195,8 +215,6 @@ void PE_low_level_init(void)
   /* PTGSE: PTGSE3=0,PTGSE2=0,PTGSE1=0,PTGSE0=0 */
   clrReg8Bits(PTGSE, 0x0F);             
   /* ### MC9S08GT60_48 "Cpu" init code ... */
-  /* ### TimerInt "TickTimer" init code ... */
-  TickTimer_Init();
   /* ### BitIO "SW2" init code ... */
   /* ### BitIO "SW3" init code ... */
   /* ### BitIO "SW4" init code ... */
@@ -206,17 +224,18 @@ void PE_low_level_init(void)
   Shadow_PTD |= 0x02;                  /* Initialize pin shadow variable bit */
   /* ### BitIO "LED3" init code ... */
   Shadow_PTD |= 0x08;                  /* Initialize pin shadow variable bit */
-  /* ### BitIO "LED4" init code ... */
-  /* ### TimerInt "AudioLoader" init code ... */
-  AudioLoader_Init();
+  /* ### Init_RTI "RTI1" init code ... */
+  /* ### Call "RTI1_Init();" init method in a user code, i.e. in the main code */
+  /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
+                 set the property Call Init method to 'yes'
+  */
   /* ### Init_TPM "PWM" init code ... */
   /* ### Call "PWM_Init();" init method in a user code, i.e. in the main code */
   /* ### Note:   To enable automatic calling of the "PWM" init code here must be
                  set the property Call Init in CPU init.code to 'yes'
   */
- /* Common peripheral initialization - ENABLE */
-  /* TPM2SC: CLKSB=0,CLKSA=1 */
-  clrSetReg8Bits(TPM2SC, 0x10, 0x08);   
+  /* ### Asynchro serial "USB" init code ... */
+  USB_Init();
   __EI();                              /* Enable interrupts */
 }
 

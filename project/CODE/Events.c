@@ -105,7 +105,7 @@ void TimerInt(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-#ifdef __AudioLoader
+//#ifdef __AudioLoader
 
 #include "task.h"
 
@@ -115,7 +115,8 @@ BufferCntType		gCurPWMRadioBufferNum = 0;
 INT16				gMasterSampleRateAdjust = 0;
 //portTickType		lastTickCount;
 
-void AudioLoader_OnInterrupt(void)
+interrupt void AudioLoader_OnInterrupt(void)
+//void AudioLoader_OnInterrupt(void)
 {
 //	if (xTaskGetTickCount() - lastTickCount > 5) {
 //		USB_SendChar('P');
@@ -142,7 +143,7 @@ void AudioLoader_OnInterrupt(void)
 		TPM1C2VL = gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
 		TPM1C2VH = 0;
 
-//		USB_SendChar(gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
+		//USB_SendChar(gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
 		//AudioLoader_Enable();
 		//TPM2C1SC_CH1F = 0;
 		//TPM2C1SC_CH1IE = 1;
@@ -174,20 +175,72 @@ void AudioLoader_OnInterrupt(void)
 			ExitCritical();
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
-			if ((gUsedBuffers > RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -500)) {
+			if ((gUsedBuffers > RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
 				gMasterSampleRateAdjust--;
-			} else if ((gUsedBuffers < RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 500)) {
+			} else if ((gUsedBuffers < RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
 				gMasterSampleRateAdjust++;
 			};
 		}
 		
 		// We can't go too low, or we'll end up missing the next interrupt and making the sample take longer.
-		TPM2C1V+=gMasterSampleRateAdjust;
-		//if (TPM2C1V < TPM2CNT) {
-		//	TPM2C1V = TPM2CNT + 17;
-		//}
-
+		TPM2MOD = MASTER_TPM2_RATE + gMasterSampleRateAdjust;
+		
+		//if (TPM2CNT + 10 > TPM2C1V)
+			//TPM2C1V = TPM2CNT + 10;
 	}
+
+	// Reset the overflow flag.
+	if (TPM2SC_TOF)
+		TPM2SC_TOF = 0;
 }
-#endif
+//#endif
+/*
+** ===================================================================
+**     Event       :  PWM1_OnEnd (module Events)
+**
+**     From bean   :  PWM1 [PWM]
+**     Description :
+**         This event is called when the specified number of cycles
+**         has been generated. (Only when the bean is enabled -
+**         Enable and the events are enabled - EnableEvent).
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+#pragma NO_ENTRY 
+#pragma NO_EXIT 
+#pragma NO_FRAME 
+#pragma NO_RETURN
+void dispatchRTI();
+void dispatchRTI() {
+	vPortTickInterrupt();
+	
+	// Ack the RTI
+	IRQSC_IRQACK = 1;
+}
+
+ISR(testRTI)
+{
+	dispatchRTI();
+}
+
+/*
+** ===================================================================
+**     Event       :  USB_OnError (module Events)
+**
+**     From bean   :  USB [AsynchroSerial]
+**     Description :
+**         This event is called when a channel error (not the error
+**         returned by a given method) occurs. The errors can be
+**         read using <GetError> method.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void  USB_OnError(void)
+{
+  /* Write your code here ... */
+}
+
 /* END Events */

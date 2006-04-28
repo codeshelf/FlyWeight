@@ -27,6 +27,7 @@ extern USBStateType gUSBState;
 // Radio input buffer
 RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
 BufferCntType		gCurRadioBufferNum = 0;
+portTickType		bufferTimeMS = (float) (1.0 / (7420.0 / ASYNC_BUFFER_SIZE)) * 1000;
 
 // --------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ void vRadioTransmitTask( void *pvParameters ) {
 	tTxPacket				gsTxPacket;
 	BufferCntType			bufferNum;
 	portTickType			lastTickCount;
-	const portTickType		bufferTimeMS = 20;
+	
 
 	// Turn the SCi back on by taking RX out of standby.
 	RTS_PORTENABLE;

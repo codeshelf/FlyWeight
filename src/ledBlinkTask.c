@@ -62,7 +62,7 @@ void LEDOn(int inLEDNum) {
 			break;
 
 		case 4:
-			LED4_ClrVal();
+//			LED4_ClrVal();
 			break;
 
 	}
@@ -86,7 +86,7 @@ void LEDOff(int inLEDNum) {
 			break;
 
 		case 4:
-			LED4_SetVal();
+//			LED4_SetVal();
 			break;
 
 	}

@@ -30,18 +30,18 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "TickTimer.h"
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
-#include "LED4.h"
-#include "AudioLoader.h"
+#include "USB.h"
 #include "PWM.h"
+#include "AudioOut.h"
 
 void SW1Int_OnInterrupt(void);
 /*
@@ -105,16 +105,16 @@ void AudioOut_OnEnd(void);
 ** ===================================================================
 */
 
-void AudioLoader_OnInterrupt(void);
+void USB_OnError(void);
 /*
 ** ===================================================================
-**     Event       :  AudioLoader_OnInterrupt (module Events)
+**     Event       :  USB_OnError (module Events)
 **
-**     From bean   :  AudioLoader [TimerInt]
+**     From bean   :  USB [AsynchroSerial]
 **     Description :
-**         When a timer interrupt occurs this event is called (only
-**         when the bean is enabled - "Enable" and the events are
-**         enabled - "EnableEvent").
+**         This event is called when a channel error (not the error
+**         returned by a given method) occurs. The errors can be
+**         read using <GetError> method.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

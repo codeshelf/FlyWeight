@@ -6,7 +6,7 @@
 **     Beantype  : Init_RTI
 **     Version   : Bean 01.030, Driver 01.06, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/7/2006, 12:54 AM
+**     Date/Time : 4/26/2006, 1:36 AM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -16,15 +16,15 @@
 **          Timer                                          : RTI
 **          Settings                                       : 
 **          Clock settings                                 : 
-**          Clock Select                                   : Internal oscilator
-**          Prescaler                                      : 256
-**          Period                                         : 8 ms
+**          Clock Select                                   : External clock
+**          Prescaler                                      : 8192
+**          Period                                         : 1.024 ms
 **          Interrupts                                     : 
 **          Interrupt                                      : Vrti
 **          Real-Time Interrupt                            : Enabled
-**          ISR Name                                       : vPortTickInterrupt
+**          ISR Name                                       : testRTI
 **          Initialization                                 : 
-**          Call Init Method                               : yes
+**          Call Init Method                               : no
 **     Contents  :
 **         Init - void RTI1_Init(void);
 **
@@ -55,7 +55,7 @@
 **
 ** ###################################################################
 
-      ISR(vPortTickInterrupt)
+      ISR(testRTI)
       {
       // NOTE: The routine should include the following actions to obtain
       //       correct functionality of the hardware.
@@ -82,8 +82,8 @@
 */
 void RTI1_Init(void)
 {
-  /* SRTISC: RTIF=0,RTIACK=0,RTICLKS=0,RTIE=1,??=0,RTIS2=0,RTIS1=0,RTIS0=1 */
-  setReg8(SRTISC, 0x11);                
+  /* SRTISC: RTIF=0,RTIACK=0,RTICLKS=1,RTIE=1,??=0,RTIS2=1,RTIS1=0,RTIS0=1 */
+  setReg8(SRTISC, 0x35);                
 }
 
 /* END RTI1. */

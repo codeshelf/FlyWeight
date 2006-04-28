@@ -29,9 +29,9 @@ xQueueHandle xLEDBlinkQueue;
 // --------------------------------------------------------------------------
 
 void vMain( void ) {
-	MCUInit();
-	MC13192Init();
-	MLMESetMC13192ClockRate(0);
+	//MCUInit();
+	//MC13192Init();
+	//MLMESetMC13192ClockRate(0);
 #ifdef XBEE
 	xbeeInit();
 #endif

@@ -31,9 +31,9 @@ xQueueHandle xLEDBlinkQueue;
 void vMain( void ) {
 
 //	WatchDog_Clear();
-	MCUInit();
-	MC13192Init();
-	MLMESetMC13192ClockRate(0);
+//	MCUInit();
+//	MC13192Init();
+//	MLMESetMC13192ClockRate(0);
 #ifdef XBEE
 	xbeeInit();
 #endif
@@ -57,7 +57,7 @@ void vMain( void ) {
 	/* All the tasks have been created - start the scheduler. */
 //	WatchDog_Clear();
 	vTaskStartScheduler();
-
+	
 	/* Should not reach here! */
 	for ( ;; );
 }
@@ -65,7 +65,7 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 #define SAMPLE_CORRECTION	0x151
-#define SAMPLE_RATE			0x151 * 2
+#define SAMPLE_RATE			0x3f3
 
 void vApplicationIdleHook( void ) {
 	// Clear the watchdog timer.
@@ -74,12 +74,18 @@ void vApplicationIdleHook( void ) {
 	// The TPM2CH1 counter can "miss" it's shot due to the way PE share the counter.
 	// This makes the audio sampling sound like crap.  Attempt to "fix" this by setting
 	// the counter to 1/2 the cycle time of the audio sampling.
+
+/*	bool  fireNow = FALSE;
+	
 	if (TPM2C1V < TPM2CNT) {
-		if (TPM2C1V > SAMPLE_RATE)
-			// They're straddling 0.
-			TPM2C1V = SAMPLE_CORRECTION;
-		else
-			// Otherwise they're on the "same side" of zero.	
-			TPM2C1V = TPM2CNT + 20; //+ SAMPLE_CORRECTION;
-	}	
+		if ((TPM2CNT + SAMPLE_RATE) < TPM2C1V) {
+			fireNow = TRUE;	
+		}
+	} else if ((TPM2CNT + SAMPLE_RATE) < TPM2C1V) {
+		fireNow = TRUE;
+	}
+	
+	if (fireNow == TRUE)
+		TPM2C1V = TPM2CNT + 30;
+*/
 }
