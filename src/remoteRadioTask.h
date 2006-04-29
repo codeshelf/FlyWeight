@@ -16,8 +16,8 @@
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void vRadioTransmitTask( void *pvParameters );
-void vRadioReceiveTask( void *pvParameters );
+void radioTransmitTask( void *pvParameters );
+void radioReceiveTask( void *pvParameters );
 
 #endif REMOTERADIOTASK_H
 

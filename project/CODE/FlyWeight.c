@@ -29,6 +29,8 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
+#include "PWM.h"
+#include "AudioOut.h"
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
@@ -36,8 +38,6 @@
 #include "LED2.h"
 #include "LED3.h"
 #include "USB.h"
-#include "PWM.h"
-#include "AudioOut.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

@@ -13,6 +13,7 @@
 // Project includes
 #include "PE_Types.h"
 #include "smacGlue.h"
+#include "commands.h"
 
 // --------------------------------------------------------------------------
 // Definitions.
@@ -21,11 +22,17 @@
 #define LED_BLINK_PRIORITY		( tskIDLE_PRIORITY + 2 )
 #define SERIAL_RECV_PRIORITY	( tskIDLE_PRIORITY + 2 )
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
-#define RADIO_QUEUE_SIZE		6
-#define RADIO_QUEUE_BALANCE		3
 
-#define ASYNC_BUFFER_COUNT		RADIO_QUEUE_SIZE
-#define ASYNC_BUFFER_SIZE		121
+#define MAX_PACKET_SIZE			121
+
+#define RX_QUEUE_SIZE			5
+#define RX_QUEUE_BALANCE		3
+#define RX_BUFFER_COUNT			RX_QUEUE_SIZE
+#define RX_BUFFER_SIZE			MAX_PACKET_SIZE
+
+#define TX_QUEUE_SIZE			1
+#define TX_BUFFER_COUNT			TX_QUEUE_SIZE
+#define TX_BUFFER_SIZE			MAX_PACKET_SIZE
 
 #define MASTER_TPM2_RATE		0x873
 
@@ -51,23 +58,33 @@ typedef byte	BufferCntType;
 typedef int		BufferOffsetType;
 typedef byte	BufferStorageType;
 typedef enum {
-	eBufferStateEmpty,
-	eBufferStateFull
+	eBufferStateFree,
+	eBufferStateInUse
 } BufferStatusType;
 
 typedef struct {
 	BufferStatusType		bufferStatus;
-	BufferStorageType		bufferStorage[ASYNC_BUFFER_SIZE + 4];
+	BufferStorageType		bufferStorage[MAX_PACKET_SIZE + 4];
 } RadioBufferStruct;
-//typedef RadioBufferStruct *RadioBufferPtrType;
 
 /* The queue used to send data from the radio to the radio receive task. */
-extern xQueueHandle xRadioTransmitQueue;
-extern xQueueHandle xRadioReceiveQueue;
+extern xQueueHandle 		gRadioTransmitQueue;
+extern xQueueHandle 		gRadioReceiveQueue;
 
-// Radio input buffer
-extern RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
-extern BufferCntType		gCurRadioBufferNum;
-extern BufferCntType		gUsedBuffers;
+// Radio RX buffer
+extern RadioBufferStruct	gRXBuffer[RX_BUFFER_COUNT];
+extern BufferCntType		gRXCurBufferNum;
+extern BufferCntType		gRXUsedBuffers;
+
+// Radio TX buffer
+extern RadioBufferStruct	gTXBuffer[TX_BUFFER_COUNT];
+extern BufferCntType		gTXCurBufferNum;
+extern BufferCntType		gTXUsedBuffers;
+
+// --------------------------------------------------------------------------
+// Prototypes
+
+bool transmitCommand(CommandPtrType inCommandP);
+CommandPtrType receiveCommand(void );
 
 #endif RADIOCOMMON_H

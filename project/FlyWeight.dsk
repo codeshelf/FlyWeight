@@ -11,7 +11,7 @@ StartupPrj=C:\eclipsework-3.1\FlyWeight\project\FlyWeight.pe
 [AppPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[492|257|318|530]
+Rect=[492|281|318|530]
 
 [CpuPanel]
 Status=hiden
@@ -21,7 +21,7 @@ CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
-Status=Visible
+Status=hiden
 WindowState=NORMAL
 Rect=[805|796|457|149]
 
@@ -90,7 +90,7 @@ FindScope=FROM_CURSOR
 FindHistory=0
 ReplaceHistory=0
 OpenFilesCount=0
-SelFile=
+SelFile=C:\eclipsework-3.1\FlyWeight\src\gatewayRadioTask.c
 SelLine=-1
 FileHistory=8
 HistoryItem1=E:\PE\TestPE2\CODE\Vectors.c.C

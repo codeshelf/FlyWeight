@@ -16,10 +16,10 @@
 //#include "WatchDog.h"
 //#include "AudioLoader.h"
 //#include "USB.h"
+#include "commands.h"
 
 // SMAC includes
 #include "pub_def.h"
-//#include "PWM1.h"
 #include "PWM.h"
 
 // --------------------------------------------------------------------------
@@ -37,18 +37,24 @@ extern UINT8 gLED2;
 extern UINT8 gLED3;
 extern UINT8 gLED4;
 extern UINT8 gu8RTxMode;
-//extern xQueueHandle xLEDBlinkQueue;
+
+extern xQueueHandle 	gLEDBlinkQueue;
+extern RemoteStateType	gRemoteState;
 
 
 // Radio input buffer
 // There's a 2-byte ID on the front of every packet.
-RadioBufferStruct	gRadioBuffer[ASYNC_BUFFER_COUNT];
-BufferCntType		gCurRadioBufferNum = 0;
-BufferCntType		gUsedBuffers;
+RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
+BufferCntType		gRXCurBufferNum = 0;
+BufferCntType		gRXUsedBuffers = 0;
+
+RadioBufferStruct	gTXRadioBuffer[RX_BUFFER_COUNT];
+BufferCntType		gTXCurRadioBufferNum = 0;
+BufferCntType		gTXUsedBuffers = 0;
 
 // --------------------------------------------------------------------------
 
-void vRadioReceiveTask(void *pvParameters) {
+void radioReceiveTask(void *pvParameters) {
 	ERadioState		radioState;
 	portTickType	lastTick;
 
@@ -69,17 +75,19 @@ void vRadioReceiveTask(void *pvParameters) {
 		
 		// Wait until the radio is ready.
 		while (gu8RTxMode != IDLE_MODE)
-			;//vTaskDelay(2);
+			vTaskDelay(2);
 		
 		// Setup for the next receive cycle.
 		lastTick = xTaskGetTickCount();
-		while (gRadioBuffer[gCurRadioBufferNum].bufferStatus == eBufferStateFull)
-			;//vTaskDelay(2);
-		//USB_SendChar(xTaskGetTickCount() - lastTick);
+		while (gRXBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
+			vTaskDelay(2);
+
+		// We have to wait here until we're in a mode that requires receiving.
+		while ((gRemoteState != eRemoteStateWakeSent) && (gRemoteState != eRemoteStateRun))
+			vTaskDelay(2);
 		
-		//USB_SendChar(gCurRadioBufferNum);
-		gsRxPacket.pu8Data = (UINT8 *) &(gRadioBuffer[gCurRadioBufferNum].bufferStorage);
-		gsRxPacket.u8MaxDataLength = ASYNC_BUFFER_SIZE;
+		gsRxPacket.pu8Data = (UINT8 *) &(gRXBuffer[gRXCurBufferNum].bufferStorage);
+		gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 		gsRxPacket.u8Status = 0;
 		MLMERXEnableRequest(&gsRxPacket, 0L);
 		
@@ -89,7 +97,6 @@ void vRadioReceiveTask(void *pvParameters) {
 		// Wait until we receive a queue message from the radio receive ISR.
 		if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
 			
-			//USB_SendChar(gCurRadioBufferNum);
 			if (radioState == eRadioReset) {
 				// We just received a reset from the radio.
 				
@@ -103,17 +110,17 @@ void vRadioReceiveTask(void *pvParameters) {
 				// The buffers are a shared, critical resource, so we have to protect them before we update.
 				EnterCritical();
 				
-					gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
+					gRXBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
 					
 					// Advance to the next buffer.
-					if (gCurRadioBufferNum >= (ASYNC_BUFFER_COUNT - 1))
-						gCurRadioBufferNum = 0;
+					if (gRXCurBufferNum >= (RX_BUFFER_COUNT - 1))
+						gRXCurBufferNum = 0;
 					else
-						gCurRadioBufferNum++;
+						gRXCurBufferNum++;
 					
 					// Account for the number of used buffers.
-					if (gUsedBuffers < ASYNC_BUFFER_COUNT)
-						gUsedBuffers++;
+					if (gRXUsedBuffers < RX_BUFFER_COUNT)
+						gRXUsedBuffers++;
 					
 				ExitCritical();
 				
@@ -121,7 +128,7 @@ void vRadioReceiveTask(void *pvParameters) {
 		}
 		
 		// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-		if (xQueueSend(xLEDBlinkQueue, &gLED2, pdFALSE)) {
+		if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
 		
 		}	
 	}
@@ -132,9 +139,10 @@ void vRadioReceiveTask(void *pvParameters) {
 
 // --------------------------------------------------------------------------
 
-void vRadioTransmitTask(void *pvParameters) {
-	byte		msgP = 0;
-	UINT8		gau8TxDataBuffer[16];
+void radioTransmitTask(void *pvParameters) {
+	byte			msgP = 0;
+	UINT8			gau8TxDataBuffer[16];
+	CommandPtrType	wakeCommand;
 	
 	gsTxPacket.u8DataLength = 0;
 	gsTxPacket.pu8Data = &gau8TxDataBuffer[0]; /* Set the pointer to point to the tx_buffer */
@@ -142,17 +150,19 @@ void vRadioTransmitTask(void *pvParameters) {
 	for ( ;; ) {
 
 		//WatchDog_Clear();
+		
+		// If we're in the init mode then we need to transmit a wake command.
+		if (gRemoteState == eRemoteStateInit) {
 
-		gsTxPacket.u8DataLength = 4;    /* Initialize the gsTxPacket global */
-		MCPSDataRequest(&gsTxPacket);
+			wakeCommand = createWakeCommand();
+			transmitCommand(wakeCommand);
+			
+			gsTxPacket.u8DataLength = 4;    /* Initialize the gsTxPacket global */
+			MCPSDataRequest(&gsTxPacket);
+			
+			gRemoteState == eRemoteStateWakeSent;
 
-		MLMERXEnableRequest(&gsRxPacket, 0L);
-
-		if (xQueueReceive(gRadioTransmitQueue, &msgP, portTICK_RATE_MS * 1000) == pdPASS) {
-			vTaskDelay(portTICK_RATE_MS * 100);
 		}
-
-		MLMERXDisableRequest();
 	}
 
 }

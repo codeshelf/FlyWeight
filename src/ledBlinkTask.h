@@ -24,12 +24,12 @@ extern UINT8		gLED1;
 extern UINT8		gLED2;
 extern UINT8		gLED3;
 extern UINT8		gLED4;
-extern xQueueHandle	xLEDBlinkQueue;
+extern xQueueHandle	gLEDBlinkQueue;
 
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
-void vLEDBlinkTask( void *pvParameters );
+void LEDBlinkTask( void *pvParameters );
 void LEDOn(int inLED);
 void LEDOff(int inLED);
 

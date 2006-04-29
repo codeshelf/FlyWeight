@@ -34,8 +34,8 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 		//USB_SendChar('R');
 		//USB_SendChar(gCurRadioBufferNum);
 
-		if (gUsedBuffers < ASYNC_BUFFER_COUNT)
-			gUsedBuffers++;
+		if (gRXUsedBuffers < ASYNC_BUFFER_COUNT)
+			gRXUsedBuffers++;
 		
 		//if (xQueueSend( gRadioTransmitQueue, NULL, pdFALSE )) {}
 		

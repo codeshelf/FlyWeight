@@ -127,30 +127,30 @@ interrupt void AudioLoader_OnInterrupt(void)
 //	lastTickCount = xTaskGetTickCount();
 	
 	// It's OK if the variable overflows - we just want to get every 8th pulse.
-	if (gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateFull) {
+	if (gRXBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse) {
 	
 		TPM1C2V = 0x80;
 		
 	} else {
 		
 		// Load in the next value from the correct PWM buffer.
-		//gPWMDutyCycle = gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+		//gPWMDutyCycle = gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 		
 		//AudioLoader_Disable();
 		//TPM2C1SC_CH1IE = 0;
 
 		// The data is in 2's complement, so switch it back to positive integer range.
-		TPM1C2VL = gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
+		TPM1C2VL = gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
 		TPM1C2VH = 0;
 
-		//USB_SendChar(gRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
+		//USB_SendChar(gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
 		//AudioLoader_Enable();
 		//TPM2C1SC_CH1F = 0;
 		//TPM2C1SC_CH1IE = 1;
 		
 		// Increment the buffer pointers.
 		gCurPWMOffset++;
-		if (gCurPWMOffset > ASYNC_BUFFER_SIZE - 1) {
+		if (gCurPWMOffset > RX_BUFFER_SIZE - 1) {
 			
 			gCurPWMOffset = 0;
 			
@@ -158,26 +158,26 @@ interrupt void AudioLoader_OnInterrupt(void)
 			EnterCritical();
 			
 				// Indicate that the buffer is clear.
-				gRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateEmpty;
+				gRXBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
 
 				// Advance to the next buffer.
-				if (gCurPWMRadioBufferNum >= ASYNC_BUFFER_COUNT - 1)
+				if (gCurPWMRadioBufferNum >= RX_BUFFER_COUNT - 1)
 					gCurPWMRadioBufferNum = 0;
 				else
 					gCurPWMRadioBufferNum++;
 				
 				// Account for the number of used buffers.
-				if (gUsedBuffers > 0)
-					gUsedBuffers--;
+				if (gRXUsedBuffers > 0)
+					gRXUsedBuffers--;
 				else
-					gUsedBuffers = 0;
+					gRXUsedBuffers = 0;
 				
 			ExitCritical();
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
-			if ((gUsedBuffers > RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
+			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
 				gMasterSampleRateAdjust--;
-			} else if ((gUsedBuffers < RADIO_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
+			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
 				gMasterSampleRateAdjust++;
 			};
 		}

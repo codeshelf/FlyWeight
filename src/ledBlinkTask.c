@@ -19,20 +19,21 @@ UINT8 gLED1 = 1;
 UINT8 gLED2 = 2;
 UINT8 gLED3 = 3;
 UINT8 gLED4 = 4;
-extern xQueueHandle xLEDBlinkQueue;
+
+xQueueHandle gLEDBlinkQueue;
 
 // --------------------------------------------------------------------------
 
-void vLEDBlinkTask( void *pvParameters ) {
+void LEDBlinkTask( void *pvParameters ) {
 	UINT8	ledNum;
 
-	if ( xLEDBlinkQueue ) {
+	if ( gLEDBlinkQueue ) {
 		for ( ;; ) {
 			//WatchDog_Clear();
 
 			// When another task wants to blink it sends us a message with the LED number to blink.
 			// Turn that LED on for 100ms and turn it off.
-			if ( xQueueReceive( xLEDBlinkQueue, &ledNum, portMAX_DELAY ) == pdPASS ) {
+			if ( xQueueReceive( gLEDBlinkQueue, &ledNum, portMAX_DELAY ) == pdPASS ) {
 				LEDOn(ledNum);
 				vTaskDelay(portTICK_RATE_MS * 100);
 				LEDOff(ledNum);
