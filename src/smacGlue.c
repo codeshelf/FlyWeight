@@ -26,36 +26,14 @@ void initSMACRadioQueueGlue(xQueueHandle inRadioReceiveQueue) {
 
 void MCPSDataIndication(tRxPacket *gsRxPacket) {
 
-
     if (gsRxPacket->u8Status == SUCCESS) {
 
-/*		gRadioBuffer[gCurRadioBufferNum].bufferStatus = eBufferStateFull;
-
-		//USB_SendChar('R');
-		//USB_SendChar(gCurRadioBufferNum);
-
-		if (gRXUsedBuffers < ASYNC_BUFFER_COUNT)
-			gRXUsedBuffers++;
-		
-		//if (xQueueSend( gRadioTransmitQueue, NULL, pdFALSE )) {}
-		
-		// We don't really do anything here since 
-		// the PWM audio processor is working at interrupt
-		// to get bytes out of the buffer.
-		
-		// Setup for the next receive cycle.
-		if (gCurRadioBufferNum >= (ASYNC_BUFFER_COUNT - 1))
-			gCurRadioBufferNum = 0;
-		else
-			gCurRadioBufferNum++;
-
-*/
 		// If we haven't initialized the radio receive queue then cause a debug trap.
 		if (gRadioReceiveQueue == NULL)
 			__asm ("BGND");
 	
 		// Send the message to the radio task's queue.
-		if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+		if (xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE)) {
 		}
 	}
 };

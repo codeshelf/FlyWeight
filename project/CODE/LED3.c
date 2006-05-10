@@ -6,10 +6,11 @@
 **     Beantype  : BitIO
 **     Version   : Bean 02.066, Driver 03.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/7/2006, 1:02 AM
+**     Date/Time : 4/30/2006, 11:58 AM
 **     Abstract  :
 **         This bean "BitIO" implements an one-bit input/output.
 **         It uses one bit/pin of a port.
+**         Note: This bean is set to work in Output direction only.
 **         Methods of this bean are mostly implemented as a macros
 **         (if supported by target language and compiler).
 **     Settings  :
@@ -25,8 +26,7 @@
 **         Bit number (in port)        : 3
 **         Bit mask of the port        : 0008
 **
-**         Initial direction           : Output (direction can be changed)
-**         Safe mode                   : yes
+**         Initial direction           : Output (direction cannot be changed)
 **         Initial output value        : 1
 **         Initial pull option         : off
 **
@@ -35,7 +35,6 @@
 **
 **         Optimization for            : speed
 **     Contents  :
-**         SetDir - void LED3_SetDir(bool Dir);
 **         ClrVal - void LED3_ClrVal(void);
 **         SetVal - void LED3_SetVal(void);
 **         NegVal - void LED3_NegVal(void);
@@ -66,13 +65,6 @@
 **
 **     Description :
 **         This method clears (sets to zero) the output value.
-**           a) direction = Input  : sets the output value to "0";
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly writes "0" to the
-**                                   appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
@@ -89,13 +81,6 @@ void LED3_ClrVal(void)
 **
 **     Description :
 **         This method sets (sets to one) the output value.
-**           a) direction = Input  : sets the output value to "1";
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly writes "1" to the
-**                                   appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
@@ -112,13 +97,6 @@ void LED3_SetVal(void)
 **
 **     Description :
 **         This method negates (inverts) the output value.
-**           a) direction = Input  : inverts the output value;
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly inverts the value
-**                                   of the appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
@@ -128,29 +106,6 @@ void LED3_NegVal(void)
 
 **  This method is implemented as a macro. See LED3.h file.  **
 */
-
-/*
-** ===================================================================
-**     Method      :  LED3_SetDir (bean BitIO)
-**
-**     Description :
-**         This method sets direction of the bean.
-**     Parameters  :
-**         NAME       - DESCRIPTION
-**         Dir        - Direction to set (FALSE or TRUE)
-**                      FALSE = Input, TRUE = Output
-**     Returns     : Nothing
-** ===================================================================
-*/
-void LED3_SetDir(bool Dir)
-{
-  if (Dir) {
-    setReg8(PTDD, (getReg8(PTDD) & (~0x08)) | (Shadow_PTD & 0x08)); /* PTDD3=Shadow_PTD[bit 3] */
-    setReg8Bits(PTDDD, 0x08);          /* PTDDD3=0x01 */
-  } else { /* !Dir */
-    clrReg8Bits(PTDDD, 0x08);          /* PTDDD3=0x00 */
-  } /* !Dir */
-}
 
 
 /* END LED3. */

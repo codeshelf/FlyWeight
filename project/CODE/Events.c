@@ -127,23 +127,23 @@ interrupt void AudioLoader_OnInterrupt(void)
 //	lastTickCount = xTaskGetTickCount();
 	
 	// It's OK if the variable overflows - we just want to get every 8th pulse.
-	if (gRXBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse) {
+	if (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse) {
 	
 		TPM1C2V = 0x80;
 		
 	} else {
 		
 		// Load in the next value from the correct PWM buffer.
-		//gPWMDutyCycle = gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+		//gPWMDutyCycle = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 		
 		//AudioLoader_Disable();
 		//TPM2C1SC_CH1IE = 0;
 
 		// The data is in 2's complement, so switch it back to positive integer range.
-		TPM1C2VL = gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
+		TPM1C2VL = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
 		TPM1C2VH = 0;
 
-		//USB_SendChar(gRXBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
+		//USB_SendChar(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset]);
 		//AudioLoader_Enable();
 		//TPM2C1SC_CH1F = 0;
 		//TPM2C1SC_CH1IE = 1;
@@ -154,25 +154,10 @@ interrupt void AudioLoader_OnInterrupt(void)
 			
 			gCurPWMOffset = 0;
 			
-			// The buffers are a shared, critical resource, so we have to protect them before we update.
-			EnterCritical();
+			advanceRXBuffer();
 			
-				// Indicate that the buffer is clear.
-				gRXBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
-
-				// Advance to the next buffer.
-				if (gCurPWMRadioBufferNum >= RX_BUFFER_COUNT - 1)
-					gCurPWMRadioBufferNum = 0;
-				else
-					gCurPWMRadioBufferNum++;
-				
-				// Account for the number of used buffers.
-				if (gRXUsedBuffers > 0)
-					gRXUsedBuffers--;
-				else
-					gRXUsedBuffers = 0;
-				
-			ExitCritical();
+			// Indicate that the buffer is clear.
+			gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
 			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
@@ -184,9 +169,6 @@ interrupt void AudioLoader_OnInterrupt(void)
 		
 		// We can't go too low, or we'll end up missing the next interrupt and making the sample take longer.
 		TPM2MOD = MASTER_TPM2_RATE + gMasterSampleRateAdjust;
-		
-		//if (TPM2CNT + 10 > TPM2C1V)
-			//TPM2C1V = TPM2CNT + 10;
 	}
 
 	// Reset the overflow flag.

@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/28/2006, 6:00 PM
+**     Date/Time : 5/10/2006, 10:56 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -31,7 +31,7 @@
 #define __Cpu
 
 /* Active configuration define symbol */
-#define PEcfg_EVBRemote 1
+#define PEcfg_EVBGateway 1
 
 
 /*Include shared modules, which are used for whole project*/
@@ -56,9 +56,6 @@
 extern volatile byte CCR_reg;          /* Current CCR reegister */
 
 
-
-/*Shadow variables*/
-extern byte Shadow_PTD;                /* Shadow variable for I/O beans */
 
 
 #define   Cpu_DisableInt()  __DI()     /* Disable interrupts */

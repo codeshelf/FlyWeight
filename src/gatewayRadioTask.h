@@ -16,9 +16,11 @@
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void radioTransmitTask( void *pvParameters );
-void radioReceiveTask( void *pvParameters );
-void serialReceiveTask( void *pvParameters );
+void advanceRXBuffer(void);
+void advanceTXBuffer(void);
+void radioReceiveTask(void *pvParameters);
+void radioTransmitTask(void *pvParameters);
+void serialReceiveTask(void *pvParameters);
 
 #endif GATEWAYRADIOTASK_H
 

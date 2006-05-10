@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/28/2006, 6:00 PM
+**     Date/Time : 5/10/2006, 10:56 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -30,11 +30,10 @@
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM.h"
-#include "AudioOut.h"
 #include "USB.h"
 extern void _EntryPoint(void);
 
@@ -50,13 +49,13 @@ void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
          Cpu_Interrupt,                /* Int.no.  8 Vsci1rx (at FFDC)               Unassigned */
          Cpu_Interrupt,                /* Int.no.  9 Vsci1err (at FFDE)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 10 Vspi1 (at FFE0)                 Unassigned */
-         AudioLoader_OnInterrupt,      /* Int.no. 11 Vtpm2ovf (at FFE2)              Used */
+         Cpu_Interrupt,                /* Int.no. 11 Vtpm2ovf (at FFE2)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 12 Reserved12 (at FFE4)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 13 Reserved13 (at FFE6)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 14 Reserved14 (at FFE8)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 15 Vtpm2ch1 (at FFEA)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 16 Vtpm2ch0 (at FFEC)              Unassigned */
-         audioOutISR,                  /* Int.no. 17 Vtpm1ovf (at FFEE)              Used */
+         Cpu_Interrupt,                /* Int.no. 17 Vtpm1ovf (at FFEE)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 18 Vtpm1ch2 (at FFF0)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 19 Vtpm1ch1 (at FFF2)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 20 Vtpm1ch0 (at FFF4)              Unassigned */

@@ -13,10 +13,8 @@
 #include "queue.h"
 #include "simple_mac.h"
 #include "ledBlinkTask.h"
-//#include "WatchDog.h"
-//#include "AudioLoader.h"
-//#include "USB.h"
 #include "commands.h"
+#include "remoteMgmtTask.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -26,21 +24,11 @@
 // Local variables.
 
 // The queue used to send data from the radio to the radio receive task.
-xQueueHandle gRadioTransmitQueue = NULL;
-xQueueHandle gRadioReceiveQueue = NULL;
+xQueueHandle		gRadioTransmitQueue = NULL;
+xQueueHandle		gRadioReceiveQueue = NULL;
 
-tTxPacket	gsTxPacket;
-tRxPacket	gsRxPacket;
-
-extern UINT8 gLED1;
-extern UINT8 gLED2;
-extern UINT8 gLED3;
-extern UINT8 gLED4;
-extern UINT8 gu8RTxMode;
-
-extern xQueueHandle 	gLEDBlinkQueue;
-extern RemoteStateType	gRemoteState;
-
+tTxPacket			gsTxPacket;
+tRxPacket			gsRxPacket;
 
 // Radio input buffer
 // There's a 2-byte ID on the front of every packet.
@@ -48,15 +36,17 @@ RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
 BufferCntType		gRXCurBufferNum = 0;
 BufferCntType		gRXUsedBuffers = 0;
 
-RadioBufferStruct	gTXRadioBuffer[RX_BUFFER_COUNT];
-BufferCntType		gTXCurRadioBufferNum = 0;
+RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
+BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
-	ERadioState		radioState;
-	portTickType	lastTick;
+	ERadioState			radioState;
+	portTickType		lastTick;
+	BufferCntType		rxBufferNum;
+	RadioCommandIDType	cmdID;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -79,20 +69,17 @@ void radioReceiveTask(void *pvParameters) {
 		
 		// Setup for the next receive cycle.
 		lastTick = xTaskGetTickCount();
-		while (gRXBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
+		while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
 			vTaskDelay(2);
 
 		// We have to wait here until we're in a mode that requires receiving.
-		while ((gRemoteState != eRemoteStateWakeSent) && (gRemoteState != eRemoteStateRun))
+		while ((gLocalDeviceState != eLocalStateWakeSent) && (gLocalDeviceState != eLocalStateRun))
 			vTaskDelay(2);
 		
-		gsRxPacket.pu8Data = (UINT8 *) &(gRXBuffer[gRXCurBufferNum].bufferStorage);
+		gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 		gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 		gsRxPacket.u8Status = 0;
 		MLMERXEnableRequest(&gsRxPacket, 0L);
-		
-		//USB_SendChar(xTaskGetTickCount() - lastTick);
-		//lastTick = xTaskGetTickCount();
 		
 		// Wait until we receive a queue message from the radio receive ISR.
 		if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
@@ -107,23 +94,32 @@ void radioReceiveTask(void *pvParameters) {
 				// the PWM audio processor is working at interrupt
 				// to get bytes out of the buffer.
 								
-				// The buffers are a shared, critical resource, so we have to protect them before we update.
-				EnterCritical();
+				rxBufferNum = gRXCurBufferNum;
 				
-					gRXBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
-					
-					// Advance to the next buffer.
-					if (gRXCurBufferNum >= (RX_BUFFER_COUNT - 1))
-						gRXCurBufferNum = 0;
-					else
-						gRXCurBufferNum++;
-					
-					// Account for the number of used buffers.
-					if (gRXUsedBuffers < RX_BUFFER_COUNT)
-						gRXUsedBuffers++;
-					
-				ExitCritical();
+				advanceRXBuffer();
 				
+				cmdID = getCommandNumber(rxBufferNum);
+				
+				switch (cmdID) {
+				
+					case eCommandAssign:
+						gLocalDeviceState = eLocalStateAddrAssignRcvd;
+						// Signal the manager about the new state.
+						if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+						}
+						break;
+						
+					case eCommandQuery:
+						gLocalDeviceState = eLocalStateQueryRcvd;
+						// Signal the manager about the new state.
+						if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+						}
+						break;
+						
+					default:
+						break;
+					
+				}
 			}
 		}
 		
@@ -140,29 +136,81 @@ void radioReceiveTask(void *pvParameters) {
 // --------------------------------------------------------------------------
 
 void radioTransmitTask(void *pvParameters) {
-	byte			msgP = 0;
-	UINT8			gau8TxDataBuffer[16];
-	CommandPtrType	wakeCommand;
+	tTxPacket		gsTxPacket;
+	BufferCntType	bufferNum;
 	
-	gsTxPacket.u8DataLength = 0;
-	gsTxPacket.pu8Data = &gau8TxDataBuffer[0]; /* Set the pointer to point to the tx_buffer */
-
 	for ( ;; ) {
 
-		//WatchDog_Clear();
-		
-		// If we're in the init mode then we need to transmit a wake command.
-		if (gRemoteState == eRemoteStateInit) {
+		// Wait until the SCI controller signals us that we have a full buffer to transmit.
+		if ( xQueueReceive( gRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
 
-			wakeCommand = createWakeCommand();
-			transmitCommand(wakeCommand);
-			
-			gsTxPacket.u8DataLength = 4;    /* Initialize the gsTxPacket global */
+			// Disable the RX to prepare for TX.
+			MLMERXDisableRequest();
+
+			// Transmit the buffer.
+			gsTxPacket.pu8Data = gTXRadioBuffer[bufferNum].bufferStorage;
+			gsTxPacket.u8DataLength = gTXRadioBuffer[bufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
 			
-			gRemoteState == eRemoteStateWakeSent;
-
+			// Set the status of the buffer to free.
+			gTXRadioBuffer[bufferNum].bufferStatus = eBufferStateFree;
+			gTXRadioBuffer[bufferNum].bufferSize = 0;	
+			
+			// Prepare to receive responses.
+			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+			gsRxPacket.u8Status = 0;
+			MLMERXEnableRequest(&gsRxPacket, 0L);
+						
+		} else {
+			
+		}
+		
+		// Blink LED1 to let us know we succeeded in transmitting the buffer.
+		if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
+		
 		}
 	}
+}
 
+// --------------------------------------------------------------------------
+
+void advanceRXBuffer() {
+
+	// The buffers are a shared, critical resource, so we have to protect them before we update.
+	EnterCritical();
+	
+		gRXRadioBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
+		
+		// Advance to the next buffer.
+		gRXCurBufferNum++;
+		if (gRXCurBufferNum >= (RX_BUFFER_COUNT))
+			gRXCurBufferNum = 0;
+		
+		// Account for the number of used buffers.
+		if (gRXUsedBuffers < RX_BUFFER_COUNT)
+			gRXUsedBuffers++;
+		
+	ExitCritical();
+}
+
+// --------------------------------------------------------------------------
+
+void advanceTXBuffer() {
+
+	// The buffers are a shared, critical resource, so we have to protect them before we update.
+	EnterCritical();
+	
+		gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
+		
+		// Advance to the next buffer.
+		gTXCurBufferNum++;
+		if (gTXCurBufferNum >= (TX_BUFFER_COUNT))
+			gTXCurBufferNum = 0;
+		
+		// Account for the number of used buffers.
+		if (gTXUsedBuffers < TX_BUFFER_COUNT)
+			gTXUsedBuffers++;
+		
+	ExitCritical();
 }

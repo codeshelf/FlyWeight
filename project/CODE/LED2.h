@@ -6,10 +6,11 @@
 **     Beantype  : BitIO
 **     Version   : Bean 02.066, Driver 03.08, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/7/2006, 1:02 AM
+**     Date/Time : 4/30/2006, 11:58 AM
 **     Abstract  :
 **         This bean "BitIO" implements an one-bit input/output.
 **         It uses one bit/pin of a port.
+**         Note: This bean is set to work in Output direction only.
 **         Methods of this bean are mostly implemented as a macros
 **         (if supported by target language and compiler).
 **     Settings  :
@@ -25,8 +26,7 @@
 **         Bit number (in port)        : 1
 **         Bit mask of the port        : 0002
 **
-**         Initial direction           : Output (direction can be changed)
-**         Safe mode                   : yes
+**         Initial direction           : Output (direction cannot be changed)
 **         Initial output value        : 1
 **         Initial pull option         : off
 **
@@ -35,7 +35,6 @@
 **
 **         Optimization for            : speed
 **     Contents  :
-**         SetDir - void LED2_SetDir(bool Dir);
 **         ClrVal - void LED2_ClrVal(void);
 **         SetVal - void LED2_SetVal(void);
 **         NegVal - void LED2_NegVal(void);
@@ -68,20 +67,12 @@
 **
 **     Description :
 **         This method clears (sets to zero) the output value.
-**           a) direction = Input  : sets the output value to "0";
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly writes "0" to the
-**                                   appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
 #define LED2_ClrVal() ( \
-    (void)clrReg8Bits(PTDD, 0x02)      /* PTDD1=0x00 */, \
-    Shadow_PTD &= ~0x02                /* Set appropriate bit in shadow variable */ \
+    (void)clrReg8Bits(PTDD, 0x02)      /* PTDD1=0x00 */ \
   )
 
 /*
@@ -90,20 +81,12 @@
 **
 **     Description :
 **         This method sets (sets to one) the output value.
-**           a) direction = Input  : sets the output value to "1";
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly writes "1" to the
-**                                   appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
 #define LED2_SetVal() ( \
-    (void)setReg8Bits(PTDD, 0x02)      /* PTDD1=0x01 */, \
-    Shadow_PTD |= 0x02                 /* Set appropriate bit in shadow variable */ \
+    (void)setReg8Bits(PTDD, 0x02)      /* PTDD1=0x01 */ \
   )
 
 /*
@@ -112,36 +95,13 @@
 **
 **     Description :
 **         This method negates (inverts) the output value.
-**           a) direction = Input  : inverts the output value;
-**                                   this operation will be shown on
-**                                   output after the direction has
-**                                   been switched to output
-**                                   (SetDir(TRUE);)
-**           b) direction = Output : directly inverts the value
-**                                   of the appropriate pin
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
 #define LED2_NegVal() ( \
-    (void)invertReg8Bits(PTDD, 0x02)   /* PTDD1=invert */, \
-    Shadow_PTD ^= 0x02                 /* Set appropriate bit in shadow variable */ \
+    (void)invertReg8Bits(PTDD, 0x02)   /* PTDD1=invert */ \
   )
-
-/*
-** ===================================================================
-**     Method      :  LED2_SetDir (bean BitIO)
-**
-**     Description :
-**         This method sets direction of the bean.
-**     Parameters  :
-**         NAME       - DESCRIPTION
-**         Dir        - Direction to set (FALSE or TRUE)
-**                      FALSE = Input, TRUE = Output
-**     Returns     : Nothing
-** ===================================================================
-*/
-void LED2_SetDir(bool Dir);
 
 
 
