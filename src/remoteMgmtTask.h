@@ -17,12 +17,17 @@
 
 #define GATEWAY_MGMT_QUEUE_SIZE		10
 
-extern xQueueHandle		gRemoteMgmtQueue;
-//extern RemoteAddrType	gMyAddr;
+extern xQueueHandle				gRemoteMgmtQueue;
+extern RemoteAddrType			gMyAddr;
+extern const RemoteUniqueIDType	kUniqueID;
 
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
 void remoteMgmtTask( void *pvParameters );
+
+// --------------------------------------------------------------------------
+// Local functions prototypes.
+
 
 #endif REMOTEMGMTTASK_H

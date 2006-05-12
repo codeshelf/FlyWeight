@@ -165,7 +165,7 @@ void processWakeCommand(BufferCntType inRXBufferNum) {
 		// See if the slot is empty or if the unique ID matches.
 		if (gRemoteStateTable[slot].remoteState == eRemoteStateUnknown) {
 			emptySlot = slot;
-		} else if (memcmp(gRemoteStateTable[slot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[1]), UNIQUE_ID_LEN)) {
+		} else if (memcmp(gRemoteStateTable[slot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[UNIQUE_ID_POS]), UNIQUE_ID_LEN)) {
 			foundSlot = slot;
 			break;
 		}
@@ -175,7 +175,7 @@ void processWakeCommand(BufferCntType inRXBufferNum) {
 	if (foundSlot != INVALID_REMOTE) {
 		gRemoteStateTable[foundSlot].remoteState = eRemoteStateWakeRcvd;		
 	} else if (emptySlot != INVALID_REMOTE) {
-		memcpy(gRemoteStateTable[emptySlot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[1]), UNIQUE_ID_LEN);
+		memcpy(gRemoteStateTable[emptySlot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[UNIQUE_ID_POS]), UNIQUE_ID_LEN);
 		gRemoteStateTable[emptySlot].remoteState = eRemoteStateWakeRcvd;
 		foundSlot = emptySlot;
 	};
@@ -193,6 +193,9 @@ void processWakeCommand(BufferCntType inRXBufferNum) {
 RemoteAddrType processAssignCommand(BufferCntType inRXBufferNum) {
 
 	RemoteAddrType result = INVALID_REMOTE;
+	
+	// Let's first make sure that this assign command is for us.
+	memcmp(&kUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[UNIQUE_ID_POS]), UNIQUE_ID_LEN);
 	
 	// The destination address is the third half-byte of the command.
 	result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[1] & 0xf0) >> 4;

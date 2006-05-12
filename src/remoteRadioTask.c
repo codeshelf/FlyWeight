@@ -45,6 +45,7 @@ BufferCntType		gTXUsedBuffers = 0;
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	RadioCommandIDType	cmdID;
+	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -89,26 +90,31 @@ void radioReceiveTask(void *pvParameters) {
 				// to get bytes out of the buffer.
 				
 				cmdID = getCommandNumber(rxBufferNum);
+				cmdDstAddr = getCommandSrcAddr(rxBufferNum);
 				
-				switch (cmdID) {
+				// Only process broadcast commands or commands addressed to us.
+				if ((cmdDstAddr == ADDR_BROADCAST) || (cmdDstAddr == gMyAddr)) {
 				
-					case eCommandAssign:
-						gLocalDeviceState = eLocalStateAddrAssignRcvd;
-						// Signal the manager about the new state.
-						if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-						}
-						break;
-						
-					case eCommandQuery:
-						gLocalDeviceState = eLocalStateQueryRcvd;
-						// Signal the manager about the new state.
-						if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-						}
-						break;
-						
-					default:
-						break;
+					switch (cmdID) {
 					
+						case eCommandAssign:
+							gLocalDeviceState = eLocalStateAddrAssignRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
+							
+						case eCommandQuery:
+							gLocalDeviceState = eLocalStateQueryRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
+							
+						default:
+							break;
+						
+					}
 				}
 			}
 			

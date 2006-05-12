@@ -19,7 +19,6 @@ ELocalStatusType			gLocalDeviceState;
 RemoteAddrType				gMyAddr = INVALID_REMOTE;
 const RemoteUniqueIDType	kUniqueID = "12345678";
 
-
 // --------------------------------------------------------------------------
 
 void remoteMgmtTask( void *pvParameters ) {
@@ -41,7 +40,7 @@ void remoteMgmtTask( void *pvParameters ) {
 
 					case eLocalStateUnknown:
 						// If we're in the init mode then we need to transmit a wake command.
-						createWakeCommand(gTXCurBufferNum, &kUniqueID);
+						createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) &kUniqueID);
 						if (transmitCommand(gTXCurBufferNum)) {
 						};
 						gLocalDeviceState = eLocalStateWakeSent;

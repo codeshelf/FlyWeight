@@ -50,6 +50,7 @@
 #define MAX_REMOTES				14
 #define INVALID_REMOTE			MAX_REMOTES + 1
 #define UNIQUE_ID_LEN			8
+#define UNIQUE_ID_POS			2
 
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0x0F
