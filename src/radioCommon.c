@@ -8,18 +8,47 @@
 */
 
 #include "radioCommon.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
+#include "cpu.h"
 
 // --------------------------------------------------------------------------
 
-bool transmitCommand(CommandPtrType inCommandP) {
-	return FALSE;
-};
+void advanceRXBuffer() {
+
+	// The buffers are a shared, critical resource, so we have to protect them before we update.
+	EnterCritical();
+	
+		gRXRadioBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
+		
+		// Advance to the next buffer.
+		gRXCurBufferNum++;
+		if (gRXCurBufferNum >= (RX_BUFFER_COUNT))
+			gRXCurBufferNum = 0;
+		
+		// Account for the number of used buffers.
+		if (gRXUsedBuffers < RX_BUFFER_COUNT)
+			gRXUsedBuffers++;
+		
+	ExitCritical();
+}
 
 // --------------------------------------------------------------------------
 
-CommandPtrType receiveCommand() {
-	return NULL;
-};
+void advanceTXBuffer() {
+
+	// The buffers are a shared, critical resource, so we have to protect them before we update.
+	EnterCritical();
+	
+		gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
+		
+		// Advance to the next buffer.
+		gTXCurBufferNum++;
+		if (gTXCurBufferNum >= (TX_BUFFER_COUNT))
+			gTXCurBufferNum = 0;
+		
+		// Account for the number of used buffers.
+		if (gTXUsedBuffers < TX_BUFFER_COUNT)
+			gTXUsedBuffers++;
+		
+	ExitCritical();
+}
+

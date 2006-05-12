@@ -109,6 +109,11 @@ extern UINT8 gu8RTxMode;
 extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 
 // --------------------------------------------------------------------------
-// Prototypes
+// Function prototypes
+
+void advanceRXBuffer(void);
+void advanceTXBuffer(void);
+
+
 
 #endif RADIOCOMMON_H

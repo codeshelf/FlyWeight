@@ -16,8 +16,6 @@
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void advanceRXBuffer(void);
-void advanceTXBuffer(void);
 void radioReceiveTask( void *pvParameters );
 void radioTransmitTask( void *pvParameters );
 

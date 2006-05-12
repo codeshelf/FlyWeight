@@ -33,8 +33,10 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 			__asm ("BGND");
 	
 		// Send the message to the radio task's queue.
-		if (xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE)) {
+		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, pdFALSE)) {
 		}
+		
+		advanceRXBuffer();
 	}
 };
 

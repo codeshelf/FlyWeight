@@ -43,60 +43,50 @@ BufferCntType		gTXUsedBuffers = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
-	ERadioState			radioState;
-	portTickType		lastTick;
 	BufferCntType		rxBufferNum;
 	RadioCommandIDType	cmdID;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
 	
-	// Setup the TPM2 timer.
-	TPM2SC = 0b01001000;
-	// 16MHz bus clock with a 7.4kHz interrupt freq.
-	TPM2MOD = MASTER_TPM2_RATE;	
+	// The radio receive task will return a pointer to a radio data packet.
+	if ( gRadioReceiveQueue ) {
 	
-	//PWM1_Enable();
-	PWM_Init();
+		// Setup the TPM2 timer.
+		TPM2SC = 0b01001000;
+		// 16MHz bus clock with a 7.4kHz interrupt freq.
+		TPM2MOD = MASTER_TPM2_RATE;	
+		
+		//PWM1_Enable();
+		PWM_Init();
 
-	for (;;) {
+		for (;;) {
 
-		//WatchDog_Clear();
-		
-		// Wait until the radio is ready.
-		while (gu8RTxMode != IDLE_MODE)
-			vTaskDelay(2);
-		
-		// Setup for the next receive cycle.
-		lastTick = xTaskGetTickCount();
-		while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
-			vTaskDelay(2);
-
-		// We have to wait here until we're in a mode that requires receiving.
-		while ((gLocalDeviceState != eLocalStateWakeSent) && (gLocalDeviceState != eLocalStateRun))
-			vTaskDelay(2);
-		
-		gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
-		gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
-		gsRxPacket.u8Status = 0;
-		MLMERXEnableRequest(&gsRxPacket, 0L);
-		
-		// Wait until we receive a queue message from the radio receive ISR.
-		if (xQueueReceive(gRadioReceiveQueue, &radioState, portTICK_RATE_MS * 500) == pdPASS) {
+			//WatchDog_Clear();
 			
-			if (radioState == eRadioReset) {
-				// We just received a reset from the radio.
-				
-			} else if (radioState == eRadioReceive) {
+			// Don't try to RX if there is no free buffer.
+			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
+				vTaskDelay(1);
+
+			// Don't try to set up an RX unless we're already done with TX.
+			while (gu8RTxMode == TX_MODE)
+				vTaskDelay(1);
+			
+			// Setup for the next RX cycle.
+			if (gu8RTxMode != RX_MODE) {
+				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+				gsRxPacket.u8Status = 0;
+				MLMERXEnableRequest(&gsRxPacket, 0L);
+			}
+
+			// Wait until we receive a queue message from the radio receive ISR.
+			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 				
 				// We just received a valid packet.
 				// We don't really do anything here since 
 				// the PWM audio processor is working at interrupt
 				// to get bytes out of the buffer.
-								
-				rxBufferNum = gRXCurBufferNum;
-				
-				advanceRXBuffer();
 				
 				cmdID = getCommandNumber(rxBufferNum);
 				
@@ -121,42 +111,42 @@ void radioReceiveTask(void *pvParameters) {
 					
 				}
 			}
+			
+			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
+			if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
+			
+			}	
 		}
-		
-		// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-		if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
-		
-		}	
-	}
 
-	/* Will only get here if the queue could not be created. */
-	for ( ;; );
+		/* Will only get here if the queue could not be created. */
+		for ( ;; );
+	}
 }
 
 // --------------------------------------------------------------------------
 
 void radioTransmitTask(void *pvParameters) {
 	tTxPacket		gsTxPacket;
-	BufferCntType	bufferNum;
+	BufferCntType	txBufferNum;
 	
-	for ( ;; ) {
+	for (;;) {
 
 		// Wait until the SCI controller signals us that we have a full buffer to transmit.
-		if ( xQueueReceive( gRadioTransmitQueue, &bufferNum, portTICK_RATE_MS * 500 ) == pdPASS ) {
+		if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS ) {
 
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
 
-			// Transmit the buffer.
-			gsTxPacket.pu8Data = gTXRadioBuffer[bufferNum].bufferStorage;
-			gsTxPacket.u8DataLength = gTXRadioBuffer[bufferNum].bufferSize;
+			// Setup for TX.
+			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
+			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
 			
-			// Set the status of the buffer to free.
-			gTXRadioBuffer[bufferNum].bufferStatus = eBufferStateFree;
-			gTXRadioBuffer[bufferNum].bufferSize = 0;	
+			// Set the status of the TX buffer to free.
+			gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree;
+			gTXRadioBuffer[txBufferNum].bufferSize = 0;	
 			
-			// Prepare to receive responses.
+			// Prepare to RX responses.
 			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 			gsRxPacket.u8Status = 0;
@@ -171,46 +161,4 @@ void radioTransmitTask(void *pvParameters) {
 		
 		}
 	}
-}
-
-// --------------------------------------------------------------------------
-
-void advanceRXBuffer() {
-
-	// The buffers are a shared, critical resource, so we have to protect them before we update.
-	EnterCritical();
-	
-		gRXRadioBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
-		
-		// Advance to the next buffer.
-		gRXCurBufferNum++;
-		if (gRXCurBufferNum >= (RX_BUFFER_COUNT))
-			gRXCurBufferNum = 0;
-		
-		// Account for the number of used buffers.
-		if (gRXUsedBuffers < RX_BUFFER_COUNT)
-			gRXUsedBuffers++;
-		
-	ExitCritical();
-}
-
-// --------------------------------------------------------------------------
-
-void advanceTXBuffer() {
-
-	// The buffers are a shared, critical resource, so we have to protect them before we update.
-	EnterCritical();
-	
-		gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
-		
-		// Advance to the next buffer.
-		gTXCurBufferNum++;
-		if (gTXCurBufferNum >= (TX_BUFFER_COUNT))
-			gTXCurBufferNum = 0;
-		
-		// Account for the number of used buffers.
-		if (gTXUsedBuffers < TX_BUFFER_COUNT)
-			gTXUsedBuffers++;
-		
-	ExitCritical();
 }

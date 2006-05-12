@@ -154,10 +154,22 @@ interrupt void AudioLoader_OnInterrupt(void)
 			
 			gCurPWMOffset = 0;
 			
-			advanceRXBuffer();
+			// The buffers are a shared, critical resource, so we have to protect them before we update.
+			EnterCritical();
 			
-			// Indicate that the buffer is clear.
-			gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+				// Indicate that the buffer is clear.
+				gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+				
+				// Advance to the next buffer.
+				gCurPWMRadioBufferNum++;
+				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
+					gCurPWMRadioBufferNum = 0;
+				
+				// Account for the number of used buffers.
+				if (gRXUsedBuffers > 0)
+					gRXUsedBuffers--;
+				
+			ExitCritical();
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
 			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {

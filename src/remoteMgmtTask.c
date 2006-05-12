@@ -26,11 +26,12 @@ void remoteMgmtTask( void *pvParameters ) {
 	BufferCntType	rxBufferNum = 0;
 
 	if ( gRemoteMgmtQueue ) {
-		for ( ;; ) {
+	
+		// Signal ourselves to start the process.
+		if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+		}
 
-			// Signal ourselves to start the process.
-			if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-			}
+		for ( ;; ) {
 
 			// Whenever we need to handle a state change for a  device, we handle it in this management task.
 			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
@@ -40,7 +41,7 @@ void remoteMgmtTask( void *pvParameters ) {
 
 					case eLocalStateUnknown:
 						// If we're in the init mode then we need to transmit a wake command.
-						createWakeCommand(gTXCurBufferNum, kUniqueID);
+						createWakeCommand(gTXCurBufferNum, &kUniqueID);
 						if (transmitCommand(gTXCurBufferNum)) {
 						};
 						gLocalDeviceState = eLocalStateWakeSent;

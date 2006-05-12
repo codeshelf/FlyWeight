@@ -51,7 +51,7 @@ UINT8 transmitCommand(BufferCntType inTXBufferNum) {
 RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
 	
 	// The command number is in the third half-byte of the message.
-	RadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[1] & 0xF0) >> 4;
+	RadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[1] & 0xf0) >> 4;
 	return result;
 };
 
@@ -60,7 +60,7 @@ RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
 	
 	// The source address is in the first half-byte of the message.
-	RemoteAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[0] & 0xF0) >> 4;
+	RemoteAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[0] & 0xf0) >> 4;
 	return result;
 };
 
@@ -195,7 +195,7 @@ RemoteAddrType processAssignCommand(BufferCntType inRXBufferNum) {
 	RemoteAddrType result = INVALID_REMOTE;
 	
 	// The destination address is the third half-byte of the command.
-	result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[1] & 0xF) >> 4;
+	result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[1] & 0xf0) >> 4;
 	
 	return result;
 	
