@@ -127,10 +127,29 @@ interrupt void AudioLoader_OnInterrupt(void)
 //	lastTickCount = xTaskGetTickCount();
 	
 	// It's OK if the variable overflows - we just want to get every 8th pulse.
-	if (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse) {
+	if (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateSoundData) {
 	
 		TPM1C2V = 0x80;
 		
+/*	} else if (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateSoundData) {
+	
+		// The buffers are a shared, critical resource, so we have to protect them before we update.
+		EnterCritical();
+		
+			// Indicate that the buffer is clear.
+			gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+			
+			// Advance to the next buffer.
+			gCurPWMRadioBufferNum++;
+			if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
+				gCurPWMRadioBufferNum = 0;
+			
+			// Account for the number of used buffers.
+			if (gRXUsedBuffers > 0)
+				gRXUsedBuffers--;
+			
+		ExitCritical();
+*/		
 	} else {
 		
 		// Load in the next value from the correct PWM buffer.
@@ -140,6 +159,9 @@ interrupt void AudioLoader_OnInterrupt(void)
 		//TPM2C1SC_CH1IE = 0;
 
 		// The data is in 2's complement, so switch it back to positive integer range.
+		//if (gCurPWMOffset < 5)
+		//	TPM1C2VL = 0xff;
+		//else
 		TPM1C2VL = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
 		TPM1C2VH = 0;
 
@@ -152,7 +174,7 @@ interrupt void AudioLoader_OnInterrupt(void)
 		gCurPWMOffset++;
 		if (gCurPWMOffset > RX_BUFFER_SIZE - 1) {
 			
-			gCurPWMOffset = 0;
+			gCurPWMOffset = 2;
 			
 			// The buffers are a shared, critical resource, so we have to protect them before we update.
 			EnterCritical();
@@ -180,7 +202,7 @@ interrupt void AudioLoader_OnInterrupt(void)
 		}
 		
 		// We can't go too low, or we'll end up missing the next interrupt and making the sample take longer.
-		TPM2MOD = MASTER_TPM2_RATE + gMasterSampleRateAdjust;
+		TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 	}
 
 	// Reset the overflow flag.

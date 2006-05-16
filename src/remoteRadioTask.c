@@ -40,6 +40,8 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
+SampleRateType		gMasterSampleRate = 0;
+
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
@@ -56,7 +58,7 @@ void radioReceiveTask(void *pvParameters) {
 		// Setup the TPM2 timer.
 		TPM2SC = 0b01001000;
 		// 16MHz bus clock with a 7.4kHz interrupt freq.
-		TPM2MOD = MASTER_TPM2_RATE;	
+		TPM2MOD = gMasterSampleRate;	
 		
 		//PWM1_Enable();
 		PWM_Init();
@@ -90,7 +92,7 @@ void radioReceiveTask(void *pvParameters) {
 				// to get bytes out of the buffer.
 				
 				cmdID = getCommandNumber(rxBufferNum);
-				cmdDstAddr = getCommandSrcAddr(rxBufferNum);
+				cmdDstAddr = getCommandDstAddr(rxBufferNum);
 				
 				// Only process broadcast commands or commands addressed to us.
 				if ((cmdDstAddr == ADDR_BROADCAST) || (cmdDstAddr == gMyAddr)) {
@@ -109,6 +111,17 @@ void radioReceiveTask(void *pvParameters) {
 							// Signal the manager about the new state.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
+							break;
+							
+						case eCommandDesc:
+							gLocalDeviceState = eLocalStateDescRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
+							
+						case eCommandData:
+							gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
 							break;
 							
 						default:

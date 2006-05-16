@@ -18,6 +18,28 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
+#define UNIQUE_ID_LEN			8
+
+// Command format positioning constants.
+// Header
+#define CMDPOS_ADDR				0
+#define CMDPOS_CMDID			1
+
+// Wake
+#define CMDPOS_WAKE_UID			2
+
+// Assign
+#define CMDPOS_ASSIGN_ADDR		2
+#define CMDPOS_ASSIGN_UID		3
+
+// Query response
+#define CMDPOS_RESPONSE			2
+
+#define CMDMASK_SRC_ADDR		0xf0
+#define CMDMASK_DST_ADDR		0x0f
+#define CMDMASK_CMDID			0xf0
+#define CMDMASK_ASSIGNID		0x0f
+
 // --------------------------------------------------------------------------
 // Typedefs
 
@@ -57,6 +79,7 @@ typedef enum {
 	eRemoteStateAddrAssignSent,
 	eRemoteStateQuerySent,
 	eRemoteStateRespRcvd,
+	eRemoteStateDescSent,
 	eRemoteStateRun
 } ERemoteStatusType;
 
@@ -66,6 +89,7 @@ typedef enum {
 	eLocalStateAddrAssignRcvd,
 	eLocalStateQueryRcvd,
 	eLocalStateRespSent,
+	eLocalStateDescRcvd,
 	eLocalStateRun
 } ELocalStatusType;
 
@@ -102,6 +126,10 @@ typedef enum {
  * The remote responds to the query command with the requested information about the facility.
  * 
  * 
+ * DescCommand
+ * 
+ * The descriptor command tell the remote about the format of the data destined for a channel.
+ * 
  */
 typedef enum {
 	eCommandWake = 0,
@@ -109,7 +137,8 @@ typedef enum {
 	eCommandChannelDesc = 2,
 	eCommandData = 3,
 	eCommandQuery = 4,
-	eCommandResponse = 5
+	eCommandResponse = 5,
+	eCommandDesc = 6
 } RadioCommandIDType;
 
 // --------------------------------------------------------------------------

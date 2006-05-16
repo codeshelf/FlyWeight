@@ -39,7 +39,9 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-portTickType		gBufferTimeMS = (float) (1.0 / (7420.0 / RX_BUFFER_SIZE)) * 1000;
+portTickType		gBufferTimeMS = (float) (1.0 / (5556.0 / RX_BUFFER_SIZE)) * 1000;
+
+RemoteAddrType		gMainRemote = INVALID_REMOTE;
 
 // --------------------------------------------------------------------------
 
@@ -159,9 +161,13 @@ void serialReceiveTask( void *pvParameters ) {
 	for ( ;; ) {
 
 		// Check if there is enough data in the serial buffer to fill the next *empty* transmit queue.
-		if ((USB_GetCharsInRxBuf() >= TX_BUFFER_SIZE) && (gTXRadioBuffer[gTXCurBufferNum].bufferStatus != eBufferStateInUse)) {
+		if ((USB_GetCharsInRxBuf() >= TX_BUFFER_SIZE) 
+			&& (gTXRadioBuffer[gTXCurBufferNum].bufferStatus != eBufferStateInUse)
+			&& (gMainRemote != INVALID_REMOTE)) {
 			
-			USB_RecvBlock((USB_TComData *) &gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE, &bytesReceived);
+			createDataCommand(gTXCurBufferNum, gMainRemote);
+			USB_RecvBlock((USB_TComData *) &gTXRadioBuffer[gTXCurBufferNum].bufferStorage[2], TX_BUFFER_SIZE - 2, &bytesReceived);
+			gTXRadioBuffer[gTXCurBufferNum].bufferSize = TX_BUFFER_SIZE;
 			
 			// Mark the transmit buffer full.
 			gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;

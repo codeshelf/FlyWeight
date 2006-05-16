@@ -14,6 +14,11 @@
 #include "radioCommon.h"
 
 // --------------------------------------------------------------------------
+// Externs
+
+extern RemoteAddrType	gMainRemote;
+
+// --------------------------------------------------------------------------
 // Functions prototypes.
 
 void radioReceiveTask(void *pvParameters);

@@ -12,6 +12,7 @@
 
 // Project includes
 #include "PE_Types.h"
+#include "cpu.h"
 #include "smacGlue.h"
 #include "commandTypes.h"
 
@@ -24,18 +25,19 @@
 #define SERIAL_RECV_PRIORITY	( tskIDLE_PRIORITY + 2 )
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
 
-#define MAX_PACKET_SIZE			121
+//#define MAX_PACKET_SIZE			121
+#define MAX_PACKET_SIZE			30
 
-#define RX_QUEUE_SIZE			5
-#define RX_QUEUE_BALANCE		3
+#define RX_QUEUE_SIZE			20
+#define RX_QUEUE_BALANCE		10
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 
-#define TX_QUEUE_SIZE			2
+#define TX_QUEUE_SIZE			4
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
 
-#define MASTER_TPM2_RATE		0x873
+//#define MASTER_TPM2_RATE		0x873
 
 //#define RTS_ON				PTAD |= 0x40
 //#define RTS_OFF				PTAD &= ~0x40
@@ -49,11 +51,19 @@
 
 #define MAX_REMOTES				14
 #define INVALID_REMOTE			MAX_REMOTES + 1
-#define UNIQUE_ID_LEN			8
-#define UNIQUE_ID_POS			2
 
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0x0F
+
+#define RELEASE_RX_BUFFER(rxBufferNum)		EnterCritical(); \
+											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
+											gRXUsedBuffers--; \
+											ExitCritical();
+
+#define RELEASE_TX_BUFFER(txBufferNum)		EnterCritical(); \
+											gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
+											gTXUsedBuffers--; \
+											ExitCritical();
 
 // --------------------------------------------------------------------------
 // Typedefs
@@ -69,6 +79,7 @@ typedef byte	BufferStorageType;
 typedef enum {
 	eBufferStateFree,
 	eBufferStateInUse,
+	eBufferStateSoundData
 } EBufferStatusType;
 
 typedef struct {
@@ -84,6 +95,9 @@ typedef struct {
 	ERemoteStatusType		remoteState;
 	RemoteUniqueIDType		remoteUniqueID;
 } RemoteDescStruct;
+
+typedef UINT16				SampleRateType;
+typedef UINT8				SampleSizeType;
 
 // --------------------------------------------------------------------------
 // Externs
@@ -105,7 +119,8 @@ extern BufferCntType		gTXUsedBuffers;
 extern tTxPacket			gsTxPacket;
 extern tRxPacket			gsRxPacket;
 
-extern UINT8 gu8RTxMode;
+extern UINT8 				gu8RTxMode;
+extern SampleRateType		gMasterSampleRate;
 
 extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 
