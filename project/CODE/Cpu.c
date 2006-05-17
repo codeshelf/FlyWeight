@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 5/15/2006, 10:12 PM
+**     Date/Time : 5/17/2006, 11:00 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -37,11 +37,10 @@
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM.h"
-#include "AudioOut.h"
 #include "USB.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -189,12 +188,12 @@ void PE_low_level_init(void)
   setReg8Bits(PTAD, 0x40);              
   /* PTADD: PTADD6=1,PTADD5=0,PTADD4=0,PTADD3=0 */
   clrSetReg8Bits(PTADD, 0x38, 0x40);    
-  /* PTDD: PTDD3=1,PTDD1=1,PTDD0=1 */
-  setReg8Bits(PTDD, 0x0B);              
-  /* PTDPE: PTDPE3=0,PTDPE2=0,PTDPE1=0,PTDPE0=0 */
-  clrReg8Bits(PTDPE, 0x0F);             
-  /* PTDDD: PTDDD3=1,PTDDD1=1,PTDDD0=1 */
-  setReg8Bits(PTDDD, 0x0B);             
+  /* PTDD: PTDD4=1,PTDD3=1,PTDD1=1,PTDD0=1 */
+  setReg8Bits(PTDD, 0x1B);              
+  /* PTDPE: PTDPE4=0,PTDPE3=0,PTDPE1=0,PTDPE0=0 */
+  clrReg8Bits(PTDPE, 0x1B);             
+  /* PTDDD: PTDDD4=1,PTDDD3=1,PTDDD1=1,PTDDD0=1 */
+  setReg8Bits(PTDDD, 0x1B);             
   /* PTCDD: PTCDD1=0,PTCDD0=1 */
   clrSetReg8Bits(PTCDD, 0x02, 0x01);    
   /* PTCD: PTCD0=1 */
@@ -218,15 +217,11 @@ void PE_low_level_init(void)
   /* ### BitIO "LED1" init code ... */
   /* ### BitIO "LED2" init code ... */
   /* ### BitIO "LED3" init code ... */
+  /* ### BitIO "LED4" init code ... */
   /* ### Init_RTI "RTI1" init code ... */
   /* ### Call "RTI1_Init();" init method in a user code, i.e. in the main code */
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
                  set the property Call Init method to 'yes'
-  */
-  /* ### Init_TPM "PWM" init code ... */
-  /* ### Call "PWM_Init();" init method in a user code, i.e. in the main code */
-  /* ### Note:   To enable automatic calling of the "PWM" init code here must be
-                 set the property Call Init in CPU init.code to 'yes'
   */
   /* ### Asynchro serial "USB" init code ... */
   USB_Init();

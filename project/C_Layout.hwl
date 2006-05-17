@@ -1,7 +1,7 @@
 OPEN source 0 0 60 39
 Source < attributes MARKS off
 OPEN assembly 60 0 40 31
-Assembly < attributes ADR on,CODE off,ABSADR on,SYMB off,TOPPC 0x367D
+Assembly < attributes ADR on,CODE off,ABSADR on,SYMB off,TOPPC 0x1836
 OPEN procedure 0 39 60 17
 Procedure < attributes VALUES on,TYPES off
 OPEN register 60 31 40 25
