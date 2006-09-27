@@ -41,7 +41,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					case eLocalStateUnknown:
 						// If we're in the init mode then we need to transmit a wake command.
 						createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) &kUniqueID);
-						if (transmitCommand(gTXCurBufferNum)) {
+						if (transmitPacket(gTXCurBufferNum)) {
 						};
 						gLocalDeviceState = eLocalStateWakeSent;
 						break;

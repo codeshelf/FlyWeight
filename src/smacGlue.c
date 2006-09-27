@@ -31,6 +31,9 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 		// If we haven't initialized the radio receive queue then cause a debug trap.
 		if (gRadioReceiveQueue == NULL)
 			__asm ("BGND");
+			
+		// Set the buffer receive size to the size of the packet received.
+		gRXRadioBuffer[gRXCurBufferNum].bufferSize = gsRxPacket->u8DataLength;
 	
 		// Send the message to the radio task's queue.
 		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, pdFALSE)) {

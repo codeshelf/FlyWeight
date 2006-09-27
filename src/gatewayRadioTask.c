@@ -49,6 +49,9 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	RadioCommandIDType	cmdID;
 	RemoteAddrType		cmdSrcAddr;
+	UINT16				bytesSent;
+	UINT16				totalBytesSent;
+	byte				status;
 	
 	// The radio receive task will return a pointer to a radio data packet.
 	if ( gRadioReceiveQueue ) {
@@ -76,16 +79,25 @@ void radioReceiveTask(void *pvParameters) {
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 			
+				// Send the packet contents to the controller via the serial port.
+				USB_SendChar(0300);
+				totalBytesSent = 0;
+				while (totalBytesSent < gRXRadioBuffer[rxBufferNum].bufferSize) {
+					status = USB_SendBlock((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage) + totalBytesSent, gRXRadioBuffer[rxBufferNum].bufferSize - totalBytesSent, &bytesSent);
+					totalBytesSent += bytesSent;
+				}
+				USB_SendChar(0300);
+				
 				cmdID = getCommandNumber(rxBufferNum);
 				cmdSrcAddr = getCommandSrcAddr(rxBufferNum);
 				
 				switch (cmdID) {
 				
-					case eCommandWake:
+					case eMgmtCommandWake:
 						processWakeCommand(rxBufferNum);
 						break;
 						
-					case eCommandResponse:
+					case eMgmtCommandResponse:
 						processResponseCommand(rxBufferNum, cmdSrcAddr);
 						break;
 						

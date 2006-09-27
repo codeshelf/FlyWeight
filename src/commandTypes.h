@@ -20,20 +20,42 @@
 
 #define UNIQUE_ID_LEN			8
 
+/*
+ * The format of a packet on the network is as follows:
+ * 
+ * 1B - Packet length
+ * 4b - Packet source address
+ * 4b - Packet dest address
+ * 4b - Command ID
+ * 4b - Command endpoint
+ * nB - Command bytes
+ * 
+ * Where B = byte, b = bit
+ * 
+ */
+
 // Command format positioning constants.
-// Header
-#define CMDPOS_ADDR				0
-#define CMDPOS_CMDID			1
+// Packet
+#define PCKPOS_SIZE				0
+#define PCKPOS_ADDR				1
+#define CMDPOS_CMDID			2
+
+// MgmtCommand
+#define MGMT_CMD_ID				3
 
 // Wake
-#define CMDPOS_WAKE_UID			2
+#define CMDPOS_WAKE_UID			4
 
 // Assign
-#define CMDPOS_ASSIGN_ADDR		2
-#define CMDPOS_ASSIGN_UID		3
+#define CMDPOS_ASSIGN_UID		4
+#define CMDPOS_ASSIGN_ADDR		5
+
+// Response
+#define CMDPOS_RESPONSE			4
+
+// DataCommand
 
 // Query response
-#define CMDPOS_RESPONSE			2
 
 #define CMDMASK_SRC_ADDR		0xf0
 #define CMDMASK_DST_ADDR		0x0f
@@ -93,8 +115,25 @@ typedef enum {
 	eLocalStateRun
 } ELocalStatusType;
 
+/* Network commands
+ * There are two types of network commands:
+ * 
+ * 1. Network management commands
+ *
+ * These are commands sent between the devices to/from endpoint 0 to organize the network itself.
+ *
+ * 2. Data commands
+ *
+ * These are commands sent between the non-zero endpoints of the devices that carry the data to run.
+ */
+typedef enum {
+	eCommandInvalid = 0,
+	eCommandMgmt = 1,
+	eCommandData = 2
+} RadioCommandIDType;
+
 /*
- * Commands
+ * Network management commands
  * 
  * CommandWake
  * 
@@ -132,14 +171,14 @@ typedef enum {
  * 
  */
 typedef enum {
-	eCommandWake = 0,
-	eCommandAssign = 1,
-	eCommandChannelDesc = 2,
-	eCommandData = 3,
-	eCommandQuery = 4,
-	eCommandResponse = 5,
-	eCommandDesc = 6
-} RadioCommandIDType;
+	eMgmtCommandInvalid = 0,
+	eMgmtCommandWake = 1,
+	eMgmtCommandAssign = 2,
+	eMgmtCommandChannelDesc = 3,
+	eMgmtCommandQuery = 4,
+	eMgmtCommandResponse = 5,
+	eMgmtCommandDesc = 6
+} RadioMgmtCommandIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.
