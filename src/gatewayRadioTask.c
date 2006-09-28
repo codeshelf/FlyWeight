@@ -8,6 +8,7 @@
 */
 
 #include "remoteRadioTask.h"
+#include "gatewayMgmtTask.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -39,22 +40,17 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-portTickType		gBufferTimeMS = (float) (1.0 / (5556.0 / RX_BUFFER_SIZE)) * 1000;
-
 RemoteAddrType		gMainRemote = INVALID_REMOTE;
 
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	RadioCommandIDType	cmdID;
-	RemoteAddrType		cmdSrcAddr;
-	UINT16				bytesSent;
-	UINT16				totalBytesSent;
-	byte				status;
+//	RadioCommandIDType	cmdID;
+//	RemoteAddrType		cmdSrcAddr;
 	
 	// The radio receive task will return a pointer to a radio data packet.
-	if ( gRadioReceiveQueue ) {
+	if (gRadioReceiveQueue) {
 	
 		for (;;) {
 
@@ -79,16 +75,11 @@ void radioReceiveTask(void *pvParameters) {
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 			
-				// Send the packet contents to the controller via the serial port.
-				USB_SendChar(0300);
-				totalBytesSent = 0;
-				while (totalBytesSent < gRXRadioBuffer[rxBufferNum].bufferSize) {
-					status = USB_SendBlock((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage) + totalBytesSent, gRXRadioBuffer[rxBufferNum].bufferSize - totalBytesSent, &bytesSent);
-					totalBytesSent += bytesSent;
-				}
-				USB_SendChar(0300);
-				
-				cmdID = getCommandNumber(rxBufferNum);
+				// Send the packet to the controller.
+				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+				RELEASE_RX_BUFFER(rxBufferNum);
+					
+/*				cmdID = getCommandNumber(rxBufferNum);
 				cmdSrcAddr = getCommandSrcAddr(rxBufferNum);
 				
 				switch (cmdID) {
@@ -105,6 +96,7 @@ void radioReceiveTask(void *pvParameters) {
 						break;
 					
 				}
+*/
 			}
 			
 			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
@@ -143,8 +135,9 @@ void radioTransmitTask(void *pvParameters) {
 			MCPSDataRequest(&gsTxPacket);
 			
 			// Set the status of the TX buffer to free.
-			gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree;
-			gTXRadioBuffer[txBufferNum].bufferSize = 0;	
+			RELEASE_TX_BUFFER(txBufferNum);	
+			//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree;
+			//gTXRadioBuffer[txBufferNum].bufferSize = 0;
 			
 			// Prepare to RX responses.
 			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
@@ -161,41 +154,4 @@ void radioTransmitTask(void *pvParameters) {
 		
 		}
 	}
-}
-
-// --------------------------------------------------------------------------
-
-void serialReceiveTask( void *pvParameters ) {
-
-	UINT16			bytesReceived;
-	portTickType	lastTick;	
-	
-	for ( ;; ) {
-
-		// Check if there is enough data in the serial buffer to fill the next *empty* transmit queue.
-		if ((USB_GetCharsInRxBuf() >= TX_BUFFER_SIZE) 
-			&& (gTXRadioBuffer[gTXCurBufferNum].bufferStatus != eBufferStateInUse)
-			&& (gMainRemote != INVALID_REMOTE)) {
-			
-			createDataCommand(gTXCurBufferNum, gMainRemote);
-			USB_RecvBlock((USB_TComData *) &gTXRadioBuffer[gTXCurBufferNum].bufferStorage[2], TX_BUFFER_SIZE - 2, &bytesReceived);
-			gTXRadioBuffer[gTXCurBufferNum].bufferSize = TX_BUFFER_SIZE;
-			
-			// Mark the transmit buffer full.
-			gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
-			
-			advanceTXBuffer();
-			
-			// Now send the buffer to the transmit queue.
-			if (xQueueSend(gRadioTransmitQueue, &gTXCurBufferNum, pdFALSE)) {
-			}
-			
-			// Wait until the we've sent the right number of packets per second.
-			vTaskDelayUntil(&lastTick, gBufferTimeMS);
-
-		}
-	}
-
-	/* Will only get here if the queue could not be created. */
-	for ( ;; );
 }

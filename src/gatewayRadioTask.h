@@ -19,11 +19,10 @@
 extern RemoteAddrType	gMainRemote;
 
 // --------------------------------------------------------------------------
-// Functions prototypes.
+// Function prototypes.
 
 void radioReceiveTask(void *pvParameters);
 void radioTransmitTask(void *pvParameters);
-void serialReceiveTask(void *pvParameters);
 
 #endif GATEWAYRADIOTASK_H
 

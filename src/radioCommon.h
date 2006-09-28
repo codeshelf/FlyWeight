@@ -73,9 +73,11 @@ typedef enum {
 	eUSBStateStarted
 } USBStateType;
 
-typedef byte	BufferCntType;
-typedef int		BufferOffsetType;
-typedef byte	BufferStorageType;
+typedef byte				BufferCntType;
+typedef int					BufferOffsetType;
+typedef byte				BufferStorageType;
+typedef BufferStorageType	*BufferStoragePtrType;
+
 typedef enum {
 	eBufferStateFree,
 	eBufferStateInUse,
