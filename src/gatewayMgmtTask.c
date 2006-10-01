@@ -100,6 +100,7 @@ void gatewayMgmtTask(void *pvParameters) {
 void serialReceiveTask( void *pvParameters ) {
 
 	portTickType	lastTick;
+	BufferCntType	txBufferNum;
 
 	for ( ;; ) {
 
@@ -111,17 +112,19 @@ void serialReceiveTask( void *pvParameters ) {
 //
 //			createDataCommand(gTXCurBufferNum, gMainRemote);
 //			USB_RecvBlock((USB_TComData *) &gTXRadioBuffer[gTXCurBufferNum].bufferStorage[2], TX_BUFFER_SIZE - 2, &bytesReceived);
-			gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(&gTXRadioBuffer[gTXCurBufferNum].bufferStorage[2], TX_BUFFER_SIZE - 2);
+			gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
 			if (gTXRadioBuffer[gTXCurBufferNum].bufferSize > 0) {
 				// Mark the transmit buffer full.
 				gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
 
+				// Remember the buffer we just filled and then advance the buffer system.
+				txBufferNum = gTXCurBufferNum;
 				advanceTXBuffer();
 
 				// Now send the buffer to the transmit queue.
-
-				if (xQueueSend(gRadioTransmitQueue, &gTXCurBufferNum, pdFALSE)) {}
+				if (xQueueSend(gRadioTransmitQueue, &txBufferNum, pdFALSE)) {
+				}
 
 				// Wait until the we've sent the right number of packets per second.
 				vTaskDelayUntil(&lastTick, gBufferTimeMS);

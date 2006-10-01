@@ -47,7 +47,6 @@ SampleRateType		gMasterSampleRate = 0;
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	RadioCommandIDType	cmdID;
-	RadioCommandIDType	mgmtCmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -98,39 +97,36 @@ void radioReceiveTask(void *pvParameters) {
 				// Only process broadcast commands or commands addressed to us.
 				if ((cmdDstAddr == ADDR_BROADCAST) || (cmdDstAddr == gMyAddr)) {
 				
-					if (cmdID == eCommandData) {
-						gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
-					} else if (cmdID == eCommandMgmt) {
+					switch (cmdID) {
 					
-						mgmtCmdID = getMgmtCommandNumber(rxBufferNum);
-					
-						switch (mgmtCmdID) {
+						case eCommandDatagram:
+							gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
+							break;
 						
-							case eMgmtCommandAssign:
-								gLocalDeviceState = eLocalStateAddrAssignRcvd;
-								// Signal the manager about the new state.
-								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-								}
-								break;
-								
-							case eMgmtCommandQuery:
-								gLocalDeviceState = eLocalStateQueryRcvd;
-								// Signal the manager about the new state.
-								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-								}
-								break;
-								
-							case eMgmtCommandDesc:
-								gLocalDeviceState = eLocalStateDescRcvd;
-								// Signal the manager about the new state.
-								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-								}
-								break;
-								
-							default:
-								break;
+						case eCommandAssign:
+							gLocalDeviceState = eLocalStateAddrAssignRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
 							
-						}
+						case eCommandQuery:
+							gLocalDeviceState = eLocalStateQueryRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
+							
+						case eCommandDesc:
+							gLocalDeviceState = eLocalStateDescRcvd;
+							// Signal the manager about the new state.
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							}
+							break;
+							
+						default:
+							break;
+						
 					}
 				}
 			}

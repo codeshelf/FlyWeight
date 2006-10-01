@@ -40,18 +40,15 @@
 #define PCKPOS_ADDR				1
 #define CMDPOS_CMDID			2
 
-// MgmtCommand
-#define MGMT_CMD_ID				3
-
 // Wake
-#define CMDPOS_WAKE_UID			4
+#define CMDPOS_WAKE_UID			3
 
 // Assign
-#define CMDPOS_ASSIGN_UID		4
-#define CMDPOS_ASSIGN_ADDR		5
+#define CMDPOS_ASSIGN_UID		3
+#define CMDPOS_ASSIGN_ADDR		11
 
 // Response
-#define CMDPOS_RESPONSE			4
+#define CMDPOS_RESPONSE			3
 
 // DataCommand
 
@@ -60,7 +57,7 @@
 #define CMDMASK_SRC_ADDR		0xf0
 #define CMDMASK_DST_ADDR		0x0f
 #define CMDMASK_CMDID			0xf0
-#define CMDMASK_ASSIGNID		0x0f
+#define CMDMASK_ASSIGNID		0xf0
 
 // --------------------------------------------------------------------------
 // Typedefs
@@ -115,25 +112,12 @@ typedef enum {
 	eLocalStateRun
 } ELocalStatusType;
 
-/* Network commands
- * There are two types of network commands:
- * 
- * 1. Network management commands
- *
- * These are commands sent between the devices to/from endpoint 0 to organize the network itself.
- *
- * 2. Data commands
- *
- * These are commands sent between the non-zero endpoints of the devices that carry the data to run.
- */
-typedef enum {
-	eCommandInvalid = 0,
-	eCommandMgmt = 1,
-	eCommandData = 2
-} RadioCommandIDType;
-
 /*
- * Network management commands
+ * Network  commands
+ *
+ * CommandDatagram
+ * 
+ * These are the command sent between the devices to/from the non-zero endpoints and carry the data to "run".
  * 
  * CommandWake
  * 
@@ -171,14 +155,15 @@ typedef enum {
  * 
  */
 typedef enum {
-	eMgmtCommandInvalid = 0,
-	eMgmtCommandWake = 1,
-	eMgmtCommandAssign = 2,
-	eMgmtCommandChannelDesc = 3,
-	eMgmtCommandQuery = 4,
-	eMgmtCommandResponse = 5,
-	eMgmtCommandDesc = 6
-} RadioMgmtCommandIDType;
+	eCommandInvalid = 0,
+	eCommandDatagram = 1,
+	eCommandWake = 2,
+	eCommandAssign = 3,
+	eCommandChannelDesc = 4,
+	eCommandQuery = 5,
+	eCommandResponse = 6,
+	eCommandDesc = 7
+} RadioCommandIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

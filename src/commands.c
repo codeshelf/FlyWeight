@@ -59,15 +59,6 @@ RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-RadioCommandIDType getMgmtCommandNumber(BufferCntType inRXBufferNum) {
-
-	// The command number is in the third half-byte of the packet.
-	RadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[MGMT_CMD_ID] & CMDMASK_CMDID) >> 4;
-	return result;
-};
-
-// --------------------------------------------------------------------------
-
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
 
 	// The source address is in the first half-byte of the packet.
@@ -105,19 +96,12 @@ void createPacket(BufferCntType inTXBufferNum, RadioCommandIDType inCmdID, Remot
 	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 };
 
-void createMgmtCommand(BufferCntType inTXBufferNum, RadioMgmtCommandIDType inMgmtCmdID) {
-	
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[MGMT_CMD_ID] = (inMgmtCmdID << 4);
-	gTXRadioBuffer[inTXBufferNum].bufferSize += 1;
-}
-
 // --------------------------------------------------------------------------
 
 void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
-	createPacket(inTXBufferNum, eCommandMgmt, ADDR_CONTROLLER, ADDR_BROADCAST);
-	createMgmtCommand(inTXBufferNum, eMgmtCommandWake);
+	createPacket(inTXBufferNum, eCommandWake, ADDR_CONTROLLER, ADDR_BROADCAST);
 
 	// The next 8 bytes are the unique ID of the device.
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), inUniqueID, UNIQUE_ID_LEN);
@@ -131,7 +115,7 @@ void createAssignCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUn
 
 	// The destination address is the address assigned to the remote with the matching ID.
 	// (We could "broadcast" and have each remote check their assignment, but it seems unnecessary right now.)
-	createPacket(inTXBufferNum, eMgmtCommandAssign, ADDR_CONTROLLER, ADDR_BROADCAST);
+	createPacket(inTXBufferNum, eCommandAssign, ADDR_CONTROLLER, ADDR_BROADCAST);
 
 	// The fourth half-byte is the assigned address.
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] = inRemoteAddr;
@@ -146,7 +130,7 @@ void createAssignCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUn
 
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eMgmtCommandQuery, ADDR_CONTROLLER, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandQuery, ADDR_CONTROLLER, inRemoteAddr);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = 2;
 };
@@ -160,7 +144,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteA
 	// This is free-format command that uses XML for content.
 	// Keep in mind that you can't send more than 125 bytes!
 
-	createPacket(inTXBufferNum, eMgmtCommandResponse, inRemoteAddr, ADDR_CONTROLLER);
+	createPacket(inTXBufferNum, eCommandResponse, inRemoteAddr, ADDR_CONTROLLER);
 
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), RESP_XML, sizeof(RESP_XML));
 
@@ -172,7 +156,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteA
 #define DESC_XML	"+C1:SS=8:SR=5556+"
 void createDescCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eMgmtCommandDesc, ADDR_CONTROLLER, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandDesc, ADDR_CONTROLLER, inRemoteAddr);
 
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), DESC_XML, sizeof(DESC_XML));
 
@@ -183,7 +167,7 @@ void createDescCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr)
 
 void createDataCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandData, ADDR_CONTROLLER, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandDatagram, ADDR_CONTROLLER, inRemoteAddr);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = 2;
 };
@@ -208,7 +192,7 @@ void processWakeCommand(BufferCntType inRXBufferNum) {
 
 		if (gRemoteStateTable[slot].remoteState == eRemoteStateUnknown) {
 			emptySlot = slot;
-		} else if (memcmp(gRemoteStateTable[slot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), UNIQUE_ID_LEN)) {
+		} else if (memcmp(gRemoteStateTable[slot].remoteUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), UNIQUE_ID_LEN) == 0) {
 			foundSlot = slot;
 			break;
 		}
@@ -242,10 +226,10 @@ RemoteAddrType processAssignCommand(BufferCntType inRXBufferNum) {
 	RemoteAddrType result = INVALID_REMOTE;
 
 	// Let's first make sure that this assign command is for us.
-	memcmp(&kUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_LEN);
-
-	// The destination address is the third half-byte of the command.
-	result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] & CMDMASK_ASSIGNID);
+	if (memcmp(&kUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_LEN) == 0) {
+		// The destination address is the third half-byte of the command.
+		result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] & CMDMASK_ASSIGNID) >> 4;	
+	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
 

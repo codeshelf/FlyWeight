@@ -17,7 +17,7 @@
 xQueueHandle 				gRemoteMgmtQueue;
 ELocalStatusType			gLocalDeviceState;
 RemoteAddrType				gMyAddr = INVALID_REMOTE;
-const RemoteUniqueIDType	kUniqueID = "12345678";
+const RemoteUniqueIDType	kUniqueID = "22345678";
 
 // --------------------------------------------------------------------------
 
