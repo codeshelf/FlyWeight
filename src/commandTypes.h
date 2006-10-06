@@ -19,6 +19,8 @@
 // Definitions.
 
 #define UNIQUE_ID_LEN			8
+#define CURRENT_PROTOCOL_NUM	1
+#define PROTOCOL_ID_LEN			1
 
 /*
  * The format of a packet on the network is as follows:
@@ -39,13 +41,19 @@
 #define PCKPOS_SIZE				0
 #define PCKPOS_ADDR				1
 #define CMDPOS_CMDID			2
+#define CMDPOS_STARTOFCMD		3
 
 // Wake
-#define CMDPOS_WAKE_UID			3
+#define CMDPOS_PROTOCOL_ID		3
+#define CMDPOS_WAKE_UID			4
 
 // Assign
 #define CMDPOS_ASSIGN_UID		3
 #define CMDPOS_ASSIGN_ADDR		11
+
+// Assign Ack
+#define CMDPOS_ASSIGNACK_UID	3
+#define CMDPOS_ASSIGNACK_ADDR	11
 
 // Response
 #define CMDPOS_RESPONSE			3
@@ -95,10 +103,8 @@ typedef enum {
 typedef enum {
 	eRemoteStateUnknown,
 	eRemoteStateWakeRcvd,
-	eRemoteStateAddrAssignSent,
 	eRemoteStateQuerySent,
 	eRemoteStateRespRcvd,
-	eRemoteStateDescSent,
 	eRemoteStateRun
 } ERemoteStatusType;
 
@@ -106,9 +112,9 @@ typedef enum {
 	eLocalStateUnknown,
 	eLocalStateWakeSent,
 	eLocalStateAddrAssignRcvd,
+	eLocalStateAddrAssignAckSent,
 	eLocalStateQueryRcvd,
 	eLocalStateRespSent,
-	eLocalStateDescRcvd,
 	eLocalStateRun
 } ELocalStatusType;
 
@@ -129,6 +135,11 @@ typedef enum {
  * 
  * The controller responds to the wake command by assigning a local destination address for the remote.
  * The remote should then act to all messages sent to that address or the broadcast address.
+ *
+ * CommandAssignAck
+ *
+ * Let the controller know that we received the address assignment.  (Sent from the assigned address,
+ * and includes the unique ID of the device.
  * 
  * CommandChannelDesc
  * 
@@ -158,11 +169,10 @@ typedef enum {
 	eCommandInvalid = 0,
 	eCommandDatagram = 1,
 	eCommandWake = 2,
-	eCommandAssign = 3,
-	eCommandChannelDesc = 4,
+	eCommandAddrAssign = 3,
+	eCommandAddrAssignAck = 4,
 	eCommandQuery = 5,
 	eCommandResponse = 6,
-	eCommandDesc = 7
 } RadioCommandIDType;
 
 // --------------------------------------------------------------------------

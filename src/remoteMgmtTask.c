@@ -47,20 +47,13 @@ void remoteMgmtTask( void *pvParameters ) {
 						break;
 		
 					case eLocalStateAddrAssignRcvd:
-						gMyAddr = processAssignCommand(rxBufferNum);
+						processAssignCommand(rxBufferNum);
 						break;
 						
 					case eLocalStateQueryRcvd:
 						// Now that the remote has an assigned address we need to ask it to describe
 						// it's capabilities and characteristics.
 						processQueryCommand(rxBufferNum, gMyAddr);
-						gLocalDeviceState = eLocalStateRespSent;
-						
-					case eLocalStateDescRcvd:
-						// Now that the remote has an assigned address we need to ask it to describe
-						// it's capabilities and characteristics.
-						processDescCommand(rxBufferNum, gMyAddr);
-						gLocalDeviceState = eLocalStateRun;
 						
 					default:
 						;

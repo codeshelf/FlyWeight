@@ -147,7 +147,10 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 	// Send the packet contents to the controller via the serial port.
 	// First send the framing character.
 #pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
-	USB_SendChar(END);
+	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	while (USB_SendChar(END) != ERR_OK) {
+	};
+
 	totalBytesSent = 0;
 
 	while (totalBytesSent < inSize) {
@@ -155,8 +158,9 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 		totalBytesSent += bytesSent;
 	}
 
-	// Send another framing character.
-	USB_SendChar(END);
+	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	while (USB_SendChar(END) != ERR_OK) {
+	};
 }
 
 // --------------------------------------------------------------------------

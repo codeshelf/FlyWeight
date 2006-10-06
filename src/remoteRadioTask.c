@@ -103,7 +103,7 @@ void radioReceiveTask(void *pvParameters) {
 							gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
 							break;
 						
-						case eCommandAssign:
+						case eCommandAddrAssign:
 							gLocalDeviceState = eLocalStateAddrAssignRcvd;
 							// Signal the manager about the new state.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
@@ -112,13 +112,6 @@ void radioReceiveTask(void *pvParameters) {
 							
 						case eCommandQuery:
 							gLocalDeviceState = eLocalStateQueryRcvd;
-							// Signal the manager about the new state.
-							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-							}
-							break;
-							
-						case eCommandDesc:
-							gLocalDeviceState = eLocalStateDescRcvd;
 							// Signal the manager about the new state.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
