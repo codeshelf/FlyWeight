@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 5/17/2006, 11:00 AM
+**     Date/Time : 10/23/2006, 5:39 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -31,7 +31,7 @@
 #define __Cpu
 
 /* Active configuration define symbol */
-#define PEcfg_EVBGateway 1
+#define PEcfg_EVBRemote 1
 
 
 /*Include shared modules, which are used for whole project*/

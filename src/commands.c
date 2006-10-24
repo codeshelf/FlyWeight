@@ -19,6 +19,12 @@
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
 
+#ifdef _TOY_NETWORK_
+	#include "toyQuery.h"
+#else
+	#include "terminalQuery.h"
+#endif
+
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
 
 // --------------------------------------------------------------------------
@@ -186,6 +192,8 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 
 void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
 
+	processQuery(gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_QUERY, gRXRadioBuffer[inRXBufferNum].bufferSize - CMDPOS_QUERY);
+	
 	createResponseCommand(gTXCurBufferNum, inSrcAddr);
 	if (transmitPacket(gTXCurBufferNum)){
 	};	

@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=603
+ProjectModificationStamp=635
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=220
+ProjectCompNumb=272
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -25,7 +25,7 @@ DontWriteGeneratedModules=0
 [UserFolder]
 NodeName=LEDs/Switches
 FolderType=Beans
-ExpandedAll=No
+ExpandedAll=Yes
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
@@ -3763,7 +3763,7 @@ MC9S08GT60CFD
 [Configuration]
 CompNumb=27
 NodeName=EVB Remote
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -3838,7 +3838,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -5538,7 +5538,7 @@ List=Event
 
 [BitIO:LED4]
 CompNumb=44
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7355,7 +7355,7 @@ LastUserSel=always
 
 [Init_TPM_HCS08:PWM]
 CompNumb=149
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -7682,7 +7682,7 @@ List=Event
 
 [InterruptVector:AudioOut]
 CompNumb=182
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -8175,9 +8175,9 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=125000 baud
+Value=115000 baud
 RuntimeSetting=0
-InitValue=125000 baud
+InitValue=115000 baud
 Precision=4.5
 PrecInProc=Yes
 LowLimit=

@@ -43,25 +43,27 @@
 #define CMDPOS_CMDID			2
 #define CMDPOS_STARTOFCMD		3
 
-// Wake
+// Wake Command
 #define CMDPOS_PROTOCOL_ID		3
 #define CMDPOS_WAKE_UID			4
 
-// Assign
+// Assign Command
 #define CMDPOS_ASSIGN_UID		3
 #define CMDPOS_ASSIGN_ADDR		11
 
-// Assign Ack
+// Assign Ack Command
 #define CMDPOS_ASSIGNACK_UID	3
 #define CMDPOS_ASSIGNACK_ADDR	11
 
-// Response
+// Data Command
+
+// Query Command
+#define CMDPOS_QUERY			3
+
+// Response Command
 #define CMDPOS_RESPONSE			3
 
-// DataCommand
-
-// Query response
-
+// Command masks
 #define CMDMASK_SRC_ADDR		0xf0
 #define CMDMASK_DST_ADDR		0x0f
 #define CMDMASK_CMDID			0xf0
