@@ -8,6 +8,10 @@
 */
 
 #include "toyQuery.h"
+#include "commands.h"
+#include "string.h"
+
+unsigned char ResponseBuffer[MAX_RESPONSE_SIZE];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -15,15 +19,21 @@
 
 // --------------------------------------------------------------------------
 
-void processQuery(BufferStoragePtrType inQueryPtr, BufferOffsetType inQueryBytes) {
+#define RESPONSE	"HELLO WORLD!"
 
-	int queryKind = inQueryPtr[QPOS_QUERYID];
+void processQuery(BufferStoragePtrType inQueryPtr, RemoteAddrType inSrcAddr) {
+
+	int queryKind = inQueryPtr[QPOS_QUERYKIND];
 	
 	// First figure out which type of query it is.
 	switch (queryKind) {
 		
 		case QUERY_ACTOR_DESCRIPTOR:
-			processQueryActorDescriptor(inQueryPtr + QUERY_HDR_SIZE, inQueryBytes - QUERY_HDR_SIZE);
+			ResponseBuffer[RPOS_RESPONSEKIND] = RESPONSE_ACTOR_DESCRIPTOR;
+			memcpy(&ResponseBuffer[RPOS_QUERYID], &inQueryPtr[QPOS_QUERYID], QUERYID_SIZE);
+			ResponseBuffer[RPOS_RESPONSE_SIZE] = (byte) strlen(RESPONSE);
+			strcat(&ResponseBuffer[RPOS_RESPONSE], RESPONSE);
+			processQueryActorDescriptor(ResponseBuffer, RPOS_RESPONSE + strlen(RESPONSE), inSrcAddr);
 			break;
 			
 		case QUERY_ACTOR_KVP_DESCRIPTOR:
@@ -40,6 +50,9 @@ void processQuery(BufferStoragePtrType inQueryPtr, BufferOffsetType inQueryBytes
 
 // --------------------------------------------------------------------------
 
-void processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferOffsetType inQueryBytes) {
-	
+void processQueryActorDescriptor(BufferStoragePtrType inResponseBuffer, BufferCntType inResponseBufferSize, RemoteAddrType inSrcAddr) {	
+	createResponseCommand(gTXCurBufferNum, inSrcAddr, inResponseBuffer, inResponseBufferSize);
+	if (transmitPacket(gTXCurBufferNum)){
+	};	
+	gLocalDeviceState = eLocalStateRespSent;	
 }

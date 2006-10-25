@@ -144,8 +144,7 @@ void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr
 
 // --------------------------------------------------------------------------
 
-#define RESP_XML	"+C1:S+"
-void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
+void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr, BufferStoragePtrType inResponseBuffer, BufferCntType inResponseSize) {
 
 	// Describe the capabilities and channels of the device.
 	// This is free-format command that uses XML for content.
@@ -153,9 +152,9 @@ void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteA
 
 	createPacket(inTXBufferNum, eCommandResponse, gMyAddr, inRemoteAddr);
 
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), RESP_XML, sizeof(RESP_XML));
+	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), inResponseBuffer, inResponseSize);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + sizeof(RESP_XML);
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_RESPONSE + inResponseSize;
 };
 
 // --------------------------------------------------------------------------
@@ -192,12 +191,7 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 
 void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
 
-	processQuery(gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_QUERY, gRXRadioBuffer[inRXBufferNum].bufferSize - CMDPOS_QUERY);
-	
-	createResponseCommand(gTXCurBufferNum, inSrcAddr);
-	if (transmitPacket(gTXCurBufferNum)){
-	};	
-	gLocalDeviceState = eLocalStateRespSent;
+	processQuery(gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_QUERY, inSrcAddr);
 };
 
 // --------------------------------------------------------------------------
