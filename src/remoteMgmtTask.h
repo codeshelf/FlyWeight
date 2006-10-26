@@ -19,7 +19,7 @@
 
 extern xQueueHandle				gRemoteMgmtQueue;
 extern RemoteAddrType			gMyAddr;
-extern const RemoteUniqueIDType	kUniqueID;
+//extern const RemoteUniqueIDType	kUniqueID;
 
 // --------------------------------------------------------------------------
 // Local functions prototypes.

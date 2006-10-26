@@ -43,7 +43,7 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAddrAssignAckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
-void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr, BufferStoragePtrType inResponseCStr, BufferCntType ResponseSize);
+void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 void createDataCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 
 void processAssignCommand(BufferCntType inRXBufferNum);

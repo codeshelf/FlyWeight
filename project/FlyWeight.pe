@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=635
+ProjectModificationStamp=637
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=272
+ProjectCompNumb=276
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC

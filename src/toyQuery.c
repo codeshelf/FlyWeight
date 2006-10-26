@@ -11,29 +11,36 @@
 #include "commands.h"
 #include "string.h"
 
-unsigned char ResponseBuffer[MAX_RESPONSE_SIZE];
-
 // --------------------------------------------------------------------------
 // Local function prototypes
+void writeAsPString(BufferStoragePtrType inDestPtr, BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize);
 
+void writeAsPString(BufferStoragePtrType inDestPtr, BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize) {
+	inDestPtr[0] = inStringSize;
+	memcpy(inDestPtr + 1, inStringPtr, inStringSize);
+}
 
 // --------------------------------------------------------------------------
 
 #define RESPONSE	"HELLO WORLD!"
 
-void processQuery(BufferStoragePtrType inQueryPtr, RemoteAddrType inSrcAddr) {
+void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr) {
 
-	int queryKind = inQueryPtr[QPOS_QUERYKIND];
+	BufferOffsetType responseSize = 0;
 	
+	// Read the query directly from the RX buffer at the start of query position.
+	BufferStoragePtrType queryPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + inStartOfQuery;
+	
+	// Write the response directly into the TX buffer at the response position offset.
+	BufferStoragePtrType responsePtr = gTXRadioBuffer[gTXCurBufferNum].bufferStorage + CMDPOS_RESPONSE;
+	
+	byte queryKind = queryPtr[QPOS_QUERYKIND];
+
 	// First figure out which type of query it is.
 	switch (queryKind) {
 		
 		case QUERY_ACTOR_DESCRIPTOR:
-			ResponseBuffer[RPOS_RESPONSEKIND] = RESPONSE_ACTOR_DESCRIPTOR;
-			memcpy(&ResponseBuffer[RPOS_QUERYID], &inQueryPtr[QPOS_QUERYID], QUERYID_SIZE);
-			ResponseBuffer[RPOS_RESPONSE_SIZE] = (byte) strlen(RESPONSE);
-			strcat(&ResponseBuffer[RPOS_RESPONSE], RESPONSE);
-			processQueryActorDescriptor(ResponseBuffer, RPOS_RESPONSE + strlen(RESPONSE), inSrcAddr);
+			responseSize = processQueryActorDescriptor(queryPtr, responsePtr);
 			break;
 			
 		case QUERY_ACTOR_KVP_DESCRIPTOR:
@@ -43,16 +50,46 @@ void processQuery(BufferStoragePtrType inQueryPtr, RemoteAddrType inSrcAddr) {
 			break;
 			
 		case QUERY_ENDPOINT_KVP_DESCRIPTOR:
-			break;
-												
+			break;												
 	};
-};
+	
+	if (responseSize > 0) {
+		createResponseCommand(gTXCurBufferNum, responseSize, inSrcAddr);
+		if (transmitPacket(gTXCurBufferNum)){
+		};	
+		gLocalDeviceState = eLocalStateRespSent;
+	}	
+}
 
 // --------------------------------------------------------------------------
 
-void processQueryActorDescriptor(BufferStoragePtrType inResponseBuffer, BufferCntType inResponseBufferSize, RemoteAddrType inSrcAddr) {	
-	createResponseCommand(gTXCurBufferNum, inSrcAddr, inResponseBuffer, inResponseBufferSize);
-	if (transmitPacket(gTXCurBufferNum)){
-	};	
-	gLocalDeviceState = eLocalStateRespSent;	
+#define DESC		"JEFFREY!"
+#define KVP_CNT		"3"
+
+BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
+
+	BufferOffsetType curPos = 0;
+	
+	// Write the response ID.
+	inResponsePtr[curPos] = RESPONSE_ACTOR_DESCRIPTOR;
+	curPos += 1;
+	
+	// Copy the query ID into the response.
+	memcpy(inResponsePtr + curPos, inQueryPtr + QPOS_QUERYID, QUERYID_SIZE);
+	curPos += QUERYID_SIZE;
+	
+	// Write the GUID into the response.
+	writeAsPString(inResponsePtr + curPos, GUID, (BufferOffsetType) strlen(GUID));
+	curPos += strlen(GUID) + 1;
+	
+	// Write the description into the response.
+	writeAsPString(inResponsePtr + curPos, DESC, (BufferOffsetType) strlen(DESC));
+	curPos += strlen(DESC) + 1;
+	
+	// Write the KVP count for the remote into the response.
+	writeAsPString(inResponsePtr + curPos, KVP_CNT, (BufferOffsetType) strlen(KVP_CNT));
+	curPos += strlen(KVP_CNT) + 1;
+	
+	// Return the size of the response.
+	return curPos;		
 }

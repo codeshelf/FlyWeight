@@ -29,8 +29,7 @@ $Name$
 
 #define RPOS_RESPONSEKIND					0
 #define RPOS_QUERYID						1
-#define RPOS_RESPONSE_SIZE					9
-#define RPOS_RESPONSE						10
+#define RPOS_RESPONSE						9
 
 #define QUERY_ACTOR_DESCRIPTOR				1
 #define QUERY_ACTOR_KVP_DESCRIPTOR			2
@@ -48,12 +47,9 @@ typedef byte QueryIDType[QUERYID_SIZE];
 
 // --------------------------------------------------------------------------
 // Function prototypes.
-void processQuery(BufferStoragePtrType inQueryPtr, RemoteAddrType inSrcAddr);
-void processQueryActorDescriptor(BufferStoragePtrType inResponseBuffer, BufferCntType inResponseBufferSize, RemoteAddrType inSrcAddr);
-
+void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr);
+BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
 // --------------------------------------------------------------------------
 // Globals.
-
-extern unsigned char ResponseStr[MAX_RESPONSE_SIZE];
 
 #endif TOYQUERY_H

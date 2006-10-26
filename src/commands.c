@@ -144,7 +144,7 @@ void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr
 
 // --------------------------------------------------------------------------
 
-void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr, BufferStoragePtrType inResponseBuffer, BufferCntType inResponseSize) {
+void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr) {
 
 	// Describe the capabilities and channels of the device.
 	// This is free-format command that uses XML for content.
@@ -152,7 +152,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteA
 
 	createPacket(inTXBufferNum, eCommandResponse, gMyAddr, inRemoteAddr);
 
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), inResponseBuffer, inResponseSize);
+	//memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), inResponseBuffer, inResponseSize);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_RESPONSE + inResponseSize;
 };
@@ -173,14 +173,14 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 	RemoteAddrType result = INVALID_REMOTE;
 
 	// Let's first make sure that this assign command is for us.
-	if (memcmp(&kUniqueID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_LEN) == 0) {
+	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_LEN) == 0) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] & CMDMASK_ASSIGNID) >> 4;	
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
 	
-	createAddrAssignAckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) &kUniqueID);
+	createAddrAssignAckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 	if (transmitPacket(gTXCurBufferNum)){
 	};	
 	gLocalDeviceState = eLocalStateAddrAssignAckSent;
@@ -191,7 +191,7 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 
 void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
 
-	processQuery(gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_QUERY, inSrcAddr);
+	processQuery(inRXBufferNum, CMDPOS_QUERY, inSrcAddr);
 };
 
 // --------------------------------------------------------------------------

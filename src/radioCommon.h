@@ -74,7 +74,7 @@ typedef enum {
 } USBStateType;
 
 typedef byte				BufferCntType;
-typedef int					BufferOffsetType;
+typedef byte				BufferOffsetType;
 typedef byte				BufferStorageType;
 typedef BufferStorageType	*BufferStoragePtrType;
 
@@ -91,7 +91,7 @@ typedef struct {
 } RadioBufferStruct;
 
 typedef UINT8				RemoteAddrType;
-typedef byte				RemoteUniqueIDType[UNIQUE_ID_LEN];
+typedef byte				RemoteUniqueIDType[UNIQUE_ID_LEN + 1];
 typedef RemoteUniqueIDType	*RemoteUniqueIDPtrType;
 typedef struct {
 	ERemoteStatusType		remoteState;

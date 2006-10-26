@@ -17,7 +17,7 @@
 xQueueHandle 				gRemoteMgmtQueue;
 ELocalStatusType			gLocalDeviceState;
 RemoteAddrType				gMyAddr = INVALID_REMOTE;
-const RemoteUniqueIDType	kUniqueID = "22345678";
+//const RemoteUniqueIDType	kUniqueID = "22345678";
 
 // --------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ void remoteMgmtTask( void *pvParameters ) {
 
 					case eLocalStateUnknown:
 						// If we're in the init mode then we need to transmit a wake command.
-						createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) &kUniqueID);
+						createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 						if (transmitPacket(gTXCurBufferNum)) {
 						};
 						gLocalDeviceState = eLocalStateWakeSent;
