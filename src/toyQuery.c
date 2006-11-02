@@ -10,19 +10,20 @@
 #include "toyQuery.h"
 #include "commands.h"
 #include "string.h"
+#include "deviceInfo.h"
+#include "PE_Types.h"
+#include "pub_def.h"
 
 // --------------------------------------------------------------------------
 // Local function prototypes
-void writeAsPString(BufferStoragePtrType inDestPtr, BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize);
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize);
 
-void writeAsPString(BufferStoragePtrType inDestPtr, BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize) {
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize) {
 	inDestPtr[0] = inStringSize;
 	memcpy(inDestPtr + 1, inStringPtr, inStringSize);
 }
 
 // --------------------------------------------------------------------------
-
-#define RESPONSE	"HELLO WORLD!"
 
 void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr) {
 
@@ -43,13 +44,16 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 			responseSize = processQueryActorDescriptor(queryPtr, responsePtr);
 			break;
 			
-		case QUERY_ACTOR_KVP_DESCRIPTOR:
+		case QUERY_ACTOR_KVP:
+			responseSize = processQueryActorKVP(queryPtr, responsePtr);
 			break;
 			
 		case QUERY_ENDPOINT_DESCRIPTOR:
+			responseSize = processQueryEndpointDescriptor(queryPtr, responsePtr);
 			break;
 			
-		case QUERY_ENDPOINT_KVP_DESCRIPTOR:
+		case QUERY_ENDPOINT_KVP:
+			responseSize = processQueryEndpointKVP(queryPtr, responsePtr);
 			break;												
 	};
 	
@@ -62,9 +66,6 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 }
 
 // --------------------------------------------------------------------------
-
-#define DESC		"JEFFREY!"
-#define KVP_CNT		"3"
 
 BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
@@ -79,17 +80,102 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 	curPos += QUERYID_SIZE;
 	
 	// Write the GUID into the response.
-	writeAsPString(inResponsePtr + curPos, GUID, (BufferOffsetType) strlen(GUID));
-	curPos += strlen(GUID) + 1;
-	
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
+	curPos += UNIQUE_ID_LEN;
+
 	// Write the description into the response.
-	writeAsPString(inResponsePtr + curPos, DESC, (BufferOffsetType) strlen(DESC));
-	curPos += strlen(DESC) + 1;
+	writeAsPString(inResponsePtr + curPos, DEVICE_DESC, (BufferOffsetType) strlen(DEVICE_DESC));
+	curPos += strlen(DEVICE_DESC) + 1;
 	
 	// Write the KVP count for the remote into the response.
-	writeAsPString(inResponsePtr + curPos, KVP_CNT, (BufferOffsetType) strlen(KVP_CNT));
-	curPos += strlen(KVP_CNT) + 1;
+	inResponsePtr[curPos] = ACTOR_KVPS;
+	curPos += sizeof(ACTOR_KVPS);
+	
+	// Write the KVP count for the remote into the response.
+	inResponsePtr[curPos] = ACTOR_ENDPOINTS;
+	curPos += sizeof(ACTOR_ENDPOINTS);
 	
 	// Return the size of the response.
 	return curPos;		
+}
+
+// --------------------------------------------------------------------------
+
+BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
+
+	BufferOffsetType curPos = 0;
+	UINT8 kvpNum;
+	
+	// Write the response ID.
+	inResponsePtr[curPos] = RESPONSE_ACTOR_KVP;
+	curPos += 1;
+	
+	// Copy the query ID into the response.
+	memcpy(inResponsePtr + curPos, inQueryPtr + QPOS_QUERYID, QUERYID_SIZE);
+	curPos += QUERYID_SIZE;
+	
+	// Write the GUID into the response.
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
+	curPos += UNIQUE_ID_LEN;
+
+	// Find the KVP that corresponds to the requested KVP.
+	kvpNum = inQueryPtr[QPOS_KVPNUM];
+	curPos += sizeof(kvpNum);
+	
+	// Write the key.
+	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][KEY_INDEX], strlen(kActorKVPs[kvpNum][KEY_INDEX]));
+	curPos += sizeof(kActorKVPs[kvpNum][KEY_INDEX]) + 1;
+	
+	// Write the value.
+	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][VALUE_INDEX], strlen(kActorKVPs[kvpNum][VALUE_INDEX]));
+	curPos += sizeof(kActorKVPs[kvpNum][VALUE_INDEX]) + 1;
+	
+	// Return the size of the response.
+	return curPos;		
+}
+
+
+// --------------------------------------------------------------------------
+
+BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
+
+	BufferOffsetType curPos = 0;
+	
+	// Write the response ID.
+	inResponsePtr[curPos] = RESPONSE_ENDPOINT_DESCRIPTOR;
+	curPos += 1;
+	
+	// Copy the query ID into the response.
+	memcpy(inResponsePtr + curPos, inQueryPtr + QPOS_QUERYID, QUERYID_SIZE);
+	curPos += QUERYID_SIZE;
+	
+	// Write the GUID into the response.
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
+	curPos += UNIQUE_ID_LEN;
+
+	return curPos;
+	
+}
+
+
+// --------------------------------------------------------------------------
+
+BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
+
+	BufferOffsetType curPos = 0;
+	
+	// Write the response ID.
+	inResponsePtr[curPos] = RESPONSE_ENDPOINT_KVP;
+	curPos += 1;
+	
+	// Copy the query ID into the response.
+	memcpy(inResponsePtr + curPos, inQueryPtr + QPOS_QUERYID, QUERYID_SIZE);
+	curPos += QUERYID_SIZE;
+	
+	// Write the GUID into the response.
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
+	curPos += UNIQUE_ID_LEN;
+
+	return curPos;
+	
 }
