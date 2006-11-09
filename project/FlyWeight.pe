@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=637
+ProjectModificationStamp=643
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=276
+ProjectCompNumb=284
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -226,7 +226,7 @@ List=EnmGrpItm
 ItemSymbol=LVDIntName
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vlvd
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -8175,9 +8175,9 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=115000 baud
+Value=58823 baud
 RuntimeSetting=0
-InitValue=115000 baud
+InitValue=58823 baud
 Precision=4.5
 PrecInProc=Yes
 LowLimit=
@@ -8628,10 +8628,10 @@ UsrMethodName=SetBaudRateMode
 ItemSymbol=GetError
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=No
-LastUserSel=no
+LastUserSel=yes
 UsrMethodName=GetError
 [ItemState]
 ItemSymbol=GetBreak

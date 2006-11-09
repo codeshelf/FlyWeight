@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/17/2006, 4:24 PM
+**     Date/Time : 11/8/2006, 10:47 AM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 115000baud
+**             Init baud rate          : 58823baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -56,6 +56,7 @@
 **         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
 **         SendBlock       - byte USB_SendBlock(USB_TComData *Ptr,word Size,word *Snd);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
+**         GetError        - byte USB_GetError(USB_TError *Err);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -280,6 +281,28 @@ byte USB_SendBlock(USB_TComData * Ptr,word Size,word *Snd);
 **     Returns     :
 **         ---             - The number of characters in the input
 **                           buffer.
+** ===================================================================
+*/
+
+byte USB_GetError(USB_TError *Err);
+/*
+** ===================================================================
+**     Method      :  USB_GetError (bean AsynchroSerial)
+**
+**     Description :
+**         Returns a set of errors on the channel (errors that
+**         cannot be returned by given methods). The errors
+**         accumulate in a set; after calling [GetError] this set is
+**         returned and cleared.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**       * Err             - Pointer to the returned set of errors
+**     Returns     :
+**         ---             - Error code (if GetError did not succeed),
+**                           possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
 ** ===================================================================
 */
 

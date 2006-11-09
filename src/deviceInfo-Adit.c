@@ -28,8 +28,8 @@ const BufferStoragePtrType kActorKVPs[3][2] = {
 const UINT8 ACTOR_ENDPOINTS = 2;
 const BufferStoragePtrType kActorEndpoints[2][3] = {
 	// Codec type, description, endpoint number
-	{ "aduo", "PCM Audio", "1" },
-	{ "leds", "PWM LEDs", "2" }
+	{ "aduo", "PCM Audio", "\1" },
+	{ "leds", "PWM LEDs", "\2" }
 };
 
 const BufferStoragePtrType kEndpointKVPs[3][3] = {

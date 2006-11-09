@@ -1255,7 +1255,7 @@
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="115000 baud"/>
+<Baud_rate v="58823 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>
@@ -1293,7 +1293,7 @@
 <CharsInTxBuf v="don&apos;t generate code"/>
 <GetCharsInTxBuf v="don&apos;t generate code"/>
 <SetBaudRateMode v="don&apos;t generate code"/>
-<GetError v="don&apos;t generate code"/>
+<GetError v="generate code"/>
 <GetBreak v="don&apos;t generate code"/>
 <SetBreak v="don&apos;t generate code"/>
 <TurnTxOn v="don&apos;t generate code"/>

@@ -27,6 +27,7 @@ $Name$
 #define QPOS_QUERYKIND						0
 #define QPOS_QUERYID						1
 #define QPOS_KVPNUM							1
+#define QPOS_ENDPOINT_NUM					2
 
 #define RPOS_RESPONSEKIND					0
 #define RPOS_QUERYID						1

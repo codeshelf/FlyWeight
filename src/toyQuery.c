@@ -87,11 +87,11 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 	writeAsPString(inResponsePtr + curPos, DEVICE_DESC, (BufferOffsetType) strlen(DEVICE_DESC));
 	curPos += strlen(DEVICE_DESC) + 1;
 	
-	// Write the KVP count for the remote into the response.
+	// Write the KVP count for the remote actor KVPs into the response.
 	inResponsePtr[curPos] = ACTOR_KVPS;
 	curPos += sizeof(ACTOR_KVPS);
 	
-	// Write the KVP count for the remote into the response.
+	// Write the KVP count for the remote endpoints into the response.
 	inResponsePtr[curPos] = ACTOR_ENDPOINTS;
 	curPos += sizeof(ACTOR_ENDPOINTS);
 	
@@ -120,15 +120,18 @@ BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferSto
 
 	// Find the KVP that corresponds to the requested KVP.
 	kvpNum = inQueryPtr[QPOS_KVPNUM];
+	
+	// Write the KVP number into the response.
+	inResponsePtr[curPos] = kvpNum;
 	curPos += sizeof(kvpNum);
 	
 	// Write the key.
 	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][KEY_INDEX], strlen(kActorKVPs[kvpNum][KEY_INDEX]));
-	curPos += sizeof(kActorKVPs[kvpNum][KEY_INDEX]) + 1;
+	curPos += strlen(kActorKVPs[kvpNum][KEY_INDEX]) + 1;
 	
 	// Write the value.
 	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][VALUE_INDEX], strlen(kActorKVPs[kvpNum][VALUE_INDEX]));
-	curPos += sizeof(kActorKVPs[kvpNum][VALUE_INDEX]) + 1;
+	curPos += strlen(kActorKVPs[kvpNum][VALUE_INDEX]) + 1;
 	
 	// Return the size of the response.
 	return curPos;		
@@ -140,6 +143,7 @@ BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferSto
 BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
 	BufferOffsetType curPos = 0;
+	UINT8 endpointNum;
 	
 	// Write the response ID.
 	inResponsePtr[curPos] = RESPONSE_ENDPOINT_DESCRIPTOR;
@@ -153,6 +157,25 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
 	curPos += UNIQUE_ID_LEN;
 
+	// Find the endpoint that corresponds to the requested endpoint.
+	endpointNum = (inQueryPtr[QPOS_ENDPOINT_NUM]) >> 4;
+	
+	// Write the endpoint number into the response.
+	inResponsePtr[curPos] = (endpointNum << 4);
+	curPos += sizeof(endpointNum);
+	
+	// Write the endpoint type into the response.
+	memcpy(inResponsePtr + curPos, kActorEndpoints[endpointNum][EP_DESC_INDEX], ENDPOINT_TYPE_LEN);
+	curPos += ENDPOINT_TYPE_LEN;
+	
+	// Write the endpoint desc into the response.
+	writeAsPString(inResponsePtr + curPos, kActorEndpoints[endpointNum][EP_DESC_INDEX], strlen(kActorEndpoints[endpointNum][EP_DESC_INDEX]));
+	curPos += strlen(kActorEndpoints[endpointNum][EP_DESC_INDEX]) + 1;
+	
+	// Write the KVP count for the remote into the response.
+	inResponsePtr[curPos] = (kActorEndpoints[endpointNum][EP_COUNT_INDEX])[0];
+	curPos += sizeof(ACTOR_KVPS);
+	
 	return curPos;
 	
 }
@@ -163,6 +186,8 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
 	BufferOffsetType curPos = 0;
+	UINT8 endpointNum;
+	UINT8 kvpNum;
 	
 	// Write the response ID.
 	inResponsePtr[curPos] = RESPONSE_ENDPOINT_KVP;
@@ -176,6 +201,28 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
 	curPos += UNIQUE_ID_LEN;
 
+	// Find the endpoint that corresponds to the requested endpoint.
+	endpointNum = (inQueryPtr[QPOS_ENDPOINT_NUM]) >> 4;
+	
+	// Write the endpoint number into the response.
+	inResponsePtr[curPos] = (endpointNum << 4);
+	curPos += sizeof(endpointNum);
+	
+	// Find the KVP that corresponds to the requested KVP.
+	kvpNum = inQueryPtr[QPOS_KVPNUM];
+	
+	// Write the KVP number into the response.
+	inResponsePtr[curPos] = kvpNum;
+	curPos += sizeof(kvpNum);
+	
+	// Write the key.
+	writeAsPString(inResponsePtr + curPos, kEndpointKVPs[kvpNum][KEY_INDEX], strlen(kEndpointKVPs[kvpNum][KEY_INDEX]));
+	curPos += strlen(kEndpointKVPs[kvpNum][KEY_INDEX]) + 1;
+	
+	// Write the value.
+	writeAsPString(inResponsePtr + curPos, kEndpointKVPs[kvpNum][VALUE_INDEX], strlen(kEndpointKVPs[kvpNum][VALUE_INDEX]));
+	curPos += strlen(kEndpointKVPs[kvpNum][VALUE_INDEX]) + 1;
+	
 	return curPos;
 	
 }

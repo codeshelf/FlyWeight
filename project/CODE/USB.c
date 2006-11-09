@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/17/2006, 4:24 PM
+**     Date/Time : 11/8/2006, 10:47 AM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -18,7 +18,7 @@
 **         Serial channel              : SCI2
 **
 **         Protocol
-**             Init baud rate          : 115000baud
+**             Init baud rate          : 58823baud
 **             Width                   : 8 bits
 **             Stop bits               : 1
 **             Parity                  : none
@@ -56,6 +56,7 @@
 **         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
 **         SendBlock       - byte USB_SendBlock(USB_TComData *Ptr,word Size,word *Snd);
 **         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
+**         GetError        - byte USB_GetError(USB_TError *Err);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -77,19 +78,24 @@
 
 
 #define OVERRUN_ERR      0x01          /* Overrun error flag bit   */
-#define COMMON_ERR       0x02          /* Common error of RX       */
-#define CHAR_IN_RX       0x04          /* Char is in RX buffer     */
-#define RUNINT_FROM_TX   0x08          /* Interrupt is in progress */
-#define FULL_RX          0x10          /* Full receive buffer      */
-#define FULL_TX          0x20          /* Full transmit buffer     */
+#define FRAMING_ERR      0x02          /* Framing error flag bit   */
+#define PARITY_ERR       0x04          /* Parity error flag bit    */
+#define NOISE_ERR        0x08          /* Noise error flag bit     */
+#define CHAR_IN_RX       0x10          /* Char is in RX buffer     */
+#define RUNINT_FROM_TX   0x20          /* Interrupt is in progress */
+#define FULL_RX          0x40          /* Full receive buffer      */
+#define FULL_TX          0x80          /* Full transmit buffer     */
 
 static byte SerFlag;                   /* Flags for serial communication */
                                        /* Bit 0 - Overrun error */
-                                       /* Bit 1 - Common error of RX */
-                                       /* Bit 2 - Char in RX buffer */
-                                       /* Bit 3 - Interrupt is in progress */
-                                       /* Bit 4 - Full RX buffer */
-                                       /* Bit 5 - Full TX buffer */
+                                       /* Bit 1 - Framing error */
+                                       /* Bit 2 - Parity error */
+                                       /* Bit 3 - Noise error */
+                                       /* Bit 4 - Char in RX buffer */
+                                       /* Bit 5 - Interrupt is in progress */
+                                       /* Bit 6 - Full RX buffer */
+                                       /* Bit 7 - Full TX buffer */
+static byte ErrFlag = 0;               /* Error flags mirror of SerFlag */
 byte USB_InpLen;                       /* Length of the input buffer content */
 static byte InpIndxR;                  /* Index for reading from input buffer */
 static byte InpIndxW;                  /* Index for writing to input buffer */
@@ -151,8 +157,8 @@ byte USB_RecvChar(USB_TComData *Chr)
       InpIndxR = 0;                    /* Set the index to the start of the buffer */
     if(USB_InpLen <= USB_RTS_BUF_SIZE)
       PTAD &= ~0x40;                   /* Set RTS to the low level */
-    Result = (byte)((SerFlag & (OVERRUN_ERR|COMMON_ERR|FULL_RX))?ERR_COMMON:ERR_OK);
-    SerFlag &= ~(OVERRUN_ERR|COMMON_ERR|FULL_RX|CHAR_IN_RX); /* Clear all errors in the status variable */
+    Result = (byte)((SerFlag & (OVERRUN_ERR|FRAMING_ERR|PARITY_ERR|NOISE_ERR|FULL_RX))?ERR_COMMON:ERR_OK);
+    SerFlag &= ~(OVERRUN_ERR|FRAMING_ERR|PARITY_ERR|NOISE_ERR|FULL_RX|CHAR_IN_RX); /* Clear all errors in the status variable */
     ExitCritical();                    /* Restore the PS register */
   } else {
     return ERR_RXEMPTY;                /* Receiver is empty */
@@ -335,6 +341,40 @@ word USB_GetCharsInRxBuf(void)
 
 /*
 ** ===================================================================
+**     Method      :  USB_GetError (bean AsynchroSerial)
+**
+**     Description :
+**         Returns a set of errors on the channel (errors that
+**         cannot be returned by given methods). The errors
+**         accumulate in a set; after calling [GetError] this set is
+**         returned and cleared.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**       * Err             - Pointer to the returned set of errors
+**     Returns     :
+**         ---             - Error code (if GetError did not succeed),
+**                           possible codes:
+**                           ERR_OK - OK
+**                           ERR_SPEED - This device does not work in
+**                           the active speed mode
+** ===================================================================
+*/
+byte USB_GetError(USB_TError *Err)
+{
+  EnterCritical();                     /* Save the PS register */
+  Err->err = 0;
+  Err->errName.OverRun = ((ErrFlag & OVERRUN_ERR) != 0); /* Overrun error */
+  Err->errName.Framing = ((ErrFlag & FRAMING_ERR ) != 0); /* Framing error */
+  Err->errName.Parity = ((ErrFlag & PARITY_ERR) != 0); /* Parity error */
+  Err->errName.RxBufOvf = ((ErrFlag & FULL_RX) != 0); /* Buffer overflow */
+  Err->errName.Noise = ((ErrFlag & NOISE_ERR) != 0); /* Noise error */
+  ErrFlag = 0;                         /* Clear error flags */
+  ExitCritical();                      /* Restore the PS register */
+  return ERR_OK;                       /* OK */
+}
+
+/*
+** ===================================================================
 **     Method      :  USB_InterruptRx (bean AsynchroSerial)
 **
 **     Description :
@@ -362,6 +402,7 @@ ISR(USB_InterruptRx)
       InpIndxW = 0;                    /* Set the index to the start of the buffer */
   } else {
     SerFlag |= FULL_RX;                /* If yes then set flag buffer overflow */
+    ErrFlag |= FULL_RX;
     OnFlags |= ON_ERROR;               /* Set flag "OnError" */
   }
   if(OnFlags & ON_ERROR) {             /* Was error flag detect? */
@@ -413,11 +454,21 @@ ISR(USB_InterruptTx)
 ISR(USB_InterruptError)
 {
   byte StatReg = getReg(SCI2S1);
-  if(StatReg & (SCI2S1_OR_MASK|SCI2S1_NF_MASK|SCI2S1_FE_MASK|SCI2S1_PF_MASK)) { /* Is an error detected? */
-    SerFlag |= COMMON_ERR;             /* If yes then set an internal flag */
+  byte OnFlags = 0;                    /* Temporary variable for flags */
+
+  if(StatReg & SCI2S1_OR_MASK)         /* Is overrun error detected? */
+    OnFlags |= OVERRUN_ERR;            /* If yes then set an internal flag */
+  if(StatReg & SCI2S1_NF_MASK)         /* Is noise error detected? */
+    OnFlags |= NOISE_ERR;              /* If yes then set an internal flag */
+  if (StatReg & SCI2S1_FE_MASK) {      /* Is framing error detected? */
+    OnFlags |= FRAMING_ERR;            /* If yes then set an internal flag */
     }
+  if(StatReg & SCI2S1_PF_MASK)
+    OnFlags |= PARITY_ERR;
+  SerFlag |= OnFlags;                  /* Copy flags status to SerFlag status variable */
+  ErrFlag |= OnFlags;                  /* Copy flags status to ErrFlag status variable */
   SCI2D;                               /* Dummy read of data register - clear error bits */
-  if(SerFlag & (COMMON_ERR)) {         /* Was any error set? */
+  if(SerFlag & (OVERRUN_ERR|FRAMING_ERR|PARITY_ERR|NOISE_ERR)) { /* Was any error set? */
     USB_OnError();                     /* If yes then invoke user event */
   }
 }
@@ -447,7 +498,7 @@ void USB_Init(void)
   /* SCI2C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
   setReg8(SCI2C2, 0x00);               /* Disable all interrupts */ 
   SCI2BDH = 0x00;                      /* Set high divisor register (enable device) */
-  SCI2BDL = 0x09;                      /* Set low divisor register (enable device) */
+  SCI2BDL = 0x11;                      /* Set low divisor register (enable device) */
       /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
   SCI2C3 |= 0x0F;                      /* Enable error interrupts */
   SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */

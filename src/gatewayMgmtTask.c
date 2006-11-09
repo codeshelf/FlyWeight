@@ -168,6 +168,8 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
+	byte result;
+	USB_TError usbError;
 
 	// Loop reading bytes until we put together a whole packet.
 	// Make sure not to copy them into the packet if we run out of room.
@@ -178,7 +180,11 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 //		if (USB_RecvChar(&nextByte) != ERR_OK)
 //			return bytesReceived;
 //		else {
-		if (USB_RecvChar(&nextByte) == ERR_OK) {
+		result = USB_RecvChar(&nextByte);
+		if (result == ERR_RXEMPTY) {
+		} else if (result != ERR_OK) {
+			USB_GetError(&usbError);
+		} else {
 		
 			switch (nextByte) {
 	

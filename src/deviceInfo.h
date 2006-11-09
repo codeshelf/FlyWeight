@@ -18,8 +18,14 @@ $Id$
 #include "pub_def.h"
 #include "radioCommon.h"
 
-#define KEY_INDEX			1
-#define VALUE_INDEX			2
+#define KEY_INDEX			0
+#define VALUE_INDEX			1
+
+#define EP_TYPE_INDEX		0
+#define EP_DESC_INDEX		1
+#define EP_COUNT_INDEX		2
+
+#define ENDPOINT_TYPE_LEN	4
 
 extern char DEVICE_DESC[];
 
