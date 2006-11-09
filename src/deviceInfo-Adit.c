@@ -17,24 +17,25 @@ $Id$
 
 const char DEVICE_DESC[] = "Adit ChatHed";
 
-const UINT8 ACTOR_KVPS = 3;
-const BufferStoragePtrType kActorKVPs[3][2] = {
+const UINT8 kActorKVPs = 3;
+const BufferStoragePtrType kActorKVPTable[3][2] = {
 	// Key, value
 	{ "gender", "male" },
 	{ "age", "32" },
 	{ "race", "south asian" }
 };
 
-const UINT8 ACTOR_ENDPOINTS = 2;
-const BufferStoragePtrType kActorEndpoints[2][3] = {
+const UINT8 kActorEndpoints = 2;
+const BufferStoragePtrType kActorEndpointTable[2][3] = {
 	// Codec type, description, endpoint number
 	{ "aduo", "PCM Audio", "\1" },
 	{ "leds", "PWM LEDs", "\2" }
 };
 
-const BufferStoragePtrType kEndpointKVPs[3][3] = {
+const UINT8 kEndpointKVPs = 3;
+const BufferStoragePtrType kEndpointKVPTable[3][3] = {
 	// Endpoint number, key, value
-	{ "1", "voice", "*" },
-	{ "2", "eyes", "*" },
-	{ "2", "color", "red" }
+	{ "\1", "voice", "*" },
+	{ "\2", "eyes", "*" },
+	{ "\2", "color", "red" }
 };

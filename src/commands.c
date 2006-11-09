@@ -192,6 +192,7 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
 
 	processQuery(inRXBufferNum, CMDPOS_QUERY, inSrcAddr);
+	RELEASE_RX_BUFFER(inRXBufferNum);
 };
 
 // --------------------------------------------------------------------------

@@ -10,24 +10,26 @@
 #include "toyQuery.h"
 #include "commands.h"
 #include "string.h"
+#include "stdlib.h"
 #include "deviceInfo.h"
 #include "PE_Types.h"
 #include "pub_def.h"
 
 // --------------------------------------------------------------------------
 // Local function prototypes
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize);
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringSize);
 
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, BufferOffsetType inStringSize) {
-	inDestPtr[0] = inStringSize;
-	memcpy(inDestPtr + 1, inStringPtr, inStringSize);
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringSize) {
+	// Though the string might be longer than 255, we only take 255.
+	inDestPtr[0] = (byte) inStringSize;
+	memcpy(inDestPtr + 1, inStringPtr, (byte) inStringSize);
 }
 
 // --------------------------------------------------------------------------
 
 void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr) {
 
-	BufferOffsetType responseSize = 0;
+	BufferOffsetType responseSize;
 	
 	// Read the query directly from the RX buffer at the start of query position.
 	BufferStoragePtrType queryPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + inStartOfQuery;
@@ -54,7 +56,10 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 			
 		case QUERY_ENDPOINT_KVP:
 			responseSize = processQueryEndpointKVP(queryPtr, responsePtr);
-			break;												
+			break;
+			
+		default:
+			responseSize = 0;											
 	};
 	
 	if (responseSize > 0) {
@@ -88,12 +93,12 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 	curPos += strlen(DEVICE_DESC) + 1;
 	
 	// Write the KVP count for the remote actor KVPs into the response.
-	inResponsePtr[curPos] = ACTOR_KVPS;
-	curPos += sizeof(ACTOR_KVPS);
+	inResponsePtr[curPos] = kActorKVPs;
+	curPos += sizeof(kActorKVPs);
 	
 	// Write the KVP count for the remote endpoints into the response.
-	inResponsePtr[curPos] = ACTOR_ENDPOINTS;
-	curPos += sizeof(ACTOR_ENDPOINTS);
+	inResponsePtr[curPos] = kActorEndpoints;
+	curPos += sizeof(kActorEndpoints);
 	
 	// Return the size of the response.
 	return curPos;		
@@ -126,12 +131,12 @@ BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferSto
 	curPos += sizeof(kvpNum);
 	
 	// Write the key.
-	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][KEY_INDEX], strlen(kActorKVPs[kvpNum][KEY_INDEX]));
-	curPos += strlen(kActorKVPs[kvpNum][KEY_INDEX]) + 1;
+	writeAsPString(inResponsePtr + curPos, kActorKVPTable[kvpNum][KEY_INDEX], strlen(kActorKVPTable[kvpNum][KEY_INDEX]));
+	curPos += strlen(kActorKVPTable[kvpNum][KEY_INDEX]) + 1;
 	
 	// Write the value.
-	writeAsPString(inResponsePtr + curPos, kActorKVPs[kvpNum][VALUE_INDEX], strlen(kActorKVPs[kvpNum][VALUE_INDEX]));
-	curPos += strlen(kActorKVPs[kvpNum][VALUE_INDEX]) + 1;
+	writeAsPString(inResponsePtr + curPos, kActorKVPTable[kvpNum][VALUE_INDEX], strlen(kActorKVPTable[kvpNum][VALUE_INDEX]));
+	curPos += strlen(kActorKVPTable[kvpNum][VALUE_INDEX]) + 1;
 	
 	// Return the size of the response.
 	return curPos;		
@@ -165,16 +170,16 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 	curPos += sizeof(endpointNum);
 	
 	// Write the endpoint type into the response.
-	memcpy(inResponsePtr + curPos, kActorEndpoints[endpointNum][EP_DESC_INDEX], ENDPOINT_TYPE_LEN);
+	memcpy(inResponsePtr + curPos, kActorEndpointTable[endpointNum][EP_DESC_INDEX], ENDPOINT_TYPE_LEN);
 	curPos += ENDPOINT_TYPE_LEN;
 	
 	// Write the endpoint desc into the response.
-	writeAsPString(inResponsePtr + curPos, kActorEndpoints[endpointNum][EP_DESC_INDEX], strlen(kActorEndpoints[endpointNum][EP_DESC_INDEX]));
-	curPos += strlen(kActorEndpoints[endpointNum][EP_DESC_INDEX]) + 1;
+	writeAsPString(inResponsePtr + curPos, kActorEndpointTable[endpointNum][EP_DESC_INDEX], strlen(kActorEndpointTable[endpointNum][EP_DESC_INDEX]));
+	curPos += strlen(kActorEndpointTable[endpointNum][EP_DESC_INDEX]) + 1;
 	
 	// Write the KVP count for the remote into the response.
-	inResponsePtr[curPos] = (kActorEndpoints[endpointNum][EP_COUNT_INDEX])[0];
-	curPos += sizeof(ACTOR_KVPS);
+	inResponsePtr[curPos] = (kActorEndpointTable[endpointNum][EP_COUNT_INDEX])[0];
+	curPos += sizeof(kActorKVPs);
 	
 	return curPos;
 	
@@ -188,6 +193,9 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 	BufferOffsetType curPos = 0;
 	UINT8 endpointNum;
 	UINT8 kvpNum;
+	UINT8 i;
+	UINT8 entryNum;
+	UINT8 index;
 	
 	// Write the response ID.
 	inResponsePtr[curPos] = RESPONSE_ENDPOINT_KVP;
@@ -202,7 +210,7 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 	curPos += UNIQUE_ID_LEN;
 
 	// Find the endpoint that corresponds to the requested endpoint.
-	endpointNum = (inQueryPtr[QPOS_ENDPOINT_NUM]) >> 4;
+	endpointNum = (inQueryPtr[QPOS_KVPENDPOINT_NUM]) >> 4;
 	
 	// Write the endpoint number into the response.
 	inResponsePtr[curPos] = (endpointNum << 4);
@@ -215,13 +223,26 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 	inResponsePtr[curPos] = kvpNum;
 	curPos += sizeof(kvpNum);
 	
+	// Compute which table entry we need to send.
+	entryNum = 0;
+	for (i=0; i < kEndpointKVPs; i++) {
+		index = (kEndpointKVPTable[i][EPKVP_NUM_INDEX])[0];
+		if (index == endpointNum) {
+			if (entryNum == kvpNum)
+				continue;
+			else
+				entryNum++;
+				
+		}
+	};
+	
 	// Write the key.
-	writeAsPString(inResponsePtr + curPos, kEndpointKVPs[kvpNum][KEY_INDEX], strlen(kEndpointKVPs[kvpNum][KEY_INDEX]));
-	curPos += strlen(kEndpointKVPs[kvpNum][KEY_INDEX]) + 1;
+	writeAsPString(inResponsePtr + curPos, kEndpointKVPTable[entryNum][EPKVP_KEY_INDEX], strlen(kEndpointKVPTable[entryNum][EPKVP_KEY_INDEX]));
+	curPos += strlen(kEndpointKVPTable[entryNum][EPKVP_KEY_INDEX]) + 1;
 	
 	// Write the value.
-	writeAsPString(inResponsePtr + curPos, kEndpointKVPs[kvpNum][VALUE_INDEX], strlen(kEndpointKVPs[kvpNum][VALUE_INDEX]));
-	curPos += strlen(kEndpointKVPs[kvpNum][VALUE_INDEX]) + 1;
+	writeAsPString(inResponsePtr + curPos, kEndpointKVPTable[entryNum][EPKVP_VALUE_INDEX], strlen(kEndpointKVPTable[entryNum][EPKVP_VALUE_INDEX]));
+	curPos += strlen(kEndpointKVPTable[entryNum][EPKVP_VALUE_INDEX]) + 1;
 	
 	return curPos;
 	

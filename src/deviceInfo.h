@@ -25,16 +25,21 @@ $Id$
 #define EP_DESC_INDEX		1
 #define EP_COUNT_INDEX		2
 
+#define EPKVP_NUM_INDEX		0
+#define EPKVP_KEY_INDEX		1
+#define EPKVP_VALUE_INDEX	2
+
 #define ENDPOINT_TYPE_LEN	4
 
 extern char DEVICE_DESC[];
 
-extern const UINT8 ACTOR_KVPS;
-extern const BufferStoragePtrType kActorKVPs[3][2];
+extern const UINT8 kActorKVPs;
+extern const BufferStoragePtrType kActorKVPTable[3][2];
 
-extern const UINT8 ACTOR_ENDPOINTS;
-extern const BufferStoragePtrType kActorEndpoints[2][3];
+extern const UINT8 kActorEndpoints;
+extern const BufferStoragePtrType kActorEndpointTable[2][3];
 
-extern const BufferStoragePtrType kEndpointKVPs[3][3];
+extern const UINT8 kEndpointKVPs;
+extern const BufferStoragePtrType kEndpointKVPTable[3][3];
 
 #endif DEVICEINFO_H
