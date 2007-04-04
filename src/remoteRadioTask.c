@@ -40,7 +40,7 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-SampleRateType		gMasterSampleRate = 2857;
+SampleRateType		gMasterSampleRate = 2857 / 2;
 
 // --------------------------------------------------------------------------
 

@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 11/8/2006, 5:15 PM
+**     Date/Time : 4/3/2007, 10:14 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -18,8 +18,8 @@
 **            Clock settings
 **              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
-**              Modulo Counter                             : 255
-**              Period                                     : 16 us
+**              Modulo Counter                             : 256
+**              Period                                     : 12.85 us
 **            Aligned                                      : Left
 **          Channels                                       : 1
 **            Channel0                                     : 1
@@ -107,7 +107,7 @@
 void PWM_Init(void)
 {
 
-  setReg16(TPM1MOD, 0xFF);              
+  setReg16(TPM1MOD, 0x0100);            
   setReg16(TPM1C2V, 0x00);              
   /* TPM1C2SC: CH2F=0,CH2IE=0,MS2B=1,MS2A=0,ELS2B=1,ELS2A=0,??=0,??=0 */
   setReg8(TPM1C2SC, 0x28);              

@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 11/8/2006, 5:15 PM
+**     Date/Time : 4/3/2007, 9:32 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -142,7 +142,7 @@ void _EntryPoint(void)
   /*** User code before PE initialization ***/
         MCUInit();
         MC13192Init();
-        MLMESetMC13192ClockRate(1);
+        MLMESetMC13192ClockRate(2);
   /*** End of user code before PE initialization ***/
 
   /* ### MC9S08GT60_48 "Cpu" init code ... */
@@ -156,8 +156,8 @@ void _EntryPoint(void)
   setReg8(SPMSC2, 0x00);                
   /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,??=0,??=0 */
   setReg8(ICGC1, 0x5C);                 
-  /* ICGC2: LOLRE=0,MFD2=0,MFD1=0,MFD0=0,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
-  setReg8(ICGC2, 0x00);                 
+  /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
+  setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
   }

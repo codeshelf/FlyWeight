@@ -317,7 +317,7 @@
 </group>
 
 <boolgroup name="External Clock" v="Enabled">
-<Oscillator_frequency__MHz_ v="8"/>
+<Oscillator_frequency__MHz_ v="4"/>
 <External_Clock_Source v="External oscillator"/>
 <Xtal_range v="0 - 40 MHz"/>
 
@@ -451,12 +451,12 @@
 
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
-<Clock_divider v="1"/>
-<Internal_bus_clock v="16"/>
-<Fixed_frequency_clock v="4"/>
+<Clock_divider v="Auto selected prescaler"/>
+<Internal_bus_clock v="20"/>
+<Fixed_frequency_clock v="2"/>
 
 <boolgroup name="FLL clock" v="Enabled">
-<FLL_clock_frequency v="32"/>
+<FLL_clock_frequency v="40"/>
 <Loss_of_FLL_lock v="Interrupt"/>
 <Loss_of_clock v="Interrupt"/>
 
@@ -860,8 +860,8 @@
 
 <group name="Clock settings">
 <Clock_select v="External clock"/>
-<Prescaler v="8192"/>
-<Period v="1.024 ms"/>
+<Prescaler v="16384"/>
+<Period v="4.096 ms"/>
 
 </group>
 
@@ -1106,8 +1106,8 @@
 <group name="Clock settings">
 <Clock_source_select v="Bus rate clock"/>
 <Prescaler v="1"/>
-<Modulo_counter v="255"/>
-<Period v="16 us"/>
+<Modulo_counter v="256"/>
+<Period v="12.85 us"/>
 
 </group>
 

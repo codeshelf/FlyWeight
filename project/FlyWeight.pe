@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=643
+ProjectModificationStamp=649
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=284
+ProjectCompNumb=296
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -25,7 +25,7 @@ DontWriteGeneratedModules=0
 [UserFolder]
 NodeName=LEDs/Switches
 FolderType=Beans
-ExpandedAll=Yes
+ExpandedAll=No
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
@@ -226,7 +226,7 @@ List=EnmGrpItm
 ItemSymbol=LVDIntName
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vlvd
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -1958,7 +1958,7 @@ List=GrupItem
 ItemSymbol=Xtal
 ReadOnly=No
 UserReadOnly=No
-Value=8
+Value=4
 [ItemState]
 ItemSymbol=EXtalSrc
 ReadOnly=No
@@ -2706,12 +2706,12 @@ UserReadOnly=No
 List=GrupItem
 
 [EndOfChilds]
-Value=1
+Value=Auto selected prescaler
 [ItemState]
 ItemSymbol=HighBusClock
 ReadOnly=No
 UserReadOnly=No
-Value=16
+Value=20
 [ItemState]
 ItemSymbol=ClkSrcSelectionHighGrp
 ReadOnly=No
@@ -2756,7 +2756,7 @@ Value=BusClkTPM2
 ItemSymbol=HighFixedClk
 ReadOnly=Yes
 UserReadOnly=No
-Value=4
+Value=2
 [ItemState]
 ItemSymbol=PLLselectHigh
 ReadOnly=No
@@ -2770,7 +2770,7 @@ List=GrupItem
 ItemSymbol=PLLvalueHigh
 ReadOnly=Yes
 UserReadOnly=No
-Value=32
+Value=40
 [ItemState]
 ItemSymbol=LossLockHigh
 ReadOnly=No
@@ -3326,7 +3326,7 @@ Value=(string list)
 StrgList=3
 Line=	MCUInit();
 Line=	MC13192Init();
-Line=	MLMESetMC13192ClockRate(1);
+Line=	MLMESetMC13192ClockRate(2);
 [ItemState]
 ItemSymbol=EntryPoint_UserCodeAfter
 ReadOnly=No
@@ -3755,7 +3755,7 @@ AsmBitsFormat=HEX
 DestDebugger=none
 xxxxxxxxxxxxxxxx=
 MC9S08GT60CFD
- 8.00000000000000E+0000
+ 4.00000000000000E+0000
  2.43000000000000E+0002
 ..@start
 ..@end
@@ -5830,12 +5830,12 @@ Value=No
 ItemSymbol=Prescaler
 ReadOnly=No
 UserReadOnly=No
-Index=5
+Index=6
 [ItemState]
 ItemSymbol=Period
 ReadOnly=Yes
 UserReadOnly=No
-Value=1.024 ms
+Value=4.096 ms
 
 [EndOfChilds]
 
@@ -7405,13 +7405,13 @@ Index=0
 ItemSymbol=ModuloCounter
 ReadOnly=No
 UserReadOnly=No
-Value=255
+Value=256
 Base=2
 [ItemState]
 ItemSymbol=Period
 ReadOnly=Yes
 UserReadOnly=No
-Value=16 us
+Value=12.85 us
 
 [EndOfChilds]
 [ItemState]
@@ -7468,7 +7468,7 @@ Index=0
 ItemSymbol=OutputAction0
 ReadOnly=No
 UserReadOnly=No
-Index=0
+Index=2
 [ItemState]
 ItemSymbol=PWMOutputAction0
 ReadOnly=No
