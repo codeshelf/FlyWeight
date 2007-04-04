@@ -1,3 +1,5 @@
-#Fri Jul 07 13:44:43 GMT-08:00 2006
+#Tue Apr 03 10:48:58 PDT 2007
 eclipse.preferences.version=1
+indexer/indexAllFiles=true
+indexer/indexerId=org.eclipse.cdt.core.domsourceindexer
 indexerId=org.eclipse.cdt.core.domsourceindexer

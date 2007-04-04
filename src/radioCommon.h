@@ -81,7 +81,7 @@ typedef BufferStorageType	*BufferStoragePtrType;
 typedef enum {
 	eBufferStateFree,
 	eBufferStateInUse,
-	eBufferStateSoundData
+//	eBufferStateSoundData
 } EBufferStatusType;
 
 typedef struct {
@@ -131,7 +131,5 @@ extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 
 void advanceRXBuffer(void);
 void advanceTXBuffer(void);
-
-
 
 #endif RADIOCOMMON_H

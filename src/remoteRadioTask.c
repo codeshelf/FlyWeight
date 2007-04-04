@@ -40,7 +40,7 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-SampleRateType		gMasterSampleRate = 0;
+SampleRateType		gMasterSampleRate = 2857;
 
 // --------------------------------------------------------------------------
 
@@ -95,12 +95,14 @@ void radioReceiveTask(void *pvParameters) {
 				cmdDstAddr = getCommandDstAddr(rxBufferNum);
 				
 				// Only process broadcast commands or commands addressed to us.
-				if ((cmdDstAddr == ADDR_BROADCAST) || (cmdDstAddr == gMyAddr)) {
+				if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
+					RELEASE_RX_BUFFER(rxBufferNum);
+				} else {
 				
 					switch (cmdID) {
 					
 						case eCommandDatagram:
-							gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
+							//gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
 							break;
 						
 						case eCommandAddrAssign:
@@ -118,6 +120,9 @@ void radioReceiveTask(void *pvParameters) {
 							break;
 							
 						default:
+							// Bogus command.
+							// Immediately free this command buffer since we'll never do anything with it.
+							RELEASE_RX_BUFFER(rxBufferNum);
 							break;
 						
 					}
