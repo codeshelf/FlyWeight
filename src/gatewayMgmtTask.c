@@ -16,10 +16,13 @@ $Name$
 #include "pub_def.h"
 #include "USB.h"
 
-xQueueHandle	gGatewayMgmtQueue;
+xQueueHandle		gGatewayMgmtQueue;
 ControllerStateType	gControllerState;
 
-portTickType	gBufferTimeMS = (float) (1.0 / (5556.0 / RX_BUFFER_SIZE)) * 1000;
+// Figure out how much time to delay for flow-control.
+//portTickType		gBufferTimeMS = (float) (1.0 / (10000.0 / RX_BUFFER_SIZE)) * 1000;
+// We now do flow-control at the controller on the PC.
+portTickType		gBufferTimeMS = 2;
 
 // --------------------------------------------------------------------------
 
@@ -127,10 +130,10 @@ void serialReceiveTask( void *pvParameters ) {
 				}
 
 				// Wait until the we've sent the right number of packets per second.
-				vTaskDelayUntil(&lastTick, gBufferTimeMS);
+				//vTaskDelayUntil(&lastTick, gBufferTimeMS);
 			}
-		}
-//	}
+//		}
+	}
 
 	/* Will only get here if the queue could not be created. */
 	for ( ;; );

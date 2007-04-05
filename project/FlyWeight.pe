@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=649
+ProjectModificationStamp=665
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=296
+ProjectCompNumb=300
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -5830,12 +5830,12 @@ Value=No
 ItemSymbol=Prescaler
 ReadOnly=No
 UserReadOnly=No
-Index=6
+Index=4
 [ItemState]
 ItemSymbol=Period
 ReadOnly=Yes
 UserReadOnly=No
-Value=4.096 ms
+Value=1.024 ms
 
 [EndOfChilds]
 
@@ -8175,10 +8175,10 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=58823 baud
+Value=115200 baud
 RuntimeSetting=0
-InitValue=58823 baud
-Precision=4.5
+InitValue=115200 baud
+Precision=10
 PrecInProc=Yes
 LowLimit=
 HighLimit=

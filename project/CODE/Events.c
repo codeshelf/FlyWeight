@@ -118,7 +118,8 @@ void TimerInt(void)
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
 INT16				gMasterSampleRateAdjust = 0;
-bool				gOddSample = 0;
+UINT8				gStepNum = 0;
+INT8				gStepSize = 0;
 UINT8				gCurSample = 0;
 UINT8				gPrevSample = 0;
 
@@ -126,7 +127,8 @@ interrupt void AudioLoader_OnInterrupt(void)
 {
 	
 	// This is not a sound buffer, so advance to the next buffer.
-	if (getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram) {
+	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram)
+		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
 	
 		TPM1C2V = 0x80;
 		EnterCritical();
@@ -138,54 +140,55 @@ interrupt void AudioLoader_OnInterrupt(void)
 		ExitCritical();
 		
 	} else {
+	
+//		TPM1C2VL = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
+//		TPM1C2VH = 0;
 		
-		if (gOddSample) {
-		
-			gOddSample = 0;
-			TPM1C2VL = gCurSample;
-			TPM1C2VH = 0;
-		
-		} else {
-		
-			gOddSample = 1;
-			
+		if (gStepNum == 0) {
 			// The data is in 2's compliment, so switch it back to positive integer range.
 			gPrevSample = gCurSample;
 			gCurSample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
-			TPM1C2VL = ((UINT16) (gPrevSample + gCurSample)) / 2;
-			TPM1C2VH = 0;
-
-			// Increment the buffer pointers.
-			gCurPWMOffset++;
-			if (gCurPWMOffset > RX_BUFFER_SIZE - 1) {
-				
-				gCurPWMOffset = 4;
-				
-				// The buffers are a shared, critical resource, so we have to protect them before we update.
-				EnterCritical();
-				
-					// Indicate that the buffer is clear.
-					gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
-					
-					// Advance to the next buffer.
-					gCurPWMRadioBufferNum++;
-					if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
-						gCurPWMRadioBufferNum = 0;
-					
-					// Account for the number of used buffers.
-					if (gRXUsedBuffers > 0)
-						gRXUsedBuffers--;
-					
-				ExitCritical();
-					
-				// Adjust the sampling rate to account for mismatches in the OTA rate.				
-				if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
-					gMasterSampleRateAdjust--;
-				} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
-					gMasterSampleRateAdjust++;
-				};
-			}
+			gStepSize = (gCurSample - gPrevSample) / 2;
 		}
+		
+		TPM1C2VL = gPrevSample + (gStepSize * gStepNum);
+		TPM1C2VH = 0;
+		
+		gStepNum++;
+		if (gStepNum > 1)
+			gStepNum = 0;
+
+		// Increment the buffer pointers.
+		gCurPWMOffset++;
+		if (gCurPWMOffset > RX_BUFFER_SIZE - 1) {
+			
+			gCurPWMOffset = 4;
+			
+			// The buffers are a shared, critical resource, so we have to protect them before we update.
+			EnterCritical();
+			
+				// Indicate that the buffer is clear.
+				gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+				
+				// Advance to the next buffer.
+				gCurPWMRadioBufferNum++;
+				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
+					gCurPWMRadioBufferNum = 0;
+				
+				// Account for the number of used buffers.
+				if (gRXUsedBuffers > 0)
+					gRXUsedBuffers--;
+				
+			ExitCritical();
+				
+			// Adjust the sampling rate to account for mismatches in the OTA rate.				
+			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
+				gMasterSampleRateAdjust--;
+			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
+				gMasterSampleRateAdjust++;
+			};
+		}
+	
 		
 		// We can't go too low, or we'll end up missing the next interrupt and making the sample take longer.
 		TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;

@@ -40,7 +40,10 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-SampleRateType		gMasterSampleRate = 2857 / 2;
+// The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
+// For example 20Mhz / 10K samples/sec, or 2000.
+// We further divide this by two since we average the cur and prev sample to smooth the waveform.
+SampleRateType		gMasterSampleRate = 2000 / 2;
 
 // --------------------------------------------------------------------------
 

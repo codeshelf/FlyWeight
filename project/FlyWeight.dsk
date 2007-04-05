@@ -21,7 +21,7 @@ CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
-Status=Visible
+Status=hiden
 WindowState=NORMAL
 Rect=[672|742|559|152]
 
@@ -40,7 +40,7 @@ BF_LicensedOnly=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[323|99|810|732]
+Rect=[94|103|810|732]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475

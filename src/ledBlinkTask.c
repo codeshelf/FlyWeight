@@ -38,6 +38,8 @@ void LEDBlinkTask( void *pvParameters ) {
 				vTaskDelay(portTICK_RATE_MS * 100);
 				LEDOff(ledNum);
 			}
+			
+			vTaskDelay(2);
 		}
 	}
 

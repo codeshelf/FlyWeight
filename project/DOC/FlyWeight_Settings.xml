@@ -860,8 +860,8 @@
 
 <group name="Clock settings">
 <Clock_select v="External clock"/>
-<Prescaler v="16384"/>
-<Period v="4.096 ms"/>
+<Prescaler v="4096"/>
+<Period v="1.024 ms"/>
 
 </group>
 
@@ -1255,7 +1255,7 @@
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="58823 baud"/>
+<Baud_rate v="115200 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>

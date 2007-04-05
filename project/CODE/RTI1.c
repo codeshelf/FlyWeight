@@ -6,7 +6,7 @@
 **     Beantype  : Init_RTI
 **     Version   : Bean 01.030, Driver 01.06, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/3/2007, 9:42 PM
+**     Date/Time : 4/4/2007, 8:34 PM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -17,8 +17,8 @@
 **          Settings                                       : 
 **          Clock settings                                 : 
 **          Clock Select                                   : External clock
-**          Prescaler                                      : 16384
-**          Period                                         : 4.096 ms
+**          Prescaler                                      : 4096
+**          Period                                         : 1.024 ms
 **          Interrupts                                     : 
 **          Interrupt                                      : Vrti
 **          Real-Time Interrupt                            : Enabled
@@ -82,8 +82,8 @@
 */
 void RTI1_Init(void)
 {
-  /* SRTISC: RTIF=0,RTIACK=0,RTICLKS=1,RTIE=1,??=0,RTIS2=1,RTIS1=1,RTIS0=0 */
-  setReg8(SRTISC, 0x36);                
+  /* SRTISC: RTIF=0,RTIACK=0,RTICLKS=1,RTIE=1,??=0,RTIS2=1,RTIS1=0,RTIS0=0 */
+  setReg8(SRTISC, 0x34);                
 }
 
 /* END RTI1. */
