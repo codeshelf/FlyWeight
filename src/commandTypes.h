@@ -19,13 +19,16 @@
 // Definitions.
 
 #define UNIQUE_ID_LEN			8
-#define CURRENT_PROTOCOL_NUM	1
-#define PROTOCOL_ID_LEN			1
+#define DEVICE_VERSION_NUM		1
+#define DEVICE_VERSION_NUM_LEN	1
 
 /*
  * The format of a packet on the network is as follows:
  * 
  * 1B - Packet length
+ * 2b - Version
+ * 3b - Network number
+ * 3b - Reserved
  * 4b - Packet source address
  * 4b - Packet dest address
  * 4b - Command ID
@@ -39,31 +42,33 @@
 // Command format positioning constants.
 // Packet
 #define PCKPOS_SIZE				0
-#define PCKPOS_ADDR				1
-#define CMDPOS_CMDID			2
-#define CMDPOS_STARTOFCMD		3
+#define PCKPOS_ADDR				2
+#define CMDPOS_CMDID			3
+#define CMDPOS_STARTOFCMD		4
 
 // Wake Command
-#define CMDPOS_PROTOCOL_ID		3
-#define CMDPOS_WAKE_UID			4
+#define CMDPOS_PROTOCOL_ID		4
+#define CMDPOS_WAKE_UID			5
 
 // Assign Command
-#define CMDPOS_ASSIGN_UID		3
-#define CMDPOS_ASSIGN_ADDR		11
+#define CMDPOS_ASSIGN_UID		4
+#define CMDPOS_ASSIGN_ADDR		12
 
 // Assign Ack Command
-#define CMDPOS_ASSIGNACK_UID	3
-#define CMDPOS_ASSIGNACK_ADDR	11
+#define CMDPOS_ASSIGNACK_UID	4
+#define CMDPOS_ASSIGNACK_ADDR	12
 
 // Data Command
 
 // Query Command
-#define CMDPOS_QUERY			3
+#define CMDPOS_QUERY			4
 
 // Response Command
-#define CMDPOS_RESPONSE			3
+#define CMDPOS_RESPONSE			4
 
 // Command masks
+#define PACKETMASK_VERSION		0xc0
+#define PACKETMASK_NETWORK_NUM	0x38
 #define CMDMASK_SRC_ADDR		0xf0
 #define CMDMASK_DST_ADDR		0x0f
 #define CMDMASK_CMDID			0xf0
