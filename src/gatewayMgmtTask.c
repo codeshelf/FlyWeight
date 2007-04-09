@@ -141,29 +141,71 @@ void serialReceiveTask( void *pvParameters ) {
 
 // --------------------------------------------------------------------------
 
+void sendOneChar(USB_TComData *inDataPtr) {
+
+	// Send a character. 
+	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	while (USB_SendChar(inDataPtr) != ERR_OK) {
+		// Consider a timeout where we just reset the MCU.
+	};
+
+}
+
+
+// --------------------------------------------------------------------------
+
 void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 
 	UINT16	bytesSent;
 	UINT16	totalBytesSent;
 	byte	status;
+ 	word 	charsSent;
 
 	// Send the packet contents to the controller via the serial port.
 	// First send the framing character.
 #pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	while (USB_SendChar(END) != ERR_OK) {
-	};
+ 	sendOneChar(END);
 
 	totalBytesSent = 0;
 
-	while (totalBytesSent < inSize) {
-		status = USB_SendBlock(inDataPtr + totalBytesSent, inSize - totalBytesSent, &bytesSent);
-		totalBytesSent += bytesSent;
-	}
+//	while (totalBytesSent < inSize) {
+//		status = USB_SendBlock(inDataPtr + totalBytesSent, inSize - totalBytesSent, &bytesSent);
+//		totalBytesSent += bytesSent;
+//	}
+ 
+	for (charsSent = 0; charsSent < inSize; charsSent++) {
+		
+        switch(*Ptr) {
+			/* if it's the same code as an END character, we send a
+			 * special two character code so as not to make the
+			 * receiver think we sent an END
+			 */
+			case END:
+				sendOneChar(ESC);
+				sendOneChar(ESC_END);
+				break;
 
+			/* if it's the same code as an ESC character,
+			 * we send a special two character code so as not
+			 * to make the receiver think we sent an ESC
+			 */
+			case ESC:
+				sendOneChar(ESC);
+				sendOneChar(ESC_ESC);
+				break;
+
+			/* otherwise, we just send the character
+			 */
+			default:
+				sendOneChar(*Ptr);
+		}
+
+		Ptr++;
+	}
+		
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	while (USB_SendChar(END) != ERR_OK) {
-	};
+	sendOneChar(END);
 }
 
 // --------------------------------------------------------------------------
