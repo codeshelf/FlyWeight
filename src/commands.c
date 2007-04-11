@@ -110,12 +110,12 @@ void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniq
 	createPacket(inTXBufferNum, eCommandWake, ADDR_CONTROLLER, ADDR_BROADCAST);
 
 	// Tell the controller what protocol we know/use.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_PROTOCOL_ID] = CURRENT_PROTOCOL_NUM;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_PROTOCOL_ID] = DEVICE_VERSION_NUM;
 	
 	// The next 8 bytes are the unique ID of the device.
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), inUniqueID, UNIQUE_ID_LEN);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + PROTOCOL_ID_LEN + UNIQUE_ID_LEN;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + DEVICE_VERSION_NUM_LEN + UNIQUE_ID_LEN;
 };
 
 // --------------------------------------------------------------------------

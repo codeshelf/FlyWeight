@@ -33,14 +33,13 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM.h"
-#include "AudioOut.h"
 #include "SW2.h"
 #include "SW3.h"
 #include "SW4.h"
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "USB.h"
 
 void SW1Int_OnInterrupt(void);

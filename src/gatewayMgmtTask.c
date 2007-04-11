@@ -39,57 +39,6 @@ void gatewayMgmtTask(void *pvParameters) {
 
 				// Just send it over the serial link to the controller.
 				serialTransmitFrame((byte*) (&gRXRadioBuffer[gRXCurBufferNum].bufferStorage), gRXRadioBuffer[gRXCurBufferNum].bufferSize);
-
-				//				// Get the state of the remote at the named slot.
-				//				switch (gRemoteStateTable[slotNum].remoteState) {
-				//
-				//					case eRemoteStateWakeRcvd:
-				//						// Respond to the remote's WAKE command with an ASSIGN command letting it know which destination slot it has.
-				//						createAssignCommand(gTXCurBufferNum, &(gRemoteStateTable[slotNum].remoteUniqueID), slotNum);
-				//						if (transmitPacket(gTXCurBufferNum)) {
-				//						};
-				//						gRemoteStateTable[slotNum].remoteState = eRemoteStateAddrAssignSent;
-				//						gMainRemote = slotNum;
-				//
-				//						// Resignal the manager about the new state.
-				//						if (xQueueSend(gGatewayMgmtQueue, &slotNum, pdFALSE)) {
-				//						}
-				//						break;
-				//
-				//					case eRemoteStateAddrAssignSent:
-				//						// Now that the remote has an assigned address we need to ask it to describe
-				//						// it's capabilities and characteristics.
-				//						createQueryCommand(gTXCurBufferNum, slotNum);
-				//						if (transmitPacket(gTXCurBufferNum)) {
-				//						};
-				//						gRemoteStateTable[slotNum].remoteState = eRemoteStateQuerySent;
-				//
-				//						// Resignal the manager about the new state.
-				//						if (xQueueSend(gGatewayMgmtQueue, &slotNum, pdFALSE)) {
-				//						}
-				//						break;
-				//
-				//					case eRemoteStateRespRcvd:
-				//						// Now that the remote has an assigned address we need to ask it to describe
-				//						// it's capabilities and characteristics.
-				//						createDescCommand(gTXCurBufferNum, slotNum);
-				//						if (transmitPacket(gTXCurBufferNum)) {
-				//						};
-				//						gRemoteStateTable[slotNum].remoteState = eRemoteStateDescSent;
-				//
-				//						// Resignal the manager about the new state.
-				//						if (xQueueSend(gGatewayMgmtQueue, &slotNum, pdFALSE)) {
-				//						}
-				//						break;
-				//
-				//					case eRemoteStateDescSent:
-				//						gRemoteStateTable[slotNum].remoteState = eRemoteStateRun;
-				//						break;
-				//
-				//					default:
-				//						;
-				//
-				//				}
 			}
 		}
 	}
@@ -102,37 +51,28 @@ void gatewayMgmtTask(void *pvParameters) {
 
 void serialReceiveTask( void *pvParameters ) {
 
-	portTickType	lastTick;
+//	portTickType	lastTick;
 	BufferCntType	txBufferNum;
 
 	for ( ;; ) {
 
-		// Check if there is enough data in the serial buffer to fill the next *empty* transmit queue.
+		gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
-//		if ((USB_GetCharsInRxBuf() >= TX_BUFFER_SIZE)
-//				&& (gTXRadioBuffer[gTXCurBufferNum].bufferStatus != eBufferStateInUse)
-//				&& (gMainRemote != INVALID_REMOTE)) {
-//
-//			createDataCommand(gTXCurBufferNum, gMainRemote);
-//			USB_RecvBlock((USB_TComData *) &gTXRadioBuffer[gTXCurBufferNum].bufferStorage[2], TX_BUFFER_SIZE - 2, &bytesReceived);
-			gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
+		if (gTXRadioBuffer[gTXCurBufferNum].bufferSize > 0) {
+			// Mark the transmit buffer full.
+			gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
 
-			if (gTXRadioBuffer[gTXCurBufferNum].bufferSize > 0) {
-				// Mark the transmit buffer full.
-				gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
+			// Remember the buffer we just filled and then advance the buffer system.
+			txBufferNum = gTXCurBufferNum;
+			advanceTXBuffer();
 
-				// Remember the buffer we just filled and then advance the buffer system.
-				txBufferNum = gTXCurBufferNum;
-				advanceTXBuffer();
-
-				// Now send the buffer to the transmit queue.
-				if (xQueueSend(gRadioTransmitQueue, &txBufferNum, pdFALSE)) {
-				}
-
-				// Wait until the we've sent the right number of packets per second.
-				//vTaskDelayUntil(&lastTick, gBufferTimeMS);
+			// Now send the buffer to the transmit queue.
+			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, pdFALSE)) {
 			}
-//		}
+
+			// Wait until the we've sent the right number of packets per second.
+			//vTaskDelayUntil(&lastTick, gBufferTimeMS);
+		}
 	}
 
 	/* Will only get here if the queue could not be created. */
@@ -141,7 +81,7 @@ void serialReceiveTask( void *pvParameters ) {
 
 // --------------------------------------------------------------------------
 
-void sendOneChar(USB_TComData *inDataPtr) {
+void sendOneChar(USB_TComData inDataPtr) {
 
 	// Send a character. 
 	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
@@ -156,9 +96,9 @@ void sendOneChar(USB_TComData *inDataPtr) {
 
 void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 
-	UINT16	bytesSent;
+//	UINT16	bytesSent;
 	UINT16	totalBytesSent;
-	byte	status;
+//	byte	status;
  	word 	charsSent;
 
 	// Send the packet contents to the controller via the serial port.
@@ -176,7 +116,7 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
  
 	for (charsSent = 0; charsSent < inSize; charsSent++) {
 		
-        switch(*Ptr) {
+        switch(*inDataPtr) {
 			/* if it's the same code as an END character, we send a
 			 * special two character code so as not to make the
 			 * receiver think we sent an END
@@ -198,10 +138,10 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 			/* otherwise, we just send the character
 			 */
 			default:
-				sendOneChar(*Ptr);
+				sendOneChar(*inDataPtr);
 		}
 
-		Ptr++;
+		inDataPtr++;
 	}
 		
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
