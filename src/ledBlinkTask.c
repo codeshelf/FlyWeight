@@ -39,7 +39,7 @@ void LEDBlinkTask( void *pvParameters ) {
 				LEDOff(ledNum);
 			}
 			
-			vTaskDelay(2);
+			//vTaskDelay(2);
 		}
 	}
 

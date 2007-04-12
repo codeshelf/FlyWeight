@@ -21,13 +21,15 @@
 #define UNIQUE_ID_LEN			8
 #define DEVICE_VERSION_NUM		1
 #define DEVICE_VERSION_NUM_LEN	1
+#define PACKET_HEADER_SIZE		1
 
 /*
  * The format of a packet on the network is as follows:
  * 
- * 1B - Packet length
  * 2b - Version
  * 3b - Network number
+ * 3b - Reserved
+ * 1B - Packet length
  * 3b - Reserved
  * 4b - Packet source address
  * 4b - Packet dest address
@@ -41,7 +43,9 @@
 
 // Command format positioning constants.
 // Packet
-#define PCKPOS_SIZE				0
+#define PCKPOS_VERSION			0
+#define PCKPOS_NETID			0
+#define PCKPOS_SIZE				1
 #define PCKPOS_ADDR				2
 #define CMDPOS_CMDID			3
 #define CMDPOS_STARTOFCMD		4

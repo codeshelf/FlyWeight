@@ -43,9 +43,9 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 	//gsTxPacket.pu8Data = gTXRadioBuffer[inTXBufferNum].bufferStorage;
 	
 	// Make sure that the packet size gets set in the first byte of the packet.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[0] = gTXRadioBuffer[inTXBufferNum].bufferSize;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = gTXRadioBuffer[inTXBufferNum].bufferSize - PACKET_HEADER_SIZE;
 
-	advanceTXBuffer();
+	//advanceTXBuffer();
 
 	// Transmit the packet.
 	if (xQueueSend(gRadioTransmitQueue, &inTXBufferNum, pdFALSE)) {}
@@ -87,18 +87,20 @@ void createPacket(BufferCntType inTXBufferNum, RadioCommandIDType inCmdID, Remot
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = 0;
 	
-	// The first byte of the packet is the packet length.
+	// The first byte of the packet is the header.
+	// The next byte of the packet is the packet length.
 	// The next half byte of the packet is the src address
 	// The next half byte of the packet is the dst address
 	// <--- Now the command starts --->
 	// The first half byte of the command is the command ID.
 	// The next half byte of the command is reserved.
 	// The remaining bytes of the command (and packet) is the command data.
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] = (0x01 << 6) | (0x01 << 3);
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = 3;
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (inSrcAddr << 4) | inDestAddr;
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (inCmdID << 4);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize += 3;
+	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;
 	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 };
 

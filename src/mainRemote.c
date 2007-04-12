@@ -72,9 +72,6 @@ void vMain( void ) {
 
 // --------------------------------------------------------------------------
 
-#define SAMPLE_CORRECTION	0x151
-#define SAMPLE_RATE			0x3f3
-
 void vApplicationIdleHook( void ) {
 	// Clear the watchdog timer.
 	//WatchDog_Clear();

@@ -43,7 +43,7 @@ BufferCntType		gTXUsedBuffers = 0;
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
 // We further divide this by two since we average the cur and prev sample to smooth the waveform.
-SampleRateType		gMasterSampleRate = 2000 / 2;
+SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
 
 // --------------------------------------------------------------------------
 

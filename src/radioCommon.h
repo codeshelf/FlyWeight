@@ -33,7 +33,7 @@
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 
-#define TX_QUEUE_SIZE			2
+#define TX_QUEUE_SIZE			3
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
 
@@ -54,6 +54,8 @@
 
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0x0F
+
+#define SAMPLE_SMOOTH_STEPS		1
 
 #define RELEASE_RX_BUFFER(rxBufferNum)		EnterCritical(); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \

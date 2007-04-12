@@ -78,31 +78,12 @@ void radioReceiveTask(void *pvParameters) {
 				// Send the packet to the controller.
 				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
 				RELEASE_RX_BUFFER(rxBufferNum);
-					
-/*				cmdID = getCommandNumber(rxBufferNum);
-				cmdSrcAddr = getCommandSrcAddr(rxBufferNum);
 				
-				switch (cmdID) {
-				
-					case eMgmtCommandWake:
-						processWakeCommand(rxBufferNum);
-						break;
-						
-					case eMgmtCommandResponse:
-						processResponseCommand(rxBufferNum, cmdSrcAddr);
-						break;
-						
-					default:
-						break;
-					
+				// Blink LED2 to let us know we succeeded in receiving a packet buffer.
+				if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
 				}
-*/
 			}
 			
-			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-			if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
-			
-			}
 		}
 	}
 
@@ -145,13 +126,12 @@ void radioTransmitTask(void *pvParameters) {
 			gsRxPacket.u8Status = 0;
 			MLMERXEnableRequest(&gsRxPacket, 0L);
 						
+			// Blink LED1 to let us know we succeeded in transmitting the buffer.
+			if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
+			}
+			
 		} else {
 			
-		}
-		
-		// Blink LED1 to let us know we succeeded in transmitting the buffer.
-		if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
-		
 		}
 	}
 }

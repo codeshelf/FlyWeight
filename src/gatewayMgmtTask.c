@@ -19,11 +19,6 @@ $Name$
 xQueueHandle		gGatewayMgmtQueue;
 ControllerStateType	gControllerState;
 
-// Figure out how much time to delay for flow-control.
-//portTickType		gBufferTimeMS = (float) (1.0 / (10000.0 / RX_BUFFER_SIZE)) * 1000;
-// We now do flow-control at the controller on the PC.
-portTickType		gBufferTimeMS = 2;
-
 // --------------------------------------------------------------------------
 
 void gatewayMgmtTask(void *pvParameters) {
@@ -55,6 +50,10 @@ void serialReceiveTask( void *pvParameters ) {
 	BufferCntType	txBufferNum;
 
 	for ( ;; ) {
+
+		// Don't try to get a frame if there is no free buffer.
+		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse)
+			vTaskDelay(1);
 
 		gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
@@ -158,15 +157,17 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 
 	// Loop reading bytes until we put together a whole packet.
 	// Make sure not to copy them into the packet if we run out of room.
+	
+	// If there's no character waiting then delay until we get one.
+//	if (USB_GetCharsInRxBuf() == 0)
+//		vTaskDelay(1);
 
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
 	while (TRUE) {
 
-//		if (USB_RecvChar(&nextByte) != ERR_OK)
-//			return bytesReceived;
-//		else {
 		result = USB_RecvChar(&nextByte);
 		if (result == ERR_RXEMPTY) {
+			//vTaskDelay(1);
 		} else if (result != ERR_OK) {
 			USB_GetError(&usbError);
 		} else {

@@ -130,7 +130,7 @@ interrupt void AudioLoader_OnInterrupt(void)
 	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram)
 		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
 	
-		TPM1C2V = 0x80;
+		TPM1C2V = 0xFF;
 		EnterCritical();
 		
 			gCurPWMRadioBufferNum++;
@@ -147,15 +147,15 @@ interrupt void AudioLoader_OnInterrupt(void)
 		if (gStepNum == 0) {
 			// The data is in 2's compliment, so switch it back to positive integer range.
 			gPrevSample = gCurSample;
-			gCurSample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
-			gStepSize = (gCurSample - gPrevSample) / 2;
+			gCurSample = 0x7f - gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];// + 0x80;
+			gStepSize = (gCurSample - gPrevSample) / SAMPLE_SMOOTH_STEPS;
 		}
 		
 		TPM1C2VL = gPrevSample + (gStepSize * gStepNum);
 		TPM1C2VH = 0;
 		
 		gStepNum++;
-		if (gStepNum > 1)
+		if (gStepNum >= SAMPLE_SMOOTH_STEPS)
 			gStepNum = 0;
 
 		// Increment the buffer pointers.
@@ -182,9 +182,9 @@ interrupt void AudioLoader_OnInterrupt(void)
 			ExitCritical();
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
-			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x300)) {
+			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x600)) {
 				gMasterSampleRateAdjust--;
-			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x300)) {
+			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x600)) {
 				gMasterSampleRateAdjust++;
 			};
 		}
