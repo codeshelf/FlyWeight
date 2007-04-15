@@ -117,20 +117,35 @@ void TimerInt(void)
 
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
+
+// The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
+// For example 20Mhz / 10K samples/sec, or 2000.
+// We further divide this by two since we average the cur and prev sample to smooth the waveform.
+SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
+// The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
+// Sample processing details.
 UINT8				gStepNum = 0;
 INT8				gStepSize = 0;
-UINT8				gCurSample = 0;
-UINT8				gPrevSample = 0;
+UINT16				gCurModulo = 0;
+UINT16				gPrevModulo = 0;
+INT16				gPWMMaxValue = 0x110;
+// 1/2 PWM max value - 1 (to convert from 2's complement).
+INT16				gPWMCenterValue = 0x90;
 
 interrupt void AudioLoader_OnInterrupt(void)
-{
+{	
+	INT8 sample;
 	
+	// Reset the timer for the next sample.
+	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
+	TPM1MOD = gPWMMaxValue;
+
 	// This is not a sound buffer, so advance to the next buffer.
 	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram)
 		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
 	
-		TPM1C2V = 0xFF;
+		setReg16(TPM1C2V, gPWMMaxValue);
 		EnterCritical();
 		
 			gCurPWMRadioBufferNum++;
@@ -141,22 +156,23 @@ interrupt void AudioLoader_OnInterrupt(void)
 		
 	} else {
 	
-//		TPM1C2VL = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset] + 0x80;
-//		TPM1C2VH = 0;
-		
 		if (gStepNum == 0) {
 			// The data is in 2's compliment, so switch it back to positive integer range.
-			gPrevSample = gCurSample;
-			gCurSample = 0x7f - gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];// + 0x80;
-			gStepSize = (gCurSample - gPrevSample) / SAMPLE_SMOOTH_STEPS;
+			gPrevModulo = gCurModulo;
+			// Use a signed int to make the 2's compliment math simpler.
+			sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+			gCurModulo = gPWMCenterValue - sample;
+			gStepSize = (gCurModulo - gPrevModulo) / SAMPLE_SMOOTH_STEPS;
 		}
 		
-		TPM1C2VL = gPrevSample + (gStepSize * gStepNum);
-		TPM1C2VH = 0;
+		setReg16(TPM1C2V, gPrevModulo + (gStepSize * gStepNum));
 		
 		gStepNum++;
-		if (gStepNum >= SAMPLE_SMOOTH_STEPS)
+		if (gStepNum >= SAMPLE_SMOOTH_STEPS) {
 			gStepNum = 0;
+
+//		gCurSample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+//		setReg16(TPM1C2V, gPWMCenterValue + gCurSample);
 
 		// Increment the buffer pointers.
 		gCurPWMOffset++;
@@ -182,16 +198,16 @@ interrupt void AudioLoader_OnInterrupt(void)
 			ExitCritical();
 				
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
+			// We can't go too low or high, or we'll end up missing 
+			// the next interrupt and making the sample run "long".
 			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x600)) {
 				gMasterSampleRateAdjust--;
 			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x600)) {
 				gMasterSampleRateAdjust++;
 			};
 		}
+		}
 	
-		
-		// We can't go too low, or we'll end up missing the next interrupt and making the sample take longer.
-		TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 	}
 
 	// Reset the overflow flag.
