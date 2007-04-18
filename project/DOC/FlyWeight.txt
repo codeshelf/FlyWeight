@@ -52,9 +52,9 @@ Module "SWI"       (bean InterruptVector)
 
 Module "MC13191IRQ" (bean InterruptVector)
 
-Module "PWM"       (bean Init_TPM_HCS08)
-   - PWM_Init -This method initializes registers of the TPM module according to this Peripheral Initialization Bean settings. 
-                Call this method in the user code to initialize the module. By default, the method is called by PE 
+Module "PWM_EVB"   (bean Init_TPM_HCS08)
+   - PWM_EVB_Init -This method initializes registers of the TPM module according to this Peripheral Initialization Bean 
+                settings. Call this method in the user code to initialize the module. By default, the method is called by PE 
                 automatically; see "Call Init method" property of the bean for more details.
 
 Module "AudioOut"  (bean InterruptVector)

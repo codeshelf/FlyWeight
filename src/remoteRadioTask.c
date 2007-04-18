@@ -18,7 +18,11 @@
 
 // SMAC includes
 #include "pub_def.h"
-#include "PWM.h"
+#ifdef XBEE
+	#include "PWM_XBee.h"
+#else
+	#include "PWM_EVB.h"
+#endif
 
 // --------------------------------------------------------------------------
 // Local variables.
@@ -65,7 +69,11 @@ void radioReceiveTask(void *pvParameters) {
 		TPM2MOD = gMasterSampleRate;	
 		
 		//PWM1_Enable();
-		PWM_Init();
+#ifdef XBEE
+		PWM_XBee_Init();
+#else
+		PWM_EVB_Init();
+#endif
 
 		for (;;) {
 

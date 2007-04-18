@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/11/2007, 4:14 PM
+**     Date/Time : 4/17/2007, 10:16 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -40,7 +40,7 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM.h"
+#include "PWM_EVB.h"
 #include "AudioOut.h"
 #include "USB.h"
 #include "PE_Types.h"
@@ -223,9 +223,9 @@ void PE_low_level_init(void)
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
                  set the property Call Init method to 'yes'
   */
-  /* ### Init_TPM "PWM" init code ... */
-  /* ### Call "PWM_Init();" init method in a user code, i.e. in the main code */
-  /* ### Note:   To enable automatic calling of the "PWM" init code here must be
+  /* ### Init_TPM "PWM_EVB" init code ... */
+  /* ### Call "PWM_EVB_Init();" init method in a user code, i.e. in the main code */
+  /* ### Note:   To enable automatic calling of the "PWM_EVB" init code here must be
                  set the property Call Init in CPU init.code to 'yes'
   */
   /* ### Asynchro serial "USB" init code ... */

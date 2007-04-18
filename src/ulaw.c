@@ -29,6 +29,8 @@
  *
  * u-law, A-law and linear PCM conversions.
  */
+ 
+ #include "ulaw.h"
 
 static int search(int val, short *table, int size) {
 	int i;
