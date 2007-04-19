@@ -90,6 +90,18 @@ void sendOneChar(USB_TComData inDataPtr) {
 
 }
 
+// --------------------------------------------------------------------------
+
+void readOneChar(USB_TComData *inDataPtr) {
+
+	// Read a character. 
+	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	while (USB_RecvChar(inDataPtr) != ERR_OK) {
+		// Consider a timeout where we just reset the MCU.
+	};
+
+}
+
 
 // --------------------------------------------------------------------------
 
@@ -152,8 +164,8 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
-	byte result;
-	USB_TError usbError;
+//	byte result;
+//	USB_TError usbError;
 
 	// Loop reading bytes until we put together a whole packet.
 	// Make sure not to copy them into the packet if we run out of room.
@@ -165,13 +177,15 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
 	while (TRUE) {
 
-		result = USB_RecvChar(&nextByte);
-		if (result == ERR_RXEMPTY) {
-			//vTaskDelay(1);
-		} else if (result != ERR_OK) {
-			USB_GetError(&usbError);
-		} else {
+//		result = USB_RecvChar(&nextByte);
+//		if (result == ERR_RXEMPTY) {
+//			//vTaskDelay(1);
+//		} else if (result != ERR_OK) {
+//			USB_GetError(&usbError);
+//		} else {
+		readOneChar(&nextByte);
 		
+		{		
 			switch (nextByte) {
 	
 				// If it's an END character then we're done with the packet.
@@ -185,7 +199,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 				 * what to store in the packet based on that.
 				 */
 				case ESC:
-					USB_RecvChar(&nextByte);
+					readOneChar(&nextByte);
 	
 					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
 					 * seems to be to leave the byte alone and just stuff it into the packet

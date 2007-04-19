@@ -19,6 +19,7 @@
 #include "gatewayRadioTask.h"
 #include "commands.h"
 #include "ledBlinkTask.h"
+#include "ulaw.h"
 
 // SMAC
 #include "simple_mac.h"
@@ -115,6 +116,13 @@ void TimerInt(void)
 
 #include "task.h"
 
+#ifdef XBEE
+	#define PWM_MSB_CHANNEL		TPM1C0V
+	#define PWM_LSB_CHANNEL		TPM1C1V
+#else
+	#define PWM_LSB_CHANNEL		TPM1C2V
+#endif
+
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
 
@@ -122,42 +130,34 @@ BufferCntType		gCurPWMRadioBufferNum = 0;
 // For example 20Mhz / 10K samples/sec, or 2000.
 // We further divide this by two since we average the cur and prev sample to smooth the waveform.
 SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
-// The "tuning" time for the master rate to keep the packet flow balanced.
-INT16				gMasterSampleRateAdjust = 0;
+#ifdef STEPPING_SUPPORT
 // Sample processing details.
 UINT8				gStepNum = 0;
 INT8				gStepSize = 0;
 UINT16				gCurModulo = 0;
 UINT16				gPrevModulo = 0;
-INT16				gPWMMaxValue = 0x100;
-// 1/2 PWM max value - 1 (to convert from 2's complement).
-INT16				gPWMCenterValue = 0x90;
-
-#ifdef XBEE
-	#define PWM_LOW_CHANNEL		TPM1C0V
-	#define PWM_HIGH_CHANNEL	TPM1C1V
-#else
-	#define PWM_LOW_CHANNEL		TPM1C2V
-//	#define PWM_HIGH_CHANNEL	TPM1C1V
 #endif
+
+// The "tuning" time for the master rate to keep the packet flow balanced.
+INT16				gMasterSampleRateAdjust = 0;
+UINT16				gPWMMaxValue = 0x100;
+// 1/2 PWM max value - 1 (to convert from 2's complement).
+UINT16				gPWMCenterValue = 0x80;
 
 interrupt void AudioLoader_OnInterrupt(void)
 {	
-	INT8 sample;
+	INT8	sample;
+	UINT16	uLawSample;
 	
 	// Reset the timer for the next sample.
 	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 	TPM1MOD = gPWMMaxValue;
 
-	// Reset the overflow flag.
-//	if (TPM2SC_TOF)
-//		TPM2SC_TOF = 0;
-
 	// This is not a sound buffer, so advance to the next buffer.
 	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram)
 		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
 	
-		setReg16(PWM_LOW_CHANNEL, gPWMMaxValue);
+		//setReg16(PWM_LOW_CHANNEL, gPWMMaxValue);
 		EnterCritical();
 		
 			gCurPWMRadioBufferNum++;
@@ -168,6 +168,7 @@ interrupt void AudioLoader_OnInterrupt(void)
 		
 	} else {
 	
+#ifdef STEPPING_SUPPORT
 		if (gStepNum == 0) {
 			// The data is in 2's compliment, so switch it back to positive integer range.
 			gPrevModulo = gCurModulo;
@@ -182,15 +183,27 @@ interrupt void AudioLoader_OnInterrupt(void)
 		gStepNum++;
 		if (gStepNum >= SAMPLE_SMOOTH_STEPS) {
 			gStepNum = 0;
-
-	//		gCurSample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
-	//		setReg16(TPM1C2V, gPWMCenterValue + gCurSample);
-
+#else
+		sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+#ifdef XBEE
+		// On the XBee module we support 16bit converted uLaw samples.
+		// One to 8-bit channel 0, and one to 8-bit channel 1.  
+		// The two channels are tied together with different resistor values to give us 16 bit resolution.
+		// (By "shifting" the voltage of channel 0 by 256x.)
+		uLawSample = ulaw2linear(sample);
+		// Only the lower 8 bits of each channel are in use.
+		setReg16(PWM_MSB_CHANNEL, gPWMCenterValue - (uLawSample >> 8));
+		setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - (uLawSample && 0x00ff));
+#else
+		setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample);
+#endif
+		{
+#endif
 			// Increment the buffer pointers.
 			gCurPWMOffset++;
-			if (gCurPWMOffset > RX_BUFFER_SIZE - 1) {
+			if (gCurPWMOffset >= gRXRadioBuffer[gCurPWMRadioBufferNum].bufferSize) {
 				
-				gCurPWMOffset = 4;
+				gCurPWMOffset = CMDPOS_DATAGRAM;
 				
 				// The buffers are a shared, critical resource, so we have to protect them before we update.
 				EnterCritical();
@@ -212,9 +225,9 @@ interrupt void AudioLoader_OnInterrupt(void)
 				// Adjust the sampling rate to account for mismatches in the OTA rate.				
 				// We can't go too low or high, or we'll end up missing 
 				// the next interrupt and making the sample run "long".
-				if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x600)) {
+				if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x80)) {
 					gMasterSampleRateAdjust--;
-				} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x600)) {
+				} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x80)) {
 					gMasterSampleRateAdjust++;
 				};
 			}

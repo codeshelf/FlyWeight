@@ -25,7 +25,7 @@
 #define SERIAL_RECV_PRIORITY	( tskIDLE_PRIORITY + 2 )
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
 
-#define MAX_PACKET_SIZE			121
+#define MAX_PACKET_SIZE			123
 //#define MAX_PACKET_SIZE			30
 
 #define RX_QUEUE_SIZE			6
@@ -33,7 +33,7 @@
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 
-#define TX_QUEUE_SIZE			3
+#define TX_QUEUE_SIZE			2
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
 
@@ -88,7 +88,7 @@ typedef enum {
 
 typedef struct {
 	EBufferStatusType		bufferStatus;
-	BufferStorageType		bufferStorage[MAX_PACKET_SIZE + 4];
+	BufferStorageType		bufferStorage[MAX_PACKET_SIZE];
 	BufferCntType			bufferSize;
 } RadioBufferStruct;
 

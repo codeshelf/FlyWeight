@@ -63,6 +63,7 @@
 #define CMDPOS_ASSIGNACK_ADDR	12
 
 // Data Command
+#define CMDPOS_DATAGRAM			4
 
 // Query Command
 #define CMDPOS_QUERY			4
