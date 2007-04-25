@@ -55,8 +55,6 @@
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0x0F
 
-#define SAMPLE_SMOOTH_STEPS		1
-
 #define RELEASE_RX_BUFFER(rxBufferNum)		EnterCritical(); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
 											gRXUsedBuffers--; \

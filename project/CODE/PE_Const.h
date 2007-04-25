@@ -6,7 +6,7 @@
 **     Beantype  : PE_Const
 **     Version   : Driver 01.00
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/18/2007, 4:23 PM
+**     Date/Time : 4/24/2007, 12:46 PM
 **     Abstract  :
 **         This bean "PE_Const" contains internal definitions
 **         of the constants.

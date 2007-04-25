@@ -22,7 +22,7 @@
 #include "ledBlinkTask.h"
 #include "commands.h"
 #include "CPU.h"
-//#include "WatchDog.h"
+#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
 // Globals
@@ -74,5 +74,5 @@ void vMain( void ) {
 
 void vApplicationIdleHook( void ) {
 	// Clear the watchdog timer.
-	//WatchDog_Clear();
+	WatchDog_Clear();
 }
