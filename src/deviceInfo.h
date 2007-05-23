@@ -31,15 +31,19 @@ $Id$
 
 #define ENDPOINT_TYPE_LEN	4
 
+#define KVP_ENTRIES			3
+#define ENDPOINT_ENTRIES	3
+#define ENDPOINT_KVPS		4
+
 extern char DEVICE_DESC[];
 
 extern const UINT8 kActorKVPs;
-extern const BufferStoragePtrType kActorKVPTable[3][2];
+extern const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2];
 
 extern const UINT8 kActorEndpoints;
-extern const BufferStoragePtrType kActorEndpointTable[2][3];
+extern const BufferStoragePtrType kActorEndpointTable[ENDPOINT_ENTRIES][3];
 
 extern const UINT8 kEndpointKVPs;
-extern const BufferStoragePtrType kEndpointKVPTable[3][3];
+extern const BufferStoragePtrType kEndpointKVPTable[ENDPOINT_KVPS][3];
 
 #endif DEVICEINFO_H

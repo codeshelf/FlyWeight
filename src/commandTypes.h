@@ -179,12 +179,15 @@ typedef enum {
  */
 typedef enum {
 	eCommandInvalid = 0,
-	eCommandDatagram = 1,
+	eCommandAudio = 1,
 	eCommandWake = 2,
 	eCommandAddrAssign = 3,
 	eCommandAddrAssignAck = 4,
 	eCommandQuery = 5,
 	eCommandResponse = 6,
+	eCommandEndpointAdjust = 7,
+	eCommandMotorPosition = 8,
+	eCommandMotorRun = 9
 } RadioCommandIDType;
 
 // --------------------------------------------------------------------------

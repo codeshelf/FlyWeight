@@ -54,6 +54,26 @@ void remoteMgmtTask( void *pvParameters ) {
 						// Now that the remote has an assigned address we need to ask it to describe
 						// it's capabilities and characteristics.
 						processQueryCommand(rxBufferNum, gMyAddr);
+						break;
+						
+					// If we're in the run state, and receive a command then we need to handle that command.
+					case eLocalStateRun:
+						
+						switch (getCommandNumber(rxBufferNum)) {
+						
+							case eCommandEndpointAdjust:
+								break;
+								
+							case eCommandMotorPosition:
+								break;
+								
+							case eCommandMotorRun:
+								break;
+								
+							default:
+								break;
+						}
+						break;
 						
 					default:
 						;

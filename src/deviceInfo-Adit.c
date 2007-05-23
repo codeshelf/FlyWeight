@@ -15,27 +15,33 @@ $Id$
 #include "pub_def.h"
 #include "radioCommon.h"
 
-const char DEVICE_DESC[] = "Adit ChatHed";
+const char DEVICE_DESC[] = "Adit ChatHead";
 
-const UINT8 kActorKVPs = 3;
-const BufferStoragePtrType kActorKVPTable[3][2] = {
+#define KVP_ENTRIES			3
+#define ENDPOINT_ENTRIES	3
+#define ENDPOINT_KVPS		4
+
+const UINT8 kActorKVPs = KVP_ENTRIES;
+const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2] = {
 	// Key, value
 	{ "gender", "male" },
 	{ "age", "32" },
 	{ "race", "south asian" }
 };
 
-const UINT8 kActorEndpoints = 2;
-const BufferStoragePtrType kActorEndpointTable[2][3] = {
+const UINT8 kActorEndpoints = ENDPOINT_ENTRIES;
+const BufferStoragePtrType kActorEndpointTable[ENDPOINT_ENTRIES][3] = {
 	// Codec type, description, endpoint number
-	{ "aduo", "PCM Audio", "\1" },
-	{ "leds", "PWM LEDs", "\2" }
+	{ "ulaw", "ULaw Audio", "\1" },
+	{ "motr", "Eyes/Ears Motor", "\2" },
+	{ "motr", "Feet/Mouth Motor", "\3" }
 };
 
-const UINT8 kEndpointKVPs = 3;
-const BufferStoragePtrType kEndpointKVPTable[3][3] = {
+const UINT8 kEndpointKVPs = ENDPOINT_KVPS;
+const BufferStoragePtrType kEndpointKVPTable[ENDPOINT_KVPS][3] = {
 	// Endpoint number, key, value
 	{ "\1", "voice", "*" },
 	{ "\2", "eyes", "*" },
-	{ "\2", "color", "red" }
+	{ "\2", "color", "brown" },
+	{ "\3", "mouth", "*" }
 };

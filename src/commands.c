@@ -163,7 +163,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 void createDataCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandDatagram, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandAudio, gMyAddr, inRemoteAddr);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
 };

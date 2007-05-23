@@ -122,8 +122,9 @@ void TimerInt(void)
 #else
 	#define PWM_LSB_CHANNEL		TPM1C2V
 #endif
+#define		MAX_DRIFT			0x40
 
-UINT16				gPWMMaxValue = 0xff;
+//UINT16				gPWMMaxValue = 0xff;
 UINT16				gPWMCenterValue = 0x7f;
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
@@ -145,10 +146,10 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	
 	// Reset the timer for the next sample.
 	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
-	TPM1MOD = gPWMMaxValue;
+//	TPM1MOD = gPWMMaxValue;
 
 	// This is not a sound buffer, so advance to the next buffer.
-	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandDatagram)
+	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandAudio)
 		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
 	
 #ifdef XBEE
@@ -208,9 +209,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			// Adjust the sampling rate to account for mismatches in the OTA rate.				
 			// We can't go too low or high, or we'll end up missing 
 			// the next interrupt and making the sample run "long".
-			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -0x80)) {
+			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
 				gMasterSampleRateAdjust--;
-			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < 0x80)) {
+			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
 				gMasterSampleRateAdjust++;
 			}
 		}

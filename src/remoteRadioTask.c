@@ -113,7 +113,7 @@ void radioReceiveTask(void *pvParameters) {
 				
 					switch (cmdID) {
 					
-						case eCommandDatagram:
+						case eCommandAudio:
 							//gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
 							break;
 						
@@ -129,6 +129,15 @@ void radioReceiveTask(void *pvParameters) {
 							// Signal the manager about the new state.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
+							break;
+							
+						case eCommandEndpointAdjust:
+							break;
+							
+						case eCommandMotorPosition:
+							break;
+							
+						case eCommandMotorRun:
 							break;
 							
 						default:
