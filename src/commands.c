@@ -43,7 +43,7 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 	//gsTxPacket.pu8Data = gTXRadioBuffer[inTXBufferNum].bufferStorage;
 	
 	// Make sure that the packet size gets set in the first byte of the packet.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = gTXRadioBuffer[inTXBufferNum].bufferSize - PACKET_HEADER_SIZE;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = gTXRadioBuffer[inTXBufferNum].bufferSize - PACKET_HEADER_BYTES;
 
 	//advanceTXBuffer();
 
@@ -60,6 +60,15 @@ RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
 	RadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
+	return result;
+};
+
+// --------------------------------------------------------------------------
+
+RadioControlIDType getControlNumber(BufferCntType inRXBufferNum) {
+
+	// The command number is in the third half-byte of the packet.
+	RadioControlIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CTRLID]);
 	return result;
 };
 
@@ -112,12 +121,12 @@ void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniq
 	createPacket(inTXBufferNum, eCommandWake, ADDR_CONTROLLER, ADDR_BROADCAST);
 
 	// Tell the controller what protocol we know/use.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_PROTOCOL_ID] = DEVICE_VERSION_NUM;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_DEVICE_TYPE] = DEVICE_REMOTE;
 	
 	// The next 8 bytes are the unique ID of the device.
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), inUniqueID, UNIQUE_ID_LEN);
+	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), inUniqueID, UNIQUE_ID_BYTES);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + DEVICE_VERSION_NUM_LEN + UNIQUE_ID_LEN;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + DEVICE_TYPE_BYTES + UNIQUE_ID_BYTES;
 };
 
 // --------------------------------------------------------------------------
@@ -128,11 +137,11 @@ void createAddrAssignAckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrTy
 	createPacket(inTXBufferNum, eCommandAddrAssignAck, gMyAddr, ADDR_CONTROLLER);
 
 	// The next 8 bytes are the unique ID of the device.
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGNACK_UID]), inUniqueID, UNIQUE_ID_LEN);
+	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGNACK_UID]), inUniqueID, UNIQUE_ID_BYTES);
 	
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGNACK_ADDR] = (gMyAddr << 4);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + UNIQUE_ID_LEN + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + UNIQUE_ID_BYTES + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -161,9 +170,9 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 // --------------------------------------------------------------------------
 
-void createDataCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
+void createControlCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandAudio, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandControl, gMyAddr, inRemoteAddr);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
 };
@@ -175,7 +184,7 @@ void processAssignCommand(BufferCntType inRXBufferNum) {
 	RemoteAddrType result = INVALID_REMOTE;
 
 	// Let's first make sure that this assign command is for us.
-	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_LEN) == 0) {
+	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] & CMDMASK_ASSIGNID) >> 4;	
 	}

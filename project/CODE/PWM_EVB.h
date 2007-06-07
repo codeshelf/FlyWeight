@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/18/2007, 2:48 PM
+**     Date/Time : 6/6/2007, 2:36 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -18,8 +18,8 @@
 **            Clock settings
 **              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
-**              Modulo Counter                             : 256
-**              Period                                     : 12.85 us
+**              Modulo Counter                             : 255
+**              Period                                     : 12.8 us
 **            Aligned                                      : Left
 **          Channels                                       : 1
 **            Channel0                                     : 1
@@ -44,7 +44,7 @@
 **            Overflow Interrupt
 **              Interrupt                                  : Vtpm1ovf
 **              Overflow Interrupt                         : Disabled
-**              ISR Name                                   :audioOutISR
+**              ISR Name                                   :
 **          Initialization
 **          Call Init Method                               : no
 **     Contents  :
@@ -85,14 +85,6 @@
 ** ===================================================================
 */
 void PWM_EVB_Init(void);
-
-/*
-** ===================================================================
-** The interrupt service routine must be implemented by user in one
-** of the user modules (see PWM_EVB.c file for more information).
-** ===================================================================
-*/
-__interrupt void audioOutISR(void);
 
 /* END PWM_EVB. */
 

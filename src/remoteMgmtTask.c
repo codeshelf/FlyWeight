@@ -38,7 +38,7 @@ void remoteMgmtTask( void *pvParameters ) {
 				// Get the state of the remote at the named slot.
 				switch (gLocalDeviceState) {
 
-					case eLocalStateUnknown:
+					case eLocalStateJustWoke:
 						// If we're in the init mode then we need to transmit a wake command.
 						createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 						if (transmitPacket(gTXCurBufferNum)) {
@@ -53,7 +53,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					case eLocalStateQueryRcvd:
 						// Now that the remote has an assigned address we need to ask it to describe
 						// it's capabilities and characteristics.
-						processQueryCommand(rxBufferNum, gMyAddr);
+						processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
 						break;
 						
 					// If we're in the run state, and receive a command then we need to handle that command.
@@ -64,10 +64,7 @@ void remoteMgmtTask( void *pvParameters ) {
 							case eCommandEndpointAdjust:
 								break;
 								
-							case eCommandMotorPosition:
-								break;
-								
-							case eCommandMotorRun:
+							case eCommandControl:
 								break;
 								
 							default:

@@ -18,10 +18,14 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
-#define UNIQUE_ID_LEN			8
-#define DEVICE_VERSION_NUM		1
-#define DEVICE_VERSION_NUM_LEN	1
-#define PACKET_HEADER_SIZE		1
+#define UNIQUE_ID_BYTES			8
+
+#define DEVICE_CONTROLLER		0
+#define DEVICE_GATEWAY			1
+#define DEVICE_REMOTE			2
+#define DEVICE_TYPE_BYTES		1
+
+#define PACKET_HEADER_BYTES		1
 
 /*
  * The format of a packet on the network is as follows:
@@ -51,7 +55,7 @@
 #define CMDPOS_STARTOFCMD		4
 
 // Wake Command
-#define CMDPOS_PROTOCOL_ID		4
+#define CMDPOS_DEVICE_TYPE		4
 #define CMDPOS_WAKE_UID			5
 
 // Assign Command
@@ -62,14 +66,18 @@
 #define CMDPOS_ASSIGNACK_UID	4
 #define CMDPOS_ASSIGNACK_ADDR	12
 
-// Data Command
-#define CMDPOS_DATAGRAM			4
-
 // Query Command
 #define CMDPOS_QUERY			4
 
 // Response Command
 #define CMDPOS_RESPONSE			4
+
+// Endpoint Adjust Command
+
+// Control Command
+#define CMDPOS_CONTROL			4
+#define CMDPOS_CTRLID			4
+#define CMDPOS_CONTROL_DATA		5
 
 // Command masks
 #define PACKETMASK_VERSION		0xc0
@@ -122,6 +130,7 @@ typedef enum {
 
 typedef enum {
 	eLocalStateUnknown,
+	eLocalStateJustWoke,
 	eLocalStateWakeSent,
 	eLocalStateAddrAssignRcvd,
 	eLocalStateAddrAssignAckSent,
@@ -178,17 +187,21 @@ typedef enum {
  * 
  */
 typedef enum {
-	eCommandInvalid = 0,
-	eCommandAudio = 1,
-	eCommandWake = 2,
-	eCommandAddrAssign = 3,
-	eCommandAddrAssignAck = 4,
-	eCommandQuery = 5,
-	eCommandResponse = 6,
-	eCommandEndpointAdjust = 7,
-	eCommandMotorPosition = 8,
-	eCommandMotorRun = 9
+	eCommandInvalid = -1,
+	eCommandWake = 0,
+	eCommandAddrAssign = 1,
+	eCommandAddrAssignAck = 2,
+	eCommandQuery = 3,
+	eCommandResponse = 4,
+	eCommandEndpointAdjust = 5,
+	eCommandControl = 6
 } RadioCommandIDType;
+
+typedef enum {
+	eControlInvalid = -1,
+	eControlAudio = 0,
+	eControlMotor = 1
+} RadioControlIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

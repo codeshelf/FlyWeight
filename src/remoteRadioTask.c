@@ -113,10 +113,17 @@ void radioReceiveTask(void *pvParameters) {
 				
 					switch (cmdID) {
 					
-						case eCommandAudio:
-							//gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateSoundData;
-							break;
-						
+						case eCommandWake:
+							// If we receive a wake command from the controller then
+							// respond with a wake command.
+							if (gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_DEVICE_TYPE] == DEVICE_CONTROLLER) {
+								gLocalDeviceState = eLocalStateJustWoke;
+								// Signal the manager about the new state.
+								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+								}
+								break;
+							}
+					
 						case eCommandAddrAssign:
 							gLocalDeviceState = eLocalStateAddrAssignRcvd;
 							// Signal the manager about the new state.
@@ -134,12 +141,17 @@ void radioReceiveTask(void *pvParameters) {
 						case eCommandEndpointAdjust:
 							break;
 							
-						case eCommandMotorPosition:
+						case eCommandControl:
+							// Make sure that there is a valid sub-command in the control command.
+							switch (getControlNumber(rxBufferNum)) {
+								case eControlAudio:
+								case eControlMotor:
+									break;
+								default:
+									RELEASE_RX_BUFFER(rxBufferNum);
+							}
 							break;
-							
-						case eCommandMotorRun:
-							break;
-							
+													
 						default:
 							// Bogus command.
 							// Immediately free this command buffer since we'll never do anything with it.

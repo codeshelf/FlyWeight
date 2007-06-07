@@ -85,8 +85,8 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 	curPos += QUERYID_SIZE;
 	
 	// Write the GUID into the response.
-	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
-	curPos += UNIQUE_ID_LEN;
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_BYTES);
+	curPos += UNIQUE_ID_BYTES;
 
 	// Write the description into the response.
 	writeAsPString(inResponsePtr + curPos, DEVICE_DESC, (BufferOffsetType) strlen(DEVICE_DESC));
@@ -120,8 +120,8 @@ BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferSto
 	curPos += QUERYID_SIZE;
 	
 	// Write the GUID into the response.
-	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
-	curPos += UNIQUE_ID_LEN;
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_BYTES);
+	curPos += UNIQUE_ID_BYTES;
 
 	// Find the KVP that corresponds to the requested KVP.
 	kvpNum = inQueryPtr[QPOS_KVPNUM];
@@ -159,8 +159,8 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 	curPos += QUERYID_SIZE;
 	
 	// Write the GUID into the response.
-	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
-	curPos += UNIQUE_ID_LEN;
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_BYTES);
+	curPos += UNIQUE_ID_BYTES;
 
 	// Find the endpoint that corresponds to the requested endpoint.
 	endpointNum = (inQueryPtr[QPOS_ENDPOINT_NUM]) >> 4;
@@ -206,8 +206,8 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 	curPos += QUERYID_SIZE;
 	
 	// Write the GUID into the response.
-	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_LEN);
-	curPos += UNIQUE_ID_LEN;
+	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_BYTES);
+	curPos += UNIQUE_ID_BYTES;
 
 	// Find the endpoint that corresponds to the requested endpoint.
 	endpointNum = (inQueryPtr[QPOS_KVPENDPOINT_NUM]) >> 4;

@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/18/2007, 2:48 PM
+**     Date/Time : 6/6/2007, 2:36 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -18,8 +18,8 @@
 **            Clock settings
 **              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
-**              Modulo Counter                             : 256
-**              Period                                     : 12.85 us
+**              Modulo Counter                             : 255
+**              Period                                     : 12.8 us
 **            Aligned                                      : Left
 **          Channels                                       : 1
 **            Channel0                                     : 1
@@ -44,7 +44,7 @@
 **            Overflow Interrupt
 **              Interrupt                                  : Vtpm1ovf
 **              Overflow Interrupt                         : Disabled
-**              ISR Name                                   :audioOutISR
+**              ISR Name                                   :
 **          Initialization
 **          Call Init Method                               : no
 **     Contents  :
@@ -64,32 +64,6 @@
 #include "PWM_EVB.h"
 
 /*
-** ###################################################################
-**
-**  The interrupt service routine(s) must be implemented
-**  by user in one of the following user modules.
-**
-**  If the "Generate ISR" option is enabled, Processor Expert generates
-**  ISR templates in the CPU event module.
-**
-**  User modules:
-**      FlyWeight.c
-**      Events.c
-**
-** ###################################################################
-      ISR(audioOutISR)
-      {
-      // NOTE: The routine should include the following actions to obtain
-      //       correct functionality of the hardware.
-      //
-      //       The TPM1SC register should be read and
-      //       TOF bit must be set to 0 to clear the interrupt request.
-      //       Example: TPM1SC;
-      //                TPM1SC_TOF = 0;
-      }
-
-*/
-/*
 ** ===================================================================
 **     Method      :  PWM_EVB_Init (bean Init_TPM)
 **
@@ -107,7 +81,7 @@
 void PWM_EVB_Init(void)
 {
 
-  setReg16(TPM1MOD, 0x0100);            
+  setReg16(TPM1MOD, 0xFF);              
   setReg16(TPM1C2V, 0x00);              
   /* TPM1C2SC: CH2F=0,CH2IE=0,MS2B=1,MS2A=0,ELS2B=1,ELS2A=0,??=0,??=0 */
   setReg8(TPM1C2SC, 0x28);              

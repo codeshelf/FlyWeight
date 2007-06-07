@@ -37,6 +37,7 @@
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
 RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum);
+RadioControlIDType getControlNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 

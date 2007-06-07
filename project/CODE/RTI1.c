@@ -6,7 +6,7 @@
 **     Beantype  : Init_RTI
 **     Version   : Bean 01.030, Driver 01.06, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/24/2007, 12:46 PM
+**     Date/Time : 6/6/2007, 10:20 PM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,

@@ -148,15 +148,16 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 //	TPM1MOD = gPWMMaxValue;
 
-	// This is not a sound buffer, so advance to the next buffer.
-	if ((getCommandNumber(gCurPWMRadioBufferNum) != eCommandAudio)
-		|| (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus != eBufferStateInUse)) {
+	// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
+	if (!((getCommandNumber(gCurPWMRadioBufferNum) == eCommandControl) 
+		&& (getControlNumber(gCurPWMRadioBufferNum) == eControlAudio)
+		&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 	
 #ifdef XBEE
 		//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 		//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
 #else
-		setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
+		//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 #endif
 		EnterCritical();
 		
@@ -187,7 +188,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		gCurPWMOffset++;
 		if (gCurPWMOffset >= gRXRadioBuffer[gCurPWMRadioBufferNum].bufferSize) {
 			
-			gCurPWMOffset = CMDPOS_DATAGRAM;
+			gCurPWMOffset = CMDPOS_CONTROL_DATA;
 			
 			// The buffers are a shared, critical resource, so we have to protect them before we update.
 			EnterCritical();

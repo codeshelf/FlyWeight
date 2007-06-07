@@ -91,7 +91,7 @@ typedef struct {
 } RadioBufferStruct;
 
 typedef UINT8				RemoteAddrType;
-typedef byte				RemoteUniqueIDType[UNIQUE_ID_LEN + 1];
+typedef byte				RemoteUniqueIDType[UNIQUE_ID_BYTES + 1];
 typedef RemoteUniqueIDType	*RemoteUniqueIDPtrType;
 typedef struct {
 	ERemoteStatusType		remoteState;
