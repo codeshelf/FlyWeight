@@ -30,7 +30,7 @@ RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
 // --------------------------------------------------------------------------
 // Local function prototypes
 
-void createPacket(BufferCntType inTXBufferNum, RadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
+void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
 
 // --------------------------------------------------------------------------
 
@@ -56,19 +56,19 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
+ERadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
-	RadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
+	ERadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
 	return result;
 };
 
 // --------------------------------------------------------------------------
 
-RadioControlIDType getControlNumber(BufferCntType inRXBufferNum) {
+EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
-	RadioControlIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CTRLID]);
+	EndpointNumType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ENDPOINT] & CMDMASK_ENDPOINT);
 	return result;
 };
 
@@ -92,7 +92,16 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void createPacket(BufferCntType inTXBufferNum, RadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
+ERadioControlCommandIDType getControlCommandNumber(BufferCntType inRXBufferNum) {
+
+	// The control command number is in the fourth half-byte of the packet.
+	ERadioControlCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CTRLID]);
+	return result;
+};
+
+// --------------------------------------------------------------------------
+
+void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = 0;
 	
@@ -220,4 +229,76 @@ void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemote
 	if (xQueueSend(gGatewayMgmtQueue, &inRemoteAddr, pdFALSE)) {
 	}
 
+}
+
+// --------------------------------------------------------------------------
+
+EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
+
+	EMotorCommandType result = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA + 1];
+	
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
+void processMotorControlCommand(BufferCntType inRXBufferNum) {
+
+#define MOTOR1_FREE		0b11111100
+#define MOTOR1_FWD		0b00000010
+#define MOTOR1_BWD		0b00000001
+#define MOTOR1_BRAKE	0b00000011
+
+#define MOTOR2_FREE		0b11110011
+#define MOTOR2_FWD		0b00001000
+#define MOTOR2_BWD		0b00000100
+#define MOTOR2_BRAKE	0b00001100
+
+	// Map the endpoint to the motor.
+	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
+	EMotorCommandType motorCommand = getMotorCommand(inRXBufferNum);
+	
+	PTBDD = 0b11111111;
+	switch (endpoint) {
+		case MOTOR1_ENDPOINT:
+			PTBD &= MOTOR1_FREE;
+			
+			switch (motorCommand) {
+				case eMotorCommandFwd:
+					PTBD |= MOTOR1_FWD;
+					break;
+			
+				case eMotorCommandBwd:
+					PTBD |= MOTOR1_BWD;
+					break;
+			
+				case eMotorCommandBrake:
+					PTBD |= MOTOR1_BRAKE;
+					break;
+			}
+			break;
+			
+		case MOTOR2_ENDPOINT:
+			PTBD &= MOTOR2_FREE;
+			
+			switch (motorCommand) {
+				case eMotorCommandFwd:
+					PTBD |= MOTOR2_FWD;
+					break;
+			
+				case eMotorCommandBwd:
+					PTBD |= MOTOR2_BWD;
+					break;
+			
+				case eMotorCommandBrake:
+					PTBD |= MOTOR2_BRAKE;
+					break;
+			}
+			break;
+			
+		default:
+			break;	
+	}
+	
+	RELEASE_RX_BUFFER(inRXBufferNum);
 }

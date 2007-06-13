@@ -150,7 +150,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 	// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
 	if (!((getCommandNumber(gCurPWMRadioBufferNum) == eCommandControl) 
-		&& (getControlNumber(gCurPWMRadioBufferNum) == eControlAudio)
+		&& (getControlCommandNumber(gCurPWMRadioBufferNum) == eControlCommandAudio)
 		&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 	
 #ifdef XBEE

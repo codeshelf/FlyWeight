@@ -54,7 +54,7 @@ BufferCntType		gTXUsedBuffers = 0;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	RadioCommandIDType	cmdID;
+	ERadioCommandIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -143,10 +143,14 @@ void radioReceiveTask(void *pvParameters) {
 							
 						case eCommandControl:
 							// Make sure that there is a valid sub-command in the control command.
-							switch (getControlNumber(rxBufferNum)) {
-								case eControlAudio:
-								case eControlMotor:
+							switch (getControlCommandNumber(rxBufferNum)) {
+								case eControlCommandAudio:
 									break;
+									
+								case eControlCommandMotor:
+									processMotorControlCommand(rxBufferNum);
+									break;
+									
 								default:
 									RELEASE_RX_BUFFER(rxBufferNum);
 							}

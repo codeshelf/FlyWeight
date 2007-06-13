@@ -19,9 +19,19 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
+#define MOTOR1_ENDPOINT		1
+#define MOTOR2_ENDPOINT		2
 
 // --------------------------------------------------------------------------
 // Typedefs.
+
+typedef enum {
+	eMotorCommandInvalid = -1,
+	eMotorCommandFreewheel = 0,
+	eMotorCommandFwd = 1,
+	eMotorCommandBwd = 2,
+	eMotorCommandBrake = 3
+} EMotorCommandType;
 
 
 // --------------------------------------------------------------------------
@@ -36,8 +46,9 @@
  
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
-RadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum);
-RadioControlIDType getControlNumber(BufferCntType inRXBufferNum);
+ERadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum);
+ERadioControlCommandIDType getControlCommandNumber(BufferCntType inRXBufferNum);
+EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
@@ -45,11 +56,12 @@ void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniq
 void createAddrAssignAckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
-void createDataCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 
 void processAssignCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
+
+void processMotorControlCommand(BufferCntType inRXBufferNum);
 
 // --------------------------------------------------------------------------
 // Globals.

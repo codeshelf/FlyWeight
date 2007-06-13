@@ -52,6 +52,7 @@
 #define PCKPOS_SIZE				1
 #define PCKPOS_ADDR				2
 #define CMDPOS_CMDID			3
+#define CMDPOS_ENDPOINT			3
 #define CMDPOS_STARTOFCMD		4
 
 // Wake Command
@@ -85,6 +86,7 @@
 #define CMDMASK_SRC_ADDR		0xf0
 #define CMDMASK_DST_ADDR		0x0f
 #define CMDMASK_CMDID			0xf0
+#define CMDMASK_ENDPOINT		0x0f
 #define CMDMASK_ASSIGNID		0xf0
 
 // --------------------------------------------------------------------------
@@ -195,13 +197,13 @@ typedef enum {
 	eCommandResponse = 4,
 	eCommandEndpointAdjust = 5,
 	eCommandControl = 6
-} RadioCommandIDType;
+} ERadioCommandIDType;
 
 typedef enum {
-	eControlInvalid = -1,
-	eControlAudio = 0,
-	eControlMotor = 1
-} RadioControlIDType;
+	eControlCommandInvalid = -1,
+	eControlCommandAudio = 0,
+	eControlCommandMotor = 1
+} ERadioControlCommandIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

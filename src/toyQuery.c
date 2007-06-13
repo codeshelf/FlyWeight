@@ -109,7 +109,7 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
 	BufferOffsetType curPos = 0;
-	UINT8 kvpNum;
+	KVPNumType kvpNum;
 	
 	// Write the response ID.
 	inResponsePtr[curPos] = RESPONSE_ACTOR_KVP;
@@ -148,7 +148,7 @@ BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferSto
 BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
 	BufferOffsetType curPos = 0;
-	UINT8 endpointNum;
+	EndpointNumType endpointNum;
 	
 	// Write the response ID.
 	inResponsePtr[curPos] = RESPONSE_ENDPOINT_DESCRIPTOR;
@@ -191,8 +191,8 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr) {	
 
 	BufferOffsetType curPos = 0;
-	UINT8 endpointNum;
-	UINT8 kvpNum;
+	EndpointNumType endpointNum;
+	KVPNumType kvpNum;
 	UINT8 i;
 	UINT8 entryNum;
 	UINT8 index;
