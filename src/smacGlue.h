@@ -15,6 +15,7 @@
 /* Scheduler include files. */
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "task.h"
 #include "pub_def.h"
 
 typedef enum { 

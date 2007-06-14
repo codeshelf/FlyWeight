@@ -22,6 +22,8 @@
 
 // --------------------------------------------------------------------------
 // Local variables.
+xTaskHandle			gRadioReceiveTask = NULL;
+xTaskHandle			gRadioTransmitTask = NULL;
 
 // The queue used to send data from the radio to the radio receive task.
 xQueueHandle		gRadioTransmitQueue = NULL;
@@ -61,17 +63,21 @@ void radioReceiveTask(void *pvParameters) {
 				vTaskDelay(1);
 
 			// Don't try to set up an RX unless we're already done with TX.
-			while (gu8RTxMode == TX_MODE)
+			while (gu8RTxMode != IDLE_MODE)
 				vTaskDelay(1);
 			
+			//vTaskSuspend(gRadioTransmitTask);
+			
 			// Setup for the next RX cycle.
-			if (gu8RTxMode != RX_MODE) {
+			//if (gu8RTxMode != RX_MODE) {
 				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
 				MLMERXEnableRequest(&gsRxPacket, 0L);
-			}
+			//}
 		
+			//vTaskResume(gRadioTransmitTask);
+			
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 			
@@ -105,8 +111,10 @@ void radioTransmitTask(void *pvParameters) {
 	for (;;) {
 	
 		// Wait until the SCI controller signals us that we have a full buffer to transmit.
-		if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS ) {
+		if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, 5) == pdPASS ) {
 
+			vTaskSuspend(gRadioReceiveTask);
+			
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
 
@@ -115,16 +123,18 @@ void radioTransmitTask(void *pvParameters) {
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
 			
+			vTaskResume(gRadioReceiveTask);
+			
 			// Set the status of the TX buffer to free.
 			RELEASE_TX_BUFFER(txBufferNum);	
 			//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree;
 			//gTXRadioBuffer[txBufferNum].bufferSize = 0;
 			
 			// Prepare to RX responses.
-			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
-			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, 0L);
+			//gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+			//gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+			//gsRxPacket.u8Status = 0;
+			//MLMERXEnableRequest(&gsRxPacket, 0L);
 						
 			// Blink LED1 to let us know we succeeded in transmitting the buffer.
 			if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {

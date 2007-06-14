@@ -106,6 +106,9 @@ typedef UINT8				SampleSizeType;
 // --------------------------------------------------------------------------
 // Externs
 
+extern xTaskHandle			gRadioReceiveTask;
+extern xTaskHandle			gRadioTransmitTask;
+
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;
 extern xQueueHandle 		gRadioReceiveQueue;

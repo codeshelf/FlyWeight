@@ -52,8 +52,13 @@ void serialReceiveTask( void *pvParameters ) {
 	for ( ;; ) {
 
 		// Don't try to get a frame if there is no free buffer.
-		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse)
+		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+			//if (uxQueueMessagesWaiting(gRadioTransmitQueue) < TX_QUEUE_SIZE) {
+			//	if (xQueueSend(gRadioTransmitQueue, &gTXCurBufferNum, pdFALSE)) {
+			//	}
+			//}
 			vTaskDelay(1);
+		}
 
 		gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
@@ -175,7 +180,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 //		vTaskDelay(1);
 
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
-	while (TRUE) {
+	while (bytesReceived < inMaxPacketSize) {
 
 //		result = USB_RecvChar(&nextByte);
 //		if (result == ERR_RXEMPTY) {
