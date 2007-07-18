@@ -27,6 +27,9 @@
 // --------------------------------------------------------------------------
 // Local variables.
 
+xTaskHandle			gRadioReceiveTask = NULL;
+xTaskHandle			gRadioTransmitTask = NULL;
+
 // The queue used to send data from the radio to the radio receive task.
 xQueueHandle		gRadioTransmitQueue = NULL;
 xQueueHandle		gRadioReceiveQueue = NULL;
@@ -167,9 +170,8 @@ void radioReceiveTask(void *pvParameters) {
 			}
 			
 			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-			if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
-			
-			}	
+			//if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
+			//}	
 		}
 
 		/* Will only get here if the queue could not be created. */
@@ -190,15 +192,13 @@ void radioTransmitTask(void *pvParameters) {
 
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
+			
+			vTaskSuspend(gRadioReceiveTask);
 
 			// Setup for TX.
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
-			
-			// Set the status of the TX buffer to free.
-			gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree;
-			gTXRadioBuffer[txBufferNum].bufferSize = 0;	
 			
 			// Prepare to RX responses.
 			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
@@ -206,13 +206,17 @@ void radioTransmitTask(void *pvParameters) {
 			gsRxPacket.u8Status = 0;
 			MLMERXEnableRequest(&gsRxPacket, 0L);
 						
+			// Set the status of the TX buffer to free.
+			RELEASE_TX_BUFFER(txBufferNum);	
+			
+			vTaskResume(gRadioReceiveTask);	
+			
 		} else {
 			
 		}
 		
 		// Blink LED1 to let us know we succeeded in transmitting the buffer.
-		if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
-		
-		}
+		//if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
+		//}
 	}
 }

@@ -27,8 +27,13 @@ void remoteMgmtTask( void *pvParameters ) {
 	if ( gRemoteMgmtQueue ) {
 	
 		// Signal ourselves to start the process.
-		if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-		}
+		//if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+		//}
+		// Send a wake command to kick everything off.
+		createWakeCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+		if (transmitPacket(gTXCurBufferNum)) {
+		};
+		gLocalDeviceState = eLocalStateWakeSent;
 
 		for ( ;; ) {
 

@@ -19,8 +19,8 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
-#define MOTOR1_ENDPOINT		1
-#define MOTOR2_ENDPOINT		2
+#define MOTOR1_ENDPOINT		2
+#define MOTOR2_ENDPOINT		3
 
 // --------------------------------------------------------------------------
 // Typedefs.
