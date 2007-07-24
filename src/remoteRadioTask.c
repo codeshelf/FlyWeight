@@ -141,8 +141,8 @@ void radioReceiveTask(void *pvParameters) {
 							}
 							break;
 							
-						case eCommandEndpointAdjust:
-							break;
+						//case eCommandEndpointAdjust:
+						//	break;
 							
 						case eCommandControl:
 							// Make sure that there is a valid sub-command in the control command.

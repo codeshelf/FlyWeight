@@ -49,6 +49,7 @@ void remoteMgmtTask( void *pvParameters ) {
 						if (transmitPacket(gTXCurBufferNum)) {
 						};
 						gLocalDeviceState = eLocalStateWakeSent;
+						RELEASE_RX_BUFFER(rxBufferNum);
 						break;
 		
 					case eLocalStateAddrAssignRcvd:
@@ -78,7 +79,7 @@ void remoteMgmtTask( void *pvParameters ) {
 						break;
 						
 					default:
-						;
+						RELEASE_RX_BUFFER(rxBufferNum);
 				
 				}
 			}
