@@ -15,9 +15,19 @@ $Name$
 #include "queue.h"
 #include "pub_def.h"
 #include "USB.h"
+#include "PE_Types.h"
 
 xQueueHandle		gGatewayMgmtQueue;
 ControllerStateType	gControllerState;
+
+#define	kBufferSize		10
+#define	kHighWaterMark  5
+
+static UINT8		gCurrentBufferPos = 0;
+static UINT8		gCurrentBufferSize = 0;
+static USB_TComData	gSCIBuffer[kBufferSize];
+
+void checkUSBInterface(void);
 
 // --------------------------------------------------------------------------
 
@@ -97,14 +107,28 @@ void sendOneChar(USB_TComData inDataPtr) {
 
 // --------------------------------------------------------------------------
 
-void readOneChar(USB_TComData *inDataPtr) {
+void readOneChar(USB_TComData *outDataPtr) {
 
 	// Read a character. 
-	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	while (USB_RecvChar(inDataPtr) != ERR_OK) {
-		// Consider a timeout where we just reset the MCU.
-	};
-
+	// (For some stupid reason the Freescale USB routine doesn't try very hard, so we have to loop until it succeeds.)
+/*	UINT8 error;
+	do {
+		error = USB_RecvChar(inDataPtr);
+		if ((error != ERR_OK) && (error != ERR_RXEMPTY)) {
+			error ++;
+			error --;
+		}
+	} while (error == ERR_RXEMPTY);
+*/
+	// New way of reading.
+	while (TRUE) {
+		if (gCurrentBufferPos < gCurrentBufferSize) {
+			*outDataPtr = gSCIBuffer[gCurrentBufferPos++];
+			return;
+		} else {
+			checkUSBInterface();
+		}
+	}
 }
 
 
@@ -225,4 +249,79 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 			}
 		}
 	}
+}
+
+// --------------------------------------------------------------------------
+
+/*
+	We're not able to read the SCI using interrupts.  The problem is that the data rate is very
+	high (in order to support multiple audio channels).  The RDRF fills very fast,	and if we 
+	(or FreeRTOS or SMAC) have suspended global interrupts then we don't get the Rx interrupt
+	for that RDRF flag.  Moreover, when interrupts get turned back on we have no way of knowing
+	we just missed the RDRF flag.  The result is that the Rx buffer doesn't get cleared and we end
+	up with a serial overrun error.  At 250000 baud we're missing about 2-3% of the characters.
+	Due to the low-power nature of the device, we are not really able to handle such a high
+	level of data loss.  (There is no retry, ECC, etc.)
+	
+	So...
+	
+	What we do instead is we poll the SCI.  We've ramped the baud rate to the maximum (1250000 baud)
+	and when we need a character we check to see if a local buffer has any.  If that buffer is empty
+	then we disable global interrupts, assert RTS and check for arriving characters.  After we
+	get a certain numbers of characters into the local buffer, we unassert RTS and keep reading characters 
+	until RDRF settles.  After that we reenable global interrupts and continue processing of the 
+	normal OS tasks.  At 1250000 baud it takes about 20-30 uSecs to read 10 or so characters.  
+	This is only 1/10th of an OS quantum.  Since the gateway only services the SCI and the radio 
+	it is safe to suspend global interrupts for this short time.  (The radio asserts the IRQ pin which
+	we detect immediately when global interrupts resume.)
+*/
+
+void checkUSBInterface() {
+
+	UINT8			loopCheck;
+	USB_TComData	lostChar;
+	
+	gCurrentBufferPos = 0;
+	gCurrentBufferSize = 0;
+	
+	// Disable interrupts, so that this is all we're doing.
+	EnterCritical();
+	
+	// Turn RTS on.
+	RTS_ON;
+	
+	// Loop until RDRF is on, or until we timeout.
+	loopCheck = 0;
+	while (!SCI2S1_RDRF) {
+		loopCheck++;
+		if (loopCheck > 100) {
+			RTS_OFF;
+			ExitCritical();
+			return;
+		}
+	}
+	
+	// Read characters until the high water mark, but keep reading characters until RDRF settles.
+	loopCheck = 0;
+	while (loopCheck < 250) {
+	
+		if (SCI2S1_RDRF) {
+			if (gCurrentBufferSize <= kBufferSize) {
+				gSCIBuffer[gCurrentBufferSize++] = SCI2D;
+			} else {
+				lostChar = SCI2D;
+			}
+		} else {
+			// No RDRF
+			loopCheck++;
+		}
+	
+		// If we've read to the high water mark then turn RTS off.
+		if (gCurrentBufferSize > kHighWaterMark) {
+			RTS_OFF;
+		}
+	}
+	
+	// Resume normal OS/interrupt processing.
+	ExitCritical();
 }

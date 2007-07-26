@@ -28,8 +28,8 @@
 #define MAX_PACKET_SIZE			123
 //#define MAX_PACKET_SIZE			30
 
-#define RX_QUEUE_SIZE			6
-#define RX_QUEUE_BALANCE		3
+#define RX_QUEUE_SIZE			8
+#define RX_QUEUE_BALANCE		4
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 
@@ -39,12 +39,10 @@
 
 //#define MASTER_TPM2_RATE		0x873
 
-//#define RTS_ON				PTAD |= 0x40
-//#define RTS_OFF				PTAD &= ~0x40
-#define RTS_ON  				/*if (gUSBState == eUSBStateStarted)*/ __asm bclr 6,0x00 //PTA6
-#define RTS_OFF 				__asm bset 6,0x00 //PTA6
-#define RTS_PORTENABLE      	__asm bclr 6,0x01 // PTA6 - PTAPE
-#define RTS_PORTDIRECTION   	__asm bset 6,0x03 // PTA6 - PTADD
+#define RTS_ON  				__asm bclr 6,0x00 //PTA7
+#define RTS_OFF  				__asm bset 6,0x00 //PTA7
+#define RTS_PORTENABLE      	__asm bclr 6,0x01 // PTA7 - PTAPE
+#define RTS_PORTDIRECTION   	__asm bset 6,0x03 // PTA7 - PTADD
 
 #define USB_STOP				RTS_OFF/*; gUSBState = eUSBStateStopped */
 #define USB_START				RTS_ON /*; gUSBState = eUSBStateStarted */
@@ -108,6 +106,9 @@ typedef UINT8				SampleSizeType;
 
 extern xTaskHandle			gRadioReceiveTask;
 extern xTaskHandle			gRadioTransmitTask;
+extern xTaskHandle			gSerialReceiveTask;
+extern xTaskHandle			gGatewayManagementTask;
+extern xTaskHandle			gRemoteManagementTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;

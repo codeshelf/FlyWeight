@@ -1380,7 +1380,7 @@
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
-<Baud_rate v="250000 baud"/>
+<Baud_rate v="312500 baud"/>
 <Break_signal v="Disabled"/>
 <Wakeup_condition v="Idle line wakeup"/>
 <Stop_in_wait_mode v="no"/>

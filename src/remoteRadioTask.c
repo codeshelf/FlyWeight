@@ -29,6 +29,8 @@
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
+xTaskHandle			gRemoteManagementTask = NULL;
+
 
 // The queue used to send data from the radio to the radio receive task.
 xQueueHandle		gRadioTransmitQueue = NULL;

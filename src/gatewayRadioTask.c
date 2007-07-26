@@ -24,6 +24,8 @@
 // Local variables.
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
+xTaskHandle			gSerialReceiveTask = NULL;
+xTaskHandle			gGatewayManagementTask = NULL;
 
 // The queue used to send data from the radio to the radio receive task.
 xQueueHandle		gRadioTransmitQueue = NULL;

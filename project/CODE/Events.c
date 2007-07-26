@@ -122,7 +122,7 @@ void TimerInt(void)
 #else
 	#define PWM_LSB_CHANNEL		TPM1C2V
 #endif
-#define		MAX_DRIFT			0x40
+#define		MAX_DRIFT			0x80
 
 //UINT16				gPWMMaxValue = 0xff;
 UINT16				gPWMCenterValue = 0x7f;

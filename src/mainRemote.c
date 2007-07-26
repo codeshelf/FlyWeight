@@ -42,7 +42,7 @@ void vMain( void ) {
 #endif
 	gLocalDeviceState = eLocalStateJustWoke;
 	MLMEMC13192PAOutputAdjust(MAX_POWER);
-	if (MLMESetChannelRequest(15) == SUCCESS) 
+	if (MLMESetChannelRequest(14) == SUCCESS) 
 		{}
 
 	/* Start the task that will handle the radio */
@@ -51,7 +51,7 @@ void vMain( void ) {
 #if  defined(MC13192EVB) || defined (MC13192SARD)
 	//xTaskCreate(LEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, LED_BLINK_PRIORITY, NULL );
 #endif
-	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, NULL );
+	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(ERadioState));
 	gRadioTransmitQueue = xQueueCreate(RX_QUEUE_SIZE, sizeof(BufferCntType));
