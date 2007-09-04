@@ -16,6 +16,7 @@ $Name$
 #include "pub_def.h"
 #include "USB.h"
 #include "PE_Types.h"
+#include "simple_mac.h"
 
 xQueueHandle		gGatewayMgmtQueue;
 ControllerStateType	gControllerState;
@@ -56,8 +57,13 @@ void gatewayMgmtTask(void *pvParameters) {
 
 void serialReceiveTask( void *pvParameters ) {
 
-//	portTickType	lastTick;
-	BufferCntType	txBufferNum;
+	ERadioCommandIDType	cmdID;
+	BufferCntType		txBufferNum;
+	UINT8				channel;
+	UINT8				selectedChannel;
+	UINT8				energyLevel;
+	UINT8				minEnergyLevel;
+	UINT8				buffer[16];
 
 	for ( ;; ) {
 
@@ -75,17 +81,35 @@ void serialReceiveTask( void *pvParameters ) {
 		if (gTXRadioBuffer[gTXCurBufferNum].bufferSize > 0) {
 			// Mark the transmit buffer full.
 			gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
-
+			
 			// Remember the buffer we just filled and then advance the buffer system.
 			txBufferNum = gTXCurBufferNum;
 			advanceTXBuffer();
+
+			cmdID = getCommandNumber(txBufferNum);
+			if (cmdID == eCommandWake) {
+			
+				// The gateway is waking up, so search for the best channel.
+//				minEnergyLevel = 255;
+//				selectedChannel = 0;
+//				for (channel; channel <= 15; channel++) {
+//					MLMESetChannelRequest(channel);
+//					energyLevel = MLMEEnergyDetect();
+//					if (energyLevel < minEnergyLevel) {
+//						minEnergyLevel = energyLevel;
+//						selectedChannel = channel;
+//					}
+//				}
+
+				selectedChannel = MLMEScanRequest(SCAN_MODE_CCA, buffer);
+				
+				MLMESetChannelRequest(selectedChannel);
+			}
 
 			// Now send the buffer to the transmit queue.
 			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, pdFALSE)) {
 			}
 
-			// Wait until the we've sent the right number of packets per second.
-			//vTaskDelayUntil(&lastTick, gBufferTimeMS);
 		}
 	}
 
