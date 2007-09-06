@@ -20,20 +20,11 @@
 
 #define UNIQUE_ID_BYTES			8
 
-#define DEVICE_CONTROLLER		0
-#define DEVICE_GATEWAY			1
-#define DEVICE_REMOTE			2
-#define DEVICE_TYPE_BYTES		1
-
-#define PACKET_HEADER_BYTES		1
-
 /*
  * The format of a packet on the network is as follows:
  * 
  * 2b - Version
  * 3b - Network number
- * 3b - Reserved
- * 1B - Packet length
  * 3b - Reserved
  * 4b - Packet source address
  * 4b - Packet dest address
@@ -49,46 +40,52 @@
 // Packet
 #define PCKPOS_VERSION			0
 #define PCKPOS_NETID			0
-#define PCKPOS_SIZE				1
-#define PCKPOS_ADDR				2
-#define CMDPOS_CMDID			3
-#define CMDPOS_ENDPOINT			3
-#define CMDPOS_STARTOFCMD		4
+#define PCKPOS_ADDR				1
+#define CMDPOS_CMDID			2
+#define CMDPOS_ENDPOINT			2
+#define CMDPOS_STARTOFCMD		3
 
-// Wake Command
-#define CMDPOS_DEVICE_TYPE		4
-#define CMDPOS_WAKE_UID			5
+// Network Mgmt
+#define CMDPOS_MGMT_SUBCMD		3
+#define CMDPOS_SETUP_NETID		4
+#define CMDPOS_SETUP_CHANNEL	5
+#define CMDPOS_CHECK_TYPE		4
+#define CMDPOS_CHECK_NETID		5
 
-// Assign Command
-#define CMDPOS_ASSIGN_UID		4
-#define CMDPOS_ASSIGN_ADDR		12
-
-// Assign Ack Command
-#define CMDPOS_ASSIGNACK_UID	4
-#define CMDPOS_ASSIGNACK_ADDR	12
+// Assoc Command
+#define CMDPOS_ASSOC_SUBCMD		3
+#define CMDPOS_ASSOC_UID		4
+#define CMDPOS_ASSOCREQ_VER		12
+#define CMDPOS_ASSOCRESP_ADDR	12
 
 // Query Command
-#define CMDPOS_QUERY			4
+#define CMDPOS_QUERY			3
 
 // Response Command
-#define CMDPOS_RESPONSE			4
+#define CMDPOS_RESPONSE			3
 
 // Endpoint Adjust Command
 
 // Control Command
-#define CMDPOS_CONTROL			4
-#define CMDPOS_CTRLID			4
-#define CMDPOS_CONTROL_DATA		5
+#define CMDPOS_CONTROL			3
+#define CMDPOS_CONTROL_SUBCMD	3
+#define CMDPOS_CONTROL_DATA		4
 
 // Command masks
-#define PACKETMASK_VERSION		0xc0
-#define PACKETMASK_NETWORK_NUM	0x38
-#define CMDMASK_SRC_ADDR		0xf0
-#define CMDMASK_DST_ADDR		0x0f
-#define CMDMASK_CMDID			0xf0
-#define CMDMASK_ENDPOINT		0x0f
-#define CMDMASK_ASSIGNID		0xf0
+#define PACKETMASK_VERSION		0b11000000
+#define PACKETMASK_NETID		0b00111000
+#define CMDMASK_SRC_ADDR		0b11110000
+#define CMDMASK_DST_ADDR		0b00001111
+#define CMDMASK_CMDID			0b11110000
+#define CMDMASK_ENDPOINT		0b00001111
+#define CMDMASK_ASSIGNID		0b11110000
+#define CMDMASK_NETID			0b11100000
 
+#define SHIFTBITS_PKT_VER		6
+#define SHIFTBITS_PKT_NETID		3
+#define SHIFTBITS_PKT_SRCADDR	4
+#define SHIFTBITS_CMDID			4
+#define SHIFTBITS_CMDNETID		5
 // --------------------------------------------------------------------------
 // Typedefs
 
@@ -124,7 +121,7 @@ typedef enum {
  */
 typedef enum {
 	eRemoteStateUnknown,
-	eRemoteStateWakeRcvd,
+	eRemoteStateAssocReqRcvd,
 	eRemoteStateQuerySent,
 	eRemoteStateRespRcvd,
 	eRemoteStateRun
@@ -132,10 +129,8 @@ typedef enum {
 
 typedef enum {
 	eLocalStateUnknown,
-	eLocalStateJustWoke,
-	eLocalStateWakeSent,
-	eLocalStateAddrAssignRcvd,
-	eLocalStateAddrAssignAckSent,
+	eLocalStateStarted,
+	eLocalStateAssocRespRcvd,
 	eLocalStateQueryRcvd,
 	eLocalStateRespSent,
 	eLocalStateRun
@@ -143,37 +138,29 @@ typedef enum {
 
 /*
  * Network  commands
+ * 
+ * CommandNetSetup
+ * 
+ * This command is sent to the gateway (dongle) by the controller and never gets transmitted to the
+ * radio network.  It is used to negotiate the creation of a new network on behalf of the controller
+ * when it restarts.
+ * 
+ * CommandAssocReq
+ * 
+ * When a remote first starts it broadcasts an associate command which contains a unique ID for the remote.
+ * It does this on every channel until a controller responds with an associate response.
+ * 
+ * CommandAssocResp
+ * 
+ * The controller responds to the associate request command by assigning a local destination address for the remote.
+ * The remote should then act on all messages sent to that address or the broadcast address.
+ * 
+ * CommandNetCheck
+ * 
+ * This command is used *after* the remote is associated with a remote.
+ * The remote should send the net check request command from time-to-time.  The controller will respond.
+ * If the contoller doesn't respond then the remote should assume the controller has quit or reset.
  *
- * CommandDatagram
- * 
- * These are the command sent between the devices to/from the non-zero endpoints and carry the data to "run".
- * 
- * CommandWake
- * 
- * When a remote first starts it broadcasts a wake command which contains a unique ID for the remote.  This
- * informs the controller that there is a new device that wants to join the network.  The command includes
- * sub-commands that describe the facilities in the remote.
- * 
- * CommandAssign
- * 
- * The controller responds to the wake command by assigning a local destination address for the remote.
- * The remote should then act to all messages sent to that address or the broadcast address.
- *
- * CommandAssignAck
- *
- * Let the controller know that we received the address assignment.  (Sent from the assigned address,
- * and includes the unique ID of the device.
- * 
- * CommandChannelDesc
- * 
- * The remote contains one of more facilities.  The controller assigns one channel for each facility
- * in use.  (The controller decides what facilities in what remotes to use to drive the concerted action.)
- * The command contains sub-commands that indicate the attributes of the channel.
- * 
- * DataCommand
- * 
- * The controller sends data to the remote on a channel using the data command.
- * 
  * QueryCommand
  * 
  * The controller sends a query to the remote asking for details of one or more facilities.
@@ -182,28 +169,43 @@ typedef enum {
  * 
  * The remote responds to the query command with the requested information about the facility.
  * 
+ * ControlAudio
  * 
- * DescCommand
+ * The controller or the remote can send a control audio command that contains audio to be played on
+ * an endpoint.
  * 
- * The descriptor command tell the remote about the format of the data destined for a channel.
+ * ControlMotor
  * 
+ * The controller or the remote can send a control motor command that contains instructions to run a
+ * motor at the specified enfpoint
  */
 typedef enum {
 	eCommandInvalid = -1,
-	eCommandWake = 0,
-	eCommandAddrAssign = 1,
-	eCommandAddrAssignAck = 2,
-	eCommandQuery = 3,
-	eCommandResponse = 4,
-	eCommandEndpointAdjust = 5,
-	eCommandControl = 6
-} ERadioCommandIDType;
+	eCommandNetMgmt = 0,
+	eCommandAssoc = 1,
+	eCommandQuery = 2,
+	eCommandResponse = 3,
+	eCommandEndpointSetup = 4,
+	eCommandControl = 5
+} ECommandIDType;
 
 typedef enum {
-	eControlCommandInvalid = -1,
-	eControlCommandAudio = 0,
-	eControlCommandMotor = 1
-} ERadioControlCommandIDType;
+	eNetMgmtSubCommandInvalid = -1,
+	eNetMgmtSubCommandSetup = 1,
+	eNetMgmtSubCommandCheck = 2
+} ENetMgmtSubCommandIDType;
+
+typedef enum {
+	eAssocSubCommandInvalid = -1,
+	eAssocSubCommandReq = 1,
+	eAssocSubCommandResp = 2
+} EAssocSubCommandIDType;
+
+typedef enum {
+	eControlSubCommandInvalid = -1,
+	eControlSubCommandAudio = 0,
+	eControlSubCommandMotor = 1
+} EControlSubCommandIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

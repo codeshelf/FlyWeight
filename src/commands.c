@@ -26,26 +26,18 @@
 #endif
 
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
+NetworkIDType		gMyNetworkID = 0x00;
 
 // --------------------------------------------------------------------------
 // Local function prototypes
 
-void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
+void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
 
 // --------------------------------------------------------------------------
 
 UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 	UINT8 result = INITIAL_VALUE;
-
-	// Setup the packet for transmission.
-	//gsTxPacket.u8DataLength = gTXRadioBuffer[inTXBufferNum].bufferSize;
-	//gsTxPacket.pu8Data = gTXRadioBuffer[inTXBufferNum].bufferStorage;
-	
-	// Make sure that the packet size gets set in the first byte of the packet.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = gTXRadioBuffer[inTXBufferNum].bufferSize - PACKET_HEADER_BYTES;
-
-	//advanceTXBuffer();
 
 	// Transmit the packet.
 	if (xQueueSend(gRadioTransmitQueue, &inTXBufferNum, pdFALSE)) {}
@@ -56,10 +48,10 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-ERadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum) {
+ECommandIDType getCommand(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
-	ERadioCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
+	ECommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
 	return result;
 };
 
@@ -92,19 +84,30 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-ERadioControlCommandIDType getControlCommandNumber(BufferCntType inRXBufferNum) {
-
-	// The control command number is in the fourth half-byte of the packet.
-	ERadioControlCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CTRLID]);
+ENetMgmtSubCommandIDType getNetMgmtSubCommand(BufferCntType inTXBufferNum) {
+	// These come in on the TC buffer from the controller, but they don't get transmitted to the air.
+	ENetMgmtSubCommandIDType result = (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD]);
 	return result;
 };
 
 // --------------------------------------------------------------------------
 
-void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
+EAssocSubCommandIDType getAssocSubCommand(BufferCntType inRXBufferNum) {
+	EAssocSubCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+	return result;
+};
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = 0;
-	
+// --------------------------------------------------------------------------
+
+EControlSubCommandIDType getControlSubCommand(BufferCntType inRXBufferNum) {
+	EControlSubCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD]);
+	return result;
+};
+
+// --------------------------------------------------------------------------
+
+void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
+
 	// The first byte of the packet is the header.
 	// The next byte of the packet is the packet length.
 	// The next half byte of the packet is the src address
@@ -113,10 +116,10 @@ void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, Remo
 	// The first half byte of the command is the command ID.
 	// The next half byte of the command is reserved.
 	// The remaining bytes of the command (and packet) is the command data.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] = (0x01 << 6) | (0x01 << 3);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SIZE] = 3;
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (inSrcAddr << 4) | inDestAddr;
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (inCmdID << 4);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NETID] |= (inNetworkID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (inSrcAddr << SHIFTBITS_PKT_SRCADDR) | inDestAddr;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (inCmdID << SHIFTBITS_CMDID);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;
 	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
@@ -124,42 +127,58 @@ void createPacket(BufferCntType inTXBufferNum, ERadioCommandIDType inCmdID, Remo
 
 // --------------------------------------------------------------------------
 
-void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
+void createNetSetupCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
 
-	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
-	createPacket(inTXBufferNum, eCommandWake, ADDR_CONTROLLER, ADDR_BROADCAST);
-
-	// Tell the controller what protocol we know/use.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_DEVICE_TYPE] = DEVICE_REMOTE;
+	// This command gets setup in the RX buffers, because it only gets sent back to the controller via
+	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
+	// directly.
 	
-	// The next 8 bytes are the unique ID of the device.
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_WAKE_UID]), inUniqueID, UNIQUE_ID_BYTES);
+	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
+	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gRXRadioBuffer[inRXBufferNum].bufferStatus = eBufferStateInUse;
+	
+	// Set the sub-command.
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCommandSetup;
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + DEVICE_TYPE_BYTES + UNIQUE_ID_BYTES;
+	// Set the network ID.
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] = inNetworkID;
+
+	// Set the channel number.
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL] = inChannelNumber;
+	
+	gRXRadioBuffer[inRXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
 };
 
 // --------------------------------------------------------------------------
 
-void createAddrAssignAckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
+void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
-	createPacket(inTXBufferNum, eCommandAddrAssignAck, gMyAddr, ADDR_CONTROLLER);
+	createPacket(inTXBufferNum, eCommandAssoc, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+	
+	// Set the AssocReq sub-command
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD] = eAssocSubCommandReq;
 
 	// The next 8 bytes are the unique ID of the device.
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGNACK_UID]), inUniqueID, UNIQUE_ID_BYTES);
-	
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSIGNACK_ADDR] = (gMyAddr << 4);
+	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), inUniqueID, UNIQUE_ID_BYTES);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + UNIQUE_ID_BYTES + 1;
+	// Set the device version
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_VER + 1;
 };
 
 // --------------------------------------------------------------------------
 
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandQuery, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandQuery, gMyNetworkID, gMyAddr, inRemoteAddr);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -170,40 +189,89 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 	// This is free-format command that uses XML for content.
 	// Keep in mind that you can't send more than 125 bytes!
 
-	createPacket(inTXBufferNum, eCommandResponse, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandResponse, gMyNetworkID, gMyAddr, inRemoteAddr);
 
 	//memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), inResponseBuffer, inResponseSize);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_RESPONSE + inResponseSize;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_RESPONSE + inResponseSize + 1;
 };
 
 // --------------------------------------------------------------------------
 
 void createControlCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandControl, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, inRemoteAddr);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 };
 
 // --------------------------------------------------------------------------
 
-void processAssignCommand(BufferCntType inRXBufferNum) {
+void processNetSetupCommand(BufferCntType inTXBufferNum) {
+
+	NetworkIDType				networkID;
+	ChannelNumberType			channel;
+	ChannelNumberType			selectedChannel;
+//	UINT8						energyLevel;
+//	UINT8						minEnergyLevel;
+	UINT8						buffer[16];
+	BufferCntType				rxBufferNum;
+
+	// Network Setup ALWAYS comes in via the serial interface to the gateway (dongle)
+	// This means we process it FROM the TX buffers and SEND from the RX buffers.
+	// These commands NEVER go onto the air.
+	
+	// Get the requested networkID
+	networkID = (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] & CMDMASK_NETID) >> SHIFTBITS_CMDNETID;
+	
+	// Get the requested channel number.
+	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL];
+	
+	RELEASE_TX_BUFFER(inTXBufferNum);
+	
+	if (channel == AUTOMATIC_CHANNEL) {
+		// If the channel number is automatic then perform a search of the channels.
+		selectedChannel = MLMEScanRequest(SCAN_MODE_CCA, buffer);
+	} else {
+		// If the channel number is specified then just use that channel.
+		selectedChannel = channel;
+	}
+	MLMESetChannelRequest(selectedChannel);	
+	gMyNetworkID = networkID;
+	
+	// Now send back a network setup response.
+	// Wait until we can get an RX buffer
+	while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
+		vTaskDelay(1);
+	}
+	EnterCritical();
+		rxBufferNum = gRXCurBufferNum;
+		advanceRXBuffer();
+	ExitCritical();
+	createNetSetupCommand(rxBufferNum, networkID, selectedChannel);
+	
+	// Now send the command to the queue that sends packets to the controller.
+	if (xQueueSend(gGatewayMgmtQueue, &rxBufferNum, pdFALSE)) {
+	}
+	
+	gLocalDeviceState = eLocalStateRun;
+};
+
+// --------------------------------------------------------------------------
+
+void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
 	RemoteAddrType result = INVALID_REMOTE;
 
 	// Let's first make sure that this assign command is for us.
-	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_UID]), UNIQUE_ID_BYTES) == 0) {
+	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
-		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSIGN_ADDR] & CMDMASK_ASSIGNID) >> 4;	
+		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGNID) >> SHIFTBITS_CMDID;	
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
 	
-	createAddrAssignAckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-	if (transmitPacket(gTXCurBufferNum)){
-	};	
-	gLocalDeviceState = eLocalStateAddrAssignAckSent;
+	gLocalDeviceState = eLocalStateAssocRespRcvd;
 
 };
 
@@ -226,8 +294,8 @@ void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemote
 
 	// Figure out what channels are available.
 
-	if (xQueueSend(gGatewayMgmtQueue, &inRemoteAddr, pdFALSE)) {
-	}
+//	if (xQueueSend(gGatewayMgmtQueue, &inRXBufferNum, pdFALSE)) {
+//	}
 
 }
 
@@ -242,7 +310,7 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void processMotorControlCommand(BufferCntType inRXBufferNum) {
+void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 #define MOTOR1_FREE		0b11111100
 #define MOTOR1_FWD		0b00000010

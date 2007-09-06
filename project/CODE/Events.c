@@ -140,17 +140,19 @@ INT16				gMasterSampleRateAdjust = 0;
 interrupt void AudioLoader_OnInterrupt(void) {	
 
 	UINT8	sample;
+#ifdef XBEE
 	INT16	ulawSample;
 	INT16	lsbSample;
 	INT16	msbSample;
+#endif
 	
 	// Reset the timer for the next sample.
 	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 //	TPM1MOD = gPWMMaxValue;
 
 	// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
-	if (!((getCommandNumber(gCurPWMRadioBufferNum) == eCommandControl) 
-		&& (getControlCommandNumber(gCurPWMRadioBufferNum) == eControlCommandAudio)
+	if (!((getCommand(gCurPWMRadioBufferNum) == eCommandControl) 
+		&& (getControlSubCommand(gCurPWMRadioBufferNum) == eControlSubCommandAudio)
 		&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 	
 #ifdef XBEE

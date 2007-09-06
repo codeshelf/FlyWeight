@@ -65,7 +65,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					// If we're in the run state, and receive a command then we need to handle that command.
 					case eLocalStateRun:
 						
-						switch (getCommandNumber(rxBufferNum)) {
+						switch (getCommand(rxBufferNum)) {
 						
 							case eCommandEndpointAdjust:
 								break;

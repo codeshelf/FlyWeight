@@ -19,6 +19,19 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
+#define DEVICE_CONTROLLER		0
+#define DEVICE_GATEWAY			1
+#define DEVICE_REMOTE			2
+
+#define DEVICE_VER_BYTES		1
+
+#define PACKET_HEADER_BYTES		1
+#define PACKET_VERSION			0x01
+#define BROADCAST_NETID			0b111
+
+#define INVALID_CHANNEL			-1
+#define AUTOMATIC_CHANNEL		127
+
 #define MOTOR1_ENDPOINT		2
 #define MOTOR2_ENDPOINT		3
 
@@ -33,6 +46,8 @@ typedef enum {
 	eMotorCommandBrake = 3
 } EMotorCommandType;
 
+typedef UINT8	NetworkIDType;
+typedef UINT8	ChannelNumberType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.
@@ -46,22 +61,27 @@ typedef enum {
  
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
-ERadioCommandIDType getCommandNumber(BufferCntType inRXBufferNum);
-ERadioControlCommandIDType getControlCommandNumber(BufferCntType inRXBufferNum);
+ECommandIDType getCommand(BufferCntType inRXBufferNum);
+
+ENetMgmtSubCommandIDType getNetMgmtSubCommand(BufferCntType inRXBufferNum);
+EAssocSubCommandIDType getAssocSubCommand(BufferCntType inRXBufferNum);
+EControlSubCommandIDType getControlSubCommand(BufferCntType inRXBufferNum);
+
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
-void createWakeCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
-void createAddrAssignAckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
+void createNetSetupCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber);
+void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 
-void processAssignCommand(BufferCntType inRXBufferNum);
+void processNetSetupCommand(BufferCntType inRXBufferNum);
+void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
 
-void processMotorControlCommand(BufferCntType inRXBufferNum);
+void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 
 // --------------------------------------------------------------------------
 // Globals.

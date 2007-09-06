@@ -59,7 +59,7 @@ BufferCntType		gTXUsedBuffers = 0;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	ERadioCommandIDType	cmdID;
+	ECommandIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -108,7 +108,7 @@ void radioReceiveTask(void *pvParameters) {
 				// the PWM audio processor is working at interrupt
 				// to get bytes out of the buffer.
 				
-				cmdID = getCommandNumber(rxBufferNum);
+				cmdID = getCommand(rxBufferNum);
 				cmdDstAddr = getCommandDstAddr(rxBufferNum);
 				
 				// Only process broadcast commands or commands addressed to us.

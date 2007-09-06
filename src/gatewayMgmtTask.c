@@ -17,6 +17,7 @@ $Name$
 #include "USB.h"
 #include "PE_Types.h"
 #include "simple_mac.h"
+#include "string.h"
 
 xQueueHandle		gGatewayMgmtQueue;
 ControllerStateType	gControllerState;
@@ -33,7 +34,7 @@ void checkUSBInterface(void);
 // --------------------------------------------------------------------------
 
 void gatewayMgmtTask(void *pvParameters) {
-	RemoteAddrType	slotNum;
+	BufferCntType	rxBufferNum;
 //	UINT16 bytesSent;
 
 	if ( gGatewayMgmtQueue ) {
@@ -41,10 +42,10 @@ void gatewayMgmtTask(void *pvParameters) {
 
 			// Whenever we need to handle a state change for a  device, we handle it in this management task.
 
-			if (xQueueReceive(gGatewayMgmtQueue, &slotNum, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 
 				// Just send it over the serial link to the controller.
-				serialTransmitFrame((byte*) (&gRXRadioBuffer[gRXCurBufferNum].bufferStorage), gRXRadioBuffer[gRXCurBufferNum].bufferSize);
+				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
 			}
 		}
 	}
@@ -57,13 +58,9 @@ void gatewayMgmtTask(void *pvParameters) {
 
 void serialReceiveTask( void *pvParameters ) {
 
-	ERadioCommandIDType	cmdID;
-	BufferCntType		txBufferNum;
-	UINT8				channel;
-	UINT8				selectedChannel;
-	UINT8				energyLevel;
-	UINT8				minEnergyLevel;
-	UINT8				buffer[16];
+	ECommandIDType			cmdID;
+	ENetMgmtSubCommandIDType	subCmdID;
+	BufferCntType				txBufferNum;
 
 	for ( ;; ) {
 
@@ -86,24 +83,14 @@ void serialReceiveTask( void *pvParameters ) {
 			txBufferNum = gTXCurBufferNum;
 			advanceTXBuffer();
 
-			cmdID = getCommandNumber(txBufferNum);
-			if (cmdID == eCommandWake) {
-			
-				// The gateway is waking up, so search for the best channel.
-//				minEnergyLevel = 255;
-//				selectedChannel = 0;
-//				for (channel; channel <= 15; channel++) {
-//					MLMESetChannelRequest(channel);
-//					energyLevel = MLMEEnergyDetect();
-//					if (energyLevel < minEnergyLevel) {
-//						minEnergyLevel = energyLevel;
-//						selectedChannel = channel;
-//					}
-//				}
-
-				selectedChannel = MLMEScanRequest(SCAN_MODE_CCA, buffer);
-				
-				MLMESetChannelRequest(selectedChannel);
+			cmdID = getCommand(txBufferNum);
+			if (cmdID == eCommandNetMgmt) {
+				subCmdID = getNetMgmtSubCommand(txBufferNum);
+				if (subCmdID == eNetMgmtSubCommandSetup) {
+					processNetSetupCommand(txBufferNum);
+					// Continue processing new frames. (Don't transmit this frame.)
+					continue;
+				}
 			}
 
 			// Now send the buffer to the transmit queue.
@@ -145,6 +132,7 @@ void readOneChar(USB_TComData *outDataPtr) {
 	} while (error == ERR_RXEMPTY);
 */
 	// New way of reading.
+#pragma MESSAGE DISABLE C4000 /* WARNING C4000: Always true */
 	while (TRUE) {
 		if (gCurrentBufferPos < gCurrentBufferSize) {
 			*outDataPtr = gSCIBuffer[gCurrentBufferPos++];
