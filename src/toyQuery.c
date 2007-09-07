@@ -66,7 +66,7 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 		createResponseCommand(gTXCurBufferNum, responseSize, inSrcAddr);
 		if (transmitPacket(gTXCurBufferNum)){
 		};	
-		gLocalDeviceState = eLocalStateRespSent;
+		//gLocalDeviceState = eLocalStateRespSent;
 	}	
 }
 

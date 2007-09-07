@@ -34,7 +34,7 @@ void checkUSBInterface(void);
 // --------------------------------------------------------------------------
 
 void gatewayMgmtTask(void *pvParameters) {
-	BufferCntType	rxBufferNum;
+	BufferCntType	txBufferNum;
 //	UINT16 bytesSent;
 
 	if ( gGatewayMgmtQueue ) {
@@ -42,10 +42,11 @@ void gatewayMgmtTask(void *pvParameters) {
 
 			// Whenever we need to handle a state change for a  device, we handle it in this management task.
 
-			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gGatewayMgmtQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
 
 				// Just send it over the serial link to the controller.
-				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+				serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+				RELEASE_TX_BUFFER(txBufferNum);
 			}
 		}
 	}

@@ -59,7 +59,7 @@ BufferCntType		gTXUsedBuffers = 0;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	ECommandIDType	cmdID;
+	ECommandIDType		cmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -118,42 +118,28 @@ void radioReceiveTask(void *pvParameters) {
 				
 					switch (cmdID) {
 					
-						case eCommandWake:
-							// If we receive a wake command from the controller then
-							// respond with a wake command.
-							if (gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_DEVICE_TYPE] == DEVICE_CONTROLLER) {
-								gLocalDeviceState = eLocalStateJustWoke;
-								// Signal the manager about the new state.
-								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-								}
-								break;
-							}
-					
-						case eCommandAddrAssign:
-							gLocalDeviceState = eLocalStateAddrAssignRcvd;
+						case eCommandAssoc:
+							gLocalDeviceState = eLocalStateAssocRespRcvd;
 							// Signal the manager about the new state.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
 							break;
 							
+						case eCommandEndpointSetup:
 						case eCommandQuery:
-							gLocalDeviceState = eLocalStateQueryRcvd;
-							// Signal the manager about the new state.
+							// Signal the manager about the new command.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
 							break;
-							
-						//case eCommandEndpointAdjust:
-						//	break;
 							
 						case eCommandControl:
 							// Make sure that there is a valid sub-command in the control command.
-							switch (getControlCommandNumber(rxBufferNum)) {
-								case eControlCommandAudio:
+							switch (getControlSubCommand(rxBufferNum)) {
+								case eControlSubCommandAudio:
 									break;
 									
-								case eControlCommandMotor:
-									processMotorControlCommand(rxBufferNum);
+								case eControlSubCommandMotor:
+									processMotorControlSubCommand(rxBufferNum);
 									break;
 									
 								default:

@@ -130,7 +130,9 @@ typedef enum {
 typedef enum {
 	eLocalStateUnknown,
 	eLocalStateStarted,
+	eLocalStateAssocReqSent,
 	eLocalStateAssocRespRcvd,
+	eLocalStateAssociated,
 	eLocalStateQueryRcvd,
 	eLocalStateRespSent,
 	eLocalStateRun

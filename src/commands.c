@@ -127,30 +127,30 @@ void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkID
 
 // --------------------------------------------------------------------------
 
-void createNetSetupCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
+void createNetSetupCommand(BufferCntType inTXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
 
-	// This command gets setup in the RX buffers, because it only gets sent back to the controller via
+	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
 	// directly.
 	
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
 	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gRXRadioBuffer[inRXBufferNum].bufferStatus = eBufferStateInUse;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 	
 	// Set the sub-command.
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCommandSetup;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCommandSetup;
 
 	// Set the network ID.
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] = inNetworkID;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] = inNetworkID;
 
 	// Set the channel number.
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL] = inChannelNumber;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL] = inChannelNumber;
 	
-	gRXRadioBuffer[inRXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -215,10 +215,10 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 //	UINT8						energyLevel;
 //	UINT8						minEnergyLevel;
 	UINT8						buffer[16];
-	BufferCntType				rxBufferNum;
+	BufferCntType				txBufferNum;
 
 	// Network Setup ALWAYS comes in via the serial interface to the gateway (dongle)
-	// This means we process it FROM the TX buffers and SEND from the RX buffers.
+	// This means we process it FROM the TX buffers and SEND from the TX buffers.
 	// These commands NEVER go onto the air.
 	
 	// Get the requested networkID
@@ -240,18 +240,18 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	gMyNetworkID = networkID;
 	
 	// Now send back a network setup response.
-	// Wait until we can get an RX buffer
-	while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
+	// Wait until we can get an TX buffer
+	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
 	}
 	EnterCritical();
-		rxBufferNum = gRXCurBufferNum;
-		advanceRXBuffer();
+		txBufferNum = gTXCurBufferNum;
+		advanceTXBuffer();
 	ExitCritical();
-	createNetSetupCommand(rxBufferNum, networkID, selectedChannel);
+	createNetSetupCommand(txBufferNum, networkID, selectedChannel);
 	
 	// Now send the command to the queue that sends packets to the controller.
-	if (xQueueSend(gGatewayMgmtQueue, &rxBufferNum, pdFALSE)) {
+	if (xQueueSend(gGatewayMgmtQueue, &txBufferNum, pdFALSE)) {
 	}
 	
 	gLocalDeviceState = eLocalStateRun;
@@ -267,12 +267,10 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGNID) >> SHIFTBITS_CMDID;	
+		gLocalDeviceState = eLocalStateAssociated;
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
-	
-	gLocalDeviceState = eLocalStateAssocRespRcvd;
-
 };
 
 // --------------------------------------------------------------------------

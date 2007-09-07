@@ -40,7 +40,7 @@ void vMain( void ) {
 #ifdef XBEE
 	xbeeInit();
 #endif
-	gLocalDeviceState = eLocalStateJustWoke;
+	gLocalDeviceState = eLocalStateStarted;
 	MLMEMC13192PAOutputAdjust(MAX_POWER);
 	if (MLMESetChannelRequest(14) == SUCCESS) 
 		{}
@@ -62,7 +62,7 @@ void vMain( void ) {
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
 	
 	// Set the state to running
-	gLocalDeviceState = eLocalStateJustWoke;
+	gLocalDeviceState = eLocalStateStarted;
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
