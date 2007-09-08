@@ -34,7 +34,7 @@ void checkUSBInterface(void);
 // --------------------------------------------------------------------------
 
 void gatewayMgmtTask(void *pvParameters) {
-	BufferCntType	txBufferNum;
+	BufferCntType	rxBufferNum;
 //	UINT16 bytesSent;
 
 	if ( gGatewayMgmtQueue ) {
@@ -42,11 +42,11 @@ void gatewayMgmtTask(void *pvParameters) {
 
 			// Whenever we need to handle a state change for a  device, we handle it in this management task.
 
-			if (xQueueReceive(gGatewayMgmtQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 
 				// Just send it over the serial link to the controller.
-				serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-				RELEASE_TX_BUFFER(txBufferNum);
+				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+				RELEASE_RX_BUFFER(rxBufferNum);
 			}
 		}
 	}
@@ -59,8 +59,8 @@ void gatewayMgmtTask(void *pvParameters) {
 
 void serialReceiveTask( void *pvParameters ) {
 
-	ECommandIDType			cmdID;
-	ENetMgmtSubCommandIDType	subCmdID;
+	ECommandIDType				cmdID;
+	ENetMgmtSubCmdIDType		subCmdID;
 	BufferCntType				txBufferNum;
 
 	for ( ;; ) {
@@ -84,13 +84,19 @@ void serialReceiveTask( void *pvParameters ) {
 			txBufferNum = gTXCurBufferNum;
 			advanceTXBuffer();
 
-			cmdID = getCommand(txBufferNum);
+			cmdID = getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage);
 			if (cmdID == eCommandNetMgmt) {
-				subCmdID = getNetMgmtSubCommand(txBufferNum);
-				if (subCmdID == eNetMgmtSubCommandSetup) {
-					processNetSetupCommand(txBufferNum);
-					// Continue processing new frames. (Don't transmit this frame.)
-					continue;
+				subCmdID = getNetMgmtSubCommand(gTXRadioBuffer[txBufferNum].bufferStorage);
+				switch (subCmdID) {
+					case eNetMgmtSubCmdNetCheck:
+						processNetCheckOutboundCommand(txBufferNum);
+						break;
+						
+					case eNetMgmtSubCmdNetSetup:
+						processNetSetupCommand(txBufferNum);
+						// We don't ever want to broadcast net-setup, so continue.
+						continue;
+						break;
 				}
 			}
 

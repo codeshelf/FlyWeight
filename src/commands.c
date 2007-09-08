@@ -26,7 +26,6 @@
 #endif
 
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
-NetworkIDType		gMyNetworkID = 0x00;
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -48,10 +47,10 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-ECommandIDType getCommand(BufferCntType inRXBufferNum) {
+ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 
 	// The command number is in the third half-byte of the packet.
-	ECommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] & CMDMASK_CMDID) >> 4;
+	ECommandIDType result = ((inBufferPtr[CMDPOS_CMDID]) & CMDMASK_CMDID) >> 4;
 	return result;
 };
 
@@ -84,23 +83,22 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-ENetMgmtSubCommandIDType getNetMgmtSubCommand(BufferCntType inTXBufferNum) {
-	// These come in on the TC buffer from the controller, but they don't get transmitted to the air.
-	ENetMgmtSubCommandIDType result = (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD]);
+ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
+	ENetMgmtSubCmdIDType result = (inBufferPtr[CMDPOS_MGMT_SUBCMD]);
 	return result;
 };
 
 // --------------------------------------------------------------------------
 
-EAssocSubCommandIDType getAssocSubCommand(BufferCntType inRXBufferNum) {
-	EAssocSubCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+EAssocSubCmdIDType getAssocSubCommand(BufferCntType inRXBufferNum) {
+	EAssocSubCmdIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
 	return result;
 };
 
 // --------------------------------------------------------------------------
 
-EControlSubCommandIDType getControlSubCommand(BufferCntType inRXBufferNum) {
-	EControlSubCommandIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD]);
+EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
+	EControlSubCmdIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD]);
 	return result;
 };
 
@@ -127,7 +125,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkID
 
 // --------------------------------------------------------------------------
 
-void createNetSetupCommand(BufferCntType inTXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
+void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -135,22 +133,16 @@ void createNetSetupCommand(BufferCntType inTXBufferNum, NetworkIDType inNetworkI
 	
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
 	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gRXRadioBuffer[inRXBufferNum].bufferStatus = eBufferStateInUse;
 	
 	// Set the sub-command.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCommandSetup;
-
-	// Set the network ID.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] = inNetworkID;
-
-	// Set the channel number.
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL] = inChannelNumber;
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetSetup;
 	
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
+	gRXRadioBuffer[inRXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -161,7 +153,7 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 	createPacket(inTXBufferNum, eCommandAssoc, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
 	
 	// Set the AssocReq sub-command
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD] = eAssocSubCommandReq;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD] = eAssocSubCmdReq;
 
 	// The next 8 bytes are the unique ID of the device.
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), inUniqueID, UNIQUE_ID_BYTES);
@@ -212,8 +204,6 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	NetworkIDType				networkID;
 	ChannelNumberType			channel;
 	ChannelNumberType			selectedChannel;
-//	UINT8						energyLevel;
-//	UINT8						minEnergyLevel;
 	UINT8						buffer[16];
 	BufferCntType				txBufferNum;
 
@@ -221,40 +211,40 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	// This means we process it FROM the TX buffers and SEND from the TX buffers.
 	// These commands NEVER go onto the air.
 	
-	// Get the requested networkID
-	networkID = (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_NETID] & CMDMASK_NETID) >> SHIFTBITS_CMDNETID;
-	
 	// Get the requested channel number.
 	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL];
 	
-	RELEASE_TX_BUFFER(inTXBufferNum);
+	MLMESetChannelRequest(channel);	
 	
-	if (channel == AUTOMATIC_CHANNEL) {
-		// If the channel number is automatic then perform a search of the channels.
-		selectedChannel = MLMEScanRequest(SCAN_MODE_CCA, buffer);
-	} else {
-		// If the channel number is specified then just use that channel.
-		selectedChannel = channel;
-	}
-	MLMESetChannelRequest(selectedChannel);	
-	gMyNetworkID = networkID;
-	
-	// Now send back a network setup response.
+	gLocalDeviceState = eLocalStateRun;
+};
+
+// --------------------------------------------------------------------------
+
+void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
+	// We need to put the gateway (dongle) GUID into the outbound packet before it gets transmitted.
+	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
+
+	// Now send back a network check response from the gateway (dongle) itself.
 	// Wait until we can get an TX buffer
-	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+	while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
 	}
 	EnterCritical();
-		txBufferNum = gTXCurBufferNum;
+		rxBufferNum = gRXCurBufferNum;
 		advanceTXBuffer();
 	ExitCritical();
-	createNetSetupCommand(txBufferNum, networkID, selectedChannel);
+	createNetCheckRespInboundCommand(rxBufferNum, networkID, selectedChannel);
 	
 	// Now send the command to the queue that sends packets to the controller.
-	if (xQueueSend(gGatewayMgmtQueue, &txBufferNum, pdFALSE)) {
+	if (xQueueSend(gGatewayMgmtQueue, &rxBufferNum, pdFALSE)) {
 	}
+};
 	
-	gLocalDeviceState = eLocalStateRun;
+// --------------------------------------------------------------------------
+
+void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {
+	
 };
 
 // --------------------------------------------------------------------------

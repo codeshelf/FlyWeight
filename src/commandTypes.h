@@ -19,6 +19,7 @@
 // Definitions.
 
 #define UNIQUE_ID_BYTES			8
+#define PRIVATE_GUID			"00000000";
 
 /*
  * The format of a packet on the network is as follows:
@@ -47,10 +48,13 @@
 
 // Network Mgmt
 #define CMDPOS_MGMT_SUBCMD		3
-#define CMDPOS_SETUP_NETID		4
-#define CMDPOS_SETUP_CHANNEL	5
+#define CMDPOS_SETUP_CHANNEL	4
 #define CMDPOS_CHECK_TYPE		4
 #define CMDPOS_CHECK_NETID		5
+#define CMDPOS_CHECK_UID		6
+#define CMDPOS_CHECK_CHANNEL	14
+#define CMDPOS_CHECK_ENERGY		15
+#define CMDPOS_CHECK_LINKQ		16
 
 // Assoc Command
 #define CMDPOS_ASSOC_SUBCMD		3
@@ -192,22 +196,22 @@ typedef enum {
 } ECommandIDType;
 
 typedef enum {
-	eNetMgmtSubCommandInvalid = -1,
-	eNetMgmtSubCommandSetup = 1,
-	eNetMgmtSubCommandCheck = 2
-} ENetMgmtSubCommandIDType;
+	eNetMgmtSubCmdInvalid = -1,
+	eNetMgmtSubCmdNetSetup = 1,
+	eNetMgmtSubCmdNetCheck = 2
+} ENetMgmtSubCmdIDType;
 
 typedef enum {
-	eAssocSubCommandInvalid = -1,
-	eAssocSubCommandReq = 1,
-	eAssocSubCommandResp = 2
-} EAssocSubCommandIDType;
+	eAssocSubCmdInvalid = -1,
+	eAssocSubCmdReq = 1,
+	eAssocSubCmdResp = 2
+} EAssocSubCmdIDType;
 
 typedef enum {
-	eControlSubCommandInvalid = -1,
-	eControlSubCommandAudio = 0,
-	eControlSubCommandMotor = 1
-} EControlSubCommandIDType;
+	eControlSubCmdInvalid = -1,
+	eControlSubCmdAudio = 0,
+	eControlSubCmdMotor = 1
+} EControlSubCmdIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

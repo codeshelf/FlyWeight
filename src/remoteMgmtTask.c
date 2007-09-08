@@ -81,7 +81,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					// If we're in the run state, and receive a command then we need to handle that command.
 					case eLocalStateRun:
 						
-						switch (getCommand(rxBufferNum)) {
+						switch (getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage)) {
 						
 							case eCommandQuery:
 								// Now that the remote has an assigned address we need to ask it to describe

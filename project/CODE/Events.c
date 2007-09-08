@@ -151,8 +151,8 @@ interrupt void AudioLoader_OnInterrupt(void) {
 //	TPM1MOD = gPWMMaxValue;
 
 	// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
-	if (!((getCommand(gCurPWMRadioBufferNum) == eCommandControl) 
-		&& (getControlSubCommand(gCurPWMRadioBufferNum) == eControlSubCommandAudio)
+	if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandControl) 
+		&& (getControlSubCommand(gCurPWMRadioBufferNum) == eControlSubCmdAudio)
 		&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 	
 #ifdef XBEE

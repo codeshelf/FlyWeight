@@ -108,7 +108,7 @@ void radioReceiveTask(void *pvParameters) {
 				// the PWM audio processor is working at interrupt
 				// to get bytes out of the buffer.
 				
-				cmdID = getCommand(rxBufferNum);
+				cmdID = getCommandID(&gRXRadioBuffer[rxBufferNum].bufferStorage);
 				cmdDstAddr = getCommandDstAddr(rxBufferNum);
 				
 				// Only process broadcast commands or commands addressed to us.
@@ -135,10 +135,10 @@ void radioReceiveTask(void *pvParameters) {
 						case eCommandControl:
 							// Make sure that there is a valid sub-command in the control command.
 							switch (getControlSubCommand(rxBufferNum)) {
-								case eControlSubCommandAudio:
+								case eControlSubCmdAudio:
 									break;
 									
-								case eControlSubCommandMotor:
+								case eControlSubCmdMotor:
 									processMotorControlSubCommand(rxBufferNum);
 									break;
 									

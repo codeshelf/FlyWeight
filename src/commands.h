@@ -61,21 +61,22 @@ typedef UINT8	ChannelNumberType;
  
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
-ECommandIDType getCommand(BufferCntType inRXBufferNum);
+ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr);
 
-ENetMgmtSubCommandIDType getNetMgmtSubCommand(BufferCntType inRXBufferNum);
-EAssocSubCommandIDType getAssocSubCommand(BufferCntType inRXBufferNum);
-EControlSubCommandIDType getControlSubCommand(BufferCntType inRXBufferNum);
+ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
+EAssocSubCmdIDType getAssocSubCommand(BufferCntType inRXBufferNum);
+EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum);
 
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
-void createNetSetupCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber);
+void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 
+void processNetCheckInboundCommand(BufferCntType inRXBufferNum);
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);
