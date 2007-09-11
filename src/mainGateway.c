@@ -41,7 +41,7 @@ void vMain( void ) {
 #endif
 	gControllerState = eControllerStateInit;
 	MLMEMC13192PAOutputAdjust(MAX_POWER);
-	if (MLMESetChannelRequest(5) == SUCCESS) 
+	if (MLMESetChannelRequest(0) == SUCCESS) 
 		{}
 
 	/* Start the task that will handle the radio */

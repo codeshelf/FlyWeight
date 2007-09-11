@@ -6,7 +6,7 @@
 **     Beantype  : PE_Error
 **     Version   : Driver 01.00
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/4/2007, 1:02 PM
+**     Date/Time : 9/11/2007, 10:25 AM
 **     Abstract  :
 **         This bean "PE_Error" contains internal definitions
 **         of the error constants.

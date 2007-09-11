@@ -64,7 +64,7 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum);
 ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr);
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
-EAssocSubCmdIDType getAssocSubCommand(BufferCntType inRXBufferNum);
+ECmdReqRespType getAssocSubCommand(BufferCntType inRXBufferNum);
 EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum);
 
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);

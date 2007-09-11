@@ -50,8 +50,8 @@ RemoteAddrType		gMainRemote = INVALID_REMOTE;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType			rxBufferNum;
-	ECommandIDType			cmdID;
-	ENetMgmtSubCmdIDType	subCmdID;
+//	ECommandIDType			cmdID;
+//	ENetMgmtSubCmdIDType	subCmdID;
 	
 	// The radio receive task will return a pointer to a radio data packet.
 	if (gRadioReceiveQueue) {
@@ -83,15 +83,15 @@ void radioReceiveTask(void *pvParameters) {
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 			
-				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
-				if (cmdID == eCommandNetMgmt) {
-					subCmdID = getNetMgmtSubCommand(gRXRadioBuffer[rxBufferNum].bufferStorage);
-					switch (subCmdID) {
-						case eNetMgmtSubCmdNetCheck:
-							processNetCheckInboundCommand(rxBufferNum);
-							break;
-					}
-				}
+//				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
+//				if (cmdID == eCommandNetMgmt) {
+//					subCmdID = getNetMgmtSubCommand(gRXRadioBuffer[rxBufferNum].bufferStorage);
+//					switch (subCmdID) {
+//						case eNetMgmtSubCmdNetCheck:
+//							processNetCheckInboundCommand(rxBufferNum);
+//							break;
+//					}
+//				}
 
 				// Send the packet to the controller.
 				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);

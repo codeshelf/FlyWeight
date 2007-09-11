@@ -202,10 +202,10 @@ typedef enum {
 } ENetMgmtSubCmdIDType;
 
 typedef enum {
-	eAssocSubCmdInvalid = -1,
-	eAssocSubCmdReq = 1,
-	eAssocSubCmdResp = 2
-} EAssocSubCmdIDType;
+	eCmdReqRespInvalid = -1,
+	eCmdReqRespREQ = 1,
+	eCmdReqRespRESP = 2
+} ECmdReqRespType;
 
 typedef enum {
 	eControlSubCmdInvalid = -1,

@@ -3,7 +3,7 @@
 <PE_core_version v="Processor Expert Version 0374"/>
 
 <CPU_Bean name="Cpu" type="MC9S08GT60_44">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="Cpu"/>
@@ -300,7 +300,7 @@
 </CPU_Bean>
 
 <CPU_Bean name="Cpu" type="MC9S08GT60_48">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="Cpu"/>
@@ -600,7 +600,7 @@
 </CPU_Bean>
 
 <Bean name="SW2" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW2"/>
@@ -636,7 +636,7 @@
 </Bean>
 
 <Bean name="SW3" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW3"/>
@@ -672,7 +672,7 @@
 </Bean>
 
 <Bean name="SW4" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="SW4"/>
@@ -708,7 +708,7 @@
 </Bean>
 
 <Bean name="LED1" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED1"/>
@@ -744,7 +744,7 @@
 </Bean>
 
 <Bean name="LED2" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED2"/>
@@ -780,7 +780,7 @@
 </Bean>
 
 <Bean name="LED3" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED3"/>
@@ -816,7 +816,7 @@
 </Bean>
 
 <Bean name="LED4" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED4"/>
@@ -932,7 +932,7 @@
 </Bean>
 
 <Bean name="WatchDog" type="WatchDog">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="WatchDog"/>
@@ -1132,14 +1132,14 @@
 <boolgroup name="Pin" v="Used">
 <Channel_pin v="PTD2_TPM1CH2"/>
 <Channel_pin_signal v=""/>
-<Pull_resistor v="autoselected pull"/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
 
 </boolgroup>
 
 <group name="Interrupt">
 
 <group name="Channel Interrupt">
-<Interrupt v=""/>
+<Interrupt v="Vtpm1ch2"/>
 <Channel_Interrupt v="Disabled"/>
 <ISR_name v=""/>
 
@@ -1186,7 +1186,7 @@
 </Bean>
 
 <Bean name="PWM_XBee" type="Init_TPM">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="PWM_XBee"/>
@@ -1309,7 +1309,7 @@
 </Bean>
 
 <Bean name="AudioOut" type="InterruptVector">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="AudioOut"/>

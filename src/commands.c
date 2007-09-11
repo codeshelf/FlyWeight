@@ -94,8 +94,8 @@ ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
 
 // --------------------------------------------------------------------------
 
-EAssocSubCmdIDType getAssocSubCommand(BufferCntType inRXBufferNum) {
-	EAssocSubCmdIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+ECmdReqRespType getAssocSubCommand(BufferCntType inRXBufferNum) {
+	ECmdReqRespType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
 	return result;
 };
 
@@ -127,27 +127,6 @@ void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkID
 	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 };
 
-// --------------------------------------------------------------------------
-
-void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum) {
-
-	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
-	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
-	// directly.
-	
-	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
-	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gRXRadioBuffer[inRXBufferNum].bufferStatus = eBufferStateInUse;
-	
-	// Set the sub-command.
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
-	
-	gRXRadioBuffer[inRXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
-};
 
 // --------------------------------------------------------------------------
 
@@ -157,7 +136,7 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 	createPacket(inTXBufferNum, eCommandAssoc, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
 	
 	// Set the AssocReq sub-command
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD] = eAssocSubCmdReq;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD] = eCmdReqRespREQ;
 
 	// The next 8 bytes are the unique ID of the device.
 	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), inUniqueID, UNIQUE_ID_BYTES);
@@ -214,7 +193,8 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	// Get the requested channel number.
 	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL];
 	
-	MLMESetChannelRequest(channel);	
+	MLMESetChannelRequest(channel);
+	RELEASE_TX_BUFFER(inTXBufferNum);
 	
 	gLocalDeviceState = eLocalStateRun;
 };
@@ -222,31 +202,79 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 // --------------------------------------------------------------------------
 
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
-	BufferCntType rxBufferNum;
+	BufferCntType txBufferNum;
+	ChannelNumberType channel;
+
+	vTaskSuspend(gRadioReceiveTask);
+	
+	// Switch to the channel requested in the outbound net-check.
+	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_CHANNEL];
+	MLMESetChannelRequest(channel);
 
 	// We need to put the gateway (dongle) GUID into the outbound packet before it gets transmitted.
-	memcpy((void *) (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
+	memcpy(&(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_UID]), GUID, UNIQUE_ID_BYTES);
 
-	// Now send back a network check response from the gateway (dongle) itself.
+	/*
+	 * At this point we transmit one inbound net-check back over the serial link from the gateway (dongle) itself.
+	 * The reason is that we need to guarantee that at least one net-check goes back to the controller
+	 * for each channel.  If there are no other controllers operating or listening at least the controller
+	 * will have a net-check from the dongle itself.  This is necessary, so that the controller can 
+	 * assess the energy detect (ED) for each channel.  Even though there may be no other controllers 
+	 * on the channel, but there may be other systems using the channel with different protocols or
+	 * modulation schemes.
+	 * 
+	 * The only rational way to do this is to use a transmit buffer.  The reason is that the radio may
+	 * already be waiting to fill an inbound packet that we already sent to the MAC.  There is no
+	 * way to let the MAC know that we're about to switch the current RX buffer.  For this reason
+	 * the only safe buffer available to us comes from the TX buffer.
+	 */
+
 	// Wait until we can get an TX buffer
-	while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
+	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
 	}
-	EnterCritical();
-		rxBufferNum = gRXCurBufferNum;
+	//EnterCritical();
+		txBufferNum = gTXCurBufferNum;
 		advanceTXBuffer();
-	ExitCritical();
-	createNetCheckRespInboundCommand(rxBufferNum);
+	//ExitCritical();
+
+	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
+	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
+	// directly.
 	
-	// Now send the command to the queue that sends packets to the controller.
-	if (xQueueSend(gGatewayMgmtQueue, &rxBufferNum, pdFALSE)) {
-	}
+	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
+	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+	
+	// Set the sub-command.
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] = eCmdReqRespRESP;
+	
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_NETID] = BROADCAST_NETID;
+	memcpy((void *) &(gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_CHANNEL] = 0;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_ENERGY] = MLMEEnergyDetect();
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_LINKQ] = 0;
+	
+	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_CHECK_LINKQ + 1;
+
+	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	RELEASE_TX_BUFFER(txBufferNum);
+	
+	vTaskResume(gRadioReceiveTask);
+
+
 };
 	
 // --------------------------------------------------------------------------
 
 void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {
-	
+	// The gateway (dongle) needs to add the link quality to the channel energy field.
+	// This way the gateway can assess channel energy.
 };
 
 // --------------------------------------------------------------------------
