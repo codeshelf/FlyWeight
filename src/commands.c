@@ -54,6 +54,10 @@ ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 	return result;
 };
 
+NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & SHIFTBITS_PKT_NETID >> SHIFTBITS_PKT_NETID);
+}
+
 // --------------------------------------------------------------------------
 
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
@@ -125,7 +129,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkID
 
 // --------------------------------------------------------------------------
 
-void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber) {
+void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum) {
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -140,7 +144,7 @@ void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum, NetworkIDType
 	gRXRadioBuffer[inRXBufferNum].bufferStatus = eBufferStateInUse;
 	
 	// Set the sub-command.
-	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetSetup;
+	gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
 	
 	gRXRadioBuffer[inRXBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
 };
@@ -201,11 +205,7 @@ void createControlCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAd
 
 void processNetSetupCommand(BufferCntType inTXBufferNum) {
 
-	NetworkIDType				networkID;
 	ChannelNumberType			channel;
-	ChannelNumberType			selectedChannel;
-	UINT8						buffer[16];
-	BufferCntType				txBufferNum;
 
 	// Network Setup ALWAYS comes in via the serial interface to the gateway (dongle)
 	// This means we process it FROM the TX buffers and SEND from the TX buffers.
@@ -222,8 +222,10 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 // --------------------------------------------------------------------------
 
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
+	BufferCntType rxBufferNum;
+
 	// We need to put the gateway (dongle) GUID into the outbound packet before it gets transmitted.
-	memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
+	memcpy((void *) (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
 
 	// Now send back a network check response from the gateway (dongle) itself.
 	// Wait until we can get an TX buffer
@@ -234,7 +236,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 		rxBufferNum = gRXCurBufferNum;
 		advanceTXBuffer();
 	ExitCritical();
-	createNetCheckRespInboundCommand(rxBufferNum, networkID, selectedChannel);
+	createNetCheckRespInboundCommand(rxBufferNum);
 	
 	// Now send the command to the queue that sends packets to the controller.
 	if (xQueueSend(gGatewayMgmtQueue, &rxBufferNum, pdFALSE)) {
@@ -257,6 +259,7 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGNID) >> SHIFTBITS_CMDID;	
+		gMyNetworkID = getNetworkID(inRXBufferNum);
 		gLocalDeviceState = eLocalStateAssociated;
 	}
 

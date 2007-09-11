@@ -108,7 +108,7 @@ void radioReceiveTask(void *pvParameters) {
 				// the PWM audio processor is working at interrupt
 				// to get bytes out of the buffer.
 				
-				cmdID = getCommandID(&gRXRadioBuffer[rxBufferNum].bufferStorage);
+				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
 				cmdDstAddr = getCommandDstAddr(rxBufferNum);
 				
 				// Only process broadcast commands or commands addressed to us.

@@ -88,6 +88,7 @@ typedef struct {
 	BufferCntType			bufferSize;
 } RadioBufferStruct;
 
+typedef UINT8				NetworkIDType;
 typedef UINT8				RemoteAddrType;
 typedef UINT8				EndpointNumType;
 typedef UINT8				KVPNumType;

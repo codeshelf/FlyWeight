@@ -19,7 +19,7 @@
 // Definitions.
 
 #define UNIQUE_ID_BYTES			8
-#define PRIVATE_GUID			"00000000";
+#define PRIVATE_GUID			"00000000"
 
 /*
  * The format of a packet on the network is as follows:

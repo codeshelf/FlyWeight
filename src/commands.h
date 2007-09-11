@@ -71,7 +71,8 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
-void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum, NetworkIDType inNetworkID, ChannelNumberType inChannelNumber);
+void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
+void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
