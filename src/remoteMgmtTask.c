@@ -48,7 +48,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			};
 			
 			// Wait up to 50ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 50 * portTICK_RATE_MS) == pdPASS) {
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
 				switch (gLocalDeviceState) {
 					case eLocalStateAssocRespRcvd:
 						processAssocRespCommand(rxBufferNum);
@@ -79,6 +79,10 @@ void remoteMgmtTask( void *pvParameters ) {
 				// Get the state of the remote at the named slot.
 				switch (gLocalDeviceState) {
 
+					case eCommandAssoc:
+						processAssocRespCommand(rxBufferNum);
+						break;
+					
 					// If we're in the run state, and receive a command then we need to handle that command.
 					case eLocalStateRun:
 						

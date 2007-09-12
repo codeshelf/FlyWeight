@@ -229,45 +229,46 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	 * the only safe buffer available to us comes from the TX buffer.
 	 */
 
-	// Wait until we can get an TX buffer
-	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-		vTaskDelay(1);
+	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdReqRespREQ) {
+		// Wait until we can get an TX buffer
+		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+			vTaskDelay(1);
+		}
+		//EnterCritical();
+			txBufferNum = gTXCurBufferNum;
+			advanceTXBuffer();
+		//ExitCritical();
+	
+		// This command gets setup in the TX buffers, because it only gets sent back to the controller via
+		// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
+		// directly.
+		
+		// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
+		//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+		
+		// Set the sub-command.
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] = eCmdReqRespRESP;
+		
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_NETID] = BROADCAST_NETID;
+		memcpy((void *) &(gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_CHANNEL] = channel;
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_ENERGY] = MLMEEnergyDetect();
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_LINKQ] = 0;
+		
+		gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_CHECK_LINKQ + 1;
+	
+		serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+		RELEASE_TX_BUFFER(txBufferNum);
+		
+		vTaskResume(gRadioReceiveTask);
+
 	}
-	//EnterCritical();
-		txBufferNum = gTXCurBufferNum;
-		advanceTXBuffer();
-	//ExitCritical();
-
-	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
-	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
-	// directly.
-	
-	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
-	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
-	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
-	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
-	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
-	
-	// Set the sub-command.
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] = eCmdReqRespRESP;
-	
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_NETID] = BROADCAST_NETID;
-	memcpy((void *) &(gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_CHANNEL] = 0;
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_ENERGY] = MLMEEnergyDetect();
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_LINKQ] = 0;
-	
-	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_CHECK_LINKQ + 1;
-
-	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-	RELEASE_TX_BUFFER(txBufferNum);
-	
-	vTaskResume(gRadioReceiveTask);
-
-
 };
 	
 // --------------------------------------------------------------------------
