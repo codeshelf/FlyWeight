@@ -23,7 +23,7 @@ ViewSizeIndex=0
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[199|772|559|152]
+Rect=[53|622|722|313]
 
 [ResourceMeter]
 Status=hiden
@@ -40,7 +40,7 @@ BF_LicensedOnly=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[21|78|834|679]
+Rect=[30|104|834|679]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -141,7 +141,7 @@ WindowVisible=No
 Rect=[0|0|0|0]
 
 [MemoryMap]
-Rect=[119|318|413|482]
+Rect=[52|365|553|482]
 DisplayOnlyMemories=No
 WindowVisible=No
 

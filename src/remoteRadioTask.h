@@ -14,6 +14,10 @@
 #include "radioCommon.h"
 
 // --------------------------------------------------------------------------
+// Externs
+
+
+// --------------------------------------------------------------------------
 // Functions prototypes.
 
 void radioReceiveTask( void *pvParameters );

@@ -7,7 +7,7 @@
 	$Name$	
 */
 
-#include "remoteRadioTask.h"
+#include "gatewayRadioTask.h"
 #include "gatewayMgmtTask.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -21,7 +21,10 @@
 #include "pub_def.h"
 
 // --------------------------------------------------------------------------
-// Local variables.
+// Global variables.
+
+UINT8 				gu8RTxMode;
+
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
 xTaskHandle			gSerialReceiveTask = NULL;

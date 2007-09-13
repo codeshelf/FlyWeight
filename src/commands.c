@@ -18,6 +18,8 @@
 #include "gatewayMgmtTask.h"
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
+#include "NV_Data.h"
+#include "update_nvm.h"
 
 #ifdef _TOY_NETWORK_
 	#include "toyQuery.h"
@@ -192,6 +194,10 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	
 	// Get the requested channel number.
 	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL];
+	
+	// Write this value to MV_RAM
+	// (cast away the "const" of the NVRAM channel number.)
+	Update_NV_RAM((unsigned char *const) &(NV_RAM_ptr->ChannelSelect), &channel, 1);
 	
 	MLMESetChannelRequest(channel);
 	RELEASE_TX_BUFFER(inTXBufferNum);

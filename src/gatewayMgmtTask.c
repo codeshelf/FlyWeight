@@ -28,6 +28,7 @@ ControllerStateType	gControllerState;
 static UINT8		gCurrentBufferPos = 0;
 static UINT8		gCurrentBufferSize = 0;
 static USB_TComData	gSCIBuffer[kBufferSize];
+ELocalStatusType	gLocalDeviceState;
 
 void checkUSBInterface(void);
 

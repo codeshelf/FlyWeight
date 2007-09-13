@@ -7,7 +7,7 @@
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/12/2007, 1:41 PM
+**     Date/Time : 9/12/2007, 6:54 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -132,6 +132,8 @@ extern void _Startup(void);            /* Forward declaration of external startu
 #include "mcu_hw_config.h"
 #include "MC13192_hw_config.h"
 #include "simple_mac.h"
+#include "NV_Data.h"
+#include "update_nvm.h"
 
 
 #pragma NO_FRAME
@@ -140,9 +142,10 @@ void _EntryPoint(void)
 {
 
   /*** User code before PE initialization ***/
-        MCUInit();
-        MC13192Init();
-        MLMESetMC13192ClockRate(2);
+  MCUInit();
+  MC13192Init();
+  MLMESetMC13192ClockRate(2);
+  NV_Flash_Setup();
   /*** End of user code before PE initialization ***/
 
   /* ### MC9S08GT60_48 "Cpu" init code ... */

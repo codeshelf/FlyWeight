@@ -25,7 +25,9 @@
 #endif
 
 // --------------------------------------------------------------------------
-// Local variables.
+// Global variables.
+
+UINT8 				gu8RTxMode;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;

@@ -24,10 +24,14 @@
 #include "commands.h"
 #include "CPU.h"
 #include "WatchDog.h"
+#include "NV_Data.h"
 
 // --------------------------------------------------------------------------
 // Globals
 
+extern volatile const Init_NV_RAM_Struct_t NV_RAM0;
+extern volatile const NV_RAM_Struct_t NV_RAM1;
+extern volatile NV_RAM_Struct_t *NV_RAM_ptr;
 // --------------------------------------------------------------------------
 
 void vMain( void ) {
@@ -41,8 +45,11 @@ void vMain( void ) {
 #endif
 	gControllerState = eControllerStateInit;
 	MLMEMC13192PAOutputAdjust(MAX_POWER);
-	if (MLMESetChannelRequest(0) == SUCCESS) 
-		{}
+	
+	// Get the channel number stored in NVRAM and switch to it.
+	// (Most likely this is the channel assigned to use when the controller last started.)
+	if (MLMESetChannelRequest(NV_RAM_ptr->ChannelSelect) == SUCCESS) {
+	}
 
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );

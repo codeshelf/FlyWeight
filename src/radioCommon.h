@@ -128,7 +128,6 @@ extern BufferCntType		gTXUsedBuffers;
 extern tTxPacket			gsTxPacket;
 extern tRxPacket			gsRxPacket;
 
-extern UINT8 				gu8RTxMode;
 extern SampleRateType		gMasterSampleRate;
 
 extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
