@@ -20,6 +20,7 @@
 #include "remoteMgmtTask.h"
 #include "NV_Data.h"
 #include "update_nvm.h"
+#include "flash.h"
 
 #ifdef _TOY_NETWORK_
 	#include "toyQuery.h"
@@ -197,7 +198,8 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	
 	// Write this value to MV_RAM
 	// (cast away the "const" of the NVRAM channel number.)
-	Update_NV_RAM((unsigned char *const) &(NV_RAM_ptr->ChannelSelect), &channel, 1);
+	//Update_NV_RAM((unsigned char *const) &(NV_RAM_ptr->ChannelSelect), &channel, 1);
+	WriteFlashByte(channel, &(NV_RAM_ptr->ChannelSelect));
 	
 	MLMESetChannelRequest(channel);
 	RELEASE_TX_BUFFER(inTXBufferNum);

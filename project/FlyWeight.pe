@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=787
+ProjectModificationStamp=790
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=440
+ProjectCompNumb=444
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -3315,22 +3315,25 @@ List=GrupItem
 ItemSymbol=EntryPoint_UserDecl
 ReadOnly=No
 Value=(string list)
-StrgList=6
+StrgList=7
 Line=#include "pub_def.h"
 Line=#include "mcu_hw_config.h"
 Line=#include "MC13192_hw_config.h"
 Line=#include "simple_mac.h"
 Line=#include "NV_Data.h"
 Line=#include "update_nvm.h"
+Line=#include "flash.h"
 [ItemState]
 ItemSymbol=EntryPoint_UserCodeBefore
 ReadOnly=No
 Value=(string list)
-StrgList=4
+StrgList=6
 Line=MCUInit();
 Line=MC13192Init();
 Line=MLMESetMC13192ClockRate(2);
+Line=InitFlash();
 Line=NV_Flash_Setup();
+Line=
 [ItemState]
 ItemSymbol=EntryPoint_UserCodeAfter
 ReadOnly=No

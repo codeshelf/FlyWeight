@@ -1366,6 +1366,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -1756,6 +1777,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>NV_Data.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -3036,6 +3072,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -3401,6 +3458,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>SARDRemote.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -4747,6 +4819,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -5152,6 +5245,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>EVBGateway.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -6446,6 +6554,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -6821,6 +6950,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>XBeeRemote.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -8167,6 +8311,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -8574,6 +8739,21 @@
                     <PATH>hcs08_flash_lib.lib</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
             </LINKORDER>
         </TARGET>
     </TARGETLIST>
@@ -8793,6 +8973,24 @@
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ulaw.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </GROUP>
