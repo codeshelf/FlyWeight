@@ -68,10 +68,6 @@ void serialReceiveTask( void *pvParameters ) {
 
 		// Don't try to get a frame if there is no free buffer.
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-			//if (uxQueueMessagesWaiting(gRadioTransmitQueue) < TX_QUEUE_SIZE) {
-			//	if (xQueueSend(gRadioTransmitQueue, &gTXCurBufferNum, pdFALSE)) {
-			//	}
-			//}
 			vTaskDelay(1);
 		}
 
