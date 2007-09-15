@@ -176,6 +176,45 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 // --------------------------------------------------------------------------
 
+void createOutboundNetsetup() {
+	BufferCntType txBufferNum;
+	
+	vTaskSuspend(gRadioReceiveTask);
+	
+	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+		vTaskDelay(1);
+	}
+	
+	txBufferNum = gTXCurBufferNum;
+	advanceTXBuffer();
+
+	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
+	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
+	// directly.
+	
+	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
+	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+	
+	// Set the sub-command.
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetSetup;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL] = 0;
+		
+	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
+
+	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	RELEASE_TX_BUFFER(txBufferNum);
+	
+	vTaskResume(gRadioReceiveTask);
+
+}
+
+// --------------------------------------------------------------------------
+
 void createControlCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
 	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, inRemoteAddr);
@@ -196,10 +235,16 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	// Get the requested channel number.
 	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SETUP_CHANNEL];
 	
-	// Write this value to MV_RAM
-	// (cast away the "const" of the NVRAM channel number.)
-	//Update_NV_RAM((unsigned char *const) &(NV_RAM_ptr->ChannelSelect), &channel, 1);
-	WriteFlashByte(channel, &(NV_RAM_ptr->ChannelSelect));
+	// Write this value to MV_RAM if it's different than what we already have.
+	// NB: Writing to flash causes it to wear out over time.  FSL says 10K write cycles, but there
+	// are other issues that may reduce this number.  So only write if we have to.
+//	if (NV_RAM_ptr->ChannelSelect != channel) {
+//		// (cast away the "const" of the NVRAM channel number.)
+//		EnterCritical();
+//		Update_NV_RAM(&(NV_RAM_ptr->ChannelSelect), &channel, 1);
+//		//WriteFlashByte(channel, &(NV_RAM_ptr->ChannelSelect));
+//		ExitCritical();
+//	}
 	
 	MLMESetChannelRequest(channel);
 	RELEASE_TX_BUFFER(inTXBufferNum);
@@ -319,11 +364,6 @@ void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemote
 	gRemoteStateTable[inRemoteAddr].remoteState = eRemoteStateRespRcvd;
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
-
-	// Figure out what channels are available.
-
-//	if (xQueueSend(gGatewayMgmtQueue, &inRXBufferNum, pdFALSE)) {
-//	}
 
 }
 

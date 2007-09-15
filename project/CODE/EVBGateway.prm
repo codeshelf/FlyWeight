@@ -17,18 +17,18 @@ SECTIONS
     DIRECT_PAGE_REGISTERS	    = READ_WRITE 0x0000 TO 0x007F; // This section contains often used registers
     DIRECT_ADDRESSING_MEMORY    = READ_WRITE 0x0080 TO 0x00FF; // Direct addressing memory
     USER_STACK                  = READ_WRITE 0x0100 TO 0x017f; // User stack
-    STATIC_USER_MEMORY          = READ_WRITE 0x0180 TO 0x0F6F; // Static user memory
+    STATIC_USER_MEMORY          = READ_WRITE 0x0180 TO 0x07ff; // Static user memory
 
     // Reserve space for NV RAM pointer - used by BootLoader of 802.15.4/App
     // The pointer is initialized by code.
-    NV_RAM_POINTER_RAM          = NO_INIT    0x0F70 TO 0x0F71; // RAM memory
+    //NV_RAM_POINTER_RAM          = NO_INIT    0x0F70 TO 0x0F71; // RAM memory
 
     // HCS08 flash Library functions (critical part) - 802.15.4/App MUST NOT use this memory.
     // Will be initialize from flash memory
-    RES_FLASH_LIB_CODE_RAM      = NO_INIT	 0x0F80 TO 0x0FBC; // RAM memory
+    //RES_FLASH_LIB_CODE_RAM      = NO_INIT	 0x0F80 TO 0x0FBC; // RAM memory
 
     // Data memory for 802.15.4/application. Not used by HCS09 flash library.
-    STATIC_USER_MEMORY2         = READ_WRITE 0x0FBD TO 0x107F;  // RAM memory
+    //STATIC_USER_MEMORY2         = READ_WRITE 0x0F80 TO 0x107F;  // RAM memory
 
     FLASH                       = READ_ONLY  0x1080 TO 0x13FF; // Flash section
 
@@ -40,9 +40,9 @@ SECTIONS
     BOOTLOADER_APP_NV_RAM1      = NO_INIT   0x01600 TO 0x17FF; // Flash memory (erased)
 
     HIGH_PAGE_REGISTERS	        = READ_WRITE 0x1800 TO 0x182B; // High page register section
-    FLASH2                      = READ_ONLY  0x182C TO 0xF013; // Flash section
-    FLASH_LIB_CODE              = READ_ONLY  0xF014 TO 0xF050; // Flash functions to copy to RAM memory
-    FLASH3                      = READ_ONLY  0xF051 TO 0xFFAF; // Flash section
+    FLASH2                      = READ_ONLY  0x182C TO 0xFAFF; // Flash section
+//    FLASH_LIB_CODE              = READ_ONLY  0xF014 TO 0xF050; // Flash functions to copy to RAM memory
+//    FLASH3                      = READ_ONLY  0xF051 TO 0xFFAF; // Flash section
     NV_REGISTERS                = READ_ONLY  0xFFB0 TO 0xFFBF; // None-volatile registers
     IRQ_VECTORS_TABLE           = READ_ONLY  0xFFC0 TO 0xFFFD; // ISR vectors
     RESET_VECTOR                = READ_ONLY  0xFFFE TO 0xFFFF; // System reset vector
@@ -53,16 +53,16 @@ END
 // Here it is listed how the variables and code must be allocated.
 PLACEMENT
     MY_ZEROPAGE                 INTO DIRECT_ADDRESSING_MEMORY;
-    DEFAULT_RAM                 INTO STATIC_USER_MEMORY2, STATIC_USER_MEMORY;
-    DEFAULT_ROM                 INTO FLASH, FLASH2, FLASH3;
+    DEFAULT_RAM                 INTO STATIC_USER_MEMORY;
+    DEFAULT_ROM                 INTO FLASH, FLASH2;//, FLASH3;
     SSTACK                      INTO USER_STACK; // Put stack in user stack section
-    NV_RAM_POINTER              INTO NV_RAM_POINTER_RAM;
-    RES_FLASH_LIB_CODE			INTO RES_FLASH_LIB_CODE_RAM;
+//    NV_RAM_POINTER              INTO NV_RAM_POINTER_RAM;
+//    RES_FLASH_LIB_CODE			INTO RES_FLASH_LIB_CODE_RAM;
     BOOTLOADER_MAC_NV_DATA0	    INTO BOOTLOADER_MAC_NV_RAM0;
     BOOTLOADER_PHY_NV_DATA0	    INTO BOOTLOADER_PHY_NV_RAM0;
     BOOTLOADER_APP_NV_DATA0     INTO BOOTLOADER_APP_NV_RAM0;
     BOOTLOADER_APP_NV_DATA1     INTO BOOTLOADER_APP_NV_RAM1;
-    NV_FLASH_FUNCTION_RAM       INTO FLASH_LIB_CODE;
+//    NV_FLASH_FUNCTION_RAM       INTO FLASH_LIB_CODE;
     NV_REGISTERS_SECTION        INTO NV_REGISTERS;
     IRQ_VECTOR_SECTION          INTO IRQ_VECTORS_TABLE;
     RESET_VECTOR_SECTION        INTO RESET_VECTOR;

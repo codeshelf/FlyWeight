@@ -28,8 +28,15 @@
 #define MAX_PACKET_SIZE			123
 //#define MAX_PACKET_SIZE			30
 
+// The gateway needs fewer buffers.
+#ifdef IS_GATEWAY
+#define RX_QUEUE_SIZE			2
+#define RX_QUEUE_BALANCE		1
+#else
 #define RX_QUEUE_SIZE			8
 #define RX_QUEUE_BALANCE		4
+#endif
+
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 

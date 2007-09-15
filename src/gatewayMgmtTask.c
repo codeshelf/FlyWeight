@@ -34,27 +34,26 @@ void checkUSBInterface(void);
 
 // --------------------------------------------------------------------------
 
-void gatewayMgmtTask(void *pvParameters) {
-	BufferCntType	rxBufferNum;
-//	UINT16 bytesSent;
-
-	if ( gGatewayMgmtQueue ) {
-		for ( ;; ) {
-
-			// Whenever we need to handle a state change for a  device, we handle it in this management task.
-
-			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
-
-				// Just send it over the serial link to the controller.
-				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
-				RELEASE_RX_BUFFER(rxBufferNum);
-			}
-		}
-	}
-
-	/* Will only get here if the queue could not be created. */
-	for ( ;; );
-}
+//void gatewayMgmtTask(void *pvParameters) {
+//	BufferCntType	rxBufferNum;
+//
+//	if ( gGatewayMgmtQueue ) {
+//		for ( ;; ) {
+//
+//			// Whenever we need to handle a state change for a  device, we handle it in this management task.
+//
+//			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
+//
+//				// Just send it over the serial link to the controller.
+//				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+//				RELEASE_RX_BUFFER(rxBufferNum);
+//			}
+//		}
+//	}
+//
+//	/* Will only get here if the queue could not be created. */
+//	for ( ;; );
+//}
 
 // --------------------------------------------------------------------------
 
@@ -64,6 +63,10 @@ void serialReceiveTask( void *pvParameters ) {
 	ENetMgmtSubCmdIDType		subCmdID;
 	BufferCntType				txBufferNum;
 
+	// Send a net-setup command to the controller.
+	// It will respond with the channel that we should be using.
+	createOutboundNetsetup();
+	
 	for ( ;; ) {
 
 		// Don't try to get a frame if there is no free buffer.

@@ -72,12 +72,13 @@ RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
-void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
+void createOutboundNetsetup(void);
 
 void processNetCheckInboundCommand(BufferCntType inRXBufferNum);
+void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);

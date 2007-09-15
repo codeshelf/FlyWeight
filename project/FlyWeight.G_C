@@ -70,14 +70,14 @@ Line=WatchDog
 Line=USB
 SignalListFile=DOC\FlyWeight_SIGNALS.txt
 DestinationCompiler=MetrowerksHCS08CC
-ProjectModificationStamp=790
+ProjectModificationStamp=797
 
 [30]
 Generated=No
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=925658411
-CodeAge=925740491
+CodeAge=925789399
 AsemblAge=-1
 GenNumMethods=22
 Delay100US=No
@@ -124,7 +124,7 @@ Generated=Yes
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=925658411
-CodeAge=925740491
+CodeAge=925789399
 AsemblAge=-1
 GenNumMethods=22
 Delay100US=No

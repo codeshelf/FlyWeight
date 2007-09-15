@@ -46,11 +46,6 @@ void vMain( void ) {
 	gControllerState = eControllerStateInit;
 	MLMEMC13192PAOutputAdjust(MAX_POWER);
 	
-	// Get the channel number stored in NVRAM and switch to it.
-	// (Most likely this is the channel assigned to use when the controller last started.)
-	if (MLMESetChannelRequest(NV_RAM_ptr->ChannelSelect) == SUCCESS) {
-	}
-
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
 	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
@@ -58,12 +53,12 @@ void vMain( void ) {
 #if  defined(MC13192EVB) || defined (MC13192SARD)
 	//xTaskCreate(LEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, LED_BLINK_PRIORITY, NULL );
 #endif
-	xTaskCreate(gatewayMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gGatewayManagementTask );
+//	xTaskCreate(gatewayMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gGatewayManagementTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, sizeof(BufferCntType));
 	//gLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
-	gGatewayMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(RemoteAddrType));
+//	gGatewayMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(RemoteAddrType));
 
 	// Setup the SMAC glue.
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
