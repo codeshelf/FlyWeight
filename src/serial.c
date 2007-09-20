@@ -1,80 +1,253 @@
 /*
-FreeRTOS V3.2.4 - Copyright (C) 2003-2005 Richard Barry.
-
-This file is part of the FreeRTOS distribution.
-
-FreeRTOS is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-FreeRTOS is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with FreeRTOS; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-A special exception to the GPL can be applied should you wish to distribute
-a combined work that includes FreeRTOS, without being obliged to provide
-the source code for any proprietary components.  See the licensing section 
-of http://www.FreeRTOS.org for full details of how and when the exception
-can be applied.
-
-***************************************************************************
-See http://www.FreeRTOS.org for documentation, latest information, license 
-and contact details.  Please ensure to read the configuration and relevant 
-port sections of the online documentation.
-***************************************************************************
+	FlyWeight
+	© Copyright 2005, 2006 Jeffrey B. Williams
+	All rights reserved
+	
+	$Id$
+	$Name$	
 */
 
-
-/* BASIC INTERRUPT DRIVEN SERIAL PORT DRIVER for port 1.
- 
-Note that this driver is written to test the RTOS port and is not intended
-to represent an optimised solution. */
-
-/* Standard include files. */
-#include <stdlib.h>
-
-/* Scheduler include files. */
-#include "FreeRTOS.h"
-#include "queue.h"
-#include "task.h"
-
-/* Demo application include files. */
 #include "serial.h"
 
+#define	kBufferSize		10
+#define	kHighWaterMark  5
+
+static UINT8			gCurrentBufferPos = 0;
+static UINT8			gCurrentBufferSize = 0;
+static USB_TComData		gSCIBuffer[kBufferSize];
+ELocalStatusType		gLocalDeviceState;
+
+void checkUSBInterface(void);
+
+// --------------------------------------------------------------------------
+
+void sendOneChar(USB_TComData inDataPtr) {
+
+	// Send a character. 
+	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	while (USB_SendChar(inDataPtr) != ERR_OK) {
+		// Consider a timeout where we just reset the MCU.
+	};
+
+}
+
+// --------------------------------------------------------------------------
+
+void readOneChar(USB_TComData *outDataPtr) {
+
+	// Read a character. 
+	// (For some stupid reason the Freescale USB routine doesn't try very hard, so we have to loop until it succeeds.)
+/*	UINT8 error;
+	do {
+		error = USB_RecvChar(inDataPtr);
+		if ((error != ERR_OK) && (error != ERR_RXEMPTY)) {
+			error ++;
+			error --;
+		}
+	} while (error == ERR_RXEMPTY);
+*/
+	// New way of reading.
+#pragma MESSAGE DISABLE C4000 /* WARNING C4000: Always true */
+	while (TRUE) {
+		if (gCurrentBufferPos < gCurrentBufferSize) {
+			*outDataPtr = gSCIBuffer[gCurrentBufferPos++];
+			return;
+		} else {
+			checkUSBInterface();
+		}
+	}
+}
+
+// --------------------------------------------------------------------------
+
+void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
+
+//	UINT16	bytesSent;
+	UINT16	totalBytesSent;
+//	byte	status;
+ 	word 	charsSent;
+
+	// Send the packet contents to the controller via the serial port.
+	// First send the framing character.
+#pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
+	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+ 	sendOneChar(END);
+
+	totalBytesSent = 0;
+
+//	while (totalBytesSent < inSize) {
+//		status = USB_SendBlock(inDataPtr + totalBytesSent, inSize - totalBytesSent, &bytesSent);
+//		totalBytesSent += bytesSent;
+//	}
+ 
+	for (charsSent = 0; charsSent < inSize; charsSent++) {
+		
+        switch(*inDataPtr) {
+			/* if it's the same code as an END character, we send a
+			 * special two character code so as not to make the
+			 * receiver think we sent an END
+			 */
+			case END:
+				sendOneChar(ESC);
+				sendOneChar(ESC_END);
+				break;
+
+			/* if it's the same code as an ESC character,
+			 * we send a special two character code so as not
+			 * to make the receiver think we sent an ESC
+			 */
+			case ESC:
+				sendOneChar(ESC);
+				sendOneChar(ESC_ESC);
+				break;
+
+			/* otherwise, we just send the character
+			 */
+			default:
+				sendOneChar(*inDataPtr);
+		}
+
+		inDataPtr++;
+	}
+		
+	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	sendOneChar(END);
+}
+
+// --------------------------------------------------------------------------
+
+BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
+	BufferStorageType nextByte;
+	BufferCntType bytesReceived = 0;
+//	byte result;
+//	USB_TError usbError;
+
+	// Loop reading bytes until we put together a whole packet.
+	// Make sure not to copy them into the packet if we run out of room.
+	
+	// If there's no character waiting then delay until we get one.
+//	if (USB_GetCharsInRxBuf() == 0)
+//		vTaskDelay(1);
+
+#pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
+	while (bytesReceived < inMaxPacketSize) {
+
+//		result = USB_RecvChar(&nextByte);
+//		if (result == ERR_RXEMPTY) {
+//			//vTaskDelay(1);
+//		} else if (result != ERR_OK) {
+//			USB_GetError(&usbError);
+//		} else {
+		readOneChar(&nextByte);
+		
+		{		
+			switch (nextByte) {
+	
+				// If it's an END character then we're done with the packet.
+				case END:
+					if (bytesReceived)
+						return bytesReceived;
+					else
+						break;
+	
+				/* If it's the same code as an ESC character, wait and get another character and then figure out
+				 * what to store in the packet based on that.
+				 */
+				case ESC:
+					readOneChar(&nextByte);
+	
+					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
+					 * seems to be to leave the byte alone and just stuff it into the packet
+					 */
+					switch (nextByte) {
+						case ESC_END:
+							nextByte = END;
+							break;
+						case ESC_ESC:
+							nextByte = ESC;
+							break;
+					}
+	
+				// Here we fall into the default handler and let it store the character for us.
+				default:
+					if (bytesReceived < inMaxPacketSize)
+						inFramePtr[bytesReceived++] = nextByte;
+			}
+		}
+	}
+}
+
+// --------------------------------------------------------------------------
 
 /*
- * Initialise port 1 for interrupt driven communications.
- */
-xComPortHandle xSerialPortInitMinimal( unsigned portLONG ulWantedBaud, unsigned portBASE_TYPE uxQueueLength ) {
-	return NULL;
+	We're not able to read the SCI using interrupts.  The problem is that the data rate is very
+	high (in order to support multiple audio channels).  The RDRF fills very fast,	and if we 
+	(or FreeRTOS or SMAC) have suspended global interrupts then we don't get the Rx interrupt
+	for that RDRF flag.  Moreover, when interrupts get turned back on we have no way of knowing
+	we just missed the RDRF flag.  The result is that the Rx buffer doesn't get cleared and we end
+	up with a serial overrun error.  At 250000 baud we're missing about 2-3% of the characters.
+	Due to the low-power nature of the device, we are not really able to handle such a high
+	level of data loss.  (There is no retry, ECC, etc.)
+	
+	So...
+	
+	What we do instead is we poll the SCI.  We've ramped the baud rate to the maximum (1250000 baud)
+	and when we need a character we check to see if a local buffer has any.  If that buffer is empty
+	then we disable global interrupts, assert RTS and check for arriving characters.  After we
+	get a certain numbers of characters into the local buffer, we unassert RTS and keep reading characters 
+	until RDRF settles.  After that we reenable global interrupts and continue processing of the 
+	normal OS tasks.  At 1250000 baud it takes about 20-30 uSecs to read 10 or so characters.  
+	This is only 1/10th of an OS quantum.  Since the gateway only services the SCI and the radio 
+	it is safe to suspend global interrupts for this short time.  (The radio asserts the IRQ pin which
+	we detect immediately when global interrupts resume.)
+*/
+
+void checkUSBInterface() {
+
+	UINT8			loopCheck;
+	USB_TComData	lostChar;
+	
+	gCurrentBufferPos = 0;
+	gCurrentBufferSize = 0;
+	
+	// Disable interrupts, so that this is all we're doing.
+	EnterCritical();
+	
+	// Turn RTS on.
+	RTS_ON;
+	
+	// Loop until RDRF is on, or until we timeout.
+	loopCheck = 0;
+	while (!SCI2S1_RDRF) {
+		loopCheck++;
+		if (loopCheck > 100) {
+			RTS_OFF;
+			ExitCritical();
+			return;
+		}
+	}
+	
+	// Read characters until the high water mark, but keep reading characters until RDRF settles.
+	loopCheck = 0;
+	while (loopCheck < 250) {
+	
+		if (SCI2S1_RDRF) {
+			if (gCurrentBufferSize <= kBufferSize) {
+				gSCIBuffer[gCurrentBufferSize++] = SCI2D;
+			} else {
+				lostChar = SCI2D;
+			}
+		} else {
+			// No RDRF
+			loopCheck++;
+		}
+	
+		// If we've read to the high water mark then turn RTS off.
+		if (gCurrentBufferSize > kHighWaterMark) {
+			RTS_OFF;
+		}
+	}
+	
+	// Resume normal OS/interrupt processing.
+	ExitCritical();
 }
-
-/*-----------------------------------------------------------*/
-
-signed portBASE_TYPE xSerialGetChar( xComPortHandle pxPort, signed portCHAR *pcRxedChar, portTickType xBlockTime ) {
-	return pdFALSE;
-}
-
-/*-----------------------------------------------------------*/
-
-signed portBASE_TYPE xSerialPutChar( xComPortHandle pxPort, signed portCHAR cOutChar, portTickType xBlockTime ) {
-	signed portBASE_TYPE xReturn = pdPASS;
-
-	return xReturn;
-}
-
-/*-----------------------------------------------------------*/
-
-void vSerialClose( xComPortHandle xPort ) {
-	/* Not supported. */
-	( void ) xPort;
-}
-
-/*-----------------------------------------------------------*/
-

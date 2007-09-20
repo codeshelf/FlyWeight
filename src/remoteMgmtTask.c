@@ -17,8 +17,6 @@
 
 xQueueHandle 				gRemoteMgmtQueue;
 ELocalStatusType			gLocalDeviceState;
-RemoteAddrType				gMyAddr = INVALID_REMOTE;
-NetworkIDType				gMyNetworkID = BROADCAST_NETID;
 
 // --------------------------------------------------------------------------
 

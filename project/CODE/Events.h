@@ -33,9 +33,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM_XBee.h"
-#include "AudioOut.h"
-#include "USB.h"
 
 void SW1Int_OnInterrupt(void);
 /*

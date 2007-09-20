@@ -728,7 +728,7 @@
 <group name="Interrupts">
 <Interrupt v="Vrti"/>
 <Real_Time_Interrupt v="Enabled"/>
-<ISR_name v="testRTI"/>
+<ISR_name v="dispatchRTI"/>
 
 </group>
 
@@ -1185,7 +1185,7 @@
 </Bean>
 
 <Bean name="USB" type="AsynchroSerial">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="USB"/>
@@ -1315,6 +1315,75 @@
 <event name="OnIdle" v="don&apos;t generate code" />
 
 <event name="OnTxComplete" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="KBI" type="Init_KBI">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="KBI"/>
+<Device v="KBI1"/>
+
+<group name="Settings">
+<Triggering_sensitivity v="edge and level"/>
+
+</group>
+
+<group name="Pins">
+
+<boolgroup name="Pin0" v="Disabled" />
+
+<boolgroup name="Pin1" v="Disabled" />
+
+<boolgroup name="Pin2" v="Disabled" />
+
+<boolgroup name="Pin3" v="Disabled" />
+
+<boolgroup name="Pin4" v="Disabled" />
+
+<boolgroup name="Pin5" v="Enabled">
+<Pin v="PTA5_KBI1P5"/>
+<Pin_signal v=""/>
+<Pull_resistor v="no initialization"/>
+<Interrupt_polarity v="high level and/or rising edge"/>
+
+</boolgroup>
+
+<boolgroup name="Pin6" v="Enabled">
+<Pin v="PTA6_KBI1P6"/>
+<Pin_signal v=""/>
+<Pull_resistor v="no initialization"/>
+<Interrupt_polarity v="high level and/or rising edge"/>
+
+</boolgroup>
+
+<boolgroup name="Pin7" v="Disabled" />
+
+</group>
+
+<group name="Interrupts">
+
+<group name="Keyboard request">
+<Interrupt v="Vkeyboard1"/>
+<Keyboard_request_interrupt v="Disabled"/>
+<ISR_name v="keyboardISR"/>
+
+</group>
+
+</group>
+
+<group name="Initialization">
+<Call_Init_method v="yes"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Init v="generate code"/>
+</Methods>
+
+<Events>
 </Events>
 </Bean>
 

@@ -3,7 +3,6 @@
 
 /*Including used modules for compilling procedure*/
 #include "Cpu.h"
-#include "Events.h"
 
 /*Include shared modules, which are used for whole project*/
 #include "PE_Types.h"
@@ -242,17 +241,17 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #pragma NO_EXIT 
 #pragma NO_FRAME 
 #pragma NO_RETURN
-void dispatchRTI();
-void dispatchRTI() {
+void handleRTI();
+void handleRTI() {
 	vPortTickInterrupt();
 	
 	// Ack the RTI
 	IRQSC_IRQACK = 1;
 }
 
-ISR(testRTI)
+ISR(dispatchRTI)
 {
-	dispatchRTI();
+	handleRTI();
 }
 
 /*

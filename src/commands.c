@@ -14,10 +14,10 @@
 #include "queue.h"
 #include "string.h"
 #include "simple_mac.h"
-#include "gatewayRadioTask.h"
-#include "gatewayMgmtTask.h"
-#include "remoteRadioTask.h"
-#include "remoteMgmtTask.h"
+//#include "gatewayRadioTask.h"
+//#include "gatewayMgmtTask.h"
+//#include "remoteRadioTask.h"
+//#include "remoteMgmtTask.h"
 #include "NV_Data.h"
 #include "flash.h"
 
@@ -28,6 +28,9 @@
 #endif
 
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
+RemoteAddrType		gMyAddr = INVALID_REMOTE;
+NetworkIDType		gMyNetworkID = BROADCAST_NETID;
+
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -177,6 +180,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 // --------------------------------------------------------------------------
 
+#ifdef IS_GATEWAY
 void createOutboundNetsetup() {
 	BufferCntType txBufferNum;
 	
@@ -213,6 +217,7 @@ void createOutboundNetsetup() {
 	vTaskResume(gRadioReceiveTask);
 
 }
+#endif
 
 // --------------------------------------------------------------------------
 
@@ -255,6 +260,7 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+#ifdef IS_GATEWAY
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	BufferCntType txBufferNum;
 	ChannelNumberType channel;
@@ -324,7 +330,8 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 
 	}
 };
-	
+#endif
+
 // --------------------------------------------------------------------------
 
 void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {

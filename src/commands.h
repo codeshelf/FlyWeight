@@ -15,6 +15,7 @@
 #include "pub_def.h"
 #include "commandTypes.h"
 #include "radioCommon.h"
+#include "serial.h"
 
 // --------------------------------------------------------------------------
 // Definitions.
@@ -75,10 +76,14 @@ void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
+#ifdef IS_GATEWAY
 void createOutboundNetsetup(void);
+#endif
 
 void processNetCheckInboundCommand(BufferCntType inRXBufferNum);
+#ifdef IS_GATEWAY
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
+#endif
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);
@@ -91,5 +96,6 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 
 extern ControllerStateType	gControllerState;
 extern ELocalStatusType		gLocalDeviceState;
+
 
 #endif COMMANDS_H

@@ -1326,27 +1326,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>smac_config.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -1368,21 +1347,49 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>keyboard.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>keyboard.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>AudioOut.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>XBeeRemote.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -1751,21 +1758,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>smac_config.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -1781,17 +1773,37 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
+                    <PATH>keyboard.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>keyboard.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>AudioOut.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>XBeeRemote.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -3074,21 +3086,21 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>serial.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -3462,17 +3474,17 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
+                    <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>serial.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -4182,7 +4194,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"GUID=""12345678"""  -D_TOY_NETWORK_ -Ms -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D"GUID=""12345678"""  -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -4758,27 +4770,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -4800,13 +4791,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>hcs08_flash_lib.lib</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Unknown</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>NV_Data.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -4821,21 +4805,35 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>serial.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -5204,21 +5202,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -5234,11 +5217,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>hcs08_flash_lib.lib</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>NV_Data.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -5249,17 +5227,27 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
+                    <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>serial.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -6507,27 +6495,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>smac_config.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -6556,21 +6523,42 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
+                    <PATH>PWM_XBee.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>AudioOut.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>KBI.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>keyboard.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>keyboard.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -6919,21 +6907,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>smac_config.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -6954,17 +6927,32 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
+                    <PATH>PWM_XBee.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
+                    <PATH>AudioOut.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
+                    <PATH>KBI.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>keyboard.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>keyboard.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -8243,27 +8231,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -8300,6 +8267,41 @@
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>EVBGateway.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>serial.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>serial.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -8673,21 +8675,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>Events.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -8704,6 +8691,31 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>EVBGateway.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>serial.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>serial.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -8888,6 +8900,12 @@
                 <FILEREF>
                     <TARGETNAME>EVB Gateway</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
+                    <PATH>gatewayMgmtTask.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>gatewayMgmtTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -8910,6 +8928,24 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
+                    <TARGETNAME>SARD (DIG536-2)</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>serial.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>keyboard.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>keyboard.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ledBlinkTask.c</PATH>
@@ -8925,24 +8961,6 @@
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ulaw.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>flash.asm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </GROUP>
@@ -9117,7 +9135,7 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>XBee Remote</TARGETNAME>
+                <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>XBeeRemote.prm</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -9142,12 +9160,6 @@
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>ansiis.lib</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>hcs08_flash_lib.lib</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>
@@ -9295,6 +9307,24 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
+                <TARGETNAME>XBee Remote</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>PWM_XBee.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Remote</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>AudioOut.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>XBee Remote</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>KBI.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>USB.c</PATH>
@@ -9331,13 +9361,13 @@
             <FILEREF>
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>Events.c</PATH>
+                <PATH>Events.h</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
                 <TARGETNAME>EVB Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>Events.h</PATH>
+                <PATH>Events.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>

@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/19/2007, 5:18 PM
+**     Date/Time : 9/20/2007, 3:35 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -36,12 +36,11 @@
 #include "MC13191IRQ.h"
 #include "PWM_XBee.h"
 #include "AudioOut.h"
-#include "USB.h"
+#include "KBI.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "Events.h"
 #include "Cpu.h"
 
 /* Global variables */
@@ -179,14 +178,6 @@ void PE_low_level_init(void)
   /* Common initialization of the CPU registers */
   /* PTDPE: PTDPE1=0,PTDPE0=0 */
   clrReg8Bits(PTDPE, 0x03);             
-  /* PTCDD: PTCDD1=0,PTCDD0=1 */
-  clrSetReg8Bits(PTCDD, 0x02, 0x01);    
-  /* PTCD: PTCD0=1 */
-  setReg8Bits(PTCD, 0x01);              
-  /* PTAD: PTAD6=1 */
-  setReg8Bits(PTAD, 0x40);              
-  /* PTADD: PTADD6=1 */
-  setReg8Bits(PTADD, 0x40);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -210,8 +201,8 @@ void PE_low_level_init(void)
   /* ### Note:   To enable automatic calling of the "PWM_XBee" init code here must be
                  set the property Call Init in CPU init.code to 'yes'
   */
-  /* ### Asynchro serial "USB" init code ... */
-  USB_Init();
+  /* ### Init_KBI "KBI" init code ... */
+    KBI_Init();
   __EI();                              /* Enable interrupts */
 }
 

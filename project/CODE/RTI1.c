@@ -6,7 +6,7 @@
 **     Beantype  : Init_RTI
 **     Version   : Bean 01.030, Driver 01.06, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/19/2007, 5:18 PM
+**     Date/Time : 9/20/2007, 3:35 PM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -22,7 +22,7 @@
 **          Interrupts                                     : 
 **          Interrupt                                      : Vrti
 **          Real-Time Interrupt                            : Enabled
-**          ISR Name                                       : testRTI
+**          ISR Name                                       : dispatchRTI
 **          Initialization                                 : 
 **          Call Init Method                               : no
 **     Contents  :
@@ -51,11 +51,10 @@
 **
 **  User modules:
 **      FlyWeight.c
-**      Events.c
 **
 ** ###################################################################
 
-      ISR(testRTI)
+      ISR(dispatchRTI)
       {
       // NOTE: The routine should include the following actions to obtain
       //       correct functionality of the hardware.
