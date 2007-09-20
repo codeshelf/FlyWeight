@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=797
+ProjectModificationStamp=800
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=456
+ProjectCompNumb=464
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -3847,7 +3847,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -4078,7 +4078,7 @@ Value=No
 [Configuration]
 CompNumb=431
 NodeName=EVB Gateway (2)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 
 [BoolList_FpgaConfig]
