@@ -35,7 +35,7 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 	BufferStoragePtrType queryPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + inStartOfQuery;
 	
 	// Write the response directly into the TX buffer at the response position offset.
-	BufferStoragePtrType responsePtr = gTXRadioBuffer[gTXCurBufferNum].bufferStorage + CMDPOS_RESPONSE;
+	BufferStoragePtrType responsePtr = gTXRadioBuffer[gTXCurBufferNum].bufferStorage + CMDPOS_INFO_RESPONSE;
 	
 	byte queryKind = queryPtr[QPOS_QUERYKIND];
 
@@ -87,6 +87,9 @@ BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, Bu
 	// Write the GUID into the response.
 	memcpy(inResponsePtr + curPos, GUID, UNIQUE_ID_BYTES);
 	curPos += UNIQUE_ID_BYTES;
+	
+	// Write the device type into the response.
+	inResponsePtr[curPos++] = REMOTE_DEVICE_TYPE;
 
 	// Write the description into the response.
 	writeAsPString(inResponsePtr + curPos, DEVICE_DESC, (BufferOffsetType) strlen(DEVICE_DESC));

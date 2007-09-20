@@ -59,7 +59,7 @@ void checkUSBInterface(void);
 
 void serialReceiveTask( void *pvParameters ) {
 
-	ECommandIDType				cmdID;
+	ECommandGroupIDType				cmdID;
 	ENetMgmtSubCmdIDType		subCmdID;
 	BufferCntType				txBufferNum;
 

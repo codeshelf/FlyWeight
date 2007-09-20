@@ -62,18 +62,18 @@
 #define CMDPOS_ASSOCREQ_VER		12
 #define CMDPOS_ASSOCRESP_ADDR	12
 
-// Query Command
-#define CMDPOS_QUERY			3
-
-// Response Command
-#define CMDPOS_RESPONSE			3
-
-// Endpoint Adjust Command
+// Info Command
+#define CMDPOS_INFO_SUBCMD		3
+#define CMDPOS_INFO_QUERY		4
+#define CMDPOS_INFO_RESPONSE	4
 
 // Control Command
 #define CMDPOS_CONTROL			3
 #define CMDPOS_CONTROL_SUBCMD	3
 #define CMDPOS_CONTROL_DATA		4
+
+// Audio Command
+#define CMDPOS_AUDIO			3
 
 // Command masks
 #define PACKETMASK_VERSION		0b11000000
@@ -189,11 +189,10 @@ typedef enum {
 	eCommandInvalid = -1,
 	eCommandNetMgmt = 0,
 	eCommandAssoc = 1,
-	eCommandQuery = 2,
-	eCommandResponse = 3,
-	eCommandEndpointSetup = 4,
-	eCommandControl = 5
-} ECommandIDType;
+	eCommandInfo = 2,
+	eCommandControl = 5,
+	eCommandAudio = 6
+} ECommandGroupIDType;
 
 typedef enum {
 	eNetMgmtSubCmdInvalid = -1,
@@ -205,12 +204,19 @@ typedef enum {
 	eCmdReqRespInvalid = -1,
 	eCmdReqRespREQ = 1,
 	eCmdReqRespRESP = 2
-} ECmdReqRespType;
+} ECmdAssocType;
+
+typedef enum {
+	eCmdInfoInvalid = -1,
+	eCmdInfoQuery = 1,
+	eCmdInfoResponse = 2
+} EInfoSubCmdIDType;
 
 typedef enum {
 	eControlSubCmdInvalid = -1,
-	eControlSubCmdAudio = 0,
-	eControlSubCmdMotor = 1
+	eControlSubCmdEndpointAdj = 1,
+	eControlSubCmdMotor = 2,
+	eControlSubCmdButton = 3
 } EControlSubCmdIDType;
 
 // --------------------------------------------------------------------------

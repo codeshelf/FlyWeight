@@ -61,10 +61,10 @@ typedef UINT8	ChannelNumberType;
  
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
-ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr);
+ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
-ECmdReqRespType getAssocSubCommand(BufferCntType inRXBufferNum);
+ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum);
 EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum);
 
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);

@@ -19,7 +19,6 @@
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
 #include "NV_Data.h"
-#include "update_nvm.h"
 #include "flash.h"
 
 #ifdef _TOY_NETWORK_
@@ -33,7 +32,7 @@ RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
 // --------------------------------------------------------------------------
 // Local function prototypes
 
-void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
+void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
 
 // --------------------------------------------------------------------------
 
@@ -50,10 +49,10 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-ECommandIDType getCommandID(BufferStoragePtrType inBufferPtr) {
+ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 
 	// The command number is in the third half-byte of the packet.
-	ECommandIDType result = ((inBufferPtr[CMDPOS_CMDID]) & CMDMASK_CMDID) >> 4;
+	ECommandGroupIDType result = ((inBufferPtr[CMDPOS_CMDID]) & CMDMASK_CMDID) >> 4;
 	return result;
 };
 
@@ -97,8 +96,8 @@ ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
 
 // --------------------------------------------------------------------------
 
-ECmdReqRespType getAssocSubCommand(BufferCntType inRXBufferNum) {
-	ECmdReqRespType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
+	ECmdAssocType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
 	return result;
 };
 
@@ -111,7 +110,7 @@ EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void createPacket(BufferCntType inTXBufferNum, ECommandIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
+void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
 
 	// The first byte of the packet is the header.
 	// The next byte of the packet is the packet length.
@@ -154,9 +153,11 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
 
-	createPacket(inTXBufferNum, eCommandQuery, gMyNetworkID, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandInfo, gMyNetworkID, gMyAddr, inRemoteAddr);
+	
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_INFO_SUBCMD] = eCmdInfoQuery;
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -167,11 +168,11 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 	// This is free-format command that uses XML for content.
 	// Keep in mind that you can't send more than 125 bytes!
 
-	createPacket(inTXBufferNum, eCommandResponse, gMyNetworkID, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandInfo, gMyNetworkID, gMyAddr, inRemoteAddr);
 
-	//memcpy((void *) &(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_RESPONSE]), inResponseBuffer, inResponseSize);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_INFO_SUBCMD] = eCmdInfoResponse;
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_RESPONSE + inResponseSize + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + inResponseSize + 1;
 };
 
 // --------------------------------------------------------------------------
@@ -352,7 +353,7 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
 void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
 
-	processQuery(inRXBufferNum, CMDPOS_QUERY, inSrcAddr);
+	processQuery(inRXBufferNum, CMDPOS_INFO_QUERY, inSrcAddr);
 	RELEASE_RX_BUFFER(inRXBufferNum);
 };
 

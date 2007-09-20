@@ -88,14 +88,11 @@ void remoteMgmtTask( void *pvParameters ) {
 						
 						switch (getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage)) {
 						
-							case eCommandQuery:
+							case eCommandInfo:
 								// Now that the remote has an assigned address we need to ask it to describe
 								// it's capabilities and characteristics.
 								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
 								break;		
-								
-							case eCommandEndpointSetup:
-								break;
 								
 							case eCommandControl:
 								break;

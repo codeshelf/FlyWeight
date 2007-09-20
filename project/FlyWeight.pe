@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=800
+ProjectModificationStamp=801
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=464
+ProjectCompNumb=468
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -29,7 +29,7 @@ ExpandedAll=Yes
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -1887,7 +1887,7 @@ MC9S08GT60CFB
 
 [MC9S08GT60_48:Cpu]
 CompNumb=40
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -3847,7 +3847,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 
 [BoolList_FpgaConfig]
@@ -4001,7 +4001,7 @@ Value=No
 [Configuration]
 CompNumb=103
 NodeName=XBee Remote
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=30
 
 [BoolList_FpgaConfig]
@@ -4154,7 +4154,7 @@ Value=No
 
 [BitIO:SW2]
 CompNumb=56
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -4400,7 +4400,7 @@ List=Event
 
 [BitIO:SW3]
 CompNumb=54
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -4646,7 +4646,7 @@ List=Event
 
 [BitIO:SW4]
 CompNumb=57
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -4892,7 +4892,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -5138,7 +5138,7 @@ List=Event
 
 [BitIO:LED2]
 CompNumb=42
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -5384,7 +5384,7 @@ List=Event
 
 [BitIO:LED3]
 CompNumb=43
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -5630,7 +5630,7 @@ List=Event
 
 [BitIO:LED4]
 CompNumb=44
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -6138,7 +6138,7 @@ List=Event
 
 [WatchDog:WatchDog]
 CompNumb=142
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=WATCHDOG
 Comment=0
@@ -7629,7 +7629,7 @@ List=GrupItem
 ItemSymbol=ChInterrupt0
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vtpm1ch2
+Value=
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=ChannelIntEn0
@@ -7774,7 +7774,7 @@ List=Event
 
 [Init_TPM_HCS08:PWM_XBee]
 CompNumb=342
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -8228,7 +8228,7 @@ List=Event
 
 [InterruptVector:AudioOut]
 CompNumb=182
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0

@@ -61,7 +61,7 @@ BufferCntType		gTXUsedBuffers = 0;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	ECommandIDType		cmdID;
+	ECommandGroupIDType		cmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -127,8 +127,7 @@ void radioReceiveTask(void *pvParameters) {
 							}
 							break;
 							
-						case eCommandEndpointSetup:
-						case eCommandQuery:
+						case eCommandInfo:
 							// Signal the manager about the new command.
 							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
 							}
@@ -137,7 +136,7 @@ void radioReceiveTask(void *pvParameters) {
 						case eCommandControl:
 							// Make sure that there is a valid sub-command in the control command.
 							switch (getControlSubCommand(rxBufferNum)) {
-								case eControlSubCmdAudio:
+								case eControlSubCmdEndpointAdj:
 									break;
 									
 								case eControlSubCmdMotor:

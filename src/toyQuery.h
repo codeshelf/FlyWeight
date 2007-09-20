@@ -45,6 +45,12 @@ $Name$
 #define RESPONSE_ENDPOINT_DESCRIPTOR		3
 #define RESPONSE_ENDPOINT_KVP				4
 
+#ifdef CHATHEAD_DEVICE
+#define REMOTE_DEVICE_TYPE 					1
+#else
+#define REMOTE_DEVICE_TYPE					2
+#endif
+
 // --------------------------------------------------------------------------
 // Typedefs.
 typedef byte QueryIDType[QUERYID_SIZE];
