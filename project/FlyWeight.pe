@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=813
+ProjectModificationStamp=816
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=478
+ProjectCompNumb=482
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -9785,7 +9785,7 @@ List=GrupItem
 ItemSymbol=TriggeringSensitivity
 ReadOnly=No
 UserReadOnly=No
-Index=1
+Index=0
 
 [EndOfChilds]
 [ItemState]
@@ -10022,7 +10022,7 @@ ItemSymbol=Pin5PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePullMode
-Index=0
+Index=2
 [ItemState]
 ItemSymbol=interrupPolarity5
 ReadOnly=No
@@ -10061,7 +10061,7 @@ ItemSymbol=Pin6PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePullMode
-Index=0
+Index=2
 [ItemState]
 ItemSymbol=interrupPolarity6
 ReadOnly=No
@@ -10136,8 +10136,8 @@ SharedPrphMode=No
 ItemSymbol=IntKBIEnable
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 [ItemState]
 ItemSymbol=ISRHandleName
 ReadOnly=No

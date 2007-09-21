@@ -6,7 +6,7 @@
 **     Beantype  : Init_KBI
 **     Version   : Bean 01.009, Driver 01.01, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/20/2007, 2:38 PM
+**     Date/Time : 9/20/2007, 5:42 PM
 **     Abstract  :
 **          This file implements the KBI (KBI1) module initialization
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -21,7 +21,7 @@
 **          Bean name                                      : KBI
 **          Device                                         : KBI1
 **          Settings 
-**            Triggering sensitivity                       : edge and level
+**            Triggering sensitivity                       : edge
 **          Pins 
 **            Pin0                                         : Disabled
 **            Pin1                                         : Disabled
@@ -38,7 +38,7 @@
 **          Interrupts 
 **            Keyboard request 
 **              Interrupt                                  : Vkeyboard1
-**              Keyboard request interrupt                 : Disabled
+**              Keyboard request interrupt                 : Enabled
 **              ISR name                                   : keyboardISR
 **          Initialization 
 **            Call Init method                             : yes
@@ -106,13 +106,13 @@ void KBI_Init(void)
   clrReg8Bits(KBI1SC, 0x02);            
   /* KBI1PE: KBIPE7=0,KBIPE6=1,KBIPE5=1,KBIPE4=0,KBIPE3=0,KBIPE2=0,KBIPE1=0,KBIPE0=0 */
   setReg8(KBI1PE, 0x60);                
-  /* KBI1SC: KBEDG6=1,KBEDG5=1,KBIMOD=1 */
-  setReg8Bits(KBI1SC, 0x61);            
+  /* KBI1SC: KBEDG6=1,KBEDG5=1 */
+  setReg8Bits(KBI1SC, 0x60);            
 
   /* KBI1SC: KBACK=1 */
   setReg8Bits(KBI1SC, 0x04);            
-  /* KBI1SC: KBIE=0 */
-  clrReg8Bits(KBI1SC, 0x02);            
+  /* KBI1SC: KBIE=1 */
+  setReg8Bits(KBI1SC, 0x02);            
 }
 
 /* END KBI. */

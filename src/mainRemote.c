@@ -24,6 +24,7 @@
 #include "ledBlinkTask.h"
 #include "commands.h"
 #include "CPU.h"
+#include "keyboard.h"
 //#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
@@ -63,6 +64,9 @@ void vMain( void ) {
 	
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;
+	
+	// Setup the keyboard.
+	KBISetup();
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
