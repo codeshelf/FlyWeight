@@ -190,8 +190,8 @@ typedef enum {
 	eCommandNetMgmt = 0,
 	eCommandAssoc = 1,
 	eCommandInfo = 2,
-	eCommandControl = 5,
-	eCommandAudio = 6
+	eCommandControl = 3,
+	eCommandAudio = 4
 } ECommandGroupIDType;
 
 typedef enum {

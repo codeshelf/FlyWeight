@@ -221,11 +221,15 @@ void createOutboundNetsetup() {
 
 // --------------------------------------------------------------------------
 
-void createControlCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
+void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType) {
 
-	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, inRemoteAddr);
+	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD] = eControlSubCmdButton;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA] = inButtonNumber;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA + 1] = inFunctionType;
+	
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_CONTROL_DATA + 2;
 };
 
 // --------------------------------------------------------------------------

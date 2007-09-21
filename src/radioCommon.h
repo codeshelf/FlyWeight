@@ -24,6 +24,7 @@
 #define MGMT_PRIORITY			( tskIDLE_PRIORITY + 2 )
 #define SERIAL_RECV_PRIORITY	( tskIDLE_PRIORITY + 2 )
 #define RADIO_PRIORITY			( tskIDLE_PRIORITY + 2 )
+#define KEYBOARD_PRIORITY		( tskIDLE_PRIORITY + 2 )
 
 #define MAX_PACKET_SIZE			123
 //#define MAX_PACKET_SIZE			30
@@ -43,6 +44,8 @@
 #define TX_QUEUE_SIZE			2
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
+
+#define KEYBOARD_QUEUE_SIZE		2
 
 //#define MASTER_TPM2_RATE		0x873
 
@@ -117,6 +120,7 @@ extern xTaskHandle			gRadioTransmitTask;
 extern xTaskHandle			gSerialReceiveTask;
 extern xTaskHandle			gGatewayManagementTask;
 extern xTaskHandle			gRemoteManagementTask;
+extern xTaskHandle			gKeyboardTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;

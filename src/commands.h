@@ -1,11 +1,11 @@
 /*
-	FlyWeight
-	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
-	
-	$Id$
-	$Name$	
-*/
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
+ 
+ $Id$
+ $Name$	
+ */
 
 #ifndef COMMANDS_H
 #define COMMANDS_H
@@ -47,8 +47,8 @@ typedef enum {
 	eMotorCommandBrake = 3
 } EMotorCommandType;
 
-typedef UINT8	NetworkIDType;
-typedef UINT8	ChannelNumberType;
+typedef UINT8 NetworkIDType;
+typedef UINT8 ChannelNumberType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.
@@ -59,7 +59,7 @@ typedef UINT8	ChannelNumberType;
  * For this reason all of the command processing function accept or produce a reference
  * to the RX or TX buffer that contains the command.
  */
- 
+
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
@@ -74,6 +74,7 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
+void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 #ifdef IS_GATEWAY
@@ -86,7 +87,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
 #endif
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);
-void processQueryCommand(BufferCntType inRXBufferNum,  RemoteAddrType inRemoteAddr);
+void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
@@ -94,8 +95,7 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 // --------------------------------------------------------------------------
 // Globals.
 
-extern ControllerStateType	gControllerState;
-extern ELocalStatusType		gLocalDeviceState;
-
+extern ControllerStateType gControllerState;
+extern ELocalStatusType gLocalDeviceState;
 
 #endif COMMANDS_H

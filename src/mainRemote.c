@@ -21,7 +21,7 @@
 #include "xbeeinit.h"
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
-#include "ledBlinkTask.h"
+#include "keyboardTask.h"
 #include "commands.h"
 #include "CPU.h"
 #include "keyboard.h"
@@ -49,14 +49,12 @@ void vMain( void ) {
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
 	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
-#if  defined(MC13192EVB) || defined (MC13192SARD)
-	//xTaskCreate(LEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, LED_BLINK_PRIORITY, NULL );
-#endif
+	xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
 	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(ERadioState));
-	gRadioTransmitQueue = xQueueCreate(RX_QUEUE_SIZE, sizeof(BufferCntType));
-	//gLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
+	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, sizeof(BufferCntType));
+	gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
 
 	// Setup the SMAC glue.

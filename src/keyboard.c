@@ -8,14 +8,17 @@
 */
 
 #include "keyboard.h"
+#include "keyboardTask.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "IO_Map.h"
 #include "PE_types.h"
 #include "pub_def.h"
 
 	/*
 	 * The keyboard is a matrix:
-	 * row1 = PTB0
-	 * row2 = PTB1
+	 * row1 = PTB4
+	 * row2 = PTB5
 	 * col1 = PTA5/KBI1P5
 	 * col2 = PTA6/KBI1P6
 	 *
@@ -43,33 +46,53 @@ void KBISetup() {
 	setReg8Bits(KBI1SC, 0x02);            
 	
 	// Setup the rows as outputs and assert them. 
-	PTBDD_PTBDD0 = 1;
-	PTBDD_PTBDD1 = 1;
-	PTBD_PTBD0 = 1;
-	PTBD_PTBD1 = 1;
+	PTBDD_PTBDD4 = 1;
+	PTBDD_PTBDD5 = 1;
+	PTBD_PTBD4 = 1;
+	PTBD_PTBD5 = 1;
 }
 
 ISR(keyboardISR) {
 	
-	UINT8 row;
-	UINT8 col;
-	UINT8 keyPress = 0;
+	UINT8 	row;
+	UINT8 	col;
+	UINT8 	buttonNum = 0;
+	UINT8 	tickVal;
 	
-	for (row = 1; row <= 2; ++row) {
+	// Disable the KBI interrupt
+	KBI1SC_KBIE = 0;
+	
+	// Debounce delay for 4ms
+	tickVal = xTaskGetTickCount() + (4 * portTICK_RATE_MS);
+	while (xTaskGetTickCount() < tickVal) {	
+	}
+	
+	for (row = 0; row <= 1; ++row) {
 		// Turn off the row outputs
-		PTBD &= 0b11111100;
+		PTBD &= 0b11001111;
 		// Set the current row to high.
-		PTBD |= row;
+		PTBD |= 1 << (row + 4);
 		
 		// Now check the columns.
-		for (col = 1; col <= 2; ++col) {
+		for (col = 0; col <= 1; ++col) {
 			// If the column is high then this is the key pressed.
-			if (PTAD && col) {
-				keyPress = row + col;
+			if (PTAD & (1 << (col + 5))) {
+				buttonNum = (row * 2)  + col + 1;
 			}
 		}
 	}
 	
-	// Acknowledge the interrupt, so that we can get another.
+	if (buttonNum > 0) {
+		// Now that we know what key we pressed send it to the controller.
+		// Send the message to the radio task's queue.
+		if (xQueueSendFromISR(gKeyboardQueue, &buttonNum, pdFALSE)) {
+		}
+	}
+	
+	// Reset the row outputs.
+	PTBD |= 0b00110000;
+
+	// Acknowledge the interrupt and re-enable KBIE, so that we can get another.
 	KBI1SC_KBACK = 1;
+	KBI1SC_KBIE = 1;
 }
