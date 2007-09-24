@@ -147,6 +147,10 @@ void radioReceiveTask(void *pvParameters) {
 									RELEASE_RX_BUFFER(rxBufferNum);
 							}
 							break;
+							
+						case eCommandAudio:
+							// Audio commands are handled by an interrupt routine.
+							break;
 													
 						default:
 							// Bogus command.

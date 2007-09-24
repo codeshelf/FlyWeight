@@ -9,8 +9,8 @@
 
 #include "serial.h"
 
-#define	kBufferSize		10
-#define	kHighWaterMark  5
+#define	kBufferSize		50
+#define	kHighWaterMark  40
 
 static UINT8			gCurrentBufferPos = 0;
 static UINT8			gCurrentBufferSize = 0;
