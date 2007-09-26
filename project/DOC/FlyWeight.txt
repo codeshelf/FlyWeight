@@ -25,6 +25,11 @@ Module "KBI"       (bean Init_KBI_HCS08)
                 Call this method in user code to initialize the module. By default, the method is called by PE automatically; 
                 see "Call Init method" property of the bean for more details.
 
+Module "ADC1"      (bean Init_ADC_HCS08)
+   - ADC1_Init -This method initializes registers of the ADC module according to this Peripheral Initialization Bean settings. 
+                Call this method in user code to initialize the module. By default, the method is called by PE automatically; 
+                see "Call Init method" property of the bean for more details.
+
 Module "Cpu"       (bean MC9S08GT60_44)
    - Cpu_EnableInt -Enables maskable interrupts
    - Cpu_DisableInt -Disables maskable interrupts

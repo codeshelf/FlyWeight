@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFB
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/20/2007, 3:35 PM
+**     Date/Time : 9/25/2007, 11:50 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -30,6 +30,7 @@
 #include "PWM_XBee.h"
 #include "AudioOut.h"
 #include "KBI.h"
+#include "ADC1.h"
 extern void _EntryPoint(void);
 
 void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */

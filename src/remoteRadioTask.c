@@ -128,9 +128,9 @@ void radioReceiveTask(void *pvParameters) {
 							break;
 							
 						case eCommandInfo:
-							// Signal the manager about the new command.
-							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
-							}
+							// Now that the remote has an assigned address we need to ask it to describe
+							// it's capabilities and characteristics.
+							processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
 							break;
 							
 						case eCommandControl:
@@ -175,9 +175,9 @@ void radioReceiveTask(void *pvParameters) {
 // --------------------------------------------------------------------------
 
 void radioTransmitTask(void *pvParameters) {
-	tTxPacket		gsTxPacket;
-	BufferCntType	txBufferNum;
-	
+	tTxPacket			gsTxPacket;
+	BufferCntType		txBufferNum;
+
 	for (;;) {
 
 		// Wait until the SCI controller signals us that we have a full buffer to transmit.

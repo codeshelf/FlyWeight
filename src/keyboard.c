@@ -15,7 +15,15 @@
 #include "PE_types.h"
 #include "pub_def.h"
 
-	/*
+// --------------------------------------------------------------------------
+// Definitions.
+#define	KEYBOARD_ROWS		2
+#define KEYBOARD_COLS		2
+
+// --------------------------------------------------------------------------
+// Functions.
+
+/*
 	 * The keyboard is a matrix:
 	 * row1 = PTB4
 	 * row2 = PTB5
@@ -67,14 +75,14 @@ ISR(keyboardISR) {
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
-	for (row = 0; row <= 1; ++row) {
+	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {
 		// Turn off the row outputs
 		PTBD &= 0b11001111;
 		// Set the current row to high.
 		PTBD |= 1 << (row + 4);
 		
 		// Now check the columns.
-		for (col = 0; col <= 1; ++col) {
+		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {
 			// If the column is high then this is the key pressed.
 			if (PTAD & (1 << (col + 5))) {
 				buttonNum = (row * 2)  + col + 1;
@@ -89,10 +97,43 @@ ISR(keyboardISR) {
 		}
 	}
 	
+}
+
+/*
+ * Restart the keyboard interrupt process.
+ */
+void restartKeyboardISR(void) {
+	
 	// Reset the row outputs.
 	PTBD |= 0b00110000;
 
 	// Acknowledge the interrupt and re-enable KBIE, so that we can get another.
 	KBI1SC_KBACK = 1;
-	KBI1SC_KBIE = 1;
+	KBI1SC_KBIE = 1;	
+}
+
+/*
+ * Check if the last button pressed by the user is still pressed.
+ */
+
+bool buttonStillPressed(UINT8 inButtonNum) {
+	bool result = FALSE;
+	UINT8 row;
+	UINT8 col;
+	
+#pragma MESSAGE DISABLE C2705 // We want just the integer part.
+	row = ((inButtonNum - 1)/ KEYBOARD_ROWS);
+	col = inButtonNum - (row * KEYBOARD_ROWS) - 1;
+
+	// Turn off the row outputs
+	PTBD &= 0b11001111;
+	// Set the current row to high.
+	PTBD |= 1 << (row + 4);
+	
+	// If the button is still down then we'll register a 1 on PTB.
+	if (PTAD & (1 << (col + 5))) {
+		result = TRUE;
+	}
+
+	return result;
 }

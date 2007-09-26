@@ -69,43 +69,45 @@ void remoteMgmtTask( void *pvParameters ) {
 		}
 		gLocalDeviceState = eLocalStateRun;
 				
-		for ( ;; ) {
+		vTaskSuspend(gRemoteManagementTask);
+//		for ( ;; ) {
+//
+//			// Whenever we need to handle a state change for a  device, we handle it in this management task.
+//			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
+//			
+//				// Get the state of the remote at the named slot.
+//				switch (gLocalDeviceState) {
+//
+//					case eCommandAssoc:
+//						processAssocRespCommand(rxBufferNum);
+//						break;
+//					
+//					// If we're in the run state, and receive a command then we need to handle that command.
+//					case eLocalStateRun:
+//						
+//						switch (getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage)) {
+//						
+//							case eCommandInfo:
+//								// Now that the remote has an assigned address we need to ask it to describe
+//								// it's capabilities and characteristics.
+//								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
+//								break;		
+//								
+//							case eCommandControl:
+//								break;
+//								
+//							default:
+//								break;
+//						}
+//						break;
+//						
+//					default:
+//						RELEASE_RX_BUFFER(rxBufferNum);
+//				
+//				}
+//			}
+//		}
 
-			// Whenever we need to handle a state change for a  device, we handle it in this management task.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
-			
-				// Get the state of the remote at the named slot.
-				switch (gLocalDeviceState) {
-
-					case eCommandAssoc:
-						processAssocRespCommand(rxBufferNum);
-						break;
-					
-					// If we're in the run state, and receive a command then we need to handle that command.
-					case eLocalStateRun:
-						
-						switch (getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage)) {
-						
-							case eCommandInfo:
-								// Now that the remote has an assigned address we need to ask it to describe
-								// it's capabilities and characteristics.
-								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
-								break;		
-								
-							case eCommandControl:
-								break;
-								
-							default:
-								break;
-						}
-						break;
-						
-					default:
-						RELEASE_RX_BUFFER(rxBufferNum);
-				
-				}
-			}
-		}
 	}
 
 	/* Will only get here if the queue could not be created. */

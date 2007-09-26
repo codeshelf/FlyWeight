@@ -52,6 +52,19 @@ UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
+
+	UINT8 result = INITIAL_VALUE;
+
+	// Transmit the packet.
+	if (xQueueSendFromISR(gRadioTransmitQueue, &inTXBufferNum, pdFALSE)) {}
+
+	return result;
+
+};
+
+// --------------------------------------------------------------------------
+
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 
 	// The command number is in the third half-byte of the packet.
@@ -230,6 +243,15 @@ void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumbe
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA + 1] = inFunctionType;
 	
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_CONTROL_DATA + 2;
+};
+
+// --------------------------------------------------------------------------
+
+void createAudioCommand(BufferCntType inTXBufferNum) {
+
+	createPacket(inTXBufferNum, eCommandAudio, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+	
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
 };
 
 // --------------------------------------------------------------------------

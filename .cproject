@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?>
 
 <cproject>
@@ -67,8 +67,6 @@
 </buildTargets>
 </storageModule>
 <storageModule buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider" id="converted.config.590343502" moduleId="org.eclipse.cdt.core.settings" name="convertedConfig">
-
-
 <externalSettings/>
 <extensions>
 <extension id="org.eclipse.cdt.core.domsourceindexer" point="org.eclipse.cdt.core.CIndexer"/>
@@ -76,15 +74,20 @@
 </extensions>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+
+
+<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
-<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
-<pathentry kind="prj" path="/SMAC"/>
 <pathentry base-path="FlyWeight" include="project/CODE" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Source/include" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Demo/common/include" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Source/portable/CodeWarrior/HCS08" kind="inc" path="" system="true"/>
+<pathentry kind="mac" name="IS_GATEWAY" path="" value="1"/>
+<pathentry kind="mac" name="XBEE" path="" value="1"/>
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
+<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+<pathentry kind="prj" path="/SMAC"/>
 </storageModule>
 </cconfiguration>
 </storageModule>

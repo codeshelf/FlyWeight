@@ -26,8 +26,4 @@ extern NetworkIDType			gMyNetworkID;
 
 void remoteMgmtTask( void *pvParameters );
 
-// --------------------------------------------------------------------------
-// Local functions prototypes.
-
-
 #endif REMOTEMGMTTASK_H

@@ -123,10 +123,16 @@ void TimerInt(void)
 #endif
 #define		MAX_DRIFT			0x80
 
-//UINT16				gPWMMaxValue = 0xff;
+bool				gAudioModeRX = TRUE;
+
+//UINT16			gPWMMaxValue = 0xff;
 UINT16				gPWMCenterValue = 0x7f;
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
+
+BufferCntType		gTXBuffer = 0;
+BufferOffsetType	gTXBufferPos = 0;
+bool				gBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
@@ -147,73 +153,97 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	
 	// Reset the timer for the next sample.
 	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
-//	TPM1MOD = gPWMMaxValue;
 
-	// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
-	if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
-		&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
-	
-#ifdef XBEE
-		//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
-		//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
-#else
-		//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
-#endif
-		EnterCritical();
-		
-			gCurPWMRadioBufferNum++;
-			if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
-				gCurPWMRadioBufferNum = 0;
-			
-		ExitCritical();
-		
+	// Figure out if we're in the RX or TX mode for audio.
+	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
+	// Otherwise the audio is coming from the controller.
+	if (!gAudioModeRX) {
+		// TX MODE
+		if (!gBufferStarted) {
+			gTXBuffer = gTXCurBufferNum;
+			advanceTXBuffer();
+			createAudioCommand(gTXBuffer);
+//			gTXBufferPos = CMDPOS_STARTOFCMD;
+			gBufferStarted = TRUE;
+		} else {
+			if (gTXRadioBuffer[gTXBuffer].bufferSize < CMD_MAX_AUDIO_BYTES) {
+				ulawSample = ATD1R;
+				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXRadioBuffer[gTXBuffer].bufferSize++] = linear2ulaw(ulawSample);
+//				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos++];
+			} else {
+				transmitPacketFromISR(gTXBuffer);
+				gBufferStarted = FALSE;
+			}
+		}
 	} else {
-	
-		sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+		// RX MODE
+
+		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
+		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
+			&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
+		
 #ifdef XBEE
-		// On the XBee module we support 16bit converted uLaw samples.
-		// One to 8-bit channel 0, and one to 8-bit channel 1.  
-		// The two channels are tied together with different resistor values to give us 16 bit resolution.
-		// (By "shifting" the voltage of channel 0 by 256x.)
-		ulawSample = 0x8000 - ulaw2linear(sample);
-		msbSample = (ulawSample >> 8) & 0xff;
-		lsbSample = ulawSample & 0xff;
-		// Only the lower 8 bits of each channel are in use.
-		setReg16(PWM_LSB_CHANNEL, lsbSample);
-		setReg16(PWM_MSB_CHANNEL, msbSample);
+			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
+			//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
 #else
-		setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample);
+			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 #endif
-			// Increment the buffer pointers.
-		gCurPWMOffset++;
-		if (gCurPWMOffset >= gRXRadioBuffer[gCurPWMRadioBufferNum].bufferSize) {
-			
-			gCurPWMOffset = CMDPOS_CONTROL_DATA;
-			
-			// The buffers are a shared, critical resource, so we have to protect them before we update.
 			EnterCritical();
 			
-				// Indicate that the buffer is clear.
-				gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
-				
-				// Advance to the next buffer.
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
 				
-				// Account for the number of used buffers.
-				if (gRXUsedBuffers > 0)
-					gRXUsedBuffers--;
-				
 			ExitCritical();
+			
+		} else {
+		
+			sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+#ifdef XBEE
+			// On the XBee module we support 16bit converted uLaw samples.
+			// One to 8-bit channel 0, and one to 8-bit channel 1.  
+			// The two channels are tied together with different resistor values to give us 16 bit resolution.
+			// (By "shifting" the voltage of channel 0 by 256x.)
+			ulawSample = 0x8000 - ulaw2linear(sample);
+			msbSample = (ulawSample >> 8) & 0xff;
+			lsbSample = ulawSample & 0xff;
+			// Only the lower 8 bits of each channel are in use.
+			setReg16(PWM_LSB_CHANNEL, lsbSample);
+			setReg16(PWM_MSB_CHANNEL, msbSample);
+#else
+			setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample);
+#endif
+				// Increment the buffer pointers.
+			gCurPWMOffset++;
+			if (gCurPWMOffset >= gRXRadioBuffer[gCurPWMRadioBufferNum].bufferSize) {
 				
-			// Adjust the sampling rate to account for mismatches in the OTA rate.				
-			// We can't go too low or high, or we'll end up missing 
-			// the next interrupt and making the sample run "long".
-			if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
-				gMasterSampleRateAdjust--;
-			} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
-				gMasterSampleRateAdjust++;
+				gCurPWMOffset = CMDPOS_CONTROL_DATA;
+				
+				// The buffers are a shared, critical resource, so we have to protect them before we update.
+				EnterCritical();
+				
+					// Indicate that the buffer is clear.
+					gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+					
+					// Advance to the next buffer.
+					gCurPWMRadioBufferNum++;
+					if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
+						gCurPWMRadioBufferNum = 0;
+					
+					// Account for the number of used buffers.
+					if (gRXUsedBuffers > 0)
+						gRXUsedBuffers--;
+					
+				ExitCritical();
+					
+				// Adjust the sampling rate to account for mismatches in the OTA rate.				
+				// We can't go too low or high, or we'll end up missing 
+				// the next interrupt and making the sample run "long".
+				if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
+					gMasterSampleRateAdjust--;
+				} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
+					gMasterSampleRateAdjust++;
+				}
 			}
 		}
 	}

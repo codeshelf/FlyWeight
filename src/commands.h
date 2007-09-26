@@ -61,6 +61,7 @@ typedef UINT8 ChannelNumberType;
  */
 
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
+UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
 
@@ -76,6 +77,7 @@ void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
+void createAudioCommand(BufferCntType inTXBufferNum);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 #ifdef IS_GATEWAY
 void createOutboundNetsetup(void);

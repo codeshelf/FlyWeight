@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/20/2007, 5:42 PM
+**     Date/Time : 9/25/2007, 11:50 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -37,6 +37,7 @@
 #include "PWM_XBee.h"
 #include "AudioOut.h"
 #include "KBI.h"
+#include "ADC1.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
@@ -205,6 +206,8 @@ void PE_low_level_init(void)
   */
   /* ### Init_KBI "KBI" init code ... */
     KBI_Init();
+  /* ### Init_ADC "ADC1" init code ... */
+  ADC1_Init();
   __EI();                              /* Enable interrupts */
 }
 

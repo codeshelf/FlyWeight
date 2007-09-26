@@ -1387,4 +1387,66 @@
 </Events>
 </Bean>
 
+<Bean name="ADC1" type="Init_ADC">
+<Enabled v="Y"/>
+
+<Properties>
+<Bean_name v="ADC1"/>
+<Device v="ATD1"/>
+
+<group name="Settings">
+
+<group name="Clock settings">
+<Prescaler v="4"/>
+<Frequency v="2000 kHz"/>
+<Conversion_time v="14.6 us"/>
+
+</group>
+<Conversion_mode v="Continuous conversion"/>
+<Result_data_format v="10-bit/left justified/unsigned"/>
+
+</group>
+
+<group name="Pins">
+
+<list name="ADC Input Pins" v="1">
+
+<group name="Input Pin0">
+<Pin v="PTB0_AD1P0"/>
+<Pin_Signal v=""/>
+<Pin_enable v="yes"/>
+
+</group>
+
+</list>
+
+</group>
+
+<group name="Interrupts">
+
+<group name="Conversion complete">
+<Interrupt v="Vatd1"/>
+<Conversion_complete_interrupt v="Disabled"/>
+<ISR_name v=""/>
+
+</group>
+
+</group>
+
+<group name="Initialization">
+<Initial_channel_select v="Channel 0"/>
+<Call_Init_method v="yes"/>
+<Enable_module v="Enabled"/>
+
+</group>
+</Properties>
+
+<Methods>
+<Init v="generate code"/>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
 </PE_PROJECT_SETTINGS_DOCUMENTATION>
