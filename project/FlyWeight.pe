@@ -1,5 +1,5 @@
 Processor Expert Version 0374
-ProjectModificationStamp=819
+ProjectModificationStamp=824
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=491
+ProjectCompNumb=507
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -4046,7 +4046,7 @@ Value10=No
 ItemId11=126
 Value11=Yes
 ItemId12=142
-Value12=No
+Value12=Yes
 ItemId13=148
 Value13=No
 ItemId14=149
@@ -6158,7 +6158,7 @@ List=Event
 
 [WatchDog:WatchDog]
 CompNumb=142
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=WATCHDOG
 Comment=0
@@ -10398,7 +10398,7 @@ List=GrupItem
 ItemSymbol=Pin0
 ReadOnly=No
 UserReadOnly=No
-Value=PTB0_AD1P0
+Value=PTB2_AD1P2
 SharedPrphMode=No
 [ItemState]
 ItemSymbol=ChannelPinName0
@@ -10489,7 +10489,7 @@ ItemSymbol=InitChannel
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typeChannelSelect
-Index=0
+Index=2
 [ItemState]
 ItemSymbol=NON_MCU_INIT
 ReadOnly=No

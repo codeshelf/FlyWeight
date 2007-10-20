@@ -25,8 +25,8 @@
 
 /*
 	 * The keyboard is a matrix:
-	 * row1 = PTB4
-	 * row2 = PTB5
+	 * row1 = PTB0
+	 * row2 = PTB1
 	 * col1 = PTA5/KBI1P5
 	 * col2 = PTA6/KBI1P6
 	 *
@@ -54,10 +54,10 @@ void KBISetup() {
 	setReg8Bits(KBI1SC, 0x02);            
 	
 	// Setup the rows as outputs and assert them. 
-	PTBDD_PTBDD4 = 1;
-	PTBDD_PTBDD5 = 1;
-	PTBD_PTBD4 = 1;
-	PTBD_PTBD5 = 1;
+	PTBDD_PTBDD0 = 1;
+	PTBDD_PTBDD1 = 1;
+	PTBD_PTBD0 = 1;
+	PTBD_PTBD1 = 1;
 }
 
 ISR(keyboardISR) {
@@ -77,9 +77,9 @@ ISR(keyboardISR) {
 	
 	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {
 		// Turn off the row outputs
-		PTBD &= 0b11001111;
+		PTBD &= 0b11111100;
 		// Set the current row to high.
-		PTBD |= 1 << (row + 4);
+		PTBD |= 1 << (row);
 		
 		// Now check the columns.
 		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {
@@ -93,7 +93,7 @@ ISR(keyboardISR) {
 	if (buttonNum > 0) {
 		// Now that we know what key we pressed send it to the controller.
 		// Send the message to the radio task's queue.
-		if (xQueueSendFromISR(gKeyboardQueue, &buttonNum, pdFALSE)) {
+		if (xQueueSendFromISR(gKeyboardQueue, &buttonNum, (portTickType) 0)) {
 		}
 	}
 	
@@ -105,7 +105,7 @@ ISR(keyboardISR) {
 void restartKeyboardISR(void) {
 	
 	// Reset the row outputs.
-	PTBD |= 0b00110000;
+	PTBD |= 0b00000011;
 
 	// Acknowledge the interrupt and re-enable KBIE, so that we can get another.
 	KBI1SC_KBACK = 1;
@@ -126,9 +126,9 @@ bool buttonStillPressed(UINT8 inButtonNum) {
 	col = inButtonNum - (row * KEYBOARD_ROWS) - 1;
 
 	// Turn off the row outputs
-	PTBD &= 0b11001111;
+	PTBD &= 0b11111100;
 	// Set the current row to high.
-	PTBD |= 1 << (row + 4);
+	PTBD |= 1 << (row);
 	
 	// If the button is still down then we'll register a 1 on PTB.
 	if (PTAD & (1 << (col + 5))) {

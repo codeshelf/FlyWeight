@@ -95,7 +95,7 @@ void serialReceiveTask( void *pvParameters ) {
 			}
 
 			// Now send the buffer to the transmit queue.
-			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, pdFALSE)) {
+			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, (portTickType) 0)) {
 			}
 
 		}

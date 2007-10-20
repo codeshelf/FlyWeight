@@ -788,7 +788,7 @@
 </Bean>
 
 <Bean name="WatchDog" type="WatchDog">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="WatchDog"/>
@@ -1412,7 +1412,7 @@
 <list name="ADC Input Pins" v="1">
 
 <group name="Input Pin0">
-<Pin v="PTB0_AD1P0"/>
+<Pin v="PTB2_AD1P2"/>
 <Pin_Signal v=""/>
 <Pin_enable v="yes"/>
 
@@ -1434,7 +1434,7 @@
 </group>
 
 <group name="Initialization">
-<Initial_channel_select v="Channel 0"/>
+<Initial_channel_select v="Channel 2"/>
 <Call_Init_method v="yes"/>
 <Enable_module v="Enabled"/>
 

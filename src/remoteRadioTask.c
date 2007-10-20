@@ -15,6 +15,7 @@
 #include "ledBlinkTask.h"
 #include "commands.h"
 #include "remoteMgmtTask.h"
+#include "WatchDog.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -84,7 +85,7 @@ void radioReceiveTask(void *pvParameters) {
 
 		for (;;) {
 
-			//WatchDog_Clear();
+			WatchDog_Clear();
 			
 			// Don't try to RX if there is no free buffer.
 			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
@@ -123,7 +124,7 @@ void radioReceiveTask(void *pvParameters) {
 						case eCommandAssoc:
 							gLocalDeviceState = eLocalStateAssocRespRcvd;
 							// Signal the manager about the new state.
-							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, pdFALSE)) {
+							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
 							}
 							break;
 							
@@ -163,7 +164,7 @@ void radioReceiveTask(void *pvParameters) {
 			}
 			
 			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-			//if (xQueueSend(gLEDBlinkQueue, &gLED2, pdFALSE)) {
+			//if (xQueueSend(gLEDBlinkQueue, &gLED2, (portTickType) 0)) {
 			//}	
 		}
 
@@ -209,7 +210,7 @@ void radioTransmitTask(void *pvParameters) {
 		}
 		
 		// Blink LED1 to let us know we succeeded in transmitting the buffer.
-		//if (xQueueSend(gLEDBlinkQueue, &gLED1, pdFALSE)) {
+		//if (xQueueSend(gLEDBlinkQueue, &gLED1, (portTickType) 0)) {
 		//}
 	}
 }

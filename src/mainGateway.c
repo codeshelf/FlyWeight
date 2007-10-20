@@ -44,7 +44,7 @@ void vMain( void ) {
 	xbeeInit();
 #endif
 	gControllerState = eControllerStateInit;
-	MLMEMC13192PAOutputAdjust(MAX_POWER);
+	MLMEMC13192PAOutputAdjust(15);
 	
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
@@ -56,8 +56,8 @@ void vMain( void ) {
 //	xTaskCreate(gatewayMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gGatewayManagementTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
-	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, sizeof(BufferCntType));
-	//gLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
+	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
+//	gLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
 //	gGatewayMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(RemoteAddrType));
 
 	// Setup the SMAC glue.

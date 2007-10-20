@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 9/25/2007, 11:50 AM
+**     Date/Time : 10/16/2007, 2:44 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core

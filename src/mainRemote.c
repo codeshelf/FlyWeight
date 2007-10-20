@@ -25,7 +25,7 @@
 #include "commands.h"
 #include "CPU.h"
 #include "keyboard.h"
-//#include "WatchDog.h"
+#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
 // Globals
@@ -42,7 +42,7 @@ void vMain( void ) {
 	xbeeInit();
 #endif
 	gLocalDeviceState = eLocalStateStarted;
-	MLMEMC13192PAOutputAdjust(MAX_POWER);
+	MLMEMC13192PAOutputAdjust(15);
 	if (MLMESetChannelRequest(0) == SUCCESS) 
 		{}
 
@@ -52,8 +52,8 @@ void vMain( void ) {
 	xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
 	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
 
-	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(ERadioState));
-	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, sizeof(BufferCntType));
+	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
+	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
 
@@ -65,6 +65,10 @@ void vMain( void ) {
 	
 	// Setup the keyboard.
 	KBISetup();
+	
+	// Turn off the SHUTDOWN signal.
+	PTCD  &= 0b01111110;
+	PTCDD |= 0b10000000;
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
@@ -77,5 +81,5 @@ void vMain( void ) {
 
 void vApplicationIdleHook( void ) {
 	// Clear the watchdog timer.
-	//WatchDog_Clear();
+	WatchDog_Clear();
 }

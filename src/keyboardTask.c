@@ -15,6 +15,7 @@
 #include "task.h"
 #include "queue.h"
 #include "pub_def.h"
+#include "Watchdog.h"
 
 #define			CHK_KEY_DELAY		10
 
@@ -30,7 +31,7 @@ void keyboardTask(void *pvParameters) {
 
 	if (gKeyboardQueue) {
 		for (;;) {
-			//WatchDog_Clear();
+			WatchDog_Clear();
 
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {

@@ -36,7 +36,7 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 		gRXRadioBuffer[gRXCurBufferNum].bufferSize = gsRxPacket->u8DataLength;
 	
 		// Send the message to the radio task's queue.
-		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, pdFALSE)) {
+		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, (portTickType) 0)) {
 		}
 		
 		advanceRXBuffer();
@@ -61,6 +61,6 @@ void MLMEMC13192ResetIndication() {
 	gRadioState = eRadioReset;
 
 	// Send the message to the radio task's queue.
-	//if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, pdFALSE) ) {
+	//if ( xQueueSendFromISR(gRadioReceiveQueue, &gRadioState, (portTickType) 0) ) {
 	//}
 };

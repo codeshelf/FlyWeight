@@ -42,9 +42,10 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 UINT8 transmitPacket(BufferCntType inTXBufferNum) {
 
 	UINT8 result = INITIAL_VALUE;
+	BufferCntType txBufferNum = inTXBufferNum;
 
 	// Transmit the packet.
-	if (xQueueSend(gRadioTransmitQueue, &inTXBufferNum, pdFALSE)) {}
+	if (xQueueGenericSend(gRadioTransmitQueue, &txBufferNum, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK)) {}
 
 	return result;
 
@@ -57,7 +58,7 @@ UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 	UINT8 result = INITIAL_VALUE;
 
 	// Transmit the packet.
-	if (xQueueSendFromISR(gRadioTransmitQueue, &inTXBufferNum, pdFALSE)) {}
+	if (xQueueSendFromISR(gRadioTransmitQueue, &inTXBufferNum, (portTickType) 0)) {}
 
 	return result;
 

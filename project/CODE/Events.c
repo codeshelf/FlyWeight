@@ -116,8 +116,8 @@ void TimerInt(void)
 #include "task.h"
 
 #ifdef XBEE
-	#define PWM_LSB_CHANNEL		TPM1C1V
-	#define PWM_MSB_CHANNEL		TPM1C0V
+	#define PWM_LSB_CHANNEL		TPM1C0V
+	#define PWM_MSB_CHANNEL		TPM1C1V
 #else
 	#define PWM_LSB_CHANNEL		TPM1C2V
 #endif
@@ -126,7 +126,11 @@ void TimerInt(void)
 bool				gAudioModeRX = TRUE;
 
 //UINT16			gPWMMaxValue = 0xff;
+#ifdef XBEE
+UINT16				gPWMCenterValue = 0x7fff;
+#else
 UINT16				gPWMCenterValue = 0x7f;
+#endif
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
 
@@ -147,8 +151,8 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	UINT8	sample;
 #ifdef XBEE
 	INT16	ulawSample;
-	INT16	lsbSample;
-	INT16	msbSample;
+	UINT8	lsbSample;
+	UINT8	msbSample;
 #endif
 	
 	// Reset the timer for the next sample.
@@ -158,6 +162,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
 	if (!gAudioModeRX) {
+#ifdef XBEE
 		// TX MODE
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
@@ -175,6 +180,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				gBufferStarted = FALSE;
 			}
 		}
+#endif
 	} else {
 		// RX MODE
 
@@ -204,12 +210,12 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			// One to 8-bit channel 0, and one to 8-bit channel 1.  
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
 			// (By "shifting" the voltage of channel 0 by 256x.)
-			ulawSample = 0x8000 - ulaw2linear(sample);
+			ulawSample = gPWMCenterValue - ulaw2linear(sample);
 			msbSample = (ulawSample >> 8) & 0xff;
 			lsbSample = ulawSample & 0xff;
 			// Only the lower 8 bits of each channel are in use.
-			setReg16(PWM_LSB_CHANNEL, lsbSample);
-			setReg16(PWM_MSB_CHANNEL, msbSample);
+			PWM_LSB_CHANNEL = lsbSample;
+			PWM_MSB_CHANNEL = msbSample;
 #else
 			setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample);
 #endif
