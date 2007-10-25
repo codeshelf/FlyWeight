@@ -19,6 +19,7 @@ $Name$
 #include "PE_Types.h"
 #include "simple_mac.h"
 #include "string.h"
+#include "Watchdog.h"
 
 xQueueHandle			gGatewayMgmtQueue;
 ControllerStateType		gControllerState;
@@ -62,6 +63,8 @@ void serialReceiveTask( void *pvParameters ) {
 	
 	
 	for ( ;; ) {
+	
+		WatchDog_Clear();
 
 		// Don't try to get a frame if there is no free buffer.
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {

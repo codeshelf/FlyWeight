@@ -6,7 +6,7 @@
 **     Beantype  : WatchDog
 **     Version   : Bean 02.060, Driver 01.04, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 10/19/2007, 11:46 AM
+**     Date/Time : 10/24/2007, 7:48 PM
 **     Abstract  :
 **     Settings  :
 **         Watchdog causes             : Reset CPU

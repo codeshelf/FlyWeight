@@ -33,6 +33,7 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
+#include "WatchDog.h"
 
 void SW1Int_OnInterrupt(void);
 /*

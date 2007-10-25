@@ -8,6 +8,7 @@
 */
 
 #include "serial.h"
+#include "watchdog.h"
 
 #define	kBufferSize		50
 #define	kHighWaterMark  40
@@ -209,6 +210,8 @@ void checkUSBInterface() {
 	
 	gCurrentBufferPos = 0;
 	gCurrentBufferSize = 0;
+	
+	WatchDog_Clear();
 	
 	// Disable interrupts, so that this is all we're doing.
 	EnterCritical();
