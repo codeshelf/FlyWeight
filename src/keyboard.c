@@ -12,6 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "IO_Map.h"
+#include "Cpu.h"
 #include "PE_types.h"
 #include "pub_def.h"
 
@@ -67,6 +68,8 @@ ISR(keyboardISR) {
 	UINT8 	buttonNum = 0;
 	UINT8 	tickVal;
 	
+	EnterCritical();
+	
 	// Disable the KBI interrupt
 	KBI1SC_KBIE = 0;
 	
@@ -95,8 +98,12 @@ ISR(keyboardISR) {
 		// Send the message to the radio task's queue.
 		if (xQueueSendFromISR(gKeyboardQueue, &buttonNum, (portTickType) 0)) {
 		}
+	} else {
+		// If for some reason we don't get a real button press then we need to immediately reenable the KBIE.
+		restartKeyboardISR();
 	}
 	
+	ExitCritical();
 }
 
 /*

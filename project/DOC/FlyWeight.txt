@@ -13,9 +13,6 @@ Module "SWI"       (bean InterruptVector)
 
 Module "MC13191IRQ" (bean InterruptVector)
 
-Module "WatchDog"  (bean WatchDog)
-   - WatchDog_Clear -Clears the watchdog timer (it makes the timer restart from zero).
-
 Module "PWM_XBee"  (bean Init_TPM_HCS08)
    - PWM_XBee_Init -This method initializes registers of the TPM module according to this Peripheral Initialization Bean 
                 settings. Call this method in the user code to initialize the module. By default, the method is called by PE 

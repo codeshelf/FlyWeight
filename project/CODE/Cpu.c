@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 10/24/2007, 7:48 PM
+**     Date/Time : 11/23/2007, 10:39 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -34,7 +34,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "PWM_XBee.h"
 #include "AudioOut.h"
 #include "KBI.h"
@@ -143,8 +142,8 @@ void _EntryPoint(void)
   /* ### MC9S08GT60_44 "Cpu" init code ... */
   /*  PE initialization code after reset */
   /*  System clock initialization */
-  /* SOPT: COPE=1,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
-  setReg8(SOPT, 0xF3);                  
+  /* SOPT: COPE=0,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
+  setReg8(SOPT, 0x73);                  
   /* SPMSC1: LVDF=0,LVDACK=0,LVDIE=0,LVDRE=1,LVDSE=1,LVDE=1,??=0,??=0 */
   setReg8(SPMSC1, 0x1C);                
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
@@ -155,7 +154,6 @@ void _EntryPoint(void)
   setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
-    __RESET_WATCHDOG();                /* Reset watchdog counter */
   }
   /* Common initialization of the write once registers */
 
@@ -201,8 +199,6 @@ void PE_low_level_init(void)
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
                  set the property Call Init method to 'yes'
   */
-  /* ###  WatchDog "WatchDog" init code ... */
-  SRS = 0xFF;
   /* ### Init_TPM "PWM_XBee" init code ... */
   /* ### Call "PWM_XBee_Init();" init method in a user code, i.e. in the main code */
   /* ### Note:   To enable automatic calling of the "PWM_XBee" init code here must be

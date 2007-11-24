@@ -788,7 +788,7 @@
 </Bean>
 
 <Bean name="WatchDog" type="WatchDog">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="WatchDog"/>

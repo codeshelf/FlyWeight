@@ -25,7 +25,9 @@
 #include "commands.h"
 #include "CPU.h"
 #include "keyboard.h"
-#include "WatchDog.h"
+#ifdef __WatchDog
+	#include "WatchDog.h"
+#endif
 
 // --------------------------------------------------------------------------
 // Globals
@@ -80,6 +82,8 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
+#ifdef __WatchDog
 	// Clear the watchdog timer.
 	WatchDog_Clear();
+#endif
 }

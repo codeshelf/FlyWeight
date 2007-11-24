@@ -40,7 +40,7 @@ BF_LicensedOnly=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[63|104|1050|596]
+Rect=[4|90|1050|596]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475

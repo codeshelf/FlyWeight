@@ -28,7 +28,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "PWM_XBee.h"
 #include "AudioOut.h"
 #include "KBI.h"
