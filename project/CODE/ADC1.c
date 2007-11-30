@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.062, Driver 01.06, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 10/15/2007, 3:15 PM
+**     Date/Time : 11/24/2007, 3:26 PM
 **     Abstract  :
 **          This file implements the ADC (ATD1) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -15,8 +15,8 @@
 **     Settings  :
 **          Bean name                                      : ADC1
 **          Device                                         : ATD1
-**          Prescaler                                      : 4
-**          Sample time                                    : 14.6 us
+**          Prescaler                                      : 10
+**          Sample time                                    : 32 us
 **          Conversion mode                                : Continuous conversion
 **          Result data formats                            : 10-bit/left justified/unsigned
 **          ADC Channels                                   : 1
@@ -62,8 +62,8 @@ void ADC1_Init(void)
 {
   /* ATD1PE: ATDPE7=0,ATDPE6=0,ATDPE5=0,ATDPE4=0,ATDPE3=0,ATDPE2=1,ATDPE1=0,ATDPE0=0 */
   setReg8(ATD1PE, 0x04);               /* Write breaks the conversion */ 
-  /* ATD1C: ATDPU=1,DJM=0,RES8=0,SGN=0,PRS3=0,PRS2=1,PRS1=0,PRS0=0 */
-  setReg8(ATD1C, 0x84);                /* Write breaks the conversion */ 
+  /* ATD1C: ATDPU=1,DJM=0,RES8=0,SGN=0,PRS3=1,PRS2=0,PRS1=1,PRS0=0 */
+  setReg8(ATD1C, 0x8A);                /* Write breaks the conversion */ 
   /* ATD1SC: CCF=0,ATDIE=0,ATDCO=1,ATDCH4=0,ATDCH3=0,ATDCH2=0,ATDCH1=1,ATDCH0=0 */
   setReg8(ATD1SC, 0x22);               /* Write starts a new conversion */ 
 }

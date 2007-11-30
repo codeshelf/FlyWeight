@@ -45,8 +45,8 @@ void remoteMgmtTask( void *pvParameters ) {
 			if (transmitPacket(gTXCurBufferNum)) {
 			};
 			
-			// Wait up to 50ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
+			// Wait up to 250ms for a response.
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 250 * portTICK_RATE_MS) == pdPASS) {
 				switch (gLocalDeviceState) {
 					case eLocalStateAssocRespRcvd:
 						processAssocRespCommand(rxBufferNum);
@@ -64,7 +64,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					channel = 0;
 				}
 				// Delay 100ms before changing channels.
-				vTaskDelay(100 * portTICK_RATE_MS);
+				//vTaskDelay(250 * portTICK_RATE_MS);
 			}
 		}
 		gLocalDeviceState = eLocalStateRun;

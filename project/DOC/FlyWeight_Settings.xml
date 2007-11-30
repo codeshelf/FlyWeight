@@ -1397,9 +1397,9 @@
 <group name="Settings">
 
 <group name="Clock settings">
-<Prescaler v="4"/>
-<Frequency v="2000 kHz"/>
-<Conversion_time v="14.6 us"/>
+<Prescaler v="10"/>
+<Frequency v="909.090909090909 kHz"/>
+<Conversion_time v="32 us"/>
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
