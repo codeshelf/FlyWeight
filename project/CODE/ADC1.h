@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.062, Driver 01.06, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 11/24/2007, 3:26 PM
+**     Date/Time : 12/5/2007, 3:42 PM
 **     Abstract  :
 **          This file implements the ADC (ATD1) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -18,7 +18,7 @@
 **          Prescaler                                      : 10
 **          Sample time                                    : 32 us
 **          Conversion mode                                : Continuous conversion
-**          Result data formats                            : 10-bit/left justified/unsigned
+**          Result data formats                            : 10-bit/right justified/unsigned
 **          ADC Channels                                   : 1
 **          Pins                                           : PTB2_AD1P2
 **          Interrupt                                      : Vatd1

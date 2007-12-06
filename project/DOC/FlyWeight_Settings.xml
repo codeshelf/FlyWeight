@@ -1403,7 +1403,7 @@
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
-<Result_data_format v="10-bit/left justified/unsigned"/>
+<Result_data_format v="10-bit/right justified/unsigned"/>
 
 </group>
 

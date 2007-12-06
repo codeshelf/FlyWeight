@@ -155,15 +155,17 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	UINT8	msbSample;
 #endif
 	
-	// Reset the timer for the next sample.
-	TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
-
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
 	if (!gAudioModeRX) {
 #ifdef XBEE
 		// TX MODE
+		
+		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
+		TPM2MOD = gMasterSampleRate - 0x50;
+
+
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
 			advanceTXBuffer();
@@ -172,7 +174,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gBufferStarted = TRUE;
 		} else {
 			if (gTXRadioBuffer[gTXBuffer].bufferSize < CMD_MAX_AUDIO_BYTES) {
-				ulawSample = ATD1R;
+				ulawSample = ATD1R << 5;
 				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXRadioBuffer[gTXBuffer].bufferSize++] = linear2ulaw(ulawSample);
 //				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos++];
 			} else {
@@ -183,6 +185,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #endif
 	} else {
 		// RX MODE
+
+		// Reset the timer for the next sample.
+		TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
 
 		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
 		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
