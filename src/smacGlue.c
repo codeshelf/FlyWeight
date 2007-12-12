@@ -13,6 +13,7 @@
 
 extern xQueueHandle	gRadioReceiveQueue;
 ERadioState			gRadioState = eRadioReceive;
+INT8				gNoReceive = -1;
 
 void initSMACRadioQueueGlue(xQueueHandle inRadioReceiveQueue) {
 	gRadioReceiveQueue = inRadioReceiveQueue;
@@ -36,11 +37,15 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 		gRXRadioBuffer[gRXCurBufferNum].bufferSize = gsRxPacket->u8DataLength;
 	
 		// Send the message to the radio task's queue.
-		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, (portTickType) 0)) {
+		if (xQueueSendFromISR(gRadioReceiveQueue, &gRXCurBufferNum, (portBASE_TYPE) 0)) {
 		}
 		
 		advanceRXBuffer();
 		
+	} else {
+		// Send the message to the radio task's queue.
+		if (xQueueSendFromISR(gRadioReceiveQueue, &gNoReceive, (portBASE_TYPE) 0)) {
+		}
 	}
 };
 

@@ -50,6 +50,9 @@ void keyboardTask(void *pvParameters) {
 						gAudioModeRX = TRUE;
 					}
 
+					// Turn off the ATD module
+					ATD1C_ATDPU = 0;
+
 					//  Send a button up message.
 					txBufferNum = gTXCurBufferNum;
 					advanceTXBuffer();
@@ -67,6 +70,9 @@ void keyboardTask(void *pvParameters) {
 				if (xQueueReceive(gKeyboardQueue, &buttonNum, CHK_KEY_DELAY * portTICK_RATE_MS) == pdPASS) {
 
 					gButtonPressed = buttonNum;
+					
+					// Turn on the ATD module
+					ATD1C_ATDPU = 1;
 					
 					// Send an associate request on the current channel.
 					txBufferNum = gTXCurBufferNum;

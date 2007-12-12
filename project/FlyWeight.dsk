@@ -38,7 +38,7 @@ BF_ForTgtCpuOnly=Yes
 BF_LicensedOnly=Yes
 
 [ObjInspector]
-Status=hiden
+Status=Visible
 WindowState=NORMAL
 Rect=[4|90|1050|596]
 ObjInspectorDockedWithPrphInit=No
@@ -58,11 +58,11 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[627|199|453|679]
+Rect=[796|250|453|596]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
-Peripheral=TPM2
+Peripheral=CPU
 
 [Editor]
 Rect=[-4|0|1199|990]

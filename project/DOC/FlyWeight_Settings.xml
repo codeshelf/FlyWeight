@@ -154,7 +154,7 @@
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
 <Clock_divider v="Auto selected prescaler"/>
-<Internal_bus_clock v="20"/>
+<Internal_bus_clock v="10"/>
 <Fixed_frequency_clock v="2"/>
 
 <boolgroup name="FLL clock" v="Enabled">
@@ -1054,7 +1054,7 @@
 <Clock_source_select v="Bus rate clock"/>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
-<Period v="12.8 us"/>
+<Period v="25.6 us"/>
 
 </group>
 
@@ -1398,8 +1398,8 @@
 
 <group name="Clock settings">
 <Prescaler v="10"/>
-<Frequency v="909.090909090909 kHz"/>
-<Conversion_time v="32 us"/>
+<Frequency v="454.545454545455 kHz"/>
+<Conversion_time v="64 us"/>
 
 </group>
 <Conversion_mode v="Continuous conversion"/>

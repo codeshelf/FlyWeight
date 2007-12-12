@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/5/2007, 2:58 PM
+**     Date/Time : 12/11/2007, 8:06 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -126,6 +126,7 @@ extern void _Startup(void);            /* Forward declaration of external startu
 #include "mcu_hw_config.h"
 #include "MC13192_hw_config.h"
 #include "simple_mac.h"
+#include "IO_Map.h"
 
 
 #pragma NO_FRAME
@@ -134,6 +135,19 @@ void _EntryPoint(void)
 {
 
   /*** User code before PE initialization ***/
+        PTADD = 0xFF;
+        PTAD  = 0x00;
+        PTBDD = 0xFF;
+        PTBD  = 0x00;
+        PTCDD = 0xFF;
+        PTCD  = 0x00;
+        PTDDD = 0xFF;
+        PTDD  = 0x00;
+        PTEDD = 0xFF;
+        PTED  = 0x00;
+        //PTFDD = 0xFF;
+        PTGDD = 0xFF;
+        PTGD  = 0x00;
         MCUInit();
         MC13192Init();
         MLMESetMC13192ClockRate(2);
@@ -150,8 +164,8 @@ void _EntryPoint(void)
   setReg8(SPMSC2, 0x00);                
   /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,??=0,??=0 */
   setReg8(ICGC1, 0x5C);                 
-  /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
-  setReg8(ICGC2, 0x30);                 
+  /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=1 */
+  setReg8(ICGC2, 0x31);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
   }

@@ -141,7 +141,7 @@ bool				gBufferStarted = FALSE;
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
 // We further divide this by two since we average the cur and prev sample to smooth the waveform.
-SampleRateType		gMasterSampleRate = 20000000 / 8000;
+SampleRateType		gMasterSampleRate = 10000000 / 8000;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
@@ -201,6 +201,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #endif
 			EnterCritical();
 			
+				PTCD  |= 0b10000000;
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
@@ -209,6 +210,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			
 		} else {
 		
+			PTCD  &= 0b01111111;
 			sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 #ifdef XBEE
 			// On the XBee module we support 16bit converted uLaw samples.

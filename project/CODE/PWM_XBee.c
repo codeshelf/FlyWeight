@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 4/25/2007, 2:17 PM
+**     Date/Time : 12/11/2007, 5:31 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -19,7 +19,7 @@
 **              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
 **              Modulo Counter                             : 255
-**              Period                                     : 12.8 us
+**              Period                                     : 25.6 us
 **            Aligned                                      : Left
 **          Channels                                       : 2
 **            Channel0                                     : 1

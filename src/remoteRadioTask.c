@@ -104,65 +104,68 @@ void radioReceiveTask(void *pvParameters) {
 				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
-				MLMERXEnableRequest(&gsRxPacket, 0L);
+				vTaskDelay(10 * portTICK_RATE_MS);
+				MLMERXEnableRequest(&gsRxPacket, (UINT32) 15 * 250);
 			}
 
 			// Wait until we receive a queue message from the radio receive ISR.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 				
-				// We just received a valid packet.
-				// We don't really do anything here since 
-				// the PWM audio processor is working at interrupt
-				// to get bytes out of the buffer.
-				
-				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
-				cmdDstAddr = getCommandDstAddr(rxBufferNum);
-				
-				// Only process broadcast commands or commands addressed to us.
-				if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
-					RELEASE_RX_BUFFER(rxBufferNum);
-				} else {
-				
-					switch (cmdID) {
+				if (rxBufferNum != 255) {
+					// We just received a valid packet.
+					// We don't really do anything here since 
+					// the PWM audio processor is working at interrupt
+					// to get bytes out of the buffer.
 					
-						case eCommandAssoc:
-							gLocalDeviceState = eLocalStateAssocRespRcvd;
-							// Signal the manager about the new state.
-							if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
-							}
-							break;
-							
-						case eCommandInfo:
-							// Now that the remote has an assigned address we need to ask it to describe
-							// it's capabilities and characteristics.
-							processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
-							break;
-							
-						case eCommandControl:
-							// Make sure that there is a valid sub-command in the control command.
-							switch (getControlSubCommand(rxBufferNum)) {
-								case eControlSubCmdEndpointAdj:
-									break;
-									
-								case eControlSubCmdMotor:
-									processMotorControlSubCommand(rxBufferNum);
-									break;
-									
-								default:
-									RELEASE_RX_BUFFER(rxBufferNum);
-							}
-							break;
-							
-						case eCommandAudio:
-							// Audio commands are handled by an interrupt routine.
-							break;
-													
-						default:
-							// Bogus command.
-							// Immediately free this command buffer since we'll never do anything with it.
-							RELEASE_RX_BUFFER(rxBufferNum);
-							break;
+					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
+					cmdDstAddr = getCommandDstAddr(rxBufferNum);
+					
+					// Only process broadcast commands or commands addressed to us.
+					if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
+						RELEASE_RX_BUFFER(rxBufferNum);
+					} else {
+					
+						switch (cmdID) {
 						
+							case eCommandAssoc:
+								gLocalDeviceState = eLocalStateAssocRespRcvd;
+								// Signal the manager about the new state.
+								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+								}
+								break;
+								
+							case eCommandInfo:
+								// Now that the remote has an assigned address we need to ask it to describe
+								// it's capabilities and characteristics.
+								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
+								break;
+								
+							case eCommandControl:
+								// Make sure that there is a valid sub-command in the control command.
+								switch (getControlSubCommand(rxBufferNum)) {
+									case eControlSubCmdEndpointAdj:
+										break;
+										
+									case eControlSubCmdMotor:
+										processMotorControlSubCommand(rxBufferNum);
+										break;
+										
+									default:
+										RELEASE_RX_BUFFER(rxBufferNum);
+								}
+								break;
+								
+							case eCommandAudio:
+								// Audio commands are handled by an interrupt routine.
+								break;
+														
+							default:
+								// Bogus command.
+								// Immediately free this command buffer since we'll never do anything with it.
+								RELEASE_RX_BUFFER(rxBufferNum);
+								break;
+							
+						}
 					}
 				}
 			}
@@ -202,7 +205,8 @@ void radioTransmitTask(void *pvParameters) {
 			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, 0L);
+			//vTaskDelay(5 * portTICK_RATE_MS);
+			MLMERXEnableRequest(&gsRxPacket, (UINT32) 200 * 250);
 						
 			// Set the status of the TX buffer to free.
 			RELEASE_TX_BUFFER(txBufferNum);	

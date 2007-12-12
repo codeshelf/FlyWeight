@@ -69,8 +69,11 @@ void vMain( void ) {
 	KBISetup();
 	
 	// Turn off the SHUTDOWN signal.
-	PTCD  &= 0b01111110;
+	PTCD  &= 0b01111111;
 	PTCDD |= 0b10000000;
+	
+	// Turn off the ATD module
+	ATD1C_ATDPU = 0;
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
