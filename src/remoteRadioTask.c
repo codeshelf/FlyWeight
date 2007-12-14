@@ -15,6 +15,7 @@
 #include "ledBlinkTask.h"
 #include "commands.h"
 #include "remoteMgmtTask.h"
+#include "CPU.h"
 #ifdef __WatchDog
 	#include "WatchDog.h"
 #endif
@@ -31,6 +32,8 @@
 // Global variables.
 
 UINT8 				gu8RTxMode;
+extern bool			gIsSleeping;
+bool				gShouldSleep;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -64,7 +67,7 @@ BufferCntType		gTXUsedBuffers = 0;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
-	ECommandGroupIDType		cmdID;
+	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
 
 	// Start the audio processing.
@@ -93,25 +96,65 @@ void radioReceiveTask(void *pvParameters) {
 			
 			// Don't try to RX if there is no free buffer.
 			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
-				vTaskDelay(1);
+				vTaskDelay(1 * portTICK_RATE_MS);
 
 			// Don't try to set up an RX unless we're already done with TX.
 			while (gu8RTxMode == TX_MODE)
-				vTaskDelay(1);
+				vTaskDelay(1 * portTICK_RATE_MS);
 			
 			// Setup for the next RX cycle.
 			if (gu8RTxMode != RX_MODE) {
 				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
-				vTaskDelay(10 * portTICK_RATE_MS);
-				MLMERXEnableRequest(&gsRxPacket, (UINT32) 15 * 250);
+				if (gShouldSleep) {
+					MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
+				} else {
+					MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
+				}
 			}
 
 			// Wait until we receive a queue message from the radio receive ISR.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 				
-				if (rxBufferNum != 255) {
+				if (rxBufferNum == 255) {
+				
+					if (!gShouldSleep) {
+						gShouldSleep = TRUE;
+					} else {
+
+						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
+						//vTaskDelay(250 * portTICK_RATE_MS);
+						EnterCritical();
+						gIsSleeping = TRUE;
+						Cpu_SetSlowSpeed();
+						MLMEHibernateRequest();
+						//TPM1SC_TOIE = 0;
+						TPM2SC_TOIE = 0;
+						SRTISC_RTICLKS = 0;
+						//SRTISC_RTIS = 0;
+						SRTISC_RTIS = 7;
+						ExitCritical();
+						
+						__asm("STOP")
+						
+						EnterCritical();
+						gIsSleeping = FALSE;
+						MLMEWakeRequest();
+						// Wait for the MC13192's modem ClkO to warm up.
+						Cpu_Delay100US(100);
+						Cpu_SetHighSpeed();
+						SRTISC_RTICLKS = 1;
+						SRTISC_RTIS = 4;
+						//TPM1SC_TOIE = 1;
+						TPM2SC_TOIE = 1;
+						ExitCritical();
+					}
+		
+				} else {
+					// The last read got a packet, so we're active.
+					gShouldSleep = FALSE;
+					
 					// We just received a valid packet.
 					// We don't really do anything here since 
 					// the PWM audio processor is working at interrupt
@@ -191,6 +234,8 @@ void radioTransmitTask(void *pvParameters) {
 		// Wait until the SCI controller signals us that we have a full buffer to transmit.
 		if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS ) {
 
+			gShouldSleep = FALSE;
+			
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
 			
@@ -205,8 +250,7 @@ void radioTransmitTask(void *pvParameters) {
 			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 			gsRxPacket.u8Status = 0;
-			//vTaskDelay(5 * portTICK_RATE_MS);
-			MLMERXEnableRequest(&gsRxPacket, (UINT32) 200 * 250);
+			MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
 						
 			// Set the status of the TX buffer to free.
 			RELEASE_TX_BUFFER(txBufferNum);	

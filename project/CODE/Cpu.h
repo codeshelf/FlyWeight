@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/5/2007, 2:58 PM
+**     Date/Time : 12/12/2007, 12:50 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -15,8 +15,11 @@
 **     Settings  :
 **
 **     Contents  :
-**         EnableInt  - void Cpu_EnableInt(void);
-**         DisableInt - void Cpu_DisableInt(void);
+**         SetHighSpeed - void Cpu_SetHighSpeed(void);
+**         SetSlowSpeed - void Cpu_SetSlowSpeed(void);
+**         EnableInt    - void Cpu_EnableInt(void);
+**         DisableInt   - void Cpu_DisableInt(void);
+**         Delay100US   - void Cpu_Delay100US(word us100);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -54,6 +57,7 @@
 
 /* Global variables */
 extern volatile byte CCR_reg;          /* Current CCR reegister */
+extern byte CpuMode;                   /* Current speed mode */
 
 
 
@@ -77,6 +81,51 @@ extern volatile byte CCR_reg;          /* Current CCR reegister */
 **
 **     Description :
 **         Enables maskable interrupts
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void Cpu_Delay100US(word us100);
+/*
+** ===================================================================
+**     Method      :  Cpu_Delay100US (bean MC9S08GT60_44)
+**
+**     Description :
+**         This method realizes software delay. The length of delay
+**         is at least 100 microsecond multiply input parameter
+**         [us100]. As the delay implementation is not based on real
+**         clock, the delay time may be increased by interrupt
+**         service routines processed during the delay. The method
+**         is independent on selected speed mode.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**         us100           - Number of 100 us delay repetitions.
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void Cpu_SetSlowSpeed(void);
+/*
+** ===================================================================
+**     Method      :  Cpu_SetSlowSpeed (bean MC9S08GT60_44)
+**
+**     Description :
+**         Sets the slow speed mode. The method is enabled only if
+**         slow speed mode is enabled in the bean.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void Cpu_SetHighSpeed(void);
+/*
+** ===================================================================
+**     Method      :  Cpu_SetHighSpeed (bean MC9S08GT60_44)
+**
+**     Description :
+**         Sets the high speed mode. The method is enabled only if
+**         low or slow speed mode is enabled in the bean as well.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

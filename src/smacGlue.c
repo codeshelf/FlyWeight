@@ -43,7 +43,7 @@ void MCPSDataIndication(tRxPacket *gsRxPacket) {
 		advanceRXBuffer();
 		
 	} else {
-		// Send the message to the radio task's queue.
+		// Send the message to the radio task's queue that we didn't get any packets before timing out.
 		if (xQueueSendFromISR(gRadioReceiveQueue, &gNoReceive, (portBASE_TYPE) 0)) {
 		}
 	}

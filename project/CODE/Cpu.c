@@ -7,7 +7,7 @@
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/11/2007, 8:06 PM
+**     Date/Time : 12/13/2007, 3:20 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -15,8 +15,11 @@
 **     Settings  :
 **
 **     Contents  :
-**         EnableInt  - void Cpu_EnableInt(void);
-**         DisableInt - void Cpu_DisableInt(void);
+**         SetHighSpeed - void Cpu_SetHighSpeed(void);
+**         SetSlowSpeed - void Cpu_SetSlowSpeed(void);
+**         EnableInt    - void Cpu_EnableInt(void);
+**         DisableInt   - void Cpu_DisableInt(void);
+**         Delay100US   - void Cpu_Delay100US(word us100);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -46,6 +49,7 @@
 
 /* Global variables */
 volatile byte CCR_reg;                 /* Current CCR register */
+byte CpuMode = HIGH_SPEED;             /* Current speed mode */
 
 /*
 ** ===================================================================
@@ -110,6 +114,137 @@ void Cpu_EnableInt(void)
 
 /*
 ** ===================================================================
+**     Method      :  Cpu_Delay100US (bean MC9S08GT60_44)
+**
+**     Description :
+**         This method realizes software delay. The length of delay
+**         is at least 100 microsecond multiply input parameter
+**         [us100]. As the delay implementation is not based on real
+**         clock, the delay time may be increased by interrupt
+**         service routines processed during the delay. The method
+**         is independent on selected speed mode.
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**         us100           - Number of 100 us delay repetitions.
+**     Returns     : Nothing
+** ===================================================================
+*/
+#pragma NO_ENTRY
+#pragma NO_EXIT
+#pragma MESSAGE DISABLE C5703
+void Cpu_Delay100US(word us100)
+{
+  /* Total irremovable overhead: 16 cycles */
+  /* ldhx: 5 cycles overhead (load parameter into register) */
+  /* jsr:  5 cycles overhead (jump to subroutine) */
+  /* rts:  6 cycles o verhead (return from subroutine) */
+
+  asm {
+loop:
+    /* 100 us delay block begin */
+    psha                               /* (2 c) backup A */
+    lda CpuMode                        /* (4 c) get CpuMode */
+    cmp #HIGH_SPEED                    /* (2 c) compare it to HIGH_SPEED */
+    bne label0                         /* (3 c) not equal? goto next section */
+    /*
+     * Delay
+     *   - requested                  : 100 us @ 20MHz,
+     *   - possible                   : 2000 c, 100000 ns
+     *   - without removable overhead : 1976 c, 98800 ns
+     */
+    pshh                               /* (2 c: 100 ns) backup H */
+    pshx                               /* (2 c: 100 ns) backup X */
+    ldhx #0xF5                         /* (3 c: 150 ns) number of iterations */
+label1:
+    aix #-0x01                         /* (2 c: 100 ns) decrement H:X */
+    cphx #0x00                         /* (3 c: 150 ns) compare it to zero */
+    bne label1                         /* (3 c: 150 ns) repeat 245x */
+    pulx                               /* (3 c: 150 ns) restore X */
+    pulh                               /* (3 c: 150 ns) restore H */
+    nop                                /* (1 c: 50 ns) wait for 1 c */
+    nop                                /* (1 c: 50 ns) wait for 1 c */
+    nop                                /* (1 c: 50 ns) wait for 1 c */
+    bra label2                         /* (3 c) finishing delay, goto end */
+    label0:
+    /*
+     * Delay
+     *   - requested                  : 100 us @ 15.552MHz,
+     *   - possible                   : 1555 c, 99987.14 ns, delta -12.86 ns
+     *   - without removable overhead : 1534 c, 98636.83 ns
+     */
+    pshh                               /* (2 c: 128.6 ns) backup H */
+    pshx                               /* (2 c: 128.6 ns) backup X */
+    ldhx #0xBE                         /* (3 c: 192.9 ns) number of iterations */
+label3:
+    aix #-0x01                         /* (2 c: 128.6 ns) decrement H:X */
+    cphx #0x00                         /* (3 c: 192.9 ns) compare it to zero */
+    bne label3                         /* (3 c: 192.9 ns) repeat 190x */
+    pulx                               /* (3 c: 192.9 ns) restore X */
+    pulh                               /* (3 c: 192.9 ns) restore H */
+    nop                                /* (1 c: 64.3 ns) wait for 1 c */
+    label2:                            /* End of delays */
+    pula                               /* (2 c) restore A */
+    /* 100 us delay block end */
+    aix #-0x01                         /* us100 parameter is passed via H:X registers */
+    cphx #0x00
+    bne loop                           /* next loop */
+    rts                                /* return from subroutine */
+  }
+}
+
+/*
+** ===================================================================
+**     Method      :  Cpu_SetHighSpeed (bean MC9S08GT60_44)
+**
+**     Description :
+**         Sets the high speed mode. The method is enabled only if
+**         low or slow speed mode is enabled in the bean as well.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void Cpu_SetHighSpeed(void)
+{
+  if (CpuMode != HIGH_SPEED) {         /* Is an actual cpu mode other than high speed mode? */
+    EnterCritical();                   /* If yes then save the PS register */
+    /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,??=0,??=0 */
+    ICGC1 = 0x5C;                      /* Initialization of the ICG control register 1 */
+    /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
+    ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
+    ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
+    while(!ICGS1_LOCK);                /* Wait */
+    ExitCritical();                    /* Restore the PS register */
+    CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
+    }
+}
+/*
+** ===================================================================
+**     Method      :  Cpu_SetSlowSpeed (bean MC9S08GT60_44)
+**
+**     Description :
+**         Sets the slow speed mode. The method is enabled only if
+**         slow speed mode is enabled in the bean.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void Cpu_SetSlowSpeed(void)
+{
+  if (CpuMode != SLOW_SPEED) {         /* Is an actual cpu mode other than slow speed mode? */
+    EnterCritical();                   /* If yes then save the PS register */
+    /* ICGC1: ??=0,RANGE=0,REFS=0,CLKS1=0,CLKS0=1,OSCSTEN=1,??=0,??=0 */
+    ICGC1 = 0x0C;                      /* Initialization of the ICG control register 1 */
+    /* ICGC2: LOLRE=0,MFD2=1,MFD1=0,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
+    ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
+    ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
+    while(!ICGS1_LOCK);                /* Wait */
+    ExitCritical();                    /* Restore the PS register */
+    CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
+    }
+}
+
+/*
+** ===================================================================
 **     Method      :  _EntryPoint (bean MC9S08GT60_44)
 **
 **     Description :
@@ -162,10 +297,10 @@ void _EntryPoint(void)
   setReg8(SPMSC1, 0x1C);                
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
   setReg8(SPMSC2, 0x00);                
-  /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,??=0,??=0 */
-  setReg8(ICGC1, 0x5C);                 
-  /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=1 */
-  setReg8(ICGC2, 0x31);                 
+  /* ICGC1: ??=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=0,??=0,??=0 */
+  setReg8(ICGC1, 0x58);                 
+  /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
+  setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
   }

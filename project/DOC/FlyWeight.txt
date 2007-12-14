@@ -31,7 +31,13 @@ Module "ADC1"      (bean Init_ADC_HCS08)
                 see "Call Init method" property of the bean for more details.
 
 Module "Cpu"       (bean MC9S08GT60_44)
+   - Cpu_SetHighSpeed -Sets the high speed mode. The method is enabled only if low or slow speed mode is enabled in the bean as 
+                well.
+   - Cpu_SetSlowSpeed -Sets the slow speed mode. The method is enabled only if slow speed mode is enabled in the bean.
    - Cpu_EnableInt -Enables maskable interrupts
    - Cpu_DisableInt -Disables maskable interrupts
+   - Cpu_Delay100US -This method realizes software delay. The length of delay is at least 100 microsecond multiply input 
+                parameter [us100]. As the delay implementation is not based on real clock, the delay time may be increased by 
+                interrupt service routines processed during the delay. The method is independent on selected speed mode.
 
 ===================================================================================

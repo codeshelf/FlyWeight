@@ -141,7 +141,7 @@ bool				gBufferStarted = FALSE;
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
 // We further divide this by two since we average the cur and prev sample to smooth the waveform.
-SampleRateType		gMasterSampleRate = 10000000 / 8000;
+SampleRateType		gMasterSampleRate = 20000000 / 8000;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
@@ -150,9 +150,10 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 	UINT8	sample;
 #ifdef XBEE
-	INT16	ulawSample;
-	UINT8	lsbSample;
-	UINT8	msbSample;
+	INT16			ulawSample;
+	UINT8			lsbSample;
+	UINT8			msbSample;
+	
 #endif
 	
 	// Figure out if we're in the RX or TX mode for audio.
@@ -165,19 +166,18 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
 		TPM2MOD = gMasterSampleRate - 0x50;
 
-
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
 			advanceTXBuffer();
 			createAudioCommand(gTXBuffer);
-//			gTXBufferPos = CMDPOS_STARTOFCMD;
+			gTXBufferPos = gTXRadioBuffer[gTXBuffer].bufferSize;
 			gBufferStarted = TRUE;
 		} else {
-			if (gTXRadioBuffer[gTXBuffer].bufferSize < CMD_MAX_AUDIO_BYTES) {
+			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
 				ulawSample = ATD1R << 5;
-				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXRadioBuffer[gTXBuffer].bufferSize++] = linear2ulaw(ulawSample);
-//				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos++];
+				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = linear2ulaw(ulawSample);
 			} else {
+				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
 				transmitPacketFromISR(gTXBuffer);
 				gBufferStarted = FALSE;
 			}
@@ -280,21 +280,27 @@ interrupt void AudioLoader_OnInterrupt(void) {
 ** ===================================================================
 */
 
+bool gIsSleeping = 0;
+UINT8 inRTI = 0;
 #pragma NO_ENTRY 
 #pragma NO_EXIT 
 #pragma NO_FRAME 
 #pragma NO_RETURN
 void handleRTI();
 void handleRTI() {
-	vPortTickInterrupt();
-	
-	// Ack the RTI
-	IRQSC_IRQACK = 1;
+		// Ack the RTI
+		SRTISC_RTIACK = 1;
+		vPortTickInterrupt();  // <------ We never return from this call into the OS task dispatch.
 }
 
 ISR(dispatchRTI)
 {
-	handleRTI();
+	if (!gIsSleeping) {
+		handleRTI();
+	}
+
+	// We get here if we got an RTI while in STOP (sleep) mode.
+	SRTISC_RTIACK = 1;
 }
 
 /*

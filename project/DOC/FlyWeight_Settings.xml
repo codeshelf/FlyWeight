@@ -32,7 +32,7 @@
 
 <enumgroup name="STOP instruction enabled" v="yes">
 <Power_down_control v="STOP3 - Standby mode"/>
-<Enable_Oscillator_in_Off_Mode v="yes"/>
+<Enable_Oscillator_in_Off_Mode v="no"/>
 
 </enumgroup>
 
@@ -154,7 +154,7 @@
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
 <Clock_divider v="Auto selected prescaler"/>
-<Internal_bus_clock v="10"/>
+<Internal_bus_clock v="20"/>
 <Fixed_frequency_clock v="2"/>
 
 <boolgroup name="FLL clock" v="Enabled">
@@ -168,15 +168,28 @@
 
 <boolgroup name="Low speed mode" v="Disabled" />
 
-<boolgroup name="Slow speed mode" v="Disabled" />
+<boolgroup name="Slow speed mode" v="Enabled">
+<Slow_speed_clock v="Internal Clock"/>
+<Clock_divider v="Auto selected prescaler"/>
+<Internal_bus_clock v="15.552000000000"/>
+<Fixed_frequency_clock v="15.552000000000"/>
+
+<boolgroup name="FLL clock" v="Enabled">
+<FLL_clock_frequency v="31.104000000000"/>
+<Loss_of_FLL_lock v="Interrupt"/>
+<Loss_of_clock v="Interrupt"/>
+
+</boolgroup>
+
+</boolgroup>
 
 </group>
 </Properties>
 
 <Methods>
-<SetHighSpeed v="don&apos;t generate code"/>
+<SetHighSpeed v="generate code"/>
 <SetLowSpeed v="don&apos;t generate code"/>
-<SetSlowSpeed v="don&apos;t generate code"/>
+<SetSlowSpeed v="generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
 <GetIntVect v="don&apos;t generate code"/>
@@ -195,7 +208,7 @@
 <GetIdentification v="don&apos;t generate code"/>
 <SetFilterValue v="don&apos;t generate code"/>
 <SetBackdoorKey v="don&apos;t generate code"/>
-<Delay100US v="don&apos;t generate code"/>
+<Delay100US v="generate code"/>
 </Methods>
 
 <Events>
@@ -965,7 +978,7 @@
 <Clock_source_select v="Bus rate clock"/>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
-<Period v="12.8 us"/>
+<Period v="16 us"/>
 
 </group>
 
@@ -1054,7 +1067,7 @@
 <Clock_source_select v="Bus rate clock"/>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
-<Period v="25.6 us"/>
+<Period v="12.8 us"/>
 
 </group>
 
@@ -1398,8 +1411,8 @@
 
 <group name="Clock settings">
 <Prescaler v="10"/>
-<Frequency v="454.545454545455 kHz"/>
-<Conversion_time v="64 us"/>
+<Frequency v="909.090909090909 kHz"/>
+<Conversion_time v="32 us"/>
 
 </group>
 <Conversion_mode v="Continuous conversion"/>

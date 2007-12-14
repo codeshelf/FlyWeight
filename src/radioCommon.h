@@ -31,17 +31,18 @@
 
 // The gateway needs fewer buffers.
 #ifdef IS_GATEWAY
-#define RX_QUEUE_SIZE			2
-#define RX_QUEUE_BALANCE		1
+	#define RX_QUEUE_SIZE			2
+	#define RX_QUEUE_BALANCE		1
+	#define TX_QUEUE_SIZE			2
 #else
-#define RX_QUEUE_SIZE			8
-#define RX_QUEUE_BALANCE		4
+	#define RX_QUEUE_SIZE			8
+	#define RX_QUEUE_BALANCE		4
+	#define TX_QUEUE_SIZE			3
 #endif
 
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
 #define RX_BUFFER_SIZE			MAX_PACKET_SIZE
 
-#define TX_QUEUE_SIZE			2
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
 
@@ -63,6 +64,8 @@
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0x0F
 
+#define SMAC_TICKS_PER_MS		250
+
 #define RELEASE_RX_BUFFER(rxBufferNum)		EnterCritical(); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
 											gRXUsedBuffers--; \
@@ -81,9 +84,9 @@ typedef enum {
 	eUSBStateStarted
 } USBStateType;
 
-typedef byte				BufferCntType;
-typedef byte				BufferOffsetType;
-typedef byte				BufferStorageType;
+typedef UINT8				BufferCntType;
+typedef UINT8				BufferOffsetType;
+typedef UINT8				BufferStorageType;
 typedef BufferStorageType	*BufferStoragePtrType;
 
 typedef enum {
