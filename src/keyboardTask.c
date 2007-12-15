@@ -23,6 +23,7 @@
 
 xQueueHandle 	gKeyboardQueue;
 extern bool 	gAudioModeRX;
+extern bool		gShouldSleep;
 UINT8			gButtonPressed;
 
 // --------------------------------------------------------------------------
@@ -39,19 +40,22 @@ void keyboardTask(void *pvParameters) {
 
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {
+				gShouldSleep = FALSE;
 				if (buttonStillPressed(gButtonPressed)) {
-					
+					// The user is still holding the button.
 				} else {
+					// The user just released the button.
 					if (gButtonPressed == PTT_BUTTON) {
 						// Wait 5ms for the remote to stop sending audio packets.
 						vTaskDelay(10 * portTICK_RATE_MS);
 						
-						// Now put us into TX mode.
+						// Now put us into RX mode.
 						gAudioModeRX = TRUE;
+						
+						// Turn off the ATD module
+						ATD_OFF;
+						AUDIO_AMP_OFF;
 					}
-
-					// Turn off the ATD module
-					ATD1C_ATDPU = 0;
 
 					//  Send a button up message.
 					txBufferNum = gTXCurBufferNum;
@@ -69,10 +73,9 @@ void keyboardTask(void *pvParameters) {
 				// The keyboard ISR will send us a message when it detects a keypress.
 				if (xQueueReceive(gKeyboardQueue, &buttonNum, CHK_KEY_DELAY * portTICK_RATE_MS) == pdPASS) {
 
-					gButtonPressed = buttonNum;
+					// The user just pressed a button.
 					
-					// Turn on the ATD module
-					ATD1C_ATDPU = 1;
+					gButtonPressed = buttonNum;
 					
 					// Send an associate request on the current channel.
 					txBufferNum = gTXCurBufferNum;
@@ -87,6 +90,10 @@ void keyboardTask(void *pvParameters) {
 						
 						// Now put us into TX mode.
 						gAudioModeRX = FALSE;
+						
+						// Turn on the ATD module
+						ATD_ON;
+						AUDIO_AMP_ON;
 					}
 				}
 			}

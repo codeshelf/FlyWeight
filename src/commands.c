@@ -30,6 +30,7 @@
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
 RemoteAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
+extern byte			gCCRHolder;
 
 
 // --------------------------------------------------------------------------
@@ -259,7 +260,7 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 
 void processNetSetupCommand(BufferCntType inTXBufferNum) {
 
-	ChannelNumberType			channel;
+	ChannelNumberType	channel;
 
 	// Network Setup ALWAYS comes in via the serial interface to the gateway (dongle)
 	// This means we process it FROM the TX buffers and SEND from the TX buffers.

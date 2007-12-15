@@ -205,6 +205,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 
 void checkUSBInterface() {
 
+	byte 			ccr;
 	UINT8			loopCheck;
 	USB_TComData	lostChar;
 	
@@ -214,7 +215,7 @@ void checkUSBInterface() {
 	WatchDog_Clear();
 	
 	// Disable interrupts, so that this is all we're doing.
-	EnterCritical();
+	EnterCriticalArg(ccrHolder);
 	
 	// Turn RTS on.
 	RTS_ON;
@@ -225,7 +226,7 @@ void checkUSBInterface() {
 		loopCheck++;
 		if (loopCheck > 100) {
 			RTS_OFF;
-			ExitCritical();
+			ExitCriticalArg(ccrHolder);
 			return;
 		}
 	}
@@ -252,5 +253,5 @@ void checkUSBInterface() {
 	}
 	
 	// Resume normal OS/interrupt processing.
-	ExitCritical();
+	ExitCriticalArg(ccrHolder);
 }

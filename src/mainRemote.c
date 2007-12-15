@@ -68,13 +68,11 @@ void vMain( void ) {
 	// Setup the keyboard.
 	KBISetup();
 	
-	// Turn off the SHUTDOWN signal.
-	PTCD  &= 0b01111111;
-	PTCDD |= 0b10000000;
+	// Setup the audio amplifiers.
+	SETUP_AUDIO_CONTROL;
+	ATD_OFF;
+	AUDIO_AMP_OFF;
 	
-	// Turn off the ATD module
-	ATD1C_ATDPU = 0;
-
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
 	

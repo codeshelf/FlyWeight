@@ -148,11 +148,12 @@ INT16				gMasterSampleRateAdjust = 0;
 
 interrupt void AudioLoader_OnInterrupt(void) {	
 
-	UINT8	sample;
+	byte	ccrHolder;
+	UINT8	sample8b;
 #ifdef XBEE
-	INT16			ulawSample;
-	UINT8			lsbSample;
-	UINT8			msbSample;
+	INT16	sample16b;
+	UINT8	lsbSample;
+	UINT8	msbSample;
 	
 #endif
 	
@@ -174,8 +175,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gBufferStarted = TRUE;
 		} else {
 			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
-				ulawSample = ATD1R << 5;
-				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = linear2ulaw(ulawSample);
+				sample16b = ATD1R << 5;
+				sample8b = linear2ulaw(sample16b);
+				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
 			} else {
 				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
 				transmitPacketFromISR(gTXBuffer);
@@ -199,32 +201,32 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #else
 			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 #endif
-			EnterCritical();
+			EnterCriticalArg(ccrHolder);
 			
-				PTCD  |= 0b10000000;
+				AUDIO_AMP_OFF;
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
 				
-			ExitCritical();
+			ExitCriticalArg(ccrHolder);
 			
 		} else {
 		
-			PTCD  &= 0b01111111;
-			sample = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
+			AUDIO_AMP_ON;
+			sample8b = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 #ifdef XBEE
 			// On the XBee module we support 16bit converted uLaw samples.
 			// One to 8-bit channel 0, and one to 8-bit channel 1.  
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
 			// (By "shifting" the voltage of channel 0 by 256x.)
-			ulawSample = gPWMCenterValue - ulaw2linear(sample);
-			msbSample = (ulawSample >> 8) & 0xff;
-			lsbSample = ulawSample & 0xff;
+			sample16b = gPWMCenterValue - ulaw2linear(sample8b);
+			msbSample = (sample16b >> 8) & 0xff;
+			lsbSample = sample16b & 0xff;
 			// Only the lower 8 bits of each channel are in use.
 			PWM_LSB_CHANNEL = lsbSample;
 			PWM_MSB_CHANNEL = msbSample;
 #else
-			setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample);
+			setReg16(PWM_LSB_CHANNEL, gPWMCenterValue - sample8b);
 #endif
 				// Increment the buffer pointers.
 			gCurPWMOffset++;
@@ -233,7 +235,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				gCurPWMOffset = CMDPOS_CONTROL_DATA;
 				
 				// The buffers are a shared, critical resource, so we have to protect them before we update.
-				EnterCritical();
+				EnterCriticalArg(ccrHolder);
 				
 					// Indicate that the buffer is clear.
 					gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
@@ -247,7 +249,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 					if (gRXUsedBuffers > 0)
 						gRXUsedBuffers--;
 					
-				ExitCritical();
+				ExitCriticalArg(ccrHolder);
 					
 				// Adjust the sampling rate to account for mismatches in the OTA rate.				
 				// We can't go too low or high, or we'll end up missing 
@@ -280,7 +282,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 ** ===================================================================
 */
 
-bool gIsSleeping = 0;
+extern bool gIsSleeping;
 UINT8 inRTI = 0;
 #pragma NO_ENTRY 
 #pragma NO_EXIT 
@@ -297,10 +299,11 @@ ISR(dispatchRTI)
 {
 	if (!gIsSleeping) {
 		handleRTI();
+		SRTISC_RTIACK = 1;
+	} else {
+		// We get here if we got an RTI while in STOP (sleep) mode.
+		SRTISC_RTIACK = 1;
 	}
-
-	// We get here if we got an RTI while in STOP (sleep) mode.
-	SRTISC_RTIACK = 1;
 }
 
 /*

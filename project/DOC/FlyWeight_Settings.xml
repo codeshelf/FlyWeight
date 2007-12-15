@@ -978,7 +978,7 @@
 <Clock_source_select v="Bus rate clock"/>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
-<Period v="16 us"/>
+<Period v="12.8 us"/>
 
 </group>
 

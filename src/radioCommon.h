@@ -49,6 +49,11 @@
 #define KEYBOARD_QUEUE_SIZE		2
 
 //#define MASTER_TPM2_RATE		0x873
+#define SETUP_AUDIO_CONTROL		PTCDD |= 0b10000000;
+#define AUDIO_AMP_OFF			PTCD  |= 0b10000000;
+#define AUDIO_AMP_ON			PTCD  &= 0b01111111;
+#define ATD_ON					ATD1C_ATDPU = 1;
+#define ATD_OFF					ATD1C_ATDPU = 0;
 
 #define RTS_ON  				__asm bclr 6,0x00 //PTA7
 #define RTS_OFF  				__asm bset 6,0x00 //PTA7
@@ -66,15 +71,15 @@
 
 #define SMAC_TICKS_PER_MS		250
 
-#define RELEASE_RX_BUFFER(rxBufferNum)		EnterCritical(); \
+#define RELEASE_RX_BUFFER(rxBufferNum)		EnterCriticalArg(gCCRHolder); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
 											gRXUsedBuffers--; \
-											ExitCritical();
+											ExitCriticalArg(gCCRHolder);
 
-#define RELEASE_TX_BUFFER(txBufferNum)		EnterCritical(); \
+#define RELEASE_TX_BUFFER(txBufferNum)		EnterCriticalArg(gCCRHolder); \
 											gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
 											gTXUsedBuffers--; \
-											ExitCritical();
+											ExitCriticalArg(gCCRHolder);
 
 // --------------------------------------------------------------------------
 // Typedefs

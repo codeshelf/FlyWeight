@@ -6,7 +6,7 @@
 **     Beantype  : IO_Map
 **     Version   : Driver 01.06
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/5/2007, 2:58 PM
+**     Date/Time : 12/13/2007, 8:27 PM
 **     Abstract  :
 **         IO_Map.h - implements an IO device's mapping. 
 **         This module contains symbol definitions of all peripheral 

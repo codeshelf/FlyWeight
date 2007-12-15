@@ -39,8 +39,7 @@
 	 * 
 	 * In our application we want to know when the user let go of the key, so we run the process again
 	 * except that the KBI interrupts are looking for falling edges or low values.
-	 */
-	 
+	 */	 
 
 void KBISetup() {
 
@@ -60,15 +59,31 @@ void KBISetup() {
 	PTBD_PTBD0 = 1;
 	PTBD_PTBD1 = 1;
 }
+#define GET_BUTTON_PRESSED(buttonNumArg)  								\
+	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					\
+		/* Turn off the row outputs	*/									\
+		PTBD &= 0b11111100;												\
+		/* Set the current row to high. */								\
+		PTBD |= 1 << (row);												\
+																		\
+		/* Now check the columns. */									\
+		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				\
+			/* If the column is high then this is the key pressed. */	\
+			if (PTAD & (1 << (col + 5))) {								\
+				buttonNumArg = (row * 2)  + col + 1;					\
+			}															\
+		}																\
+	}																	\
 
 ISR(keyboardISR) {
 	
+	byte 	ccrHolder;
 	UINT8 	row;
 	UINT8 	col;
 	UINT8 	buttonNum = 0;
 	UINT8 	tickVal;
 	
-	EnterCritical();
+	EnterCriticalArg(ccrHolder);
 	
 	// Disable the KBI interrupt
 	KBI1SC_KBIE = 0;
@@ -78,20 +93,7 @@ ISR(keyboardISR) {
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
-	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {
-		// Turn off the row outputs
-		PTBD &= 0b11111100;
-		// Set the current row to high.
-		PTBD |= 1 << (row);
-		
-		// Now check the columns.
-		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {
-			// If the column is high then this is the key pressed.
-			if (PTAD & (1 << (col + 5))) {
-				buttonNum = (row * 2)  + col + 1;
-			}
-		}
-	}
+	GET_BUTTON_PRESSED(buttonNum);
 	
 	if (buttonNum > 0) {
 		// Now that we know what key we pressed send it to the controller.
@@ -103,7 +105,7 @@ ISR(keyboardISR) {
 		restartKeyboardISR();
 	}
 	
-	ExitCritical();
+	ExitCriticalArg(ccrHolder);
 }
 
 /*
@@ -124,23 +126,11 @@ void restartKeyboardISR(void) {
  */
 
 bool buttonStillPressed(UINT8 inButtonNum) {
-	bool result = FALSE;
+	UINT8 buttonNum;
 	UINT8 row;
 	UINT8 col;
 	
-#pragma MESSAGE DISABLE C2705 // We want just the integer part.
-	row = ((inButtonNum - 1)/ KEYBOARD_ROWS);
-	col = inButtonNum - (row * KEYBOARD_ROWS) - 1;
-
-	// Turn off the row outputs
-	PTBD &= 0b11111100;
-	// Set the current row to high.
-	PTBD |= 1 << (row);
+	GET_BUTTON_PRESSED(buttonNum);
 	
-	// If the button is still down then we'll register a 1 on PTB.
-	if (PTAD & (1 << (col + 5))) {
-		result = TRUE;
-	}
-
-	return result;
+	return (inButtonNum == buttonNum);
 }

@@ -32,8 +32,9 @@
 // Global variables.
 
 UINT8 				gu8RTxMode;
-extern bool			gIsSleeping;
+bool				gIsSleeping;
 bool				gShouldSleep;
+extern byte			gCCRHolder;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -66,6 +67,7 @@ BufferCntType		gTXUsedBuffers = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
+	byte				ccrHolder;
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
@@ -125,7 +127,7 @@ void radioReceiveTask(void *pvParameters) {
 
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
 						//vTaskDelay(250 * portTICK_RATE_MS);
-						EnterCritical();
+						EnterCriticalArg(ccrHolder);
 						gIsSleeping = TRUE;
 						Cpu_SetSlowSpeed();
 						MLMEHibernateRequest();
@@ -133,12 +135,12 @@ void radioReceiveTask(void *pvParameters) {
 						TPM2SC_TOIE = 0;
 						SRTISC_RTICLKS = 0;
 						//SRTISC_RTIS = 0;
-						SRTISC_RTIS = 7;
-						ExitCritical();
+						SRTISC_RTIS = 5;
+						ExitCriticalArg(ccrHolder);
 						
 						__asm("STOP")
 						
-						EnterCritical();
+						EnterCriticalArg(ccrHolder);
 						gIsSleeping = FALSE;
 						MLMEWakeRequest();
 						// Wait for the MC13192's modem ClkO to warm up.
@@ -148,7 +150,7 @@ void radioReceiveTask(void *pvParameters) {
 						SRTISC_RTIS = 4;
 						//TPM1SC_TOIE = 1;
 						TPM2SC_TOIE = 1;
-						ExitCritical();
+						ExitCriticalArg(ccrHolder);
 					}
 		
 				} else {
