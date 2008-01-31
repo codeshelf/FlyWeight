@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFB
 **     Version   : Bean 01.101, Driver 01.21, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/13/2007, 8:27 PM
+**     Date/Time : 1/15/2008, 2:26 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_44" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -36,7 +36,7 @@ extern void _EntryPoint(void);
 void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
          dispatchRTI,                  /* Int.no.  0 Vrti (at FFCC)                  Used */
          Cpu_Interrupt,                /* Int.no.  1 Viic1 (at FFCE)                 Unassigned */
-         Cpu_Interrupt,                /* Int.no.  2 Vatd1 (at FFD0)                 Unassigned */
+         testadc,                      /* Int.no.  2 Vatd1 (at FFD0)                 Used */
          keyboardISR,                  /* Int.no.  3 Vkeyboard1 (at FFD2)            Used */
          Cpu_Interrupt,                /* Int.no.  4 Vsci2tx (at FFD4)               Unassigned */
          Cpu_Interrupt,                /* Int.no.  5 Vsci2rx (at FFD6)               Unassigned */

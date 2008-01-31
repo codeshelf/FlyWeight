@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.062, Driver 01.06, CPU db: 2.87.086
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/13/2007, 3:20 PM
+**     Date/Time : 1/15/2008, 2:37 AM
 **     Abstract  :
 **          This file implements the ADC (ATD1) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -15,15 +15,15 @@
 **     Settings  :
 **          Bean name                                      : ADC1
 **          Device                                         : ATD1
-**          Prescaler                                      : 10
-**          Sample time                                    : 32 us
+**          Prescaler                                      : 4
+**          Sample time                                    : 14.6 us
 **          Conversion mode                                : Continuous conversion
 **          Result data formats                            : 10-bit/right justified/unsigned
 **          ADC Channels                                   : 1
 **          Pins                                           : PTB2_AD1P2
 **          Interrupt                                      : Vatd1
-**          Conversion complete interrupt                  : Disabled
-**          ISR name                                       : 
+**          Conversion complete interrupt                  : Enabled
+**          ISR name                                       : testadc
 **          Initial channel select                         : Channel 2
 **          Call Init method                               : yes
 **          Enable module                                  : Enabled
@@ -56,6 +56,13 @@
 #include "Cpu.h"
 
 
+/*
+** ===================================================================
+** The interrupt service routine must be implemented by user in one
+** of the user modules (see ADC1.c file for more information).
+** ===================================================================
+*/
+__interrupt void testadc(void);
 
 void ADC1_Init(void);
 /*

@@ -98,6 +98,10 @@ void TimerInt(void)
 	vPortTickInterrupt();
 }
 
+interrupt void testadc(void) {
+	UINT16 adcval = ATD1R;
+}
+
 /*
 ** ===================================================================
 **     Event       :  AudioLoader_OnInterrupt (module Events)

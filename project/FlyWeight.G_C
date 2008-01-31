@@ -31,7 +31,7 @@ ShrdCodeAge3=932029281
 ShrdAsemblAge3=-1
 GenExtraFiles=1
 Line=CODE\Vectors.c
-XtraAge0=932029281
+XtraAge0=942609219
 GenExtraFileType0=4
 GenEventModules=0
 GenAllModules=12
@@ -58,7 +58,7 @@ Line=KBI
 Line=ADC1
 SignalListFile=DOC\FlyWeight_SIGNALS.txt
 DestinationCompiler=MetrowerksHCS08CC
-ProjectModificationStamp=874
+ProjectModificationStamp=880
 
 [30]
 Generated=Yes
@@ -995,13 +995,13 @@ LineEnd=116
 Generated=Yes
 GenCompName=ADC1
 GenEventModule=
-HeaderAge=932018817
-CodeAge=932018817
+HeaderAge=942609589
+CodeAge=942609589
 AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ISRHandleName=
+ISR_ISRHandleName=testadc
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -1009,13 +1009,13 @@ GenMethodPos=2
 MethodPos0=Init
 MethodType=method
 ModuleType=Header
-LineBeg=59
-LineEnd=74
+LineBeg=66
+LineEnd=81
 MethodPos1=Init
 MethodType=method
 ModuleType=Code
-LineBeg=46
-LineEnd=68
+LineBeg=74
+LineEnd=96
 
 [UsedSrcFiles]
 SrcFile=Drivers\SW\_PE_ProjectInfo.drv=857891962
