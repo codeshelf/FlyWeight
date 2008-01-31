@@ -30,9 +30,18 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "SW2.h"
+#include "SW3.h"
+#include "SW4.h"
+#include "LED1.h"
+#include "LED2.h"
+#include "LED3.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
+#include "PWM_EVB.h"
+#include "AudioOut.h"
+#include "USB.h"
 
 void SW1Int_OnInterrupt(void);
 /*

@@ -3,6 +3,7 @@
 
 /*Including used modules for compilling procedure*/
 #include "Cpu.h"
+#include "Events.h"
 
 /*Include shared modules, which are used for whole project*/
 #include "PE_Types.h"

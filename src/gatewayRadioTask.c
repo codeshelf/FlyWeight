@@ -25,6 +25,7 @@
 // Global variables.
 
 UINT8 				gu8RTxMode;
+extern byte			gCCRHolder;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;

@@ -23,6 +23,8 @@ $Name$
 
 xQueueHandle			gGatewayMgmtQueue;
 ControllerStateType		gControllerState;
+extern byte				gCCRHolder;
+
 
 // --------------------------------------------------------------------------
 

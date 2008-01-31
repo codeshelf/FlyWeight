@@ -25,13 +25,19 @@
 
 /* Including used modules for compiling procedure */
 #include "Cpu.h"
+#include "Events.h"
+#include "SW2.h"
+#include "SW3.h"
+#include "SW4.h"
+#include "LED1.h"
+#include "LED2.h"
+#include "LED3.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM_XBee.h"
+#include "PWM_EVB.h"
 #include "AudioOut.h"
-#include "KBI.h"
-#include "ADC1.h"
+#include "USB.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

@@ -41,7 +41,7 @@ BF_LicensedOnly=Yes
 Status=Visible
 WindowState=NORMAL
 Rect=[4|90|1050|596]
-ObjInspectorDockedWithPrphInit=Yes
+ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
 ColWidth11=188
@@ -56,9 +56,9 @@ OptionsViewItemLevel=EXPERT
 ViewItemLevel=EXPERT
 
 [PrphInspector]
-Status=Visible
+Status=hiden
 WindowState=NORMAL
-Rect=[1054|90|453|596]
+Rect=[814|96|453|596]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No

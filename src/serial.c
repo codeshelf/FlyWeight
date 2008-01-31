@@ -205,7 +205,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 
 void checkUSBInterface() {
 
-	byte 			ccr;
+	byte 			ccrHolder;
 	UINT8			loopCheck;
 	USB_TComData	lostChar;
 	
