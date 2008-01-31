@@ -519,7 +519,13 @@ void USB_Init(void)
 }
 
 
+void USB_SetHigh(void) {
+	
+}
 
+void USB_SetSlow(void) {
+	
+}
 /* END USB. */
 
 

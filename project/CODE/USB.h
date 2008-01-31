@@ -112,6 +112,8 @@ extern byte USB_OutLen;                /* Length of the output buffer content */
 extern byte USB_InpLen;                /* Length of the input buffer content */
 
 void getFromRXBuffer(void);
+void USB_SetHigh(void);
+void USB_SetSlow(void);
 
 byte USB_RecvChar(USB_TComData *Chr);
 /*
