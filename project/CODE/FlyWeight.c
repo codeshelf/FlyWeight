@@ -32,11 +32,11 @@
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM_EVB.h"
-#include "AudioOut.h"
+#include "WatchDog.h"
 #include "USB.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"

@@ -36,11 +36,11 @@
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM_EVB.h"
-#include "AudioOut.h"
+#include "WatchDog.h"
 #include "USB.h"
 
 void SW1Int_OnInterrupt(void);

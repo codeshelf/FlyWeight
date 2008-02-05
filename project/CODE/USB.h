@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 7/24/2007, 5:05 PM
+**     Date/Time : 2/4/2008, 4:56 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -15,7 +15,7 @@
 **         Communication speed can be changed also in runtime.
 **         The bean requires one on-chip asynchronous serial channel.
 **     Settings  :
-**         Serial channel              : SCI2
+**         Serial channel              : SCI1
 **
 **         Protocol
 **             Init baud rate          : 312500baud
@@ -25,25 +25,25 @@
 **             Breaks                  : Disabled
 **
 **         Registers
-**             Input buffer            : SCI2D     [0027]
-**             Output buffer           : SCI2D     [0027]
-**             Control register        : SCI2C1    [0022]
-**             Mode register           : SCI2C2    [0023]
-**             Baud setting reg.       : SCI2BD    [0020]
-**             Special register        : SCI2S1    [0024]
+**             Input buffer            : SCI1D     [001F]
+**             Output buffer           : SCI1D     [001F]
+**             Control register        : SCI1C1    [001A]
+**             Mode register           : SCI1C2    [001B]
+**             Baud setting reg.       : SCI1BD    [0018]
+**             Special register        : SCI1S1    [001C]
 **
 **         Input interrupt
-**             Vector name             : Vsci2rx
+**             Vector name             : Vsci1rx
 **
 **         Output interrupt
-**             Vector name             : Vsci2tx
+**             Vector name             : Vsci1tx
 **
 **         Used pins:
 **         ----------------------------------------------------------
 **           Function | On package           |    Name
 **         ----------------------------------------------------------
-**            Input   |     3                |  PTC1_RxD2
-**            Output  |     2                |  PTC0_TxD2
+**            Input   |     11               |  PTE1_RxD1
+**            Output  |     10               |  PTE0_TxD1
 **             RTS    |     41               |  PTA6_KBI1P6
 **         ----------------------------------------------------------
 **

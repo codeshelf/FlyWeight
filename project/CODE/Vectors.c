@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.085, Driver 01.21, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 1/30/2008, 5:51 PM
+**     Date/Time : 2/4/2008, 4:56 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -30,11 +30,11 @@
 #include "LED1.h"
 #include "LED2.h"
 #include "LED3.h"
+#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "PWM_EVB.h"
-#include "AudioOut.h"
+#include "WatchDog.h"
 #include "USB.h"
 extern void _EntryPoint(void);
 
@@ -43,14 +43,14 @@ void (* const _vect[])() @0xFFCC = {   /* Interrupt vector table */
          Cpu_Interrupt,                /* Int.no.  1 Viic1 (at FFCE)                 Unassigned */
          Cpu_Interrupt,                /* Int.no.  2 Vatd1 (at FFD0)                 Unassigned */
          Cpu_Interrupt,                /* Int.no.  3 Vkeyboard1 (at FFD2)            Unassigned */
-         USB_InterruptTx,              /* Int.no.  4 Vsci2tx (at FFD4)               Used */
-         USB_InterruptRx,              /* Int.no.  5 Vsci2rx (at FFD6)               Used */
-         USB_InterruptError,           /* Int.no.  6 Vsci2err (at FFD8)              Used */
-         Cpu_Interrupt,                /* Int.no.  7 Vsci1tx (at FFDA)               Unassigned */
-         Cpu_Interrupt,                /* Int.no.  8 Vsci1rx (at FFDC)               Unassigned */
-         Cpu_Interrupt,                /* Int.no.  9 Vsci1err (at FFDE)              Unassigned */
+         Cpu_Interrupt,                /* Int.no.  4 Vsci2tx (at FFD4)               Unassigned */
+         Cpu_Interrupt,                /* Int.no.  5 Vsci2rx (at FFD6)               Unassigned */
+         Cpu_Interrupt,                /* Int.no.  6 Vsci2err (at FFD8)              Unassigned */
+         USB_InterruptTx,              /* Int.no.  7 Vsci1tx (at FFDA)               Used */
+         USB_InterruptRx,              /* Int.no.  8 Vsci1rx (at FFDC)               Used */
+         USB_InterruptError,           /* Int.no.  9 Vsci1err (at FFDE)              Used */
          Cpu_Interrupt,                /* Int.no. 10 Vspi1 (at FFE0)                 Unassigned */
-         AudioLoader_OnInterrupt,      /* Int.no. 11 Vtpm2ovf (at FFE2)              Used */
+         Cpu_Interrupt,                /* Int.no. 11 Vtpm2ovf (at FFE2)              Unassigned */
          Cpu_Interrupt,                /* Int.no. 12 Reserved12 (at FFE4)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 13 Reserved13 (at FFE6)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 14 Reserved14 (at FFE8)            Unassigned */

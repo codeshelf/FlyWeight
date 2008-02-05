@@ -187,9 +187,9 @@
 </Properties>
 
 <Methods>
-<SetHighSpeed v="generate code"/>
+<SetHighSpeed v="don&apos;t generate code"/>
 <SetLowSpeed v="don&apos;t generate code"/>
-<SetSlowSpeed v="generate code"/>
+<SetSlowSpeed v="don&apos;t generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
 <GetIntVect v="don&apos;t generate code"/>
@@ -698,7 +698,7 @@
 </Bean>
 
 <Bean name="LED4" type="BitIO">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="LED4"/>
@@ -814,7 +814,7 @@
 </Bean>
 
 <Bean name="WatchDog" type="WatchDog">
-<Enabled v="N"/>
+<Enabled v="Y"/>
 
 <Properties>
 <Bean_name v="WatchDog"/>
@@ -979,7 +979,7 @@
 </Bean>
 
 <Bean name="PWM_EVB" type="Init_TPM">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="PWM_EVB"/>
@@ -1191,7 +1191,7 @@
 </Bean>
 
 <Bean name="AudioOut" type="InterruptVector">
-<Enabled v="Y"/>
+<Enabled v="N"/>
 
 <Properties>
 <Bean_name v="AudioOut"/>
@@ -1215,13 +1215,13 @@
 
 <Properties>
 <Bean_name v="USB"/>
-<Channel v="SCI2"/>
+<Channel v="SCI1"/>
 
 <boolgroup name="Interrupt service/event" v="Enabled">
-<Interrupt v="Vsci2err"/>
-<Interrupt_RxD v="Vsci2rx"/>
+<Interrupt v="Vsci1err"/>
+<Interrupt_RxD v="Vsci1rx"/>
 <Interrupt_RxD_priority v="medium priority"/>
-<Interrupt_TxD v="Vsci2tx"/>
+<Interrupt_TxD v="Vsci1tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
 <Input_buffer_size v="150"/>
 <Output_buffer_size v="5"/>
@@ -1252,13 +1252,13 @@
 </enumgroup>
 
 <boolgroup name="Receiver" v="Enabled">
-<RxD v="PTC1_RxD2"/>
+<RxD v="PTE1_RxD1"/>
 <RxD_pin_signal v="RX"/>
 
 </boolgroup>
 
 <boolgroup name="Transmitter" v="Enabled">
-<TxD v="PTC0_TxD2"/>
+<TxD v="PTE0_TxD1"/>
 <TxD_pin_signal v="TX"/>
 
 </boolgroup>
@@ -1424,8 +1424,8 @@
 
 <group name="Clock settings">
 <Prescaler v="4"/>
-<Frequency v="2000 kHz"/>
-<Conversion_time v="14.6 us"/>
+<Frequency v="? kHz"/>
+<Conversion_time v="? us"/>
 
 </group>
 <Conversion_mode v="Continuous conversion"/>

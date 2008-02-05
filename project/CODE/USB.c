@@ -6,7 +6,7 @@
 **     Beantype  : AsynchroSerial
 **     Version   : Bean 02.333, Driver 01.12, CPU db: 2.87.074
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 7/24/2007, 5:05 PM
+**     Date/Time : 2/4/2008, 4:56 PM
 **     Abstract  :
 **         This bean "AsynchroSerial" implements an asynchronous serial
 **         communication. The bean supports different settings of
@@ -15,7 +15,7 @@
 **         Communication speed can be changed also in runtime.
 **         The bean requires one on-chip asynchronous serial channel.
 **     Settings  :
-**         Serial channel              : SCI2
+**         Serial channel              : SCI1
 **
 **         Protocol
 **             Init baud rate          : 312500baud
@@ -25,25 +25,25 @@
 **             Breaks                  : Disabled
 **
 **         Registers
-**             Input buffer            : SCI2D     [0027]
-**             Output buffer           : SCI2D     [0027]
-**             Control register        : SCI2C1    [0022]
-**             Mode register           : SCI2C2    [0023]
-**             Baud setting reg.       : SCI2BD    [0020]
-**             Special register        : SCI2S1    [0024]
+**             Input buffer            : SCI1D     [001F]
+**             Output buffer           : SCI1D     [001F]
+**             Control register        : SCI1C1    [001A]
+**             Mode register           : SCI1C2    [001B]
+**             Baud setting reg.       : SCI1BD    [0018]
+**             Special register        : SCI1S1    [001C]
 **
 **         Input interrupt
-**             Vector name             : Vsci2rx
+**             Vector name             : Vsci1rx
 **
 **         Output interrupt
-**             Vector name             : Vsci2tx
+**             Vector name             : Vsci1tx
 **
 **         Used pins:
 **         ----------------------------------------------------------
 **           Function | On package           |    Name
 **         ----------------------------------------------------------
-**            Input   |     3                |  PTC1_RxD2
-**            Output  |     2                |  PTC0_TxD2
+**            Input   |     11               |  PTE1_RxD1
+**            Output  |     10               |  PTE0_TxD1
 **             RTS    |     41               |  PTA6_KBI1P6
 **         ----------------------------------------------------------
 **
@@ -148,10 +148,10 @@ static USB_TComData OutBuffer[USB_OUT_BUF_SIZE]; /* Output buffer for SCI commmu
 byte USB_RecvChar(USB_TComData *Chr)
 {
   byte Result = ERR_OK;                /* Return error code */
-  
+
   // First check to see if RDRF is high.
   // This would indicate the receipt of a character when global interrupts were disabled.
-  if (SCI2S1_RDRF)
+  if (SCI1S1_RDRF)
   	getFromRXBuffer();
 
   if(USB_InpLen > 0) {                 /* Is number of received chars greater than 0? */
@@ -210,7 +210,7 @@ byte USB_SendChar(USB_TComData Chr)
   OutBuffer[OutIndxW] = Chr;           /* Store char to buffer */
   if (++OutIndxW >= USB_OUT_BUF_SIZE)  /* Is the index out of the buffer? */
     OutIndxW = 0;                      /* Set the index to the start of the buffer */
-  SCI2C2_TIE = 1;                      /* Enable transmit interrupt */
+  SCI1C2_TIE = 1;                      /* Enable transmit interrupt */
   //ExitCritical();                      /* Restore the PS register */
   return ERR_OK;                       /* OK */
 }
@@ -401,11 +401,11 @@ ISR(USB_InterruptRx) {
 // This results in overruns.
 void getFromRXBuffer() {
   USB_TComData Data;                   /* Temporary variable for data */
-  byte StatReg = getReg(SCI2S1);
+  byte StatReg = getReg(SCI1S1);
   byte OnFlags = 0;                    /* Temporary variable for flags */
 
   //PTAD |= 0x40;
-  Data = SCI2D;                        /* Read data from the receiver */
+  Data = SCI1D;                        /* Read data from the receiver */
   if(USB_InpLen < USB_INP_BUF_SIZE) {  /* Is number of bytes in the receive buffer lower than size of buffer? */
     USB_InpLen++;                      /* Increse number of chars in the receive buffer */
     InpBuffer[InpIndxW] = Data;        /* Save received char to the receive buffer */
@@ -444,13 +444,13 @@ ISR(USB_InterruptTx)
   if(USB_OutLen) {                     /* Is number of bytes in the transmit buffer greater then 0? */
     USB_OutLen--;                      /* Decrease number of chars in the transmit buffer */
     SerFlag |= RUNINT_FROM_TX;         /* Set flag "running int from TX"? */
-    SCI2S1;                            /* Reset interrupt request flag */
-    SCI2D = OutBuffer[OutIndxR];       /* Store char to transmitter register */
+    SCI1S1;                            /* Reset interrupt request flag */
+    SCI1D = OutBuffer[OutIndxR];       /* Store char to transmitter register */
     if (++OutIndxR >= USB_OUT_BUF_SIZE) /* Is the index out of the buffer? */
       OutIndxR = 0;                    /* Set the index to the start of the buffer */
   }
   else {
-    SCI2C2_TIE = 0;                    /* Disable transmit interrupt */
+    SCI1C2_TIE = 0;                    /* Disable transmit interrupt */
   }
 }
 
@@ -466,21 +466,21 @@ ISR(USB_InterruptTx)
 */
 ISR(USB_InterruptError)
 {
-  byte StatReg = getReg(SCI2S1);
+  byte StatReg = getReg(SCI1S1);
   byte OnFlags = 0;                    /* Temporary variable for flags */
 
-  if(StatReg & SCI2S1_OR_MASK)         /* Is overrun error detected? */
+  if(StatReg & SCI1S1_OR_MASK)         /* Is overrun error detected? */
     OnFlags |= OVERRUN_ERR;            /* If yes then set an internal flag */
-  if(StatReg & SCI2S1_NF_MASK)         /* Is noise error detected? */
+  if(StatReg & SCI1S1_NF_MASK)         /* Is noise error detected? */
     OnFlags |= NOISE_ERR;              /* If yes then set an internal flag */
-  if (StatReg & SCI2S1_FE_MASK) {      /* Is framing error detected? */
+  if (StatReg & SCI1S1_FE_MASK) {      /* Is framing error detected? */
     OnFlags |= FRAMING_ERR;            /* If yes then set an internal flag */
     }
-  if(StatReg & SCI2S1_PF_MASK)
+  if(StatReg & SCI1S1_PF_MASK)
     OnFlags |= PARITY_ERR;
   SerFlag |= OnFlags;                  /* Copy flags status to SerFlag status variable */
   ErrFlag |= OnFlags;                  /* Copy flags status to ErrFlag status variable */
-  SCI2D;                               /* Dummy read of data register - clear error bits */
+  SCI1D;                               /* Dummy read of data register - clear error bits */
   if(SerFlag & (OVERRUN_ERR|FRAMING_ERR|PARITY_ERR|NOISE_ERR)) { /* Was any error set? */
     USB_OnError();                     /* If yes then invoke user event */
   }
@@ -504,27 +504,27 @@ void USB_Init(void)
   InpIndxR = InpIndxW = 0;             /* Reset indices */
   USB_OutLen = 0;                      /* No char in the transmit buffer */
   OutIndxR = OutIndxW = 0;             /* Reset indices */
-  /* SCI2C1: LOOPS=0,SCISWAI=0,RSRC=0,M=0,WAKE=0,ILT=0,PE=0,PT=0 */
-  setReg8(SCI2C1, 0x00);               /* Configure the SCI */ 
-  /* SCI2C3: R8=0,T8=0,TXDIR=0,??=0,ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
-  setReg8(SCI2C3, 0x00);               /* Disable error interrupts */ 
-  /* SCI2C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
-  setReg8(SCI2C2, 0x00);               /* Disable all interrupts */ 
-  SCI2BDH = 0x00;                      /* Set high divisor register (enable device) */
-  SCI2BDL = 0x01;                      /* Set low divisor register (enable device) */
+  /* SCI1C1: LOOPS=0,SCISWAI=0,RSRC=0,M=0,WAKE=0,ILT=0,PE=0,PT=0 */
+  setReg8(SCI1C1, 0x00);               /* Configure the SCI */ 
+  /* SCI1C3: R8=0,T8=0,TXDIR=0,??=0,ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
+  setReg8(SCI1C3, 0x00);               /* Disable error interrupts */ 
+  /* SCI1C2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
+  setReg8(SCI1C2, 0x00);               /* Disable all interrupts */ 
+  SCI1BDH = 0x00;                      /* Set high divisor register (enable device) */
+  SCI1BDL = 0x01;                      /* Set low divisor register (enable device) */
       /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
-  SCI2C3 |= 0x0F;                      /* Enable error interrupts */
+  SCI1C3 |= 0x0F;                      /* Enable error interrupts */
   //SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK | SCI2C2_RIE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
-  SCI2C2 |= ( SCI2C2_TE_MASK | SCI2C2_RE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
+  SCI1C2 |= ( SCI1C2_TE_MASK | SCI1C2_RE_MASK); /*  Enable transmitter, Enable receiver, Enable receiver interrupt */
 }
 
 
 void USB_SetHigh(void) {
-	
+
 }
 
 void USB_SetSlow(void) {
-	
+
 }
 /* END USB. */
 
