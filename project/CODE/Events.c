@@ -3,7 +3,6 @@
 
 /*Including used modules for compilling procedure*/
 #include "Cpu.h"
-#include "Events.h"
 
 /*Include shared modules, which are used for whole project*/
 #include "PE_Types.h"
@@ -100,7 +99,11 @@ void TimerInt(void)
 }
 
 interrupt void testadc(void) {
+#if defined(XBEE)
 	UINT16 adcval = ATD1R;
+#elif defined(MC1321X)
+	UINT16 adcval = ATDR;
+#endif
 }
 
 /*
@@ -123,6 +126,9 @@ interrupt void testadc(void) {
 #ifdef XBEE
 	#define PWM_LSB_CHANNEL		TPM1C0V
 	#define PWM_MSB_CHANNEL		TPM1C1V
+#elif defined(MC1321X)
+	#define PWM_LSB_CHANNEL		TPM2C2V
+	#define PWM_MSB_CHANNEL		TPM2C3V
 #else
 	#define PWM_LSB_CHANNEL		TPM1C2V
 #endif
@@ -131,7 +137,7 @@ interrupt void testadc(void) {
 bool				gAudioModeRX = TRUE;
 
 //UINT16			gPWMMaxValue = 0xff;
-#ifdef XBEE
+#if defined(XBEE) || defined(MC1321X)
 UINT16				gPWMCenterValue = 0x7fff;
 #else
 UINT16				gPWMCenterValue = 0x7f;
@@ -155,7 +161,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 	byte	ccrHolder;
 	UINT8	sample8b;
-#ifdef XBEE
+#if defined(XBEE) || defined(MC1321X)
 	INT16	sample16b;
 	UINT8	lsbSample;
 	UINT8	msbSample;
@@ -166,7 +172,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
 	if (!gAudioModeRX) {
-#ifdef XBEE
+#if defined(XBEE) || defined(MC1321X)
 		// TX MODE
 		
 		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
@@ -180,7 +186,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gBufferStarted = TRUE;
 		} else {
 			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
-				sample16b = ATD1R << 5;
+				sample16b = ATDR << 5;
 				sample8b = linear2ulaw(sample16b);
 				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
 			} else {
@@ -200,7 +206,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
 			&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 		
-#ifdef XBEE
+#if defined(XBEE) || defined(MC1321X)
 			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 			//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
 #else
@@ -219,8 +225,8 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		
 			AUDIO_AMP_ON;
 			sample8b = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
-#ifdef XBEE
-			// On the XBee module we support 16bit converted uLaw samples.
+#if defined(XBEE) || defined(MC1321X)
+			// On the MC1321X or XBee module we support 16bit converted uLaw samples.
 			// One to 8-bit channel 0, and one to 8-bit channel 1.  
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
 			// (By "shifting" the voltage of channel 0 by 256x.)

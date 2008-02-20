@@ -22,9 +22,11 @@
 
 // SMAC includes
 #include "pub_def.h"
-#ifdef XBEE
+#if defined(XBEE)
 	#include "PWM_XBee.h"
-#else
+#elif defined(MC1321X)
+	#include "PWM_MC1321X.h"
+#elif defined(MC13192EVB)
 	#include "PWM_EVB.h"
 #endif
 
@@ -84,8 +86,10 @@ void radioReceiveTask(void *pvParameters) {
 		TPM2MOD = gMasterSampleRate;	
 		
 		//PWM1_Enable();
-#ifdef XBEE
+#if defined(XBEE)
 		PWM_XBee_Init();
+#elif defined(MC1321X)
+		PWM_MC1321X_Init();
 #else
 		PWM_EVB_Init();
 #endif

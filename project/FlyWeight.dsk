@@ -23,7 +23,7 @@ ViewSizeIndex=0
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[53|622|722|313]
+Rect=[49|653|722|313]
 
 [ResourceMeter]
 Status=hiden
@@ -40,7 +40,7 @@ BF_LicensedOnly=Yes
 [ObjInspector]
 Status=Visible
 WindowState=NORMAL
-Rect=[4|90|1050|596]
+Rect=[4|90|1064|668]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -58,11 +58,11 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[814|96|453|596]
+Rect=[717|188|354|668]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
-Peripheral=ATD1
+Peripheral=CPU
 
 [Editor]
 Rect=[-4|0|1199|990]

@@ -44,14 +44,14 @@
 void KBISetup() {
 
 	// KBI1SC: KBIE=0
-	clrReg8Bits(KBI1SC, 0x02);            
+	clrReg8Bits(KBISC, 0x02);            
 	// KBI1PE: KBIPE7=0,KBIPE6=1,KBIPE5=1,KBIPE4=0,KBIPE3=0,KBIPE2=0,KBIPE1=0,KBIPE0=0
-	setReg8(KBI1PE, 0x60);                
+	setReg8(KBIPE, 0x60);                
 	
 	// KBI1SC: KBACK=1
-	setReg8Bits(KBI1SC, 0x04);            
+	setReg8Bits(KBISC, 0x04);            
 	// KBI1SC: KBIE=1
-	setReg8Bits(KBI1SC, 0x02);            
+	setReg8Bits(KBISC, 0x02);            
 	
 	// Setup the rows as outputs and assert them. 
 	PTBDD_PTBDD0 = 1;
@@ -86,7 +86,7 @@ ISR(keyboardISR) {
 	EnterCriticalArg(ccrHolder);
 	
 	// Disable the KBI interrupt
-	KBI1SC_KBIE = 0;
+	KBISC_KBIE = 0;
 	
 	// Debounce delay for 4ms
 	tickVal = xTaskGetTickCount() + (4 * portTICK_RATE_MS);
@@ -117,8 +117,8 @@ void restartKeyboardISR(void) {
 	PTBD |= 0b00000011;
 
 	// Acknowledge the interrupt and re-enable KBIE, so that we can get another.
-	KBI1SC_KBACK = 1;
-	KBI1SC_KBIE = 1;	
+	KBISC_KBACK = 1;
+	KBISC_KBIE = 1;	
 }
 
 /*

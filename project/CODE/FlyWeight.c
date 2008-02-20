@@ -25,19 +25,14 @@
 
 /* Including used modules for compiling procedure */
 #include "Cpu.h"
-#include "Events.h"
-#include "SW2.h"
-#include "SW3.h"
-#include "SW4.h"
-#include "LED1.h"
-#include "LED2.h"
-#include "LED3.h"
-#include "LED4.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "USB.h"
+#include "PWM_MC1321X.h"
+#include "AudioLoader_MC1321X.h"
+#include "MIC_MC1321X.h"
+#include "KBI_MC1321X.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

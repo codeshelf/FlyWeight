@@ -49,11 +49,19 @@
 #define KEYBOARD_QUEUE_SIZE		2
 
 //#define MASTER_TPM2_RATE		0x873
-#define SETUP_AUDIO_CONTROL		PTCDD |= 0b10000000;
-#define AUDIO_AMP_OFF			PTCD  |= 0b10000000;
-#define AUDIO_AMP_ON			PTCD  &= 0b01111111;
-#define ATD_ON					ATD1C = 0xC4;  ATD1SC = 0xE2;//ATD1SC_CCF = 1; ATD1C_ATDPU = 1;
-#define ATD_OFF					ATD1C_ATDPU = 0;
+#if defined(XBEE)
+	#define SETUP_AUDIO_CONTROL		PTCDD |= 0b10000000;
+	#define AUDIO_AMP_OFF			PTCD  |= 0b10000000;
+	#define AUDIO_AMP_ON			PTCD  &= 0b01111111;
+	#define ATD_ON					ATD1C = 0xC4;  ATD1SC = 0xE2;//ATD1SC_CCF = 1; ATD1C_ATDPU = 1;
+	#define ATD_OFF					ATD1C_ATDPU = 0;
+#elif defined(MC1321X)
+	#define SETUP_AUDIO_CONTROL		PTCDD |= 0b10000000;
+	#define AUDIO_AMP_OFF			PTCD  |= 0b10000000;
+	#define AUDIO_AMP_ON			PTCD  &= 0b01111111;
+	#define ATD_ON					ATDC = 0xC4;  ATDSC = 0xE2;//ATDSC_CCF = 1; ATDC_ATDPU = 1;
+	#define ATD_OFF					ATDC_ATDPU = 0;
+#endif
 
 #define RTS_ON  				__asm bclr 6,0x00 //PTA7
 #define RTS_OFF  				__asm bset 6,0x00 //PTA7
