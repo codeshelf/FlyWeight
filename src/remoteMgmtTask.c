@@ -24,6 +24,7 @@ void remoteMgmtTask( void *pvParameters ) {
 	BufferCntType		rxBufferNum = 0;
 	ChannelNumberType	channel;
 	bool				associated;
+	UINT8				trim = 128;
 
 	if ( gRemoteMgmtQueue ) {
 		
@@ -61,6 +62,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			
 			// If we're still not associated then change channels.
 			if (!associated) {
+				MLMEMC13192XtalAdjust(trim--);
 				channel++;
 				if (channel > 16) {
 					channel = 0;

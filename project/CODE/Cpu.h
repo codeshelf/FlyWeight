@@ -7,7 +7,7 @@
 **     Version   : Bean 01.034, Driver 01.21, CPU db: 2.87.087
 **     Datasheet : MC1321x Rev. 1.0, Draft E, 06/2005
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/19/2008, 5:00 PM
+**     Date/Time : 2/28/2008, 1:33 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core

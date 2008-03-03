@@ -28,7 +28,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "PWM_MC1321X.h"
 #include "AudioLoader_MC1321X.h"
 #include "MIC_MC1321X.h"

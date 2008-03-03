@@ -131,7 +131,7 @@ void radioReceiveTask(void *pvParameters) {
 
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
 						//vTaskDelay(250 * portTICK_RATE_MS);
-						EnterCriticalArg(ccrHolder);
+/*						EnterCriticalArg(ccrHolder);
 						gIsSleeping = TRUE;
 						Cpu_SetSlowSpeed();
 						MLMEHibernateRequest();
@@ -155,7 +155,7 @@ void radioReceiveTask(void *pvParameters) {
 						//TPM1SC_TOIE = 1;
 						TPM2SC_TOIE = 1;
 						ExitCriticalArg(ccrHolder);
-					}
+*/					}
 		
 				} else {
 					// The last read got a packet, so we're active.

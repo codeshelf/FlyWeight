@@ -23,7 +23,7 @@ ViewSizeIndex=0
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[49|653|722|313]
+Rect=[33|640|722|313]
 
 [ResourceMeter]
 Status=hiden
@@ -58,7 +58,7 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[717|188|354|668]
+Rect=[779|120|354|668]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
@@ -109,8 +109,8 @@ Rect=[0|0|0|0]
 Rect=[64|35|449|697]
 
 [StrListEditor]
-WindowWidth=450
-WindowHeight=333
+WindowWidth=639
+WindowHeight=549
 
 [Breakpoints]
 WindowVisible=No

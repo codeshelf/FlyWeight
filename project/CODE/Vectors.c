@@ -5,7 +5,7 @@
 **     Processor : MC13213R2
 **     Version   : Bean 01.034, Driver 01.21, CPU db: 2.87.087
 **     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/19/2008, 5:00 PM
+**     Date/Time : 2/29/2008, 2:57 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -27,7 +27,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "PWM_MC1321X.h"
 #include "AudioLoader_MC1321X.h"
 #include "MIC_MC1321X.h"

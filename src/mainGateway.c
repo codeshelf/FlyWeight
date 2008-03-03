@@ -23,7 +23,9 @@
 #include "ledBlinkTask.h"
 #include "commands.h"
 #include "CPU.h"
-#include "WatchDog.h"
+#ifdef __WatchDog
+	#include "WatchDog.h"
+#endif
 #include "NV_Data.h"
 
 // --------------------------------------------------------------------------
@@ -76,6 +78,7 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-	// Clear the watchdog timer.
+	#ifdef __WatchDog
 	WatchDog_Clear();
+	#endif
 }

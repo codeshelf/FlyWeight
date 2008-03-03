@@ -84,7 +84,6 @@ void vMain( void ) {
 
 void vApplicationIdleHook( void ) {
 #ifdef __WatchDog
-	// Clear the watchdog timer.
 	WatchDog_Clear();
 #endif
 }
