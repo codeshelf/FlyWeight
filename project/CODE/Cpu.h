@@ -4,10 +4,10 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : MC13214
-**     Version   : Bean 01.034, Driver 01.21, CPU db: 2.87.087
-**     Datasheet : MC1321x Rev. 1.0, Draft E, 06/2005
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/28/2008, 1:33 PM
+**     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
+**     Datasheet : MC1321xRM Rev. 1.1 10/2006
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 4/29/2008, 6:38 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -21,7 +21,7 @@
 **         DisableInt   - void Cpu_DisableInt(void);
 **         Delay100US   - void Cpu_Delay100US(word us100);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -45,7 +45,6 @@
 
 /* MODULE Cpu. */
 
-
 #ifndef __BWUserType_tPowerDownModes
 #define __BWUserType_tPowerDownModes
   typedef enum {                       /*  */
@@ -55,12 +54,34 @@
   } tPowerDownModes;
 #endif
 
+
 /* Global variables */
-extern volatile byte CCR_reg;          /* Current CCR reegister */
+extern volatile byte CCR_reg;          /* Current CCR register */
 extern byte CpuMode;                   /* Current speed mode */
 
 
+__interrupt void Cpu_VicgInterrupt(void);
+/*
+** ===================================================================
+**     Method      :  Cpu_VicgInterrupt (bean MC13214)
+**
+**     Description :
+**         This ISR services the 'Loss of lock' or the 'Loss of clock' 
+**         interrupt.
+**         This method is internal. It is used by Processor Expert only.
+** ===================================================================
+*/
 
+__interrupt void Cpu_Interrupt(void);
+/*
+** ===================================================================
+**     Method      :  Cpu_Interrupt (bean MC13214)
+**
+**     Description :
+**         The method services unhandled interrupt vectors.
+**         This method is internal. It is used by Processor Expert only.
+** ===================================================================
+*/
 
 #define   Cpu_DisableInt()  __DI()     /* Disable interrupts */
 /*
@@ -112,7 +133,7 @@ void Cpu_SetSlowSpeed(void);
 **
 **     Description :
 **         Sets the slow speed mode. The method is enabled only if
-**         slow speed mode is enabled in the bean.
+**         <Slow speed mode> is enabled in the bean.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
@@ -124,33 +145,11 @@ void Cpu_SetHighSpeed(void);
 **     Method      :  Cpu_SetHighSpeed (bean MC13214)
 **
 **     Description :
-**         Sets the high speed mode. The method is enabled only if
-**         low or slow speed mode is enabled in the bean as well.
+**         Sets the high speed mode. The method is enabled only if <Low
+**         speed mode> or <Slow speed mode> are enabled in the bean as
+**         well.
 **     Parameters  : None
 **     Returns     : Nothing
-** ===================================================================
-*/
-
-__interrupt void Cpu_Interrupt(void);
-/*
-** ===================================================================
-**     Method      :  Cpu_Interrupt (bean MC13214)
-**
-**     Description :
-**         The method services the interrupt of the selected peripheral(s)
-**         and eventually invokes the beans event(s).
-**         This method is internal. It is used by Processor Expert only.
-** ===================================================================
-*/
-
-__interrupt void Cpu_OnClockMonitorInt(void);
-/*
-** ===================================================================
-**     Method      :  Cpu_OnClockMonitorInt (bean MC13214)
-**
-**     Description :
-**         This event is envoked if OnClockMonitor flag is changed.
-**         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
 */
 
@@ -173,7 +172,7 @@ void PE_low_level_init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

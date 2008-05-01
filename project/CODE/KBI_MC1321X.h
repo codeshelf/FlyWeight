@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_KBI
-**     Version   : Bean 01.009, Driver 01.01, CPU db: 2.87.087
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/28/2008, 1:33 PM
+**     Version   : Bean 01.020, Driver 01.07, CPU db: 2.87.123
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 4/29/2008, 6:38 PM
 **     Abstract  :
 **          This file implements the KBI (KBI) module initialization
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -37,15 +37,15 @@
 **            Pin7                                         : Disabled
 **          Interrupts 
 **            Keyboard request 
-**              Interrupt                                  : Vkeyboard
-**              Keyboard request interrupt                 : Disabled
-**              ISR name                                   : 
+**              Interrupt                                  : Vkeyboard1
+**              Keyboard request interrupt                 : Enabled
+**              ISR name                                   : keyboardISR
 **          Initialization 
 **            Call Init method                             : yes
 **     Contents  :
 **         Init - void KBI_MC1321X_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -68,6 +68,14 @@
 
 #include "Cpu.h"
 
+
+/*
+** ===================================================================
+** The interrupt service routine must be implemented by user in one
+** of the user modules (see KBI_MC1321X.c file for more information).
+** ===================================================================
+*/
+__interrupt void keyboardISR(void);
 
 void KBI_MC1321X_Init(void);
 /*
@@ -92,7 +100,7 @@ void KBI_MC1321X_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

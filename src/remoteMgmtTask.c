@@ -47,7 +47,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			};
 			
 			// Wait up to 250ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 250 * portTICK_RATE_MS) == pdPASS) {
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 500 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					switch (gLocalDeviceState) {
 						case eLocalStateAssocRespRcvd:
@@ -62,7 +62,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			
 			// If we're still not associated then change channels.
 			if (!associated) {
-				MLMEMC13192XtalAdjust(trim--);
+			//	MLMEMC13192XtalAdjust(trim--);
 				channel++;
 				if (channel > 16) {
 					channel = 0;

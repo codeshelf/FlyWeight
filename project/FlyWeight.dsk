@@ -1,5 +1,5 @@
 [Version]
-PE_DesktopFileVersion=884
+PE_DesktopFileVersion=914
 
 [Desktop]
 StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
@@ -11,7 +11,7 @@ StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
 [AppPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[492|281|318|530]
+Rect=[-4|58|318|530]
 
 [CpuPanel]
 Status=hiden
@@ -36,9 +36,10 @@ WindowState=NORMAL
 Rect=[-16|510|457|446]
 BF_ForTgtCpuOnly=Yes
 BF_LicensedOnly=Yes
+BF_BA_AllQuestions=Yes
 
 [ObjInspector]
-Status=Visible
+Status=hiden
 WindowState=NORMAL
 Rect=[4|90|1064|668]
 ObjInspectorDockedWithPrphInit=No

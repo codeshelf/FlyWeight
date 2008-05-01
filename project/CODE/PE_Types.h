@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : PE_Types
-**     Version   : Driver 01.06
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/19/2008, 5:00 PM
+**     Version   : Driver 01.09
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 4/29/2008, 6:38 PM
 **     Abstract  :
 **         PE_Types.h - contains definitions of basic types,
 **         register access macros and hardware specific macros
@@ -15,7 +15,7 @@
 **     Contents  :
 **         No public methods
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -27,8 +27,12 @@
 #ifndef __PE_Types_H
 #define __PE_Types_H
 
-#define  FALSE  0
-#define  TRUE   1
+#ifndef FALSE
+  #define  FALSE  0                    /* Boolean value FALSE. FALSE is defined always as a zero value. */
+#endif
+#ifndef TRUE
+  #define  TRUE   1                    /* Boolean value TRUE. TRUE is defined always as a non zero value. */
+#endif
 
 /*Types definition*/
 typedef unsigned char bool;
@@ -52,31 +56,26 @@ typedef unsigned long int   VUINT32;
 typedef signed char int8_t;
 #endif
 #ifndef int16_t
-typedef short int   int16_t;
+typedef signed int int16_t;
 #endif
 #ifndef int32_t
-typedef long int    int32_t;
-#endif
-#ifndef int64_t
-typedef long int    int64_t[2];
+typedef signed long int int32_t;
 #endif
 
 #ifndef uint8_t
-typedef unsigned char       uint8_t;
+typedef unsigned char uint8_t;
 #endif
 #ifndef uint16_t
-typedef unsigned short int  uint16_t;
+typedef unsigned int uint16_t;
 #endif
 #ifndef uint32_t
-typedef unsigned long int   uint32_t;
-#endif
-#ifndef uint64_t
-typedef unsigned long int   uint64_t[2];
+typedef unsigned long int uint32_t;
 #endif
 
 /**************************************************/
 /* PE register access macros                      */
 /**************************************************/
+/*lint -save -e960 Disable MISRA rule (98) checking. */
 #define setRegBit(reg, bit)                                     (reg |= reg##_##bit##_##MASK)
 #define clrRegBit(reg, bit)                                     (reg &= ~reg##_##bit##_##MASK)
 #define getRegBit(reg, bit)                                     (reg & reg##_##bit##_##MASK)
@@ -202,6 +201,7 @@ typedef unsigned long int   uint64_t[2];
                                                                  RegName &= ~(~((GroupVal) << RegName##_##GroupName##_##BITNUM) & RegName##_##GroupName##_##MASK) )
 #define seqResetSetReg8BitGroupVal(RegName,GroupName,GroupVal)   (RegName &= ~RegName##_##GroupName##_##MASK,\
                                                                  RegName |= ((GroupVal) << RegName##_##GroupName##_##BITNUM) & RegName##_##GroupName##_##MASK )
+/*lint -restore */
 
  /* register access macros */
 #define in16(var,l,h)  (var = ((word)(l)) | (((word)(h)) << 8))
@@ -210,10 +210,22 @@ typedef unsigned long int   uint64_t[2];
 #define output(P, V) (P = (V))
 #define input(P) (P)
 
-#define __DI()  { asm sei; }      /* Disable interrupts  */
-#define __EI()  { asm cli; }      /* Enable interrupts */
-#define SaveStatusReg()     { asm PSHA; asm TPA; asm SEI; asm STA CCR_reg; asm PULA; } /* This macro is used by Processor Expert. It saves CCR register and disable global interrupts. */
-#define RestoreStatusReg()  { asm PSHA; asm LDA CCR_reg; asm TAP; asm PULA; } /* This macro is used by Processor Expert. It restores CCR register saved in SaveStatusReg(). */
+#define __DI() \
+/*lint -save -esym(960,54) Disable MISRA rule (54) checking. */\
+ { asm sei; }      /* Disable interrupts  */ \
+/*lint -restore */
+#define __EI() \
+/*lint -save -esym(960,54) Disable MISRA rule (54) checking. */\
+ { asm cli; }      /* Enable interrupts */ \
+/*lint -restore */
+#define SaveStatusReg() \
+/*lint -save -e505 -e522 -esym(960,54) Disable MISRA rule (53,54) checking. */\
+ { asm PSHA; asm TPA; asm SEI; asm STA CCR_reg; asm PULA; } /* This macro is used by Processor Expert. It saves CCR register and disable global interrupts. */ \
+/*lint -restore */
+#define RestoreStatusReg() \
+/*lint -save -e505 -e522 -esym(960,54) Disable MISRA rule (53,54) checking. */\
+ { asm PSHA; asm LDA CCR_reg; asm TAP; asm PULA; } /* This macro is used by Processor Expert. It restores CCR register saved in SaveStatusReg(). */ \
+/*lint -restore */
 #define EnterCritical()     SaveStatusReg()
 #define ExitCritical()      RestoreStatusReg()
 #define ISR(x) __interrupt void x(void)
@@ -239,7 +251,7 @@ typedef union {
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

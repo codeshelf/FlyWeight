@@ -15,7 +15,7 @@
 #include "queue.h"
 
 // Flyweight
-#include "gatewayRadioTask.h"
+#include "remoteRadioTask.h"
 #include "commands.h"
 #include "ledBlinkTask.h"
 #include "ulaw.h"
@@ -99,11 +99,7 @@ void TimerInt(void)
 }
 
 interrupt void testadc(void) {
-#if defined(XBEE)
 	UINT16 adcval = ATD1R;
-#elif defined(MC1321X)
-	UINT16 adcval = ATDR;
-#endif
 }
 
 /*
@@ -123,15 +119,6 @@ interrupt void testadc(void) {
 
 #include "task.h"
 
-#ifdef XBEE
-	#define PWM_LSB_CHANNEL		TPM1C0V
-	#define PWM_MSB_CHANNEL		TPM1C1V
-#elif defined(MC1321X)
-	#define PWM_LSB_CHANNEL		TPM2C2V
-	#define PWM_MSB_CHANNEL		TPM2C3V
-#else
-	#define PWM_LSB_CHANNEL		TPM1C2V
-#endif
 #define		MAX_DRIFT			0x80
 
 bool				gAudioModeRX = TRUE;
@@ -176,7 +163,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// TX MODE
 		
 		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
-		TPM2MOD = gMasterSampleRate - 0x50;
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate - 0x50;
 
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
@@ -186,7 +173,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gBufferStarted = TRUE;
 		} else {
 			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
-				sample16b = ATDR << 5;
+				sample16b = ATD1R << 5;
 				sample8b = linear2ulaw(sample16b);
 				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
 			} else {
@@ -200,7 +187,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// RX MODE
 
 		// Reset the timer for the next sample.
-		TPM2MOD = gMasterSampleRate + gMasterSampleRateAdjust;
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate + gMasterSampleRateAdjust;
 
 		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
 		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
@@ -214,7 +201,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #endif
 			EnterCriticalArg(ccrHolder);
 			
-				AUDIO_AMP_OFF;
+				SPKR_AMP_OFF;
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
@@ -223,7 +210,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			
 		} else {
 		
-			AUDIO_AMP_ON;
+			SPKR_AMP_ON;
 			sample8b = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 #if defined(XBEE) || defined(MC1321X)
 			// On the MC1321X or XBee module we support 16bit converted uLaw samples.
@@ -275,8 +262,8 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	}
 
 	// Reset the overflow flag.
-	if (TPM2SC_TOF)
-		TPM2SC_TOF = 0;
+	if (TPMOF_AUDIO_LOADER)
+		TPMOF_AUDIO_LOADER = 0;
 }
 //#endif
 /*

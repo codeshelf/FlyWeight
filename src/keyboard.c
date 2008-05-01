@@ -26,10 +26,19 @@
 
 /*
 	 * The keyboard is a matrix:
+	 * XBEE:
+	 * -----------------
 	 * row1 = PTB0
 	 * row2 = PTB1
 	 * col1 = PTA5/KBI1P5
 	 * col2 = PTA6/KBI1P6
+	 *
+	 * MC1321X:
+	 * -----------------
+	 * row1 = PTB0
+	 * row2 = PTB1
+	 * col1 = PTA4/KBI1P4
+	 * col2 = PTA5/KBI1P5
 	 *
 	 * The keyboard module does nothing until the user presses a key.  That causes one of the PTB outputs
 	 * to drive a KBI pin that causes an interrupt.  In that interrupt routine we make the PTB pins
@@ -41,39 +50,47 @@
 	 * except that the KBI interrupts are looking for falling edges or low values.
 	 */	 
 
+
 void KBISetup() {
 
 	// KBI1SC: KBIE=0
-	clrReg8Bits(KBISC, 0x02);            
+	clrReg8Bits(KBI1SC, 0x02);            
 	// KBI1PE: KBIPE7=0,KBIPE6=1,KBIPE5=1,KBIPE4=0,KBIPE3=0,KBIPE2=0,KBIPE1=0,KBIPE0=0
-	setReg8(KBIPE, 0x60);                
+	setReg8(KBI1PE, KB_PEBITS);                
 	
 	// KBI1SC: KBACK=1
-	setReg8Bits(KBISC, 0x04);            
+	setReg8Bits(KBI1SC, 0x04);            
 	// KBI1SC: KBIE=1
-	setReg8Bits(KBISC, 0x02);            
+	setReg8Bits(KBI1SC, 0x02);            
 	
 	// Setup the rows as outputs and assert them. 
-	PTBDD_PTBDD0 = 1;
-	PTBDD_PTBDD1 = 1;
-	PTBD_PTBD0 = 1;
-	PTBD_PTBD1 = 1;
+	KB_SETUP_ROW0 = 1;
+	KB_SETUP_ROW1 = 1;
+	KB_SETUP_COL0 = 0;
+	KB_SETUP_COL1 = 0;
+	KB_ROW0 = 1;
+	KB_ROW1 = 1;
 }
+
+// A function to get the current key pressed.
 #define GET_BUTTON_PRESSED(buttonNumArg)  								\
 	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					\
 		/* Turn off the row outputs	*/									\
-		PTBD &= 0b11111100;												\
+		KB_ROW0 = 0;													\
+		KB_ROW1 = 0;													\
+																		\
 		/* Set the current row to high. */								\
 		PTBD |= 1 << (row);												\
 																		\
 		/* Now check the columns. */									\
 		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				\
 			/* If the column is high then this is the key pressed. */	\
-			if (PTAD & (1 << (col + 5))) {								\
+			if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				\
 				buttonNumArg = (row * 2)  + col + 1;					\
 			}															\
 		}																\
 	}																	\
+
 
 ISR(keyboardISR) {
 	
@@ -86,14 +103,31 @@ ISR(keyboardISR) {
 	EnterCriticalArg(ccrHolder);
 	
 	// Disable the KBI interrupt
-	KBISC_KBIE = 0;
+	KBI1SC_KBIE = 0;
 	
-	// Debounce delay for 4ms
-	tickVal = xTaskGetTickCount() + (4 * portTICK_RATE_MS);
+	// Debounce delay for 100ms
+	tickVal = xTaskGetTickCount() + (100 * portTICK_RATE_MS);
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
-	GET_BUTTON_PRESSED(buttonNum);
+	//GET_BUTTON_PRESSED(buttonNum);
+	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					
+		/* Turn off the row outputs	*/									
+		KB_ROW0 = 0;													
+		KB_ROW1 = 0;													
+																		
+		/* Set the current row to high. */								
+		PTBD |= 1 << (row);												
+																		
+		/* Now check the columns. */									
+		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
+			/* If the column is high then this is the key pressed. */	
+			if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
+				buttonNum = (row * 2)  + col + 1;					
+			}															
+		}																
+	}																	
+	
 	
 	if (buttonNum > 0) {
 		// Now that we know what key we pressed send it to the controller.
@@ -114,11 +148,12 @@ ISR(keyboardISR) {
 void restartKeyboardISR(void) {
 	
 	// Reset the row outputs.
-	PTBD |= 0b00000011;
+	KB_ROW0 = 1;
+	KB_ROW1 = 1;
 
 	// Acknowledge the interrupt and re-enable KBIE, so that we can get another.
-	KBISC_KBACK = 1;
-	KBISC_KBIE = 1;	
+	KBI1SC_KBACK = 1;
+	KBI1SC_KBIE = 1;	
 }
 
 /*

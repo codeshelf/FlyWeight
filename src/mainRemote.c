@@ -69,9 +69,12 @@ void vMain( void ) {
 	KBISetup();
 	
 	// Setup the audio amplifiers.
-	SETUP_AUDIO_CONTROL;
 	ATD_OFF;
-	AUDIO_AMP_OFF;
+	SETUP_MIC_CONTROL;
+	MIC_AMP_OFF;
+	
+	SETUP_SPKR_CONTROL;
+	SPKR_AMP_OFF;
 	
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();

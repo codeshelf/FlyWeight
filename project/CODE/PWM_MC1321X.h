@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_TPM
-**     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.087
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/28/2008, 1:33 PM
+**     Version   : Bean 01.053, Driver 01.12, CPU db: 2.87.123
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 4/30/2008, 12:56 PM
 **     Abstract  :
 **          This file implements the TPM (TPM2) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -16,12 +16,44 @@
 **          Device                                         : TPM2
 **          Settings
 **            Clock settings
-**              Clock Source Select                        : No clock
+**              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
-**              Modulo Counter                             : 0
-**              Period                                     : ?
+**              Modulo Counter                             : 255
+**              Period                                     : 12.8 us
 **            Aligned                                      : Left
-**          Channels                                       : 0
+**          Channels                                       : 2
+**            Channel0                                     : 1
+**              Capture/compare device                     : TPM22
+**              Settings
+**                Mode                                     : PWM
+**                  PWM Output Action                      : Clear output on compare
+**                  ChannelValue                           : 0
+**                  DutyCycle                              : 0 us
+**              Pin                                        : Used
+**                Channel Pin                              : PTD5_TPM2CH2
+**                Channel Pin Signal                       : 
+**                Pull Resistor                            : autoselected pull
+**              Interrupt
+**                Channel Interrupt
+**                  Interrupt                              : Vtpm2ch2
+**                  Channel Interrupt                      : Disabled
+**                  ISR Name                               : 
+**            Channel1                                     : 2
+**              Capture/compare device                     : TPM23
+**              Settings
+**                Mode                                     : PWM
+**                  PWM Output Action                      : Clear output on compare
+**                  ChannelValue                           : 0
+**                  DutyCycle                              : 0 us
+**              Pin                                        : Used
+**                Channel Pin                              : PTD6_TPM2CH3
+**                Channel Pin Signal                       : 
+**                Pull Resistor                            : autoselected pull
+**              Interrupt
+**                Channel Interrupt
+**                  Interrupt                              : Vtpm2ch3
+**                  Channel Interrupt                      : Disabled
+**                  ISR Name                               : 
 **          Pins
 **            External Clock Source                        : Disabled
 **          Interrupts
@@ -34,7 +66,7 @@
 **     Contents  :
 **         Init - void PWM_MC1321X_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -76,7 +108,7 @@ void PWM_MC1321X_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

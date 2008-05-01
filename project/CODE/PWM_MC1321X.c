@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_TPM
-**     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.087
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 2/28/2008, 1:33 PM
+**     Version   : Bean 01.053, Driver 01.12, CPU db: 2.87.123
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 4/30/2008, 12:56 PM
 **     Abstract  :
 **          This file implements the TPM (TPM2) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -16,12 +16,44 @@
 **          Device                                         : TPM2
 **          Settings
 **            Clock settings
-**              Clock Source Select                        : No clock
+**              Clock Source Select                        : Bus rate clock
 **              Prescaler                                  : 1
-**              Modulo Counter                             : 0
-**              Period                                     : ?
+**              Modulo Counter                             : 255
+**              Period                                     : 12.8 us
 **            Aligned                                      : Left
-**          Channels                                       : 0
+**          Channels                                       : 2
+**            Channel0                                     : 1
+**              Capture/compare device                     : TPM22
+**              Settings
+**                Mode                                     : PWM
+**                  PWM Output Action                      : Clear output on compare
+**                  ChannelValue                           : 0
+**                  DutyCycle                              : 0 us
+**              Pin                                        : Used
+**                Channel Pin                              : PTD5_TPM2CH2
+**                Channel Pin Signal                       : 
+**                Pull Resistor                            : autoselected pull
+**              Interrupt
+**                Channel Interrupt
+**                  Interrupt                              : Vtpm2ch2
+**                  Channel Interrupt                      : Disabled
+**                  ISR Name                               : 
+**            Channel1                                     : 2
+**              Capture/compare device                     : TPM23
+**              Settings
+**                Mode                                     : PWM
+**                  PWM Output Action                      : Clear output on compare
+**                  ChannelValue                           : 0
+**                  DutyCycle                              : 0 us
+**              Pin                                        : Used
+**                Channel Pin                              : PTD6_TPM2CH3
+**                Channel Pin Signal                       : 
+**                Pull Resistor                            : autoselected pull
+**              Interrupt
+**                Channel Interrupt
+**                  Interrupt                              : Vtpm2ch3
+**                  Channel Interrupt                      : Disabled
+**                  ISR Name                               : 
 **          Pins
 **            External Clock Source                        : Disabled
 **          Interrupts
@@ -34,7 +66,7 @@
 **     Contents  :
 **         Init - void PWM_MC1321X_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -65,9 +97,20 @@
 void PWM_MC1321X_Init(void)
 {
 
-  setReg16(TPM2MOD, 0x00);              
   /* TPM2SC: TOF=0,TOIE=0,CPWMS=0,CLKSB=0,CLKSA=0,PS2=0,PS1=0,PS0=0 */
-  setReg8(TPM2SC, 0x00);                
+  setReg8(TPM2SC, 0x00);               /* Stop and reset counter */ 
+  setReg16(TPM2MOD, 0xFF);             /* Period value setting */ 
+  (void)getReg8(TPM2C2SC);             /* Channel 0 int. flag clearing (first part) */
+  /* TPM2C2SC: CH2F=0,CH2IE=0,MS2B=1,MS2A=0,ELS2B=1,ELS2A=0,??=0,??=0 */
+  setReg8(TPM2C2SC, 0x28);             /* Int. flag clearing (2nd part) and channel 0 contr. register setting */ 
+  setReg16(TPM2C2V, 0x00);             /* Compare 0 value setting */ 
+  (void)getReg8(TPM2C3SC);             /* Channel 1 int. flag clearing (first part) */
+  /* TPM2C3SC: CH3F=0,CH3IE=0,MS3B=1,MS3A=0,ELS3B=1,ELS3A=0,??=0,??=0 */
+  setReg8(TPM2C3SC, 0x28);             /* Int. flag clearing (2nd part) and channel 1 contr. register setting */ 
+  setReg16(TPM2C3V, 0x00);             /* Compare 1 value setting */ 
+  (void)getReg8(TPM2SC);               /* Overflow int. flag clearing (first part) */
+  /* TPM2SC: TOF=0,TOIE=0,CPWMS=0,CLKSB=0,CLKSA=1,PS2=0,PS1=0,PS0=0 */
+  setReg8(TPM2SC, 0x08);               /* Int. flag clearing (2nd part) and timer control register setting */ 
 
 }
 
@@ -76,7 +119,7 @@ void PWM_MC1321X_Init(void)
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

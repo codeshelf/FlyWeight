@@ -1,6 +1,6 @@
 <PE_PROJECT_SETTINGS_DOCUMENTATION>
-<PE_product_version v="version 2.97 for Freescale HC(S)08"/>
-<PE_core_version v="Processor Expert Version 0374"/>
+<PE_product_version v="version 3.01 for Freescale HC(S)08/RS08/CFV1"/>
+<PE_core_version v="Processor Expert Version 0392"/>
 
 <CPU_Bean name="Cpu" type="MC9S08GT60_44">
 <Enabled v="N"/>
@@ -21,10 +21,19 @@
 
 </group>
 
-<boolgroup name="External Clock" v="Enabled">
-<Oscillator_frequency__MHz_ v="4"/>
-<External_Clock_Source v="External oscillator"/>
-<Xtal_range v="0 - 40 MHz"/>
+<boolgroup name="External clock" v="Enabled">
+
+<enumgroup name="Clock source" v="External oscillator">
+<Clock_frequency__MHz_ v="4"/>
+<Clock_range v="0 - 40 MHz"/>
+
+<group name="Clock input pin">
+<Pin_name v=""/>
+<Pin_signal v=""/>
+
+</group>
+
+</enumgroup>
 
 </boolgroup>
 
@@ -32,7 +41,7 @@
 
 <enumgroup name="STOP instruction enabled" v="yes">
 <Power_down_control v="STOP3 - Standby mode"/>
-<Enable_Oscillator_in_Off_Mode v="no"/>
+<Enable_oscillator_in_ICG_off_mode v="no"/>
 
 </enumgroup>
 
@@ -40,6 +49,26 @@
 
 </group>
 <Maskable_CPU_interrupts v="interrupts enabled"/>
+
+<list name="Shared internal resource mapping" v="1">
+
+<group name="Internal resource mapping">
+
+<group name="Interrupt vector table">
+<Address v="0"/>
+<Size v="0"/>
+
+</group>
+
+<group name="Reset vector">
+<Address v="65534"/>
+<Size v="2"/>
+
+</group>
+
+</group>
+
+</list>
 
 <group name="Internal peripherals">
 
@@ -65,8 +94,6 @@
 <enumgroup name="Security state" v="Disabled">
 
 </enumgroup>
-
-<boolgroup name="Backdoor key mechanism" v="Disabled" />
 <Protection v="Disabled"/>
 <Vector_redirection v="no"/>
 
@@ -145,7 +172,7 @@
 
 </boolgroup>
 
-<boolgroup name="Generate SWI interrupt handler" v="Disabled" />
+<boolgroup name="SWI" v="Disabled" />
 
 </group>
 
@@ -153,14 +180,14 @@
 
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="20"/>
 <Fixed_frequency_clock v="2"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="40"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -170,14 +197,14 @@
 
 <boolgroup name="Slow speed mode" v="Enabled">
 <Slow_speed_clock v="Internal Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="15.552000000000"/>
 <Fixed_frequency_clock v="15.552000000000"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="31.104000000000"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -204,7 +231,6 @@
 <ClearLowVoltageWarningFlag v="don&apos;t generate code"/>
 <GetPartialPowerDownFlag v="don&apos;t generate code"/>
 <ClearPartialPowerDownFlag v="don&apos;t generate code"/>
-<SetPowerDownMode v="don&apos;t generate code"/>
 <GetIdentification v="don&apos;t generate code"/>
 <SetFilterValue v="don&apos;t generate code"/>
 <SetBackdoorKey v="don&apos;t generate code"/>
@@ -222,16 +248,42 @@
 
 <event name="OnLvdINT" v="don&apos;t generate code" />
 </Events>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 
 <CompilerProperties>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 <Generate_macros v="yes"/>
 
 <group name="User initialization">
-<User_data_declarations v="(string list)"/>
-<User_code_before_PE_initialization v="(string list)"/>
-<User_code_after_PE_initialization v="(string list)"/>
+<User_data_declarations>
+#include "pub_def.h"
+#include "mcu_hw_config.h"
+#include "MC13192_hw_config.h"
+#include "simple_mac.h"
+#include "IO_Map.h"
+</User_data_declarations>
+<User_code_before_PE_initialization>
+	PTADD = 0xFF;
+	PTAD  = 0x00;
+	PTBDD = 0xFF;
+	PTBD  = 0x00;
+	PTCDD = 0xFF;
+	PTCD  = 0x00;
+	PTDDD = 0xFF;
+	PTDD  = 0x00;
+	PTEDD = 0xFF;
+	PTED  = 0x00;
+	//PTFDD = 0xFF;
+	PTGDD = 0xFF;
+	PTGD  = 0x00;
+
+	MCUInit();
+	MC13192Init();
+	MLMESetMC13192ClockRate(2);
+
+</User_code_before_PE_initialization>
+<User_code_after_PE_initialization>
+</User_code_after_PE_initialization>
 
 </group>
 <Memory_model v="Small"/>
@@ -259,10 +311,19 @@
 
 </group>
 
-<boolgroup name="External Clock" v="Enabled">
-<Oscillator_frequency__MHz_ v="4"/>
-<External_Clock_Source v="External oscillator"/>
-<Xtal_range v="0 - 40 MHz"/>
+<boolgroup name="External clock" v="Enabled">
+
+<enumgroup name="Clock source" v="External oscillator">
+<Clock_frequency__MHz_ v="4"/>
+<Clock_range v="0 - 40 MHz"/>
+
+<group name="Clock input pin">
+<Pin_name v=""/>
+<Pin_signal v=""/>
+
+</group>
+
+</enumgroup>
 
 </boolgroup>
 
@@ -270,7 +331,7 @@
 
 <enumgroup name="STOP instruction enabled" v="yes">
 <Power_down_control v="STOP3 - Standby mode"/>
-<Enable_Oscillator_in_Off_Mode v="yes"/>
+<Enable_oscillator_in_ICG_off_mode v="yes"/>
 
 </enumgroup>
 
@@ -278,6 +339,26 @@
 
 </group>
 <Maskable_CPU_interrupts v="interrupts enabled"/>
+
+<list name="Shared internal resource mapping" v="1">
+
+<group name="Internal resource mapping">
+
+<group name="Interrupt vector table">
+<Address v="0"/>
+<Size v="0"/>
+
+</group>
+
+<group name="Reset vector">
+<Address v="65534"/>
+<Size v="2"/>
+
+</group>
+
+</group>
+
+</list>
 
 <group name="Internal peripherals">
 
@@ -303,8 +384,6 @@
 <enumgroup name="Security state" v="Disabled">
 
 </enumgroup>
-
-<boolgroup name="Backdoor key mechanism" v="Disabled" />
 <Protection v="Disabled"/>
 <Vector_redirection v="no"/>
 
@@ -386,7 +465,7 @@
 
 </boolgroup>
 
-<boolgroup name="Generate SWI interrupt handler" v="Disabled" />
+<boolgroup name="SWI" v="Disabled" />
 
 </group>
 
@@ -394,14 +473,14 @@
 
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="20"/>
 <Fixed_frequency_clock v="2"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="40"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -411,14 +490,14 @@
 
 <boolgroup name="Slow speed mode" v="Enabled">
 <Slow_speed_clock v="Internal Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="15.552000000000"/>
 <Fixed_frequency_clock v="15.552000000000"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="31.104000000000"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -445,7 +524,6 @@
 <ClearLowVoltageWarningFlag v="don&apos;t generate code"/>
 <GetPartialPowerDownFlag v="don&apos;t generate code"/>
 <ClearPartialPowerDownFlag v="don&apos;t generate code"/>
-<SetPowerDownMode v="don&apos;t generate code"/>
 <GetIdentification v="don&apos;t generate code"/>
 <SetFilterValue v="don&apos;t generate code"/>
 <SetBackdoorKey v="don&apos;t generate code"/>
@@ -463,16 +541,32 @@
 
 <event name="OnLvdINT" v="don&apos;t generate code" />
 </Events>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 
 <CompilerProperties>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 <Generate_macros v="yes"/>
 
 <group name="User initialization">
-<User_data_declarations v="(string list)"/>
-<User_code_before_PE_initialization v="(string list)"/>
-<User_code_after_PE_initialization v="(string list)"/>
+<User_data_declarations>
+#include "pub_def.h"
+#include "mcu_hw_config.h"
+#include "MC13192_hw_config.h"
+#include "simple_mac.h"
+#include "NV_Data.h"
+//#include "update_nvm.h"
+//#include "flash.h"
+</User_data_declarations>
+<User_code_before_PE_initialization>
+MCUInit();
+MC13192Init();
+MLMESetMC13192ClockRate(2);
+//InitFlash();
+//NV_Flash_Setup();
+
+</User_code_before_PE_initialization>
+<User_code_after_PE_initialization>
+</User_code_after_PE_initialization>
 
 </group>
 <Memory_model v="Small"/>
@@ -501,10 +595,20 @@
 
 </group>
 
-<boolgroup name="External Clock" v="Enabled">
-<Oscillator_frequency__MHz_ v="4"/>
-<External_Clock_Source v="External oscillator"/>
-<Xtal_range v="0 - 40 MHz"/>
+<boolgroup name="External clock" v="Enabled">
+
+<enumgroup name="Clock source" v="External oscillator">
+<Clock_frequency__MHz_ v="4"/>
+<Clock_range v="High frequency"/>
+<Operating_mode v="Low power"/>
+
+<group name="Clock input pin">
+<Pin_name v="PTG2_EXTAL"/>
+<Pin_signal v=""/>
+
+</group>
+
+</enumgroup>
 
 </boolgroup>
 
@@ -512,7 +616,7 @@
 
 <enumgroup name="STOP instruction enabled" v="yes">
 <Power_down_control v="STOP3 - Standby mode"/>
-<Enable_Oscillator_in_Off_Mode v="yes"/>
+<Enable_oscillator_in_ICG_off_mode v="yes"/>
 
 </enumgroup>
 
@@ -520,6 +624,26 @@
 
 </group>
 <Maskable_CPU_interrupts v="interrupts enabled"/>
+
+<list name="Shared internal resource mapping" v="1">
+
+<group name="Internal resource mapping">
+
+<group name="Interrupt vector table">
+<Address v="65484"/>
+<Size v="50"/>
+
+</group>
+
+<group name="Reset vector">
+<Address v="65534"/>
+<Size v="2"/>
+
+</group>
+
+</group>
+
+</list>
 
 <group name="Internal peripherals">
 
@@ -545,8 +669,6 @@
 <enumgroup name="Security state" v="Disabled">
 
 </enumgroup>
-
-<boolgroup name="Backdoor key mechanism" v="Disabled" />
 <Protection v="Disabled"/>
 <Vector_redirection v="no"/>
 
@@ -626,7 +748,7 @@
 
 </boolgroup>
 
-<boolgroup name="Generate SWI interrupt handler" v="Disabled" />
+<boolgroup name="SWI" v="Disabled" />
 
 </group>
 
@@ -634,14 +756,14 @@
 
 <boolgroup name="High speed mode" v="Enabled">
 <High_speed_clock v="External Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="20"/>
 <Fixed_frequency_clock v="2"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="40"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -651,14 +773,14 @@
 
 <boolgroup name="Slow speed mode" v="Enabled">
 <Slow_speed_clock v="Internal Clock"/>
-<Clock_divider v="Auto selected prescaler"/>
+<Clock_divider v="Auto select"/>
 <Internal_bus_clock v="15.552000000000"/>
 <Fixed_frequency_clock v="15.552000000000"/>
+<Loss_of_clock v="Interrupt"/>
 
 <boolgroup name="FLL clock" v="Enabled">
 <FLL_clock_frequency v="31.104000000000"/>
 <Loss_of_FLL_lock v="Interrupt"/>
-<Loss_of_clock v="Interrupt"/>
 
 </boolgroup>
 
@@ -685,7 +807,6 @@
 <ClearLowVoltageWarningFlag v="don&apos;t generate code"/>
 <GetPartialPowerDownFlag v="don&apos;t generate code"/>
 <ClearPartialPowerDownFlag v="don&apos;t generate code"/>
-<SetPowerDownMode v="don&apos;t generate code"/>
 <GetIdentification v="don&apos;t generate code"/>
 <SetFilterValue v="don&apos;t generate code"/>
 <SetBackdoorKey v="don&apos;t generate code"/>
@@ -703,16 +824,42 @@
 
 <event name="OnLvdINT" v="don&apos;t generate code" />
 </Events>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 
 <CompilerProperties>
-<Compiler v="Metrowerks HCS08 C Compiler"/>
+<Compiler v="CodeWarrior HCS08 C Compiler"/>
 <Generate_macros v="yes"/>
 
 <group name="User initialization">
-<User_data_declarations v="(string list)"/>
-<User_code_before_PE_initialization v="(string list)"/>
-<User_code_after_PE_initialization v="(string list)"/>
+<User_data_declarations>
+#include "pub_def.h"
+#include "mcu_hw_config.h"
+#include "MC13192_hw_config.h"
+#include "simple_mac.h"
+#include "NV_Data.h"
+//#include "update_nvm.h"
+//#include "flash.h"
+</User_data_declarations>
+<User_code_before_PE_initialization>
+	PTADD = 0xFF;
+	PTAD  = 0x00;
+	PTBDD = 0xFF;
+	PTBD  = 0x00;
+	PTCDD = 0xFF;
+	PTCD  = 0x00;
+	PTDDD = 0xFF;
+	PTDD  = 0x00;
+	PTEDD = 0xFF;
+	PTED  = 0x00;
+	PTGDD = 0xFF;
+	PTGD  = 0x00;
+
+MCUInit();
+MC13192Init();
+MLMESetMC13192ClockRate(2);
+</User_code_before_PE_initialization>
+<User_code_after_PE_initialization>
+</User_code_after_PE_initialization>
 
 </group>
 <Memory_model v="Small"/>
@@ -729,7 +876,7 @@
 <Pin_for_I_O v="PTA3_KBI1P3"/>
 <Pin_signal v=""/>
 <Pull_resistor v="pull up"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Input"/>
 
 <group name="Initialization">
@@ -765,7 +912,7 @@
 <Pin_for_I_O v="PTA4_KBI1P4"/>
 <Pin_signal v=""/>
 <Pull_resistor v="pull up"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Input"/>
 
 <group name="Initialization">
@@ -801,7 +948,7 @@
 <Pin_for_I_O v="PTA5_KBI1P5"/>
 <Pin_signal v=""/>
 <Pull_resistor v="pull up"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Input"/>
 
 <group name="Initialization">
@@ -837,7 +984,7 @@
 <Pin_for_I_O v="PTD0_TPM1CH0"/>
 <Pin_signal v=""/>
 <Pull_resistor v="autoselected pull"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Output"/>
 
 <group name="Initialization">
@@ -873,7 +1020,7 @@
 <Pin_for_I_O v="PTD1_TPM1CH1"/>
 <Pin_signal v=""/>
 <Pull_resistor v="autoselected pull"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Output"/>
 
 <group name="Initialization">
@@ -909,7 +1056,7 @@
 <Pin_for_I_O v="PTD3_TPM2CH0"/>
 <Pin_signal v=""/>
 <Pull_resistor v="autoselected pull"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Output"/>
 
 <group name="Initialization">
@@ -945,7 +1092,7 @@
 <Pin_for_I_O v="PTD4_TPM2CH1"/>
 <Pin_signal v=""/>
 <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
-<Open_drain v="no open drain"/>
+<Open_drain v="push-pull"/>
 <Direction v="Output"/>
 
 <group name="Initialization">
@@ -1062,8 +1209,8 @@
 <WatchDog_action v="Reset CPU"/>
 
 <boolgroup name="Output pin" v="Disabled" />
-<Prescaler v="COP"/>
 <Period v="13.107 ms"/>
+<Mode v="Normal"/>
 
 <group name="Initialization">
 <Enabled_in_init__code v="yes"/>
@@ -1074,8 +1221,6 @@
 </Properties>
 
 <Methods>
-<Enable v="don&apos;t generate code"/>
-<Disable v="don&apos;t generate code"/>
 <Clear v="generate code"/>
 </Methods>
 
@@ -1085,8 +1230,6 @@
 <event name="BeforeNewSpeed" v="don&apos;t generate code" />
 
 <event name="AfterNewSpeed" v="don&apos;t generate code" />
-
-<event name="OnWatchDog" v="don&apos;t generate code" />
 </Events>
 </Bean>
 
@@ -1100,14 +1243,85 @@
 <group name="Settings">
 
 <group name="Clock settings">
-<Clock_source_select v="No clock"/>
+
+<enumgroup name="Clock source select" v="Bus rate clock">
+
+</enumgroup>
 <Prescaler v="1"/>
-<Modulo_counter v="0"/>
-<Period v="?"/>
+<Modulo_counter v="255"/>
+<Period v="12.8 us"/>
 
 </group>
 
-<list name="Channels" v="0">
+<list name="Channels" v="2">
+
+<group name="Channel">
+<Capture_compare_device v="TPM22"/>
+
+<group name="Settings">
+
+<enumgroup name="Mode" v="PWM">
+<PWM_output_action v="Clear output on compare"/>
+<Channel_compare_value v="0"/>
+<Channel_duty v="0 us"/>
+
+</enumgroup>
+
+</group>
+
+<boolgroup name="Pin" v="Used">
+<Channel_pin v="PTD5_TPM2CH2"/>
+<Channel_pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+
+</boolgroup>
+
+<group name="Interrupt">
+
+<group name="Channel Interrupt">
+<Interrupt v="Vtpm2ch2"/>
+<Channel_Interrupt v="Disabled"/>
+<ISR_name v=""/>
+
+</group>
+
+</group>
+
+</group>
+
+<group name="Channel">
+<Capture_compare_device v="TPM23"/>
+
+<group name="Settings">
+
+<enumgroup name="Mode" v="PWM">
+<PWM_output_action v="Clear output on compare"/>
+<Channel_compare_value v="0"/>
+<Channel_duty v="0 us"/>
+
+</enumgroup>
+
+</group>
+
+<boolgroup name="Pin" v="Used">
+<Channel_pin v="PTD6_TPM2CH3"/>
+<Channel_pin_signal v=""/>
+<Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+
+</boolgroup>
+
+<group name="Interrupt">
+
+<group name="Channel Interrupt">
+<Interrupt v="Vtpm2ch3"/>
+<Channel_Interrupt v="Disabled"/>
+<ISR_name v=""/>
+
+</group>
+
+</group>
+
+</group>
 
 </list>
 
@@ -1132,7 +1346,7 @@
 
 <group name="Initialization">
 <Call_Init_method v="yes"/>
-<Enable_module v="no"/>
+<Enable_module v="yes"/>
 
 </group>
 </Properties>
@@ -1155,7 +1369,10 @@
 <group name="Settings">
 
 <group name="Clock settings">
-<Clock_source_select v="Bus rate clock"/>
+
+<enumgroup name="Clock source select" v="Bus rate clock">
+
+</enumgroup>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
 <Period v="12.8 us"/>
@@ -1164,7 +1381,7 @@
 
 <list name="Channels" v="2">
 
-<group name="Channel0">
+<group name="Channel">
 <Capture_compare_device v="TPM10"/>
 
 <group name="Settings">
@@ -1198,7 +1415,7 @@
 
 </group>
 
-<group name="Channel1">
+<group name="Channel">
 <Capture_compare_device v="TPM11"/>
 
 <group name="Settings">
@@ -1278,7 +1495,10 @@
 <group name="Settings">
 
 <group name="Clock settings">
-<Clock_source_select v="Bus rate clock"/>
+
+<enumgroup name="Clock source select" v="Bus rate clock">
+
+</enumgroup>
 <Prescaler v="1"/>
 <Modulo_counter v="255"/>
 <Period v="12.8 us"/>
@@ -1287,7 +1507,7 @@
 
 <list name="Channels" v="1">
 
-<group name="Channel0">
+<group name="Channel">
 <Capture_compare_device v=""/>
 
 <group name="Settings">
@@ -1435,7 +1655,7 @@
 <group name="Interrupts">
 
 <group name="Conversion complete">
-<Interrupt v="Vatd"/>
+<Interrupt v="Vatd1"/>
 <Conversion_complete_interrupt v="Enabled"/>
 <ISR_name v="testadc"/>
 
@@ -1470,8 +1690,8 @@
 
 <group name="Clock settings">
 <Prescaler v="4"/>
-<Frequency v="? kHz"/>
-<Conversion_time v="? us"/>
+<Frequency v="2000 kHz"/>
+<Conversion_time v="14.6 us"/>
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
@@ -1497,7 +1717,7 @@
 <group name="Interrupts">
 
 <group name="Conversion complete">
-<Interrupt v="Vatd"/>
+<Interrupt v="Vatd1"/>
 <Conversion_complete_interrupt v="Enabled"/>
 <ISR_name v="testadc"/>
 
@@ -1568,7 +1788,7 @@
 <group name="Interrupts">
 
 <group name="Keyboard request">
-<Interrupt v="Vkeyboard"/>
+<Interrupt v="Vkeyboard1"/>
 <Keyboard_request_interrupt v="Enabled"/>
 <ISR_name v="keyboardISR"/>
 
@@ -1615,7 +1835,7 @@
 <boolgroup name="Pin4" v="Enabled">
 <Pin v="PTA4_KBIP4"/>
 <Pin_signal v=""/>
-<Pull_resistor v="pull up"/>
+<Pull_resistor v="no pull resistor"/>
 <Interrupt_polarity v="high level and/or rising edge"/>
 
 </boolgroup>
@@ -1623,7 +1843,7 @@
 <boolgroup name="Pin5" v="Enabled">
 <Pin v="PTA5_KBIP5"/>
 <Pin_signal v=""/>
-<Pull_resistor v="pull up"/>
+<Pull_resistor v="no pull resistor"/>
 <Interrupt_polarity v="high level and/or rising edge"/>
 
 </boolgroup>
@@ -1637,9 +1857,9 @@
 <group name="Interrupts">
 
 <group name="Keyboard request">
-<Interrupt v="Vkeyboard"/>
-<Keyboard_request_interrupt v="Disabled"/>
-<ISR_name v=""/>
+<Interrupt v="Vkeyboard1"/>
+<Keyboard_request_interrupt v="Enabled"/>
+<ISR_name v="keyboardISR"/>
 
 </group>
 
@@ -1667,11 +1887,12 @@
 <Channel v="SCI1"/>
 
 <boolgroup name="Interrupt service/event" v="Enabled">
-<Interrupt v="Vsci1err"/>
 <Interrupt_RxD v="Vsci1rx"/>
 <Interrupt_RxD_priority v="medium priority"/>
 <Interrupt_TxD v="Vsci1tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
+<Interrupt_Error v=""/>
+<Interrupt_Error_priority v="medium priority"/>
 <Input_buffer_size v="150"/>
 <Output_buffer_size v="5"/>
 
@@ -1778,6 +1999,8 @@
 </event>
 
 <event name="OnRxChar" v="don&apos;t generate code" />
+
+<event name="OnRxCharExt" v="don&apos;t generate code" />
 
 <event name="OnTxChar" v="don&apos;t generate code" />
 

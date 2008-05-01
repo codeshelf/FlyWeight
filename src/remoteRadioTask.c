@@ -69,7 +69,7 @@ BufferCntType		gTXUsedBuffers = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
-	byte				ccrHolder;
+	//byte				ccrHolder;
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
@@ -81,9 +81,9 @@ void radioReceiveTask(void *pvParameters) {
 	if ( gRadioReceiveQueue ) {
 	
 		// Setup the TPM2 timer.
-		TPM2SC = 0b01001000;
+		TPMSC_AUDIO_LOADER = 0b01001000;
 		// 16MHz bus clock with a 7.4kHz interrupt freq.
-		TPM2MOD = gMasterSampleRate;	
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate;	
 		
 		//PWM1_Enable();
 #if defined(XBEE)
@@ -135,8 +135,8 @@ void radioReceiveTask(void *pvParameters) {
 						gIsSleeping = TRUE;
 						Cpu_SetSlowSpeed();
 						MLMEHibernateRequest();
-						//TPM1SC_TOIE = 0;
-						TPM2SC_TOIE = 0;
+						//TPMIE_PWM = 0;
+						TPMIE_AUDIO_LOADER = 0;
 						SRTISC_RTICLKS = 0;
 						//SRTISC_RTIS = 0;
 						SRTISC_RTIS = 5;
@@ -152,8 +152,8 @@ void radioReceiveTask(void *pvParameters) {
 						Cpu_SetHighSpeed();
 						SRTISC_RTICLKS = 1;
 						SRTISC_RTIS = 4;
-						//TPM1SC_TOIE = 1;
-						TPM2SC_TOIE = 1;
+						//TPMIE_PWM = 1;
+						TPMIE_AUDIO_LOADER = 1;
 						ExitCriticalArg(ccrHolder);
 */					}
 		

@@ -54,7 +54,7 @@ void keyboardTask(void *pvParameters) {
 						
 						// Turn off the ATD module
 						ATD_OFF;
-						AUDIO_AMP_OFF;
+						MIC_AMP_OFF;
 					}
 
 					//  Send a button up message.
@@ -64,6 +64,9 @@ void keyboardTask(void *pvParameters) {
 					if (transmitPacket(txBufferNum)) {
 					};
 					gButtonPressed = NO_BUTTON;
+					
+					// Wait 500ms before restarting to read another button.
+					vTaskDelay(500 * portTICK_RATE_MS);
 					
 					// Start looking for another keypress.
 					restartKeyboardISR();
@@ -93,7 +96,7 @@ void keyboardTask(void *pvParameters) {
 						
 						// Turn on the ATD module
 						ATD_ON;
-						AUDIO_AMP_ON;
+						MIC_AMP_ON;
 					}
 				}
 			}
