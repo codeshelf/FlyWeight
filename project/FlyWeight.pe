@@ -1,5 +1,5 @@
 Processor Expert Version 0392
-ProjectModificationStamp=955
+ProjectModificationStamp=958
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=659
+ProjectCompNumb=667
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -10788,8 +10788,8 @@ List=GrupItem
 ItemSymbol=PinEn0
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 
 [EndOfChilds]
 [ItemState]
@@ -10859,8 +10859,8 @@ Value=
 ItemSymbol=IntEnable
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 [ItemState]
 ItemSymbol=NonRS081
 ReadOnly=No
@@ -12041,7 +12041,7 @@ ItemSymbol=Pin4PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePullMode
-Index=1
+Index=2
 [ItemState]
 ItemSymbol=interrupPolarity4
 ReadOnly=No
@@ -12078,7 +12078,7 @@ ItemSymbol=Pin5PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePullMode
-Index=1
+Index=2
 [ItemState]
 ItemSymbol=interrupPolarity5
 ReadOnly=No

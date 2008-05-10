@@ -20,6 +20,7 @@
 // Definitions.
 #define	KEYBOARD_ROWS		2
 #define KEYBOARD_COLS		2
+#define SAMPLES				5
 
 // --------------------------------------------------------------------------
 // Functions.
@@ -72,25 +73,7 @@ void KBISetup() {
 	KB_ROW1 = 1;
 }
 
-// A function to get the current key pressed.
-#define GET_BUTTON_PRESSED(buttonNumArg)  								\
-	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					\
-		/* Turn off the row outputs	*/									\
-		KB_ROW0 = 0;													\
-		KB_ROW1 = 0;													\
-																		\
-		/* Set the current row to high. */								\
-		PTBD |= 1 << (row);												\
-																		\
-		/* Now check the columns. */									\
-		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				\
-			/* If the column is high then this is the key pressed. */	\
-			if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				\
-				buttonNumArg = (row * 2)  + col + 1;					\
-			}															\
-		}																\
-	}																	\
-
+	
 
 ISR(keyboardISR) {
 	
@@ -99,6 +82,9 @@ ISR(keyboardISR) {
 	UINT8 	col;
 	UINT8 	buttonNum = 0;
 	UINT8 	tickVal;
+	UINT8	sample;
+	UINT8	sum;
+	bool	shouldRestartISR = FALSE;
 	
 	EnterCriticalArg(ccrHolder);
 	
@@ -111,23 +97,38 @@ ISR(keyboardISR) {
 	}
 	
 	//GET_BUTTON_PRESSED(buttonNum);
-	for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					
-		/* Turn off the row outputs	*/									
-		KB_ROW0 = 0;													
-		KB_ROW1 = 0;													
-																		
-		/* Set the current row to high. */								
-		PTBD |= 1 << (row);												
-																		
-		/* Now check the columns. */									
-		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
-			/* If the column is high then this is the key pressed. */	
-			if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
-				buttonNum = (row * 2)  + col + 1;					
-			}															
-		}																
-	}																	
-	
+	sum = 0;															   	
+	for (sample = 0; sample < SAMPLES; sample++) {							
+																			
+		buttonNum = 0;									
+		for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					
+			/* Turn off the row outputs	*/									
+			KB_ROW0 = 0;													
+			KB_ROW1 = 0;													
+																			
+			/* Set the current row to high. */								
+			PTBD |= 1 << (row);												
+																			
+			/* Now check the columns. */
+			for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
+				/* If the column is high then this is the key pressed. */	
+				if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
+					buttonNum = (row * 2)  + col + 1;					
+				}															
+			}																
+		}																	
+		sum += buttonNum;																													
+	}																		
+	if (sum == 0)
+		buttonNum = 0;
+	else if (sum <= 7)
+		buttonNum = 1;
+	else if (sum <= 12)
+		buttonNum = 2;
+	else if (sum <= 17)
+		buttonNum = 3;
+	else 
+		buttonNum = 4;
 	
 	if (buttonNum > 0) {
 		// Now that we know what key we pressed send it to the controller.
@@ -136,10 +137,13 @@ ISR(keyboardISR) {
 		}
 	} else {
 		// If for some reason we don't get a real button press then we need to immediately reenable the KBIE.
-		restartKeyboardISR();
+		shouldRestartISR = TRUE;
 	}
 	
 	ExitCriticalArg(ccrHolder);
+	
+	if (shouldRestartISR)
+		restartKeyboardISR();
 }
 
 /*
@@ -164,8 +168,43 @@ bool buttonStillPressed(UINT8 inButtonNum) {
 	UINT8 buttonNum;
 	UINT8 row;
 	UINT8 col;
+	UINT8 sample;
+	UINT8 sum;
 	
-	GET_BUTTON_PRESSED(buttonNum);
+//	GET_BUTTON_PRESSED(buttonNum);
+	sum = 0;															   	
+	for (sample = 0; sample < SAMPLES; sample++) {							
+																			
+		buttonNum = 0;									
+		for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					
+			/* Turn off the row outputs	*/									
+			KB_ROW0 = 0;													
+			KB_ROW1 = 0;													
+																			
+			/* Set the current row to high. */								
+			PTBD |= 1 << (row);												
+																			
+			/* Now check the columns. */									
+			for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
+				/* If the column is high then this is the key pressed. */	
+				if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
+					buttonNum = (row * 2)  + col + 1;					
+				}															
+			}																
+		}																	
+		sum += buttonNum;																													
+	}																		
+	if (sum == 0)
+		buttonNum = 0;
+	else if (sum <= 7)
+		buttonNum = 1;
+	else if (sum <= 12)
+		buttonNum = 2;
+	else if (sum <= 17)
+		buttonNum = 3;
+	else 
+		buttonNum = 4;
 	
-	return (inButtonNum == buttonNum);
+	//return (inButtonNum == buttonNum);
+	return (buttonNum > 0);
 }

@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.115, Driver 01.12, CPU db: 2.87.123
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/29/2008, 6:38 PM
+**     Date/Time : 5/1/2008, 9:31 AM
 **     Abstract  :
 **          This file implements the ADC (ATD) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -22,7 +22,7 @@
 **          ADC Channels                                   : 1
 **          Pins                                           : PTB2_AD2
 **          Interrupt                                      : Vatd1
-**          Conversion complete interrupt                  : Enabled
+**          Conversion complete interrupt                  : Disabled
 **          ISR name                                       : testadc
 **          Initial channel select                         : Channel 2
 **          Call Init method                               : yes
@@ -87,12 +87,12 @@ ISR( testadc)
 */
 void MIC_MC1321X_Init(void)
 {
-  /* ATD1PE: ATDPE7=0,ATDPE6=0,ATDPE5=0,ATDPE4=0,ATDPE3=0,ATDPE2=0,ATDPE1=0,ATDPE0=0 */
-  setReg8(ATD1PE, 0x00);               /* Write stops the conversion */ 
+  /* ATD1PE: ATDPE7=0,ATDPE6=0,ATDPE5=0,ATDPE4=0,ATDPE3=0,ATDPE2=1,ATDPE1=0,ATDPE0=0 */
+  setReg8(ATD1PE, 0x04);               /* Write stops the conversion */ 
   /* ATD1C: ATDPU=1,DJM=1,RES8=0,SGN=0,PRS3=0,PRS2=1,PRS1=0,PRS0=0 */
   setReg8(ATD1C, 0xC4);                /* Write stops the conversion */ 
-  /* ATD1SC: CCF=0,ATDIE=1,ATDCO=1,ATDCH4=0,ATDCH3=0,ATDCH2=0,ATDCH1=1,ATDCH0=0 */
-  setReg8(ATD1SC, 0x62);               /* Write starts a new conversion */ 
+  /* ATD1SC: CCF=0,ATDIE=0,ATDCO=1,ATDCH4=0,ATDCH3=0,ATDCH2=0,ATDCH1=1,ATDCH0=0 */
+  setReg8(ATD1SC, 0x22);               /* Write starts a new conversion */ 
 }
 /* END MIC_MC1321X. */
 

@@ -69,7 +69,7 @@ BufferCntType		gTXUsedBuffers = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
-	//byte				ccrHolder;
+	byte				ccrHolder;
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
@@ -113,6 +113,7 @@ void radioReceiveTask(void *pvParameters) {
 				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
+
 				if (gShouldSleep) {
 					MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
 				} else {
@@ -123,6 +124,7 @@ void radioReceiveTask(void *pvParameters) {
 			// Wait until we receive a queue message from the radio receive ISR.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 				
+				
 				if (rxBufferNum == 255) {
 				
 					if (!gShouldSleep) {
@@ -131,7 +133,7 @@ void radioReceiveTask(void *pvParameters) {
 
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
 						//vTaskDelay(250 * portTICK_RATE_MS);
-/*						EnterCriticalArg(ccrHolder);
+						EnterCriticalArg(ccrHolder);
 						gIsSleeping = TRUE;
 						Cpu_SetSlowSpeed();
 						MLMEHibernateRequest();
@@ -155,7 +157,7 @@ void radioReceiveTask(void *pvParameters) {
 						//TPMIE_PWM = 1;
 						TPMIE_AUDIO_LOADER = 1;
 						ExitCriticalArg(ccrHolder);
-*/					}
+					}
 		
 				} else {
 					// The last read got a packet, so we're active.

@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.115, Driver 01.12, CPU db: 2.87.123
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/29/2008, 6:38 PM
+**     Date/Time : 5/1/2008, 9:31 AM
 **     Abstract  :
 **          This file implements the ADC (ATD) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -22,7 +22,7 @@
 **          ADC Channels                                   : 1
 **          Pins                                           : PTB2_AD2
 **          Interrupt                                      : Vatd1
-**          Conversion complete interrupt                  : Enabled
+**          Conversion complete interrupt                  : Disabled
 **          ISR name                                       : testadc
 **          Initial channel select                         : Channel 2
 **          Call Init method                               : yes

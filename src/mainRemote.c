@@ -69,7 +69,7 @@ void vMain( void ) {
 	KBISetup();
 	
 	// Setup the audio amplifiers.
-	ATD_OFF;
+	ATD_ON;
 	SETUP_MIC_CONTROL;
 	MIC_AMP_OFF;
 	

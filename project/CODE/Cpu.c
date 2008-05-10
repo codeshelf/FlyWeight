@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/30/2008, 12:56 PM
+**     Date/Time : 5/1/2008, 3:34 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -335,8 +335,8 @@ void PE_low_level_init(void)
   /* Common initialization of the CPU registers */
   /* PTDPE: PTDPE6=0,PTDPE5=0 */
   clrReg8Bits(PTDPE, 0x60);             
-  /* PTAPE: PTAPE5=0,PTAPE4=0 */
-  clrReg8Bits(PTAPE, 0x30);             
+  /* PTAPE: PTAPE5=1,PTAPE4=1 */
+  setReg8Bits(PTAPE, 0x30);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
