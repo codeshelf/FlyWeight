@@ -844,6 +844,7 @@ MLMESetMC13192ClockRate(2);
 	PTADD = 0xFF;
 	PTAD  = 0x00;
 	PTBDD = 0xFF;
+	PTBSE = 0x03;
 	PTBD  = 0x00;
 	PTCDD = 0xFF;
 	PTCD  = 0x00;

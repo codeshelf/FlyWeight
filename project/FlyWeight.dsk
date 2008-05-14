@@ -59,7 +59,7 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[1068|90|354|668]
+Rect=[885|155|354|668]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No

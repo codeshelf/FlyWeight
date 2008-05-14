@@ -61,6 +61,7 @@
 #define CMDPOS_ASSOC_UID		4
 #define CMDPOS_ASSOCREQ_VER		12
 #define CMDPOS_ASSOCRESP_ADDR	12
+#define CMDPOS_ASSOCASCK_STATE	12
 
 // Info Command
 #define CMDPOS_INFO_SUBCMD		3
@@ -202,9 +203,11 @@ typedef enum {
 } ENetMgmtSubCmdIDType;
 
 typedef enum {
-	eCmdReqRespInvalid = -1,
-	eCmdReqRespREQ = 1,
-	eCmdReqRespRESP = 2
+	eCmdAssocInvalid = -1,
+	eCmdAssocREQ = 1,
+	eCmdAssocRESP = 2,
+	eCmdAssocCHECK = 3,
+	eCmdAssocACK = 4
 } ECmdAssocType;
 
 typedef enum {

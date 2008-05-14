@@ -75,6 +75,7 @@ RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
+void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType);
 void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
 void createAudioCommand(BufferCntType inTXBufferNum);

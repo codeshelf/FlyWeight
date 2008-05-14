@@ -73,6 +73,7 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
+	ECmdAssocType		assocSubCmd;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -157,8 +158,12 @@ void radioReceiveTask(void *pvParameters) {
 						//TPMIE_PWM = 1;
 						TPMIE_AUDIO_LOADER = 1;
 						ExitCriticalArg(ccrHolder);
+						
 					}
-		
+					createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+					if (transmitPacket(gTXCurBufferNum)){
+					};
+								
 				} else {
 					// The last read got a packet, so we're active.
 					gShouldSleep = FALSE;
@@ -179,10 +184,18 @@ void radioReceiveTask(void *pvParameters) {
 						switch (cmdID) {
 						
 							case eCommandAssoc:
-								gLocalDeviceState = eLocalStateAssocRespRcvd;
-								// Signal the manager about the new state.
-								if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+								assocSubCmd = getAssocSubCommand(rxBufferNum);
+								if (assocSubCmd == eCmdAssocRESP) {
+									
+									gLocalDeviceState = eLocalStateAssocRespRcvd;
+									// Signal the manager about the new state.
+									if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+									}
+								} else if (assocSubCmd == eCmdAssocACK) {
+									if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCASCK_STATE])
+										__asm DCB 0x8D;
 								}
+								RELEASE_RX_BUFFER(rxBufferNum);
 								break;
 								
 							case eCommandInfo:

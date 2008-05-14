@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 5/1/2008, 3:34 PM
+**     Date/Time : 5/13/2008, 1:20 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -282,6 +282,7 @@ void _EntryPoint(void)
         PTADD = 0xFF;
         PTAD  = 0x00;
         PTBDD = 0xFF;
+        PTBSE = 0x03;
         PTBD  = 0x00;
         PTCDD = 0xFF;
         PTCD  = 0x00;
