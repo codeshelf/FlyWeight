@@ -77,7 +77,6 @@ void keyboardTask(void *pvParameters) {
 				if (xQueueReceive(gKeyboardQueue, &buttonNum, CHK_KEY_DELAY * portTICK_RATE_MS) == pdPASS) {
 
 					// The user just pressed a button.
-					
 					gButtonPressed = buttonNum;
 					
 					// Send an associate request on the current channel.

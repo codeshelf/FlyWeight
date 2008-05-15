@@ -36,6 +36,8 @@
 UINT8 				gu8RTxMode;
 bool				gIsSleeping;
 bool				gShouldSleep;
+UINT8				gSleepCount;
+extern UINT8		gButtonPressed;
 extern byte			gCCRHolder;
 
 xTaskHandle			gRadioReceiveTask = NULL;
@@ -81,6 +83,8 @@ void radioReceiveTask(void *pvParameters) {
 	// The radio receive task will return a pointer to a radio data packet.
 	if ( gRadioReceiveQueue ) {
 	
+		gSleepCount = 0;
+	
 		// Setup the TPM2 timer.
 		TPMSC_AUDIO_LOADER = 0b01001000;
 		// 16MHz bus clock with a 7.4kHz interrupt freq.
@@ -125,8 +129,7 @@ void radioReceiveTask(void *pvParameters) {
 			// Wait until we receive a queue message from the radio receive ISR.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
 				
-				
-				if (rxBufferNum == 255) {
+				if ((rxBufferNum == 255) && (!gButtonPressed)) {
 				
 					if (!gShouldSleep) {
 						gShouldSleep = TRUE;
@@ -142,7 +145,8 @@ void radioReceiveTask(void *pvParameters) {
 						TPMIE_AUDIO_LOADER = 0;
 						SRTISC_RTICLKS = 0;
 						//SRTISC_RTIS = 0;
-						SRTISC_RTIS = 5;
+						// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
+						SRTISC_RTIS = 6;
 						ExitCriticalArg(ccrHolder);
 						
 						__asm("STOP")
@@ -160,9 +164,15 @@ void radioReceiveTask(void *pvParameters) {
 						ExitCriticalArg(ccrHolder);
 						
 					}
-					createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-					if (transmitPacket(gTXCurBufferNum)){
-					};
+					
+					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.
+					gSleepCount++;
+					if (gSleepCount >= 9) {
+						gSleepCount = 0;
+						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+						if (transmitPacket(gTXCurBufferNum)){
+						};
+					}
 								
 				} else {
 					// The last read got a packet, so we're active.

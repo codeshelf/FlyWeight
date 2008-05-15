@@ -20,7 +20,7 @@
 // Definitions.
 #define	KEYBOARD_ROWS		2
 #define KEYBOARD_COLS		2
-#define SAMPLES				5
+#define SAMPLES				10
 
 // --------------------------------------------------------------------------
 // Functions.
@@ -83,8 +83,10 @@ ISR(keyboardISR) {
 	UINT8 	buttonNum = 0;
 	UINT8 	tickVal;
 	UINT8	sample;
-	UINT8	sum;
 	bool	shouldRestartISR = FALSE;
+	UINT8	i;
+	UINT8	maxPresses;
+	UINT8	buttonArray[5];
 	
 	EnterCriticalArg(ccrHolder);
 	
@@ -92,12 +94,16 @@ ISR(keyboardISR) {
 	KBI1SC_KBIE = 0;
 	
 	// Debounce delay for 100ms
-	tickVal = xTaskGetTickCount() + (100 * portTICK_RATE_MS);
+	tickVal = xTaskGetTickCount() + (200 * portTICK_RATE_MS);
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
+	for (i = 0; i <=4; i++) {
+		buttonArray[i] = 0;	
+	}
+	maxPresses = 0;	
+
 	//GET_BUTTON_PRESSED(buttonNum);
-	sum = 0;															   	
 	for (sample = 0; sample < SAMPLES; sample++) {							
 																			
 		buttonNum = 0;									
@@ -117,18 +123,16 @@ ISR(keyboardISR) {
 				}															
 			}																
 		}																	
-		sum += buttonNum;																													
+		buttonArray[buttonNum]++;																													
 	}																		
-	if (sum == 0)
-		buttonNum = 0;
-	else if (sum <= 7)
-		buttonNum = 1;
-	else if (sum <= 12)
-		buttonNum = 2;
-	else if (sum <= 17)
-		buttonNum = 3;
-	else 
-		buttonNum = 4;
+	
+	buttonNum = 0;
+	for (i = 0; i <=4; i++) {
+		if (buttonArray[i] > buttonNum) {
+			maxPresses = buttonArray[i];
+			buttonNum = i;
+		}
+	}	
 	
 	if (buttonNum > 0) {
 		// Now that we know what key we pressed send it to the controller.
@@ -165,14 +169,20 @@ void restartKeyboardISR(void) {
  */
 
 bool buttonStillPressed(UINT8 inButtonNum) {
-	UINT8 buttonNum;
-	UINT8 row;
-	UINT8 col;
-	UINT8 sample;
-	UINT8 sum;
+	UINT8	buttonNum;
+	UINT8	row;
+	UINT8	col;
+	UINT8	sample;
+	UINT8	i;
+	UINT8	maxPresses;
+	UINT8	buttonArray[5];
 	
+	for (i = 0; i <=4; i++) {
+		buttonArray[i] = 0;	
+	}
+	maxPresses = 0;	
+
 //	GET_BUTTON_PRESSED(buttonNum);
-	sum = 0;															   	
 	for (sample = 0; sample < SAMPLES; sample++) {							
 																			
 		buttonNum = 0;									
@@ -192,19 +202,18 @@ bool buttonStillPressed(UINT8 inButtonNum) {
 				}															
 			}																
 		}																	
-		sum += buttonNum;																													
+		buttonArray[buttonNum]++;																													
 	}																		
-	if (sum == 0)
-		buttonNum = 0;
-	else if (sum <= 7)
-		buttonNum = 1;
-	else if (sum <= 12)
-		buttonNum = 2;
-	else if (sum <= 17)
-		buttonNum = 3;
-	else 
-		buttonNum = 4;
+	
+	buttonNum = 0;
+	for (i = 0; i <=4; i++) {
+		if (buttonArray[i] > buttonNum) {
+			maxPresses = buttonArray[i];
+			buttonNum = i;
+		}
+	}	
+	
 	
 	//return (inButtonNum == buttonNum);
-	return (buttonNum > 0);
+	return (buttonNum);
 }
