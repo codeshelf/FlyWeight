@@ -12,7 +12,6 @@
 #include "task.h"
 #include "queue.h"
 #include "simple_mac.h"
-#include "ledBlinkTask.h"
 #include "commands.h"
 #include "remoteMgmtTask.h"
 #include "CPU.h"

@@ -25,7 +25,7 @@
 
 <enumgroup name="Clock source" v="External oscillator">
 <Clock_frequency__MHz_ v="4"/>
-<Clock_range v="0 - 40 MHz"/>
+<Clock_range v="High frequency"/>
 
 <group name="Clock input pin">
 <Pin_name v=""/>
@@ -56,7 +56,7 @@
 
 <group name="Interrupt vector table">
 <Address v="0"/>
-<Size v="0"/>
+<Size v="50"/>
 
 </group>
 
@@ -73,7 +73,7 @@
 <group name="Internal peripherals">
 
 <boolgroup name="BDM pin support" v="Enabled">
-<BDM_pin v="PTG0_BKGD_MS"/>
+<BDM_pin v=""/>
 <BDM_pin_signal v=""/>
 
 </boolgroup>
@@ -315,10 +315,10 @@
 
 <enumgroup name="Clock source" v="External oscillator">
 <Clock_frequency__MHz_ v="4"/>
-<Clock_range v="0 - 40 MHz"/>
+<Clock_range v="High frequency"/>
 
 <group name="Clock input pin">
-<Pin_name v=""/>
+<Pin_name v="PTG2_EXTAL"/>
 <Pin_signal v=""/>
 
 </group>
@@ -345,8 +345,8 @@
 <group name="Internal resource mapping">
 
 <group name="Interrupt vector table">
-<Address v="0"/>
-<Size v="0"/>
+<Address v="65484"/>
+<Size v="50"/>
 
 </group>
 
@@ -507,9 +507,9 @@
 </Properties>
 
 <Methods>
-<SetHighSpeed v="don&apos;t generate code"/>
+<SetHighSpeed v="generate code"/>
 <SetLowSpeed v="don&apos;t generate code"/>
-<SetSlowSpeed v="don&apos;t generate code"/>
+<SetSlowSpeed v="generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
 <GetIntVect v="don&apos;t generate code"/>
@@ -1406,7 +1406,7 @@ MLMESetMC13192ClockRate(2);
 <group name="Interrupt">
 
 <group name="Channel Interrupt">
-<Interrupt v=""/>
+<Interrupt v="Vtpm1ch0"/>
 <Channel_Interrupt v="Disabled"/>
 <ISR_name v=""/>
 
@@ -1440,7 +1440,7 @@ MLMESetMC13192ClockRate(2);
 <group name="Interrupt">
 
 <group name="Channel Interrupt">
-<Interrupt v=""/>
+<Interrupt v="Vtpm1ch1"/>
 <Channel_Interrupt v="Disabled"/>
 <ISR_name v=""/>
 
@@ -1634,7 +1634,7 @@ MLMESetMC13192ClockRate(2);
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
-<Result_data_format v="10-bit/right justified/unsigned"/>
+<Result_data_format v="10-bit/left justified/unsigned"/>
 
 </group>
 
@@ -1892,7 +1892,7 @@ MLMESetMC13192ClockRate(2);
 <Interrupt_RxD_priority v="medium priority"/>
 <Interrupt_TxD v="Vsci1tx"/>
 <Interrupt_TxD_priority v="medium priority"/>
-<Interrupt_Error v=""/>
+<Interrupt_Error v="Vsci1err"/>
 <Interrupt_Error_priority v="medium priority"/>
 <Input_buffer_size v="150"/>
 <Output_buffer_size v="5"/>
@@ -2014,6 +2014,66 @@ MLMESetMC13192ClockRate(2);
 <event name="OnIdle" v="don&apos;t generate code" />
 
 <event name="OnTxComplete" v="don&apos;t generate code" />
+</Events>
+</Bean>
+
+<Bean name="SCI2Tx" type="InterruptVector">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SCI2Tx"/>
+<Interrupt_vector v="Vsci2tx"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="USB_InterruptTx"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SCI2Rx" type="InterruptVector">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SCI2Rx"/>
+<Interrupt_vector v="Vsci2rx"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="USB_InterruptRx"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
+</Events>
+</Bean>
+
+<Bean name="SCI2Error" type="InterruptVector">
+<Enabled v="N"/>
+
+<Properties>
+<Bean_name v="SCI2Error"/>
+<Interrupt_vector v="Vsci2err"/>
+<Interrupt_priority v="medium priority"/>
+
+<boolgroup name="Shared interrupt" v="no" />
+<ISR_name v="USB_InterruptError"/>
+<Allow_duplicate_ISR_names v="no"/>
+</Properties>
+
+<Methods>
+</Methods>
+
+<Events>
 </Events>
 </Bean>
 

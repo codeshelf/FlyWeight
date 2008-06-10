@@ -226,7 +226,7 @@ void checkUSBInterface() {
 	
 	// Loop until RDRF is on, or until we timeout.
 	loopCheck = 0;
-	while (!SCI1S1_RDRF) {
+	while (!SCIS1_RDRF) {
 		loopCheck++;
 		if (loopCheck > 100) {
 			RTS_OFF;
@@ -239,11 +239,11 @@ void checkUSBInterface() {
 	loopCheck = 0;
 	while (loopCheck < 250) {
 	
-		if (SCI1S1_RDRF) {
+		if (SCIS1_RDRF) {
 			if (gCurrentBufferSize <= kBufferSize) {
-				gSCIBuffer[gCurrentBufferSize++] = SCI1D;
+				gSCIBuffer[gCurrentBufferSize++] = SCID;
 			} else {
-				lostChar = SCI1D;
+				lostChar = SCID;
 			}
 		} else {
 			// No RDRF

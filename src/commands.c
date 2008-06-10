@@ -336,7 +336,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	 * the only safe buffer available to us comes from the TX buffer.
 	 */
 
-	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdReqRespREQ) {
+	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdAssocREQ) {
 		// Wait until we can get an TX buffer
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 			vTaskDelay(1);
@@ -360,7 +360,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 		
 		// Set the sub-command.
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
-		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] = eCmdReqRespRESP;
+		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] = eCmdAssocRESP;
 		
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_NETID] = BROADCAST_NETID;
 		memcpy((void *) &(gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CHECK_UID]), PRIVATE_GUID, UNIQUE_ID_BYTES);

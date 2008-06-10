@@ -58,6 +58,9 @@ void serialReceiveTask( void *pvParameters ) {
 	ECommandGroupIDType			cmdID;
 	ENetMgmtSubCmdIDType		subCmdID;
 	BufferCntType				txBufferNum;
+	
+	// Setup the USB interface.
+	USB_Init();
 
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.

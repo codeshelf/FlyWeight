@@ -17,7 +17,6 @@
 // Flyweight
 #include "remoteRadioTask.h"
 #include "commands.h"
-#include "ledBlinkTask.h"
 #include "ulaw.h"
 
 // SMAC
@@ -172,7 +171,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gBufferStarted = TRUE;
 		} else {
 			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
-				sample16b = ATD1R << 5;
+				sample16b = ATD1R;
 				sample8b = linear2ulaw(sample16b);
 				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
 			} else {

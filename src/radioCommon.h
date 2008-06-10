@@ -79,6 +79,14 @@
 	#define TPMIE_AUDIO_LOADER		TPM1SC_TOIE
 	#define TPMOF_AUDIO_LOADER		TPM1SC_TOF
 #else
+	#define SETUP_SPKR_CONTROL
+	#define SPKR_AMP_OFF
+	#define SPKR_AMP_ON
+	#define SETUP_MIC_CONTROL
+	#define MIC_AMP_OFF
+	#define MIC_AMP_ON
+	#define ATD_ON
+	#define ATD_OFF
 	#define PWM_LSB_CHANNEL			TPM1C2V
 	#define TPMSC_PWM				TPM1SC
 	#define TPMSC_AUDIO_LOADER		TPM2SC

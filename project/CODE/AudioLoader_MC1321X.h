@@ -6,7 +6,7 @@
 **     Beantype  : InterruptVector
 **     Version   : Bean 02.022, Driver 01.07, CPU db: 2.87.123
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/29/2008, 6:38 PM
+**     Date/Time : 5/26/2008, 11:58 AM
 **     Abstract  :
 **         This bean "InterruptVector" gives an access to interrupt vector.
 **         The purpose of this bean is to allocate the interrupt vector
