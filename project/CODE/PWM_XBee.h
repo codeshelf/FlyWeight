@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC9S08GT60CFB
 **     Beantype  : Init_TPM
-**     Version   : Bean 01.035, Driver 01.07, CPU db: 2.87.086
-**     Compiler  : Metrowerks HCS08 C Compiler
-**     Date/Time : 12/13/2007, 3:20 PM
+**     Version   : Bean 01.053, Driver 01.12, CPU db: 2.87.118
+**     Compiler  : CodeWarrior HCS08 C Compiler
+**     Date/Time : 6/10/2008, 11:28 AM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -66,7 +66,7 @@
 **     Contents  :
 **         Init - void PWM_XBee_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2005
+**     (c) Copyright UNIS, spol. s r.o. 1997-2006
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -108,7 +108,7 @@ void PWM_XBee_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
+**     This file was created by UNIS Processor Expert 3.01 [03.92]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

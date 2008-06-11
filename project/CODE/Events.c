@@ -158,31 +158,43 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// Otherwise the audio is coming from the controller.
 	if (!gAudioModeRX) {
 #if defined(XBEE) || defined(MC1321X)
-		// TX MODE
+		// --- TX MODE ---------------------------------------------
 		
-		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
-		TPMMOD_AUDIO_LOADER = gMasterSampleRate - 0x50;
+		// Take an audio sample first.
+#if defined(XBEE)
+		sample16b = ATD1R << 4;
+#else
+		sample16b = ATD1R;
+#endif
+		sample8b = linear2ulaw(sample16b);
 
+		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate - 0x40;
+
+		// If the buffer is full then schedule it for send.
+		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
+			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
+			transmitPacketFromISR(gTXBuffer);
+			gBufferStarted = FALSE;
+		}
+			
+		// If we haven't started a buffer yet then start one.
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
 			advanceTXBuffer();
 			createAudioCommand(gTXBuffer);
-			gTXBufferPos = gTXRadioBuffer[gTXBuffer].bufferSize;
+			gTXBufferPos = CMDPOS_AUDIO;
 			gBufferStarted = TRUE;
-		} else {
-			if (gTXBufferPos < CMD_MAX_AUDIO_BYTES) {
-				sample16b = ATD1R;
-				sample8b = linear2ulaw(sample16b);
-				gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
-			} else {
-				gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
-				transmitPacketFromISR(gTXBuffer);
-				gBufferStarted = FALSE;
-			}
 		}
+		
+		// Put the sample into the buffer.
+		if (gBufferStarted) {
+			gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
+		}
+		
 #endif
 	} else {
-		// RX MODE
+		// --- RX MODE ---------------------------------------------
 
 		// Reset the timer for the next sample.
 		TPMMOD_AUDIO_LOADER = gMasterSampleRate + gMasterSampleRateAdjust;

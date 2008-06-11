@@ -272,7 +272,7 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 
 	createPacket(inTXBufferNum, eCommandAudio, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
 	
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 };
 
 // --------------------------------------------------------------------------

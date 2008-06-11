@@ -75,7 +75,7 @@
 
 // Audio Command
 #define CMDPOS_AUDIO			3
-#define CMD_MAX_AUDIO_BYTES		122
+#define CMD_MAX_AUDIO_BYTES		120
 
 // Command masks
 #define PACKETMASK_VERSION		0b11000000
