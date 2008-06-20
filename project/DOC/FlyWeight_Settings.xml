@@ -55,7 +55,7 @@
 <group name="Internal resource mapping">
 
 <group name="Interrupt vector table">
-<Address v="0"/>
+<Address v="65484"/>
 <Size v="50"/>
 
 </group>
@@ -214,9 +214,9 @@
 </Properties>
 
 <Methods>
-<SetHighSpeed v="don&apos;t generate code"/>
+<SetHighSpeed v="generate code"/>
 <SetLowSpeed v="don&apos;t generate code"/>
-<SetSlowSpeed v="don&apos;t generate code"/>
+<SetSlowSpeed v="generate code"/>
 <GetSpeedMode v="don&apos;t generate code"/>
 <SetIntVect v="don&apos;t generate code"/>
 <GetIntVect v="don&apos;t generate code"/>
@@ -1696,7 +1696,7 @@ MLMESetMC13192ClockRate(2);
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
-<Result_data_format v="10-bit/right justified/unsigned"/>
+<Result_data_format v="10-bit/left justified/unsigned"/>
 
 </group>
 

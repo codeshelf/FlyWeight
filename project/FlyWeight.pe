@@ -1,5 +1,5 @@
 Processor Expert Version 0392
-ProjectModificationStamp=978
+ProjectModificationStamp=985
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=715
+ProjectCompNumb=731
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -208,7 +208,7 @@ List=ListItem
 ItemSymbol=InternalMappingGrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -230,7 +230,7 @@ Value=No
 ItemSymbol=IntVectorTableAddress
 ReadOnly=No
 UserReadOnly=No
-Value=0
+Value=65484
 Base=3
 [ItemState]
 ItemSymbol=IntVectorTableSize
@@ -1209,7 +1209,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=SlowRTIClockSel
-ReadOnly=No
+ReadOnly=Yes
 UserReadOnly=No
 
 [Childs]
@@ -1250,10 +1250,10 @@ List=Method
 ItemSymbol=SetHighSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=No
-LastUserSel=never
+LastUserSel=always
 UsrMethodName=SetHighSpeed
 [ItemState]
 ItemSymbol=SetLowSpeed
@@ -1268,19 +1268,19 @@ UsrMethodName=SetLowSpeed
 ItemSymbol=SetSlowSpeed
 ReadOnly=Yes
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 LastSelection=No
-LastUserSel=never
+LastUserSel=always
 UsrMethodName=SetSlowSpeed
 [ItemState]
 ItemSymbol=GetSpeedMode
-ReadOnly=Yes
+ReadOnly=No
 UserReadOnly=No
 Index=1
 Value=No
 LastSelection=No
-LastUserSel=never
+LastUserSel=no
 UsrMethodName=GetSpeedMode
 [ItemState]
 ItemSymbol=SetIntVect
@@ -2014,7 +2014,7 @@ MC9S08GT60CFB
 
 [MC9S08GT60_48:Cpu]
 CompNumb=40
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -4007,7 +4007,7 @@ MC9S08GT60CFD
 
 [MC13214:Cpu]
 CompNumb=592
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -6117,7 +6117,7 @@ Value=No
 [Configuration]
 CompNumb=104
 NodeName=EVB Gateway
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 ConfigurationComment=0
 
@@ -6435,7 +6435,7 @@ Value=No
 [Configuration]
 CompNumb=594
 NodeName=GW0005 (Remote)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6540,7 +6540,7 @@ Value=No
 
 [BitIO:SW2]
 CompNumb=56
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -6785,7 +6785,7 @@ List=Event
 
 [BitIO:SW3]
 CompNumb=54
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7030,7 +7030,7 @@ List=Event
 
 [BitIO:SW4]
 CompNumb=57
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7275,7 +7275,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7520,7 +7520,7 @@ List=Event
 
 [BitIO:LED2]
 CompNumb=42
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7765,7 +7765,7 @@ List=Event
 
 [BitIO:LED3]
 CompNumb=43
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -8010,7 +8010,7 @@ List=Event
 
 [BitIO:LED4]
 CompNumb=44
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -8935,7 +8935,7 @@ LastUserSel=never
 
 [Init_TPM_HCS08:PWM_MC1321X]
 CompNumb=595
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -9140,7 +9140,7 @@ List=GrupItem
 ItemSymbol=ChInterrupt0
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm2ch2
 
 [EndOfChilds]
 [ItemState]
@@ -9296,7 +9296,7 @@ List=GrupItem
 ItemSymbol=ChInterrupt1
 ReadOnly=Yes
 UserReadOnly=No
-Value=
+Value=Vtpm2ch3
 
 [EndOfChilds]
 [ItemState]
@@ -10456,7 +10456,7 @@ List=Event
 
 [InterruptVector:AudioLoader_MC1321X]
 CompNumb=596
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10576,7 +10576,7 @@ List=Event
 
 [Init_ADC_HCS08:MIC_MC1321X]
 CompNumb=597
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11088,7 +11088,7 @@ ItemSymbol=ResultDataFormats
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typeResultFormats
-Index=4
+Index=2
 
 [EndOfChilds]
 [ItemState]
@@ -11427,7 +11427,7 @@ List=GrupItem
 ItemSymbol=PinHidden0
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
 ReadOnly=No
@@ -11441,7 +11441,7 @@ List=GrupItem
 ItemSymbol=Pin0
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
 ReadOnly=No
@@ -11464,7 +11464,7 @@ Index=0
 ItemSymbol=PinHidden1
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
 ReadOnly=No
@@ -11478,7 +11478,7 @@ List=GrupItem
 ItemSymbol=Pin1
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
 ReadOnly=No
@@ -11501,7 +11501,7 @@ Index=0
 ItemSymbol=PinHidden2
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
 ReadOnly=No
@@ -11515,7 +11515,7 @@ List=GrupItem
 ItemSymbol=Pin2
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
 ReadOnly=No
@@ -11538,7 +11538,7 @@ Index=0
 ItemSymbol=PinHidden3
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
 ReadOnly=No
@@ -11552,7 +11552,7 @@ List=GrupItem
 ItemSymbol=Pin3
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
 ReadOnly=No
@@ -11575,7 +11575,7 @@ Index=0
 ItemSymbol=PinHidden4
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
 ReadOnly=No
@@ -11589,7 +11589,7 @@ List=GrupItem
 ItemSymbol=Pin4
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
 ReadOnly=No
@@ -11612,7 +11612,7 @@ Index=0
 ItemSymbol=PinHidden5
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
 ReadOnly=No
@@ -11626,7 +11626,7 @@ List=GrupItem
 ItemSymbol=Pin5
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
 ReadOnly=No
@@ -11686,7 +11686,7 @@ Index=1
 ItemSymbol=PinHidden7
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
 ReadOnly=No
@@ -11700,7 +11700,7 @@ List=GrupItem
 ItemSymbol=Pin7
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
 ReadOnly=No
@@ -11844,7 +11844,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_MC1321X]
 CompNumb=598
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11899,7 +11899,7 @@ List=GrupItem
 ItemSymbol=PinHidden0
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
 ReadOnly=No
@@ -11913,7 +11913,7 @@ List=GrupItem
 ItemSymbol=Pin0
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
 ReadOnly=No
@@ -11936,7 +11936,7 @@ Index=0
 ItemSymbol=PinHidden1
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
 ReadOnly=No
@@ -11950,7 +11950,7 @@ List=GrupItem
 ItemSymbol=Pin1
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
 ReadOnly=No
@@ -11973,7 +11973,7 @@ Index=0
 ItemSymbol=PinHidden2
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
 ReadOnly=No
@@ -11987,7 +11987,7 @@ List=GrupItem
 ItemSymbol=Pin2
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
 ReadOnly=No
@@ -12010,7 +12010,7 @@ Index=0
 ItemSymbol=PinHidden3
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
 ReadOnly=No
@@ -12024,7 +12024,7 @@ List=GrupItem
 ItemSymbol=Pin3
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
 ReadOnly=No
@@ -12047,7 +12047,7 @@ Index=0
 ItemSymbol=PinHidden4
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
 ReadOnly=No
@@ -12061,7 +12061,7 @@ List=GrupItem
 ItemSymbol=Pin4
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
 ReadOnly=No
@@ -12084,7 +12084,7 @@ Index=1
 ItemSymbol=PinHidden5
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
 ReadOnly=No
@@ -12098,7 +12098,7 @@ List=GrupItem
 ItemSymbol=Pin5
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
 ReadOnly=No
@@ -12158,7 +12158,7 @@ Index=0
 ItemSymbol=PinHidden7
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
 ReadOnly=No
@@ -12172,7 +12172,7 @@ List=GrupItem
 ItemSymbol=Pin7
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
 ReadOnly=No
@@ -12525,7 +12525,7 @@ Value=
 ItemSymbol=CtsInt
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vkeyboard1
+Value=
 [ItemState]
 ItemSymbol=IntCtsPriority
 ReadOnly=No
@@ -13896,7 +13896,7 @@ LastUserSel=never
 
 [InterruptVector:SCI2Tx]
 CompNumb=704
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -13956,7 +13956,7 @@ List=Event
 
 [InterruptVector:SCI2Rx]
 CompNumb=705
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -14016,7 +14016,7 @@ List=Event
 
 [InterruptVector:SCI2Error]
 CompNumb=706
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
