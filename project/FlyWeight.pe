@@ -1,5 +1,5 @@
 Processor Expert Version 0392
-ProjectModificationStamp=985
+ProjectModificationStamp=986
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=731
+ProjectCompNumb=735
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2852,7 +2852,7 @@ List=GrupItem
 ItemSymbol=IntVreset
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -10690,7 +10690,7 @@ ItemSymbol=ResultDataFormats
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typeResultFormats
-Index=2
+Index=3
 
 [EndOfChilds]
 [ItemState]

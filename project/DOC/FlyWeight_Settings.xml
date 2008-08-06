@@ -1634,7 +1634,7 @@ MLMESetMC13192ClockRate(2);
 
 </group>
 <Conversion_mode v="Continuous conversion"/>
-<Result_data_format v="10-bit/left justified/unsigned"/>
+<Result_data_format v="10-bit/left justified/signed"/>
 
 </group>
 
