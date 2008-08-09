@@ -50,6 +50,7 @@
 #define CMDPOS_MGMT_SUBCMD		3
 #define CMDPOS_SETUP_CHANNEL	4
 #define CMDPOS_CHECK_TYPE		4
+#define CMDPOS_INTF_TEST_NUM	4
 #define CMDPOS_CHECK_NETID		5
 #define CMDPOS_CHECK_UID		6
 #define CMDPOS_CHECK_CHANNEL	14
@@ -199,7 +200,8 @@ typedef enum {
 typedef enum {
 	eNetMgmtSubCmdInvalid = -1,
 	eNetMgmtSubCmdNetSetup = 1,
-	eNetMgmtSubCmdNetCheck = 2
+	eNetMgmtSubCmdNetCheck = 2,
+	eNetMgmtSubCmdNetIntfTest = 3
 } ENetMgmtSubCmdIDType;
 
 typedef enum {

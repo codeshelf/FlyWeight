@@ -81,12 +81,13 @@ void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr
 void createAudioCommand(BufferCntType inTXBufferNum);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
 #ifdef IS_GATEWAY
-void createOutboundNetsetup(void);
+void createOutboundNetSetup(void);
 #endif
 
 void processNetCheckInboundCommand(BufferCntType inRXBufferNum);
 #ifdef IS_GATEWAY
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum);
+void processNetIntfTestCommand(BufferCntType inTXBufferNum);
 #endif
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);

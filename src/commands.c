@@ -215,7 +215,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 // --------------------------------------------------------------------------
 
 #ifdef IS_GATEWAY
-void createOutboundNetsetup() {
+void createOutboundNetSetup() {
 	BufferCntType txBufferNum;
 	
 	vTaskSuspend(gRadioReceiveTask);
@@ -304,6 +304,59 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	
 	gLocalDeviceState = eLocalStateRun;
 };
+
+// --------------------------------------------------------------------------
+
+#ifdef IS_GATEWAY
+void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
+
+	BufferCntType txBufferNum;
+
+	vTaskSuspend(gRadioReceiveTask);
+
+	/*
+	 * At this point we transmit one inbound interface test back over the serial link from the gateway (dongle) itself.
+	 * 
+	 * The only rational way to do this is to use a transmit buffer.  The reason is that the radio may
+	 * already be waiting to fill an inbound packet that we already sent to the MAC.  There is no
+	 * way to let the MAC know that we're about to switch the current RX buffer.  For this reason
+	 * the only safe buffer available to us comes from the TX buffer.
+	 */
+
+	// Wait until we can get an TX buffer
+	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+		vTaskDelay(1);
+	}
+	//EnterCritical();
+	txBufferNum = gTXCurBufferNum;
+	advanceTXBuffer();
+	//ExitCritical();
+
+	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
+	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
+	// directly.
+
+	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
+	//createPacket(inTXBufferNum, eCommandNetMgmt, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
+	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+
+	// Set the sub-command.
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_INTF_TEST_NUM] = 0;
+
+	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_INTF_TEST_NUM + 1;
+
+	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	RELEASE_TX_BUFFER(txBufferNum);
+
+	vTaskResume(gRadioReceiveTask);
+
+};
+#endif
 
 // --------------------------------------------------------------------------
 

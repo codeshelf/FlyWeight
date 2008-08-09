@@ -6,7 +6,7 @@
 **     Beantype  : Init_RTI
 **     Version   : Bean 01.039, Driver 01.12, CPU db: 2.87.123
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 6/11/2008, 2:02 PM
+**     Date/Time : 8/8/2008, 6:25 PM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -51,6 +51,7 @@
 **
 **  User modules:
 **      FlyWeight.c
+**      Events.c
 **
 ** ###################################################################
 

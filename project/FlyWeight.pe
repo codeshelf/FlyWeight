@@ -1,5 +1,5 @@
 Processor Expert Version 0392
-ProjectModificationStamp=986
+ProjectModificationStamp=987
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=735
+ProjectCompNumb=739
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2113,7 +2113,7 @@ List=GrupItem
 ItemSymbol=OSC1Pin
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTG2_EXTAL
+Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2133,7 +2133,7 @@ List=GrupItem
 ItemSymbol=OSC2Pin
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTG1_XTAL
+Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2286,7 +2286,7 @@ List=GrupItem
 ItemSymbol=BDMPin
 ReadOnly=Yes
 UserReadOnly=No
-Value=PTG0_BKGD_MS
+Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2336,7 +2336,7 @@ List=EnmGrpItm
 ItemSymbol=LVDIntName
 ReadOnly=Yes
 UserReadOnly=No
-Value=Vlvd
+Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -6329,7 +6329,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6435,7 +6435,7 @@ Value=No
 [Configuration]
 CompNumb=594
 NodeName=GW0005 (Remote)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -8935,7 +8935,7 @@ LastUserSel=never
 
 [Init_TPM_HCS08:PWM_MC1321X]
 CompNumb=595
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10456,7 +10456,7 @@ List=Event
 
 [InterruptVector:AudioLoader_MC1321X]
 CompNumb=596
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10576,7 +10576,7 @@ List=Event
 
 [Init_ADC_HCS08:MIC_MC1321X]
 CompNumb=597
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11844,7 +11844,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_MC1321X]
 CompNumb=598
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12316,7 +12316,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0

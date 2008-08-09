@@ -64,7 +64,7 @@ void serialReceiveTask( void *pvParameters ) {
 
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.
-	createOutboundNetsetup();
+	createOutboundNetSetup();
 	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
 	RELEASE_TX_BUFFER(txBufferNum);
 	
@@ -101,6 +101,14 @@ void serialReceiveTask( void *pvParameters ) {
 					case eNetMgmtSubCmdNetSetup:
 						processNetSetupCommand(txBufferNum);
 						// We don't ever want to broadcast net-setup, so continue.
+						RELEASE_TX_BUFFER(txBufferNum);
+						continue;
+						break;
+						
+					case eNetMgmtSubCmdNetIntfTest:
+						processNetIntfTestCommand(txBufferNum);
+						// We don't ever want to broadcast intf-test, so continue.
+						RELEASE_TX_BUFFER(txBufferNum);
 						continue;
 						break;
 				}
