@@ -263,9 +263,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				// Adjust the sampling rate to account for mismatches in the OTA rate.				
 				// We can't go too low or high, or we'll end up missing 
 				// the next interrupt and making the sample run "long".
-				if ((gRXUsedBuffers > RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
+				if ((gRXUsedBuffers > RX_QUEUE_LOW_WATER) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
 					gMasterSampleRateAdjust--;
-				} else if ((gRXUsedBuffers < RX_QUEUE_BALANCE) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
+				} else if ((gRXUsedBuffers < RX_QUEUE_LOW_WATER) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
 					gMasterSampleRateAdjust++;
 				}
 			}
