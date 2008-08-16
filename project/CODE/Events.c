@@ -3,7 +3,6 @@
 
 /*Including used modules for compilling procedure*/
 #include "Cpu.h"
-#include "Events.h"
 
 /*Include shared modules, which are used for whole project*/
 #include "PE_Types.h"
@@ -119,7 +118,7 @@ interrupt void testadc(void) {
 
 #include "task.h"
 
-#define		MAX_DRIFT			0x80
+#define		MAX_DRIFT			0x60
 
 bool				gAudioModeRX = TRUE;
 
@@ -263,8 +262,10 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				// Adjust the sampling rate to account for mismatches in the OTA rate.				
 				// We can't go too low or high, or we'll end up missing 
 				// the next interrupt and making the sample run "long".
-				if ((gRXUsedBuffers > RX_QUEUE_LOW_WATER) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
+				if ((gRXUsedBuffers > RX_QUEUE_HIGH_WATER) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
 					gMasterSampleRateAdjust--;
+				} else if ((gRXUsedBuffers > RX_QUEUE_LOW_WATER)) {
+					gMasterSampleRateAdjust = 0;
 				} else if ((gRXUsedBuffers < RX_QUEUE_LOW_WATER) && (gMasterSampleRateAdjust < MAX_DRIFT)) {
 					gMasterSampleRateAdjust++;
 				}

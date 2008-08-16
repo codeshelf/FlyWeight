@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/8/2008, 6:25 PM
+**     Date/Time : 8/16/2008, 12:14 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -37,12 +37,14 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "USB.h"
+#include "PWM_MC1321X.h"
+#include "AudioLoader_MC1321X.h"
+#include "MIC_MC1321X.h"
+#include "KBI_MC1321X.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "Events.h"
 #include "Cpu.h"
 
 
@@ -173,7 +175,7 @@ label0:
      * Delay
      *   - requested                  : 100 us @ 15.552MHz,
      *   - possible                   : 1555 c, 99987.14 ns, delta -12.86 ns
-     *   - without removable overhead : 1526 c, 98122.43 ns
+     *   - without removable overhead : 1526 c, 98122.429999999987 ns
      */
     pshh                               /* (2 c: 128.6 ns) backup H */
     pshx                               /* (2 c: 128.6 ns) backup X */
@@ -221,7 +223,6 @@ void Cpu_SetHighSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
   }
-  USB_SetHigh();                       /* Set all beans in project to the high speed mode */
 }
 /*
 ** ===================================================================
@@ -247,7 +248,6 @@ void Cpu_SetSlowSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
   }
-  USB_SetSlow();                       /* Set all beans in project to the slow speed mode */
 }
 
 /*
@@ -334,14 +334,10 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
-  /* PTED: PTED0=1 */
-  setReg8Bits(PTED, 0x01);              
-  /* PTEDD: PTEDD1=0,PTEDD0=1 */
-  clrSetReg8Bits(PTEDD, 0x02, 0x01);    
-  /* PTAD: PTAD6=1 */
-  setReg8Bits(PTAD, 0x40);              
-  /* PTADD: PTADD6=1 */
-  setReg8Bits(PTADD, 0x40);             
+  /* PTDPE: PTDPE6=0,PTDPE5=0 */
+  clrReg8Bits(PTDPE, 0x60);             
+  /* PTAPE: PTAPE5=1,PTAPE4=1 */
+  setReg8Bits(PTAPE, 0x30);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -360,8 +356,12 @@ void PE_low_level_init(void)
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
                  set the property Call Init method to 'yes'
    */
-  /* ### Asynchro serial "USB" init code ... */
-  USB_Init();
+  /* ### Init_TPM "PWM_MC1321X" init code ... */
+  PWM_MC1321X_Init();
+  /* ### Init_ADC "MIC_MC1321X" init code ... */
+  MIC_MC1321X_Init();
+  /* ### Init_KBI "KBI_MC1321X" init code ... */
+  KBI_MC1321X_Init();
   __EI();                              /* Enable interrupts */
 }
 
