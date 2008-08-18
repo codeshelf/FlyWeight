@@ -50,7 +50,7 @@ extern void TimerInt(void);
 */
 #ifdef __SWI
 extern void vButtonPush(void);
-#pragma TRAP_PROC SAVE_NO_REGS 
+#pragma TRAP_PROC SAVE_NO_REGS
 void SW1Int_OnInterrupt(void)
 {
   /* place your SW1Int interrupt procedure body here */
@@ -87,9 +87,9 @@ void SW1Int_OnInterrupt(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-#pragma NO_ENTRY 
-#pragma NO_EXIT 
-#pragma NO_FRAME 
+#pragma NO_ENTRY
+#pragma NO_EXIT
+#pragma NO_FRAME
 #pragma NO_RETURN
 extern void vPortTickInterrupt(void);
 void TimerInt(void)
@@ -137,12 +137,12 @@ bool				gBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
-SampleRateType		gMasterSampleRate = 20000000 / 8000;
+const SampleRateType	gMasterSampleRate = 20000000 / 8000;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
 
-interrupt void AudioLoader_OnInterrupt(void) {	
+interrupt void AudioLoader_OnInterrupt(void) {
 
 	byte	ccrHolder;
 	UINT8	sample8b;
@@ -150,17 +150,24 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	INT16	sample16b;
 	UINT8	lsbSample;
 	UINT8	msbSample;
-	
+
 #endif
-	
+
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
 	if (!gAudioModeRX) {
 #if defined(XBEE) || defined(MC1321X)
 		// --- TX MODE ---------------------------------------------
-		
+
+		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// - 0x40;
+
 		// Take an audio sample first.
+		// Start and wait for a ATD conversion.
+		ATD1SC_ATDCO = 0;
+		while (!ATD1SC_CCF) {
+		}
 #if defined(XBEE)
 		sample16b = ATD1R << 4;
 #else
@@ -168,16 +175,6 @@ interrupt void AudioLoader_OnInterrupt(void) {
 #endif
 		sample8b = linear2ulaw(sample16b);
 
-		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
-		TPMMOD_AUDIO_LOADER = gMasterSampleRate - 0x40;
-
-		// If the buffer is full then schedule it for send.
-		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
-			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
-			transmitPacketFromISR(gTXBuffer);
-			gBufferStarted = FALSE;
-		}
-			
 		// If we haven't started a buffer yet then start one.
 		if (!gBufferStarted) {
 			gTXBuffer = gTXCurBufferNum;
@@ -186,12 +183,20 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			gTXBufferPos = CMDPOS_AUDIO;
 			gBufferStarted = TRUE;
 		}
-		
+
 		// Put the sample into the buffer.
 		if (gBufferStarted) {
 			gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
 		}
-		
+
+		// If the buffer is full then schedule it for send.
+		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
+			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
+			transmitPacketFromISR(gTXBuffer);
+			gBufferStarted = FALSE;
+		}
+
+
 #endif
 	} else {
 		// --- RX MODE ---------------------------------------------
@@ -200,9 +205,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		TPMMOD_AUDIO_LOADER = gMasterSampleRate + gMasterSampleRateAdjust;
 
 		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
-		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio) 
+		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio)
 			&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
-		
+
 #if defined(XBEE) || defined(MC1321X)
 			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 			//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
@@ -210,21 +215,21 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
 #endif
 			EnterCriticalArg(ccrHolder);
-			
+
 				SPKR_AMP_OFF;
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
-				
+
 			ExitCriticalArg(ccrHolder);
-			
+
 		} else {
-		
+
 			SPKR_AMP_ON;
 			sample8b = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
 #if defined(XBEE) || defined(MC1321X)
 			// On the MC1321X or XBee module we support 16bit converted uLaw samples.
-			// One to 8-bit channel 0, and one to 8-bit channel 1.  
+			// One to 8-bit channel 0, and one to 8-bit channel 1.
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
 			// (By "shifting" the voltage of channel 0 by 256x.)
 			sample16b = gPWMCenterValue - ulaw2linear(sample8b);
@@ -239,28 +244,28 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				// Increment the buffer pointers.
 			gCurPWMOffset++;
 			if (gCurPWMOffset >= gRXRadioBuffer[gCurPWMRadioBufferNum].bufferSize) {
-				
+
 				gCurPWMOffset = CMDPOS_CONTROL_DATA;
-				
+
 				// The buffers are a shared, critical resource, so we have to protect them before we update.
 				EnterCriticalArg(ccrHolder);
-				
+
 					// Indicate that the buffer is clear.
 					gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
-					
+
 					// Advance to the next buffer.
 					gCurPWMRadioBufferNum++;
 					if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 						gCurPWMRadioBufferNum = 0;
-					
+
 					// Account for the number of used buffers.
 					if (gRXUsedBuffers > 0)
 						gRXUsedBuffers--;
-					
+
 				ExitCriticalArg(ccrHolder);
-					
-				// Adjust the sampling rate to account for mismatches in the OTA rate.				
-				// We can't go too low or high, or we'll end up missing 
+
+				// Adjust the sampling rate to account for mismatches in the OTA rate.
+				// We can't go too low or high, or we'll end up missing
 				// the next interrupt and making the sample run "long".
 				if ((gRXUsedBuffers > RX_QUEUE_HIGH_WATER) && (gMasterSampleRateAdjust > -MAX_DRIFT)) {
 					gMasterSampleRateAdjust--;
@@ -294,9 +299,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 extern bool gIsSleeping;
 UINT8 inRTI = 0;
-#pragma NO_ENTRY 
-#pragma NO_EXIT 
-#pragma NO_FRAME 
+#pragma NO_ENTRY
+#pragma NO_EXIT
+#pragma NO_FRAME
 #pragma NO_RETURN
 void handleRTI();
 void handleRTI() {
