@@ -15,33 +15,27 @@ $Id$
 #include "pub_def.h"
 #include "radioCommon.h"
 
-const char DEVICE_DESC[] = "Adit ChatHead";
+const char DEVICE_DESC[] = "RocketPhone";
 
-#define KVP_ENTRIES			3
-#define ENDPOINT_ENTRIES	3
-#define ENDPOINT_KVPS		4
+#define KVP_ENTRIES			2
+#define ENDPOINT_ENTRIES	1
+#define ENDPOINT_KVPS		1
 
 const UINT8 kActorKVPs = KVP_ENTRIES;
 const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2] = {
 	// Key, value
-	{ "gender", "male" },
-	{ "age", "32" },
-	{ "race", "south asian" }
+	{ "hw_version", "gw0005.r2" },
+	{ "sw_version", "1.0" }
 };
 
 const UINT8 kActorEndpoints = ENDPOINT_ENTRIES;
 const BufferStoragePtrType kActorEndpointTable[ENDPOINT_ENTRIES][3] = {
 	// Codec type, description, endpoint number
-	{ "ulaw", "ULaw Audio", "\1" },
-	{ "motr", "Eyes/Ears Motor", "\2" },
-	{ "motr", "Feet/Mouth Motor", "\3" }
+	{ "ulaw", "ULaw Audio", "\1" }
 };
 
 const UINT8 kEndpointKVPs = ENDPOINT_KVPS;
 const BufferStoragePtrType kEndpointKVPTable[ENDPOINT_KVPS][3] = {
 	// Endpoint number, key, value
-	{ "\1", "voice", "*" },
-	{ "\2", "eyes", "*" },
-	{ "\2", "color", "brown" },
-	{ "\3", "mouth", "*" }
+	{ "\1", "voice", "*" }
 };
