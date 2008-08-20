@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/16/2008, 12:14 PM
+**     Date/Time : 8/18/2008, 6:43 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -175,7 +175,7 @@ label0:
      * Delay
      *   - requested                  : 100 us @ 15.552MHz,
      *   - possible                   : 1555 c, 99987.14 ns, delta -12.86 ns
-     *   - without removable overhead : 1526 c, 98122.429999999987 ns
+     *   - without removable overhead : 1526 c, 98122.43 ns
      */
     pshh                               /* (2 c: 128.6 ns) backup H */
     pshx                               /* (2 c: 128.6 ns) backup X */

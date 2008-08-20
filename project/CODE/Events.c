@@ -137,10 +137,12 @@ bool				gBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
-const SampleRateType	gMasterSampleRate = 20000000 / 8000;
+SampleRateType		gMasterSampleRate = 2500; // 20,000,000 Hz / 8,000 S/sec;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
+UINT16				gEventNumber = 0;
+UINT16				gLastTXEventNumber = 0;
 
 interrupt void AudioLoader_OnInterrupt(void) {
 
@@ -152,6 +154,10 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	UINT8	msbSample;
 
 #endif
+
+	// We keep track of even numbers, because it's a fairly accurate marker.
+	// RTI is 1.024ms, but this tick count comes every 400us.
+	gEventNumber++;
 
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
@@ -192,6 +198,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// If the buffer is full then schedule it for send.
 		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
 			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
+			gLastTXEventNumber = gEventNumber;
 			transmitPacketFromISR(gTXBuffer);
 			gBufferStarted = FALSE;
 		}

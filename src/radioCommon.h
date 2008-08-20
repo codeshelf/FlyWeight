@@ -74,7 +74,7 @@
 	#define SPKR_AMP_OFF			PTBD_PTBD3 = 1;
 	#define SPKR_AMP_ON				PTBD_PTBD3 = 0;
 	#define SETUP_MIC_CONTROL		PTBDD_PTBDD7 = 1;
-	#define MIC_AMP_OFF				PTBD_PTBD7 = 0;
+	#define MIC_AMP_OFF				PTBD_PTBD7 = 1;
 	#define MIC_AMP_ON				PTBD_PTBD7 = 1;
 	#define ATD_ON					ATD1C_ATDPU = 1; ATD1SC_ATDIE = 1; //ATD1SC_ATDIE = 0;
 	#define ATD_OFF					ATD1C_ATDPU = 0; //ATD1SC_ATDIE = 0;

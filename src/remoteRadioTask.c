@@ -38,6 +38,8 @@ bool				gShouldSleep;
 UINT8				gSleepCount;
 extern UINT8		gButtonPressed;
 extern byte			gCCRHolder;
+extern UINT16		gEventNumber;
+extern UINT16		gLastTXEventNumber;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -258,6 +260,7 @@ void radioReceiveTask(void *pvParameters) {
 void radioTransmitTask(void *pvParameters) {
 	tTxPacket			gsTxPacket;
 	BufferCntType		txBufferNum;
+	//portTickType		lastTick;
 
 	for (;;) {
 
@@ -270,17 +273,31 @@ void radioTransmitTask(void *pvParameters) {
 			MLMERXDisableRequest();
 			
 			vTaskSuspend(gRadioReceiveTask);
+			
+			// We're trying to get TX to happen at a precise time.
+			//lastTick = xTaskGetTickCount() + 1;
+			//while (xTaskGetTickCount() < lastTick) {
+			//}
 
 			// Setup for TX.
+			SRTISC_RTIE = 0;
+			if (gEventNumber !=0) {
+				while (gEventNumber < gLastTXEventNumber + 30) {
+				}
+			}
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
+			SRTISC_RTIE = 1;
 			
 			// Prepare to RX responses.
-			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
-			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
+			// Don't go into RX mode if the last thing we sent was an audio packet.
+			if (!(getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) == eCommandAudio)) {
+				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+				gsRxPacket.u8Status = 0;
+				MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
+			}
 						
 			// Set the status of the TX buffer to free.
 			RELEASE_TX_BUFFER(txBufferNum);	
