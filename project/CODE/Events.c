@@ -137,7 +137,7 @@ bool				gBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
-SampleRateType		gMasterSampleRate = 2500; // 20,000,000 Hz / 8,000 S/sec;
+SampleRateType		gMasterSampleRate = 1814; // 20,000,000 Hz / 11,025 samples/sec;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
@@ -199,6 +199,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
 			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
 			gLastTXEventNumber = gEventNumber;
+			gEventNumber = 0;
 			transmitPacketFromISR(gTXBuffer);
 			gBufferStarted = FALSE;
 		}

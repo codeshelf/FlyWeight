@@ -274,16 +274,15 @@ void radioTransmitTask(void *pvParameters) {
 			
 			vTaskSuspend(gRadioReceiveTask);
 			
-			// We're trying to get TX to happen at a precise time.
-			//lastTick = xTaskGetTickCount() + 1;
-			//while (xTaskGetTickCount() < lastTick) {
-			//}
-
 			// Setup for TX.
-			SRTISC_RTIE = 0;
-			if (gEventNumber !=0) {
-				while (gEventNumber < gLastTXEventNumber + 30) {
-				}
+			// We're trying to get TX to happen at a precise time.
+			if (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) == eCommandAudio) {
+				SRTISC_RTIE = 0;
+				//if (gLastTXEventNumber !=0) {
+					while (gEventNumber < 25) {
+					}
+				//}
+				gLastTXEventNumber = 0;
 			}
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
