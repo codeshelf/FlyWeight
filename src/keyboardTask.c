@@ -21,10 +21,13 @@
 
 #define			CHK_KEY_DELAY		10
 
-xQueueHandle 	gKeyboardQueue;
-extern bool 	gAudioModeRX;
-extern bool		gShouldSleep;
-UINT8			gButtonPressed;
+xQueueHandle 			gKeyboardQueue;
+UINT8					gButtonPressed;
+extern bool 			gAudioModeRX;
+extern bool				gShouldSleep;
+extern BufferCntType	gCurAudioTXBuffer;
+extern BufferOffsetType	gCurAudioTXBufferPos;
+extern bool				gCurAudioTXBufferStarted;
 
 // --------------------------------------------------------------------------
 
@@ -41,20 +44,37 @@ void keyboardTask(void *pvParameters) {
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {
 				gShouldSleep = FALSE;
-				if (buttonStillPressed(gButtonPressed)) {
+				if (buttonStillPressed()) {
 					// The user is still holding the button.
 				} else {
 					// The user just released the button.
 					if (gButtonPressed == PTT_BUTTON) {
-						// Wait 5ms for the remote to stop sending audio packets.
-						vTaskDelay(10 * portTICK_RATE_MS);
-						
+					
 						// Now put us into RX mode.
 						gAudioModeRX = TRUE;
 						
 						// Turn off the ATD module
 						ATD_OFF;
 						MIC_AMP_OFF;
+
+						// Wait a few ms for the remote to stop sending audio packets.
+						vTaskDelay(20 * portTICK_RATE_MS);
+
+						// Send the last TX packet.
+						if (gTXRadioBuffer[gCurAudioTXBuffer].bufferStatus == eBufferStateInUse) {
+							gTXRadioBuffer[gCurAudioTXBuffer].bufferSize = gCurAudioTXBufferPos;
+							transmitPacket(gCurAudioTXBuffer);
+							gCurAudioTXBufferStarted = FALSE;
+						}
+						
+					}
+
+					// Wait  a few ms for the remote to stop sending audio packets.
+					vTaskDelay(25 * portTICK_RATE_MS);
+
+					// Wait until a TX packet is free.
+					while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
+						vTaskDelay(1 * portTICK_RATE_MS);
 					}
 
 					//  Send a button up message.
@@ -65,8 +85,8 @@ void keyboardTask(void *pvParameters) {
 					};
 					gButtonPressed = NO_BUTTON;
 					
-					// Wait 500ms before restarting to read another button.
-					vTaskDelay(500 * portTICK_RATE_MS);
+					// Wait 250ms before restarting to read another button.
+					vTaskDelay(250 * portTICK_RATE_MS);
 					
 					// Start looking for another keypress.
 					restartKeyboardISR();
@@ -87,8 +107,8 @@ void keyboardTask(void *pvParameters) {
 					};
 					
 					if (gButtonPressed == PTT_BUTTON) {
-						// Wait 5ms for the controller to stop sending audio packets.
-						vTaskDelay(10 * portTICK_RATE_MS);
+						// Wait a few ms for the controller to stop sending audio packets.
+						vTaskDelay(5 * portTICK_RATE_MS);
 						
 						// Now put us into TX mode.
 						gAudioModeRX = FALSE;

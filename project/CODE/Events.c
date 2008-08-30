@@ -131,18 +131,16 @@ UINT16				gPWMCenterValue = 0x7f;
 BufferOffsetType	gCurPWMOffset = 0;
 BufferCntType		gCurPWMRadioBufferNum = 0;
 
-BufferCntType		gTXBuffer = 0;
-BufferOffsetType	gTXBufferPos = 0;
-bool				gBufferStarted = FALSE;
+BufferCntType		gCurAudioTXBuffer = 0;
+BufferOffsetType	gCurAudioTXBufferPos = 0;
+bool				gCurAudioTXBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
-SampleRateType		gMasterSampleRate = 1814; // 20,000,000 Hz / 11,025 samples/sec;
+SampleRateType		gMasterSampleRate = 2500; // 20,000,000 Hz / 8,000 samples/sec;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
-UINT16				gEventNumber = 0;
-UINT16				gLastTXEventNumber = 0;
 
 interrupt void AudioLoader_OnInterrupt(void) {
 
@@ -154,10 +152,6 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	UINT8	msbSample;
 
 #endif
-
-	// We keep track of even numbers, because it's a fairly accurate marker.
-	// RTI is 1.024ms, but this tick count comes every 400us.
-	gEventNumber++;
 
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
@@ -182,26 +176,24 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		sample8b = linear2ulaw(sample16b);
 
 		// If we haven't started a buffer yet then start one.
-		if (!gBufferStarted) {
-			gTXBuffer = gTXCurBufferNum;
+		if (!gCurAudioTXBufferStarted) {
+			gCurAudioTXBuffer = gTXCurBufferNum;
 			advanceTXBuffer();
-			createAudioCommand(gTXBuffer);
-			gTXBufferPos = CMDPOS_AUDIO;
-			gBufferStarted = TRUE;
+			createAudioCommand(gCurAudioTXBuffer);
+			gCurAudioTXBufferPos = CMDPOS_AUDIO;
+			gCurAudioTXBufferStarted = TRUE;
 		}
 
 		// Put the sample into the buffer.
-		if (gBufferStarted) {
-			gTXRadioBuffer[gTXBuffer].bufferStorage[gTXBufferPos++] = sample8b;
+		if (gCurAudioTXBufferStarted) {
+			gTXRadioBuffer[gCurAudioTXBuffer].bufferStorage[gCurAudioTXBufferPos++] = sample8b;
 		}
 
 		// If the buffer is full then schedule it for send.
-		if (gTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
-			gTXRadioBuffer[gTXBuffer].bufferSize = gTXBufferPos;
-			gLastTXEventNumber = gEventNumber;
-			gEventNumber = 0;
-			transmitPacketFromISR(gTXBuffer);
-			gBufferStarted = FALSE;
+		if (gCurAudioTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
+			gTXRadioBuffer[gCurAudioTXBuffer].bufferSize = gCurAudioTXBufferPos;
+			transmitPacketFromISR(gCurAudioTXBuffer);
+			gCurAudioTXBufferStarted = FALSE;
 		}
 
 

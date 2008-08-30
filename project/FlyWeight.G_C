@@ -58,7 +58,7 @@ Line=MIC_MC1321X
 Line=KBI_MC1321X
 SignalListFile=DOC\FlyWeight_SIGNALS.txt
 DestinationCompiler=MetrowerksHCS08CC
-ProjectModificationStamp=992
+ProjectModificationStamp=993
 
 [30]
 Generated=No
@@ -711,8 +711,8 @@ GenMethodPos=0
 Generated=Yes
 GenCompName=MIC_MC1321X
 GenEventModule=
-HeaderAge=957514683
-CodeAge=957514683
+HeaderAge=957908392
+CodeAge=957908392
 AsemblAge=-1
 GenNumMethods=1
 Init=Yes

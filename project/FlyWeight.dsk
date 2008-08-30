@@ -59,11 +59,11 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[885|155|354|668]
+Rect=[709|148|447|668]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
-Peripheral=CPU
+Peripheral=ATD1
 
 [Editor]
 Rect=[-4|0|1199|990]

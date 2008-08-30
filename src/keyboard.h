@@ -67,6 +67,6 @@
 // Local functions prototypes.
 void KBISetup(void);
 void restartKeyboardISR(void);
-bool buttonStillPressed(UINT8 inButtonNum);
+bool buttonStillPressed();
 
 #endif // KEYBOARD_H

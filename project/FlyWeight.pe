@@ -1,5 +1,5 @@
 Processor Expert Version 0392
-ProjectModificationStamp=992
+ProjectModificationStamp=993
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=751
+ProjectCompNumb=755
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -10669,15 +10669,15 @@ Value=2000 kHz
 ItemSymbol=ConvTime
 ReadOnly=Yes
 UserReadOnly=No
-Value=14 us
+Value=14.6 us
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=ConversionMode
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 [ItemState]
 ItemSymbol=NotRS08SAfamily0
 ReadOnly=No

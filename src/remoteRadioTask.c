@@ -38,8 +38,6 @@ bool				gShouldSleep;
 UINT8				gSleepCount;
 extern UINT8		gButtonPressed;
 extern byte			gCCRHolder;
-extern UINT16		gEventNumber;
-extern UINT16		gLastTXEventNumber;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -274,20 +272,9 @@ void radioTransmitTask(void *pvParameters) {
 			
 			vTaskSuspend(gRadioReceiveTask);
 			
-			// Setup for TX.
-			// We're trying to get TX to happen at a precise time.
-			if (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) == eCommandAudio) {
-				SRTISC_RTIE = 0;
-				//if (gLastTXEventNumber !=0) {
-					while (gEventNumber < 25) {
-					}
-				//}
-				gLastTXEventNumber = 0;
-			}
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
 			MCPSDataRequest(&gsTxPacket);
-			SRTISC_RTIE = 1;
 			
 			// Prepare to RX responses.
 			// Don't go into RX mode if the last thing we sent was an audio packet.

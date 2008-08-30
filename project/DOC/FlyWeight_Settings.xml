@@ -1630,10 +1630,10 @@ MLMESetMC13192ClockRate(2);
 <group name="Clock settings">
 <Prescaler v="4"/>
 <Frequency v="2000 kHz"/>
-<Conversion_time v="14 us"/>
+<Conversion_time v="14.6 us"/>
 
 </group>
-<Conversion_mode v="Single conversion"/>
+<Conversion_mode v="Continuous conversion"/>
 <Result_data_format v="10-bit/left justified/signed"/>
 
 </group>

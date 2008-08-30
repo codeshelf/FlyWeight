@@ -168,52 +168,21 @@ void restartKeyboardISR(void) {
  * Check if the last button pressed by the user is still pressed.
  */
 
-bool buttonStillPressed(UINT8 inButtonNum) {
-	UINT8	buttonNum;
-	UINT8	row;
+bool buttonStillPressed() {
 	UINT8	col;
-	UINT8	sample;
-	UINT8	i;
-	UINT8	maxPresses;
-	UINT8	buttonArray[5];
+	bool	anyButtonPressed;
 	
-	for (i = 0; i <=4; i++) {
-		buttonArray[i] = 0;	
-	}
-	maxPresses = 0;	
-
-//	GET_BUTTON_PRESSED(buttonNum);
-	for (sample = 0; sample < SAMPLES; sample++) {							
-																			
-		buttonNum = 0;									
-		for (row = 0; row <= (KEYBOARD_ROWS - 1); ++row) {					
-			/* Turn off the row outputs	*/									
-			KB_ROW0 = 0;													
-			KB_ROW1 = 0;													
-																			
-			/* Set the current row to high. */								
-			PTBD |= 1 << (row);												
-																			
-			/* Now check the columns. */									
-			for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
-				/* If the column is high then this is the key pressed. */	
-				if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
-					buttonNum = (row * 2)  + col + 1;					
-				}															
-			}																
-		}																	
-		buttonArray[buttonNum]++;																													
-	}																		
-	
-	buttonNum = 0;
-	for (i = 0; i <=4; i++) {
-		if (buttonArray[i] > buttonNum) {
-			maxPresses = buttonArray[i];
-			buttonNum = i;
-		}
-	}	
-	
-	
-	//return (inButtonNum == buttonNum);
-	return (buttonNum);
+	anyButtonPressed = FALSE;									
+	/* Turn on the row outputs	*/									
+	KB_ROW0 = 1;													
+	KB_ROW1 = 1;													
+																	
+	/* Now check the columns. */									
+	for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
+		/* If the column is high then this is the key pressed. */	
+		if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
+			anyButtonPressed = TRUE;					
+		}															
+	}																
+	return (anyButtonPressed);
 }

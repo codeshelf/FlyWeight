@@ -130,6 +130,9 @@ EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 
 void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
 
+	// First clear the packet header.
+	memset((void *) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMDID);
+	
 	// The first byte of the packet is the header.
 	// The next byte of the packet is the packet length.
 	// The next half byte of the packet is the src address
@@ -221,7 +224,7 @@ void createOutboundNetSetup() {
 	vTaskSuspend(gRadioReceiveTask);
 	
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-		vTaskDelay(1);
+		vTaskDelay(1 * portTICK_RATE_MS);
 	}
 	
 	txBufferNum = gTXCurBufferNum;
@@ -325,7 +328,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	// Wait until we can get an TX buffer
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-		vTaskDelay(1);
+		vTaskDelay(1 * portTICK_RATE_MS);
 	}
 	//EnterCritical();
 	txBufferNum = gTXCurBufferNum;
@@ -392,7 +395,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdAssocREQ) {
 		// Wait until we can get an TX buffer
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-			vTaskDelay(1);
+			vTaskDelay(1 * );
 		}
 		//EnterCritical();
 			txBufferNum = gTXCurBufferNum;
