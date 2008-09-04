@@ -33,9 +33,9 @@
 // Global variables.
 
 UINT8 				gu8RTxMode;
-bool				gIsSleeping;
-bool				gShouldSleep;
-UINT8				gSleepCount;
+extern bool			gIsSleeping;
+extern bool			gShouldSleep;
+extern UINT8		gSleepCount;
 extern UINT8		gButtonPressed;
 extern byte			gCCRHolder;
 
@@ -70,7 +70,6 @@ BufferCntType		gTXUsedBuffers = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
-	byte				ccrHolder;
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
@@ -133,35 +132,8 @@ void radioReceiveTask(void *pvParameters) {
 					if (!gShouldSleep) {
 						gShouldSleep = TRUE;
 					} else {
-
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						//vTaskDelay(250 * portTICK_RATE_MS);
-						EnterCriticalArg(ccrHolder);
-						gIsSleeping = TRUE;
-						Cpu_SetSlowSpeed();
-						MLMEHibernateRequest();
-						//TPMIE_PWM = 0;
-						TPMIE_AUDIO_LOADER = 0;
-						SRTISC_RTICLKS = 0;
-						//SRTISC_RTIS = 0;
-						// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
-						SRTISC_RTIS = 6;
-						ExitCriticalArg(ccrHolder);
-						
-						__asm("STOP")
-						
-						EnterCriticalArg(ccrHolder);
-						gIsSleeping = FALSE;
-						MLMEWakeRequest();
-						// Wait for the MC13192's modem ClkO to warm up.
-						Cpu_Delay100US(100);
-						Cpu_SetHighSpeed();
-						SRTISC_RTICLKS = 1;
-						SRTISC_RTIS = 4;
-						//TPMIE_PWM = 1;
-						TPMIE_AUDIO_LOADER = 1;
-						ExitCriticalArg(ccrHolder);
-						
+						sleepThisRemote(1);
 					}
 					
 					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.

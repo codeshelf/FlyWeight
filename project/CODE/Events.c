@@ -124,7 +124,8 @@ bool				gAudioModeRX = TRUE;
 
 //UINT16			gPWMMaxValue = 0xff;
 #if defined(XBEE) || defined(MC1321X)
-UINT16				gPWMCenterValue = 0x7fff;
+//UINT16				gPWMCenterValue = 0x7fff;
+UINT16				gPWMCenterValue = 0x7f;
 #else
 UINT16				gPWMCenterValue = 0x7f;
 #endif
@@ -232,9 +233,13 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			// One to 8-bit channel 0, and one to 8-bit channel 1.
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
 			// (By "shifting" the voltage of channel 0 by 256x.)
-			sample16b = gPWMCenterValue - ulaw2linear(sample8b);
+			sample16b = ulaw2linear(sample8b);
+			//sample16b = gPWMCenterValue - sample16b;
 			msbSample = (sample16b >> 8) & 0xff;
 			lsbSample = sample16b & 0xff;
+			msbSample = gPWMCenterValue - msbSample;
+			lsbSample = gPWMCenterValue - lsbSample;
+			
 			// Only the lower 8 bits of each channel are in use.
 			PWM_LSB_CHANNEL = lsbSample;
 			PWM_MSB_CHANNEL = msbSample;

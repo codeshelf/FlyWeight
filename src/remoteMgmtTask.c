@@ -15,8 +15,11 @@
 #include "pub_def.h"
 #include "simple_mac.h"
 
-xQueueHandle 				gRemoteMgmtQueue;
-ELocalStatusType			gLocalDeviceState;
+xQueueHandle 		gRemoteMgmtQueue;
+ELocalStatusType	gLocalDeviceState;
+bool				gIsSleeping;
+bool				gShouldSleep;
+UINT8				gSleepCount;
 
 // --------------------------------------------------------------------------
 
@@ -25,6 +28,7 @@ void remoteMgmtTask( void *pvParameters ) {
 	ChannelNumberType	channel;
 	bool				associated;
 	UINT8				trim = 128;
+	UINT8				assocAttempts = 0;
 
 	if ( gRemoteMgmtQueue ) {
 		
@@ -66,6 +70,10 @@ void remoteMgmtTask( void *pvParameters ) {
 				channel++;
 				if (channel > 16) {
 					channel = 0;
+					assocAttempts++;
+					if (assocAttempts % 2) {
+						sleepThisRemote(5);
+					}
 				}
 				// Delay 100ms before changing channels.
 				//vTaskDelay(250 * portTICK_RATE_MS);
@@ -116,4 +124,46 @@ void remoteMgmtTask( void *pvParameters ) {
 
 	/* Will only get here if the queue could not be created. */
 	for ( ;; );
+}
+
+void sleepThisRemote(UINT8 inSleepSeconds) {
+
+	byte ccrHolder;
+	int i;
+	
+	if (TRUE) {
+		//vTaskDelay(250 * portTICK_RATE_MS);
+		EnterCriticalArg(ccrHolder);
+		gIsSleeping = TRUE;
+		Cpu_SetSlowSpeed();
+		MLMEHibernateRequest();
+		//TPMIE_PWM = 0;
+		TPMIE_AUDIO_LOADER = 0;
+		SRTISC_RTICLKS = 0;
+		//SRTISC_RTIS = 0;
+		// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
+		SRTISC_RTIS = 6;
+		ExitCriticalArg(ccrHolder);
+		
+		for (i = 0; i < inSleepSeconds; i++) {
+			__asm("STOP");
+			
+			// If a KBI woke us up then don't keep sleeping.
+			if (KBI1SC_KBF) {
+				break;
+			}
+		}
+		
+		EnterCriticalArg(ccrHolder);
+		gIsSleeping = FALSE;
+		MLMEWakeRequest();
+		// Wait for the MC13192's modem ClkO to warm up.
+		Cpu_Delay100US(100);
+		Cpu_SetHighSpeed();
+		SRTISC_RTICLKS = 1;
+		SRTISC_RTIS = 4;
+		//TPMIE_PWM = 1;
+		TPMIE_AUDIO_LOADER = 1;
+		ExitCriticalArg(ccrHolder);
+	}
 }
