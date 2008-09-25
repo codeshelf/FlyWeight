@@ -395,7 +395,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdAssocREQ) {
 		// Wait until we can get an TX buffer
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-			vTaskDelay(1 * );
+			vTaskDelay(1);
 		}
 		//EnterCritical();
 			txBufferNum = gTXCurBufferNum;

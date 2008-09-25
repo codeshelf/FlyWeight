@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_KBI
-**     Version   : Bean 01.020, Driver 01.07, CPU db: 2.87.123
+**     Version   : Bean 01.022, Driver 01.09, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/18/2008, 12:47 PM
+**     Date/Time : 9/24/2008, 8:15 PM
 **     Abstract  :
 **          This file implements the KBI (KBI) module initialization
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -45,7 +45,7 @@
 **     Contents  :
 **         Init - void KBI_MC1321X_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2006
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -100,7 +100,7 @@ void KBI_MC1321X_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.01 [03.92]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

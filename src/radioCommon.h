@@ -71,7 +71,7 @@
 	#define TPMOF_AUDIO_LOADER		TPM2SC_TOF
 #elif defined(MC1321X)
 	#define SETUP_SPKR_CONTROL		PTBDD_PTBDD3 = 1;
-	#define SPKR_AMP_OFF			PTBD_PTBD3 = 1; //PWM_LSB_CHANNEL = 0;  PWM_MSB_CHANNEL = 0;
+	#define SPKR_AMP_OFF			PTBD_PTBD3 = 1; PWM_LSB_CHANNEL = 0x7f;  PWM_MSB_CHANNEL = 0x7f;
 	#define SPKR_AMP_ON				PTBD_PTBD3 = 0;
 	#define SETUP_MIC_CONTROL		PTBDD_PTBDD7 = 1;
 	#define MIC_AMP_OFF				PTBD_PTBD7 = 0;
@@ -102,13 +102,15 @@
 	#define TPMOF_AUDIO_LOADER		TPM2SC_TOF
 #endif
 
-#define RTS_ON  				__asm bclr 6,0x00 //PTA7
-#define RTS_OFF  				__asm bset 6,0x00 //PTA7
-#define RTS_PORTENABLE      	__asm bclr 6,0x01 // PTA7 - PTAPE
-#define RTS_PORTDIRECTION   	__asm bset 6,0x03 // PTA7 - PTADD
+#define CTS_ON  				PTAD_PTAD6 = 0;
+#define CTS_OFF  				PTAD_PTAD6 = 1;
+#define CTS_SETUP      			PTAPE_PTAPE6 = 0; PTADD_PTADD6 = 1;
 
-#define USB_STOP				RTS_OFF/*; gUSBState = eUSBStateStopped */
-#define USB_START				RTS_ON /*; gUSBState = eUSBStateStarted */
+#define RTS						PTAD_PTAD7
+#define RTS_SETUP				PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
+
+#define USB_STOP				CTS_OFF/*; gUSBState = eUSBStateStopped */
+#define USB_START				CTS_ON /*; gUSBState = eUSBStateStarted */
 
 #define MAX_REMOTES				14
 #define INVALID_REMOTE			MAX_REMOTES + 1

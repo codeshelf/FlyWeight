@@ -3,9 +3,9 @@
 **     Filename  : Vectors.C
 **     Project   : FlyWeight
 **     Processor : MC13213R2
-**     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
+**     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/18/2008, 12:47 PM
+**     Date/Time : 9/24/2008, 8:15 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -13,7 +13,7 @@
 **     Settings  :
 **
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2006
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -31,12 +31,13 @@
 #include "AudioLoader_MC1321X.h"
 #include "MIC_MC1321X.h"
 #include "KBI_MC1321X.h"
+#include "LowVoltage.h"
 extern near void _EntryPoint(void);
 
 void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
          dispatchRTI,                  /* Int.no. 25 Vrti (at FFCC)                  Used */
          Cpu_Interrupt,                /* Int.no. 24 Viic1 (at FFCE)                 Unassigned */
-         testadc,                      /* Int.no. 23 Vatd1 (at FFD0)                 Used */
+         TestADC,                      /* Int.no. 23 Vatd1 (at FFD0)                 Used */
          keyboardISR,                  /* Int.no. 22 Vkeyboard1 (at FFD2)            Used */
          Cpu_Interrupt,                /* Int.no. 21 Vsci2tx (at FFD4)               Unassigned */
          Cpu_Interrupt,                /* Int.no. 20 Vsci2rx (at FFD6)               Unassigned */
@@ -56,7 +57,7 @@ void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
          Cpu_Interrupt,                /* Int.no.  6 Vtpm1ch1 (at FFF2)              Unassigned */
          Cpu_Interrupt,                /* Int.no.  5 Vtpm1ch0 (at FFF4)              Unassigned */
          Cpu_VicgInterrupt,            /* Int.no.  4 Vicg (at FFF6)                  Used */
-         Cpu_Interrupt,                /* Int.no.  3 Vlvd (at FFF8)                  Unassigned */
+         LowVoltageDetect,             /* Int.no.  3 Vlvd (at FFF8)                  Used */
          IRQIsr,                       /* Int.no.  2 Virq (at FFFA)                  Used */
          vPortYield,                   /* Int.no.  1 Vswi (at FFFC)                  Used */
          _EntryPoint                   /* Int.no.  0 Vreset (at FFFE)                Reset vector */
@@ -65,7 +66,7 @@ void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.01 [03.92]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

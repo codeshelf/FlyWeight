@@ -3,6 +3,7 @@
 
 /*Including used modules for compilling procedure*/
 #include "Cpu.h"
+#include "Events.h"
 
 /*Include shared modules, which are used for whole project*/
 #include "PE_Types.h"
@@ -97,10 +98,6 @@ void TimerInt(void)
 	vPortTickInterrupt();
 }
 
-interrupt void testadc(void) {
-	UINT16 adcval = ATD1R;
-}
-
 /*
 ** ===================================================================
 **     Event       :  AudioLoader_OnInterrupt (module Events)
@@ -118,7 +115,7 @@ interrupt void testadc(void) {
 
 #include "task.h"
 
-#define		MAX_DRIFT			0x60
+#define		MAX_DRIFT			500
 
 bool				gAudioModeRX = TRUE;
 
@@ -203,25 +200,18 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// --- RX MODE ---------------------------------------------
 
 		// Reset the timer for the next sample.
-		TPMMOD_AUDIO_LOADER = gMasterSampleRate + gMasterSampleRateAdjust;
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// + gMasterSampleRateAdjust;
 
 		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
 		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio)
 			&& (gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus == eBufferStateInUse))) {
 
-#if defined(XBEE) || defined(MC1321X)
-			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
-			//setReg16(PWM_MSB_CHANNEL, gPWMCenterValue);
-#else
-			//setReg16(PWM_LSB_CHANNEL, gPWMCenterValue);
-#endif
-			EnterCriticalArg(ccrHolder);
+			SPKR_AMP_OFF;
 
-				SPKR_AMP_OFF;
+			EnterCriticalArg(ccrHolder);
 				gCurPWMRadioBufferNum++;
 				if (gCurPWMRadioBufferNum >= (RX_BUFFER_COUNT))
 					gCurPWMRadioBufferNum = 0;
-
 			ExitCriticalArg(ccrHolder);
 
 		} else {
@@ -326,22 +316,12 @@ ISR(dispatchRTI)
 	}
 }
 
-/*
-** ===================================================================
-**     Event       :  USB_OnError (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when a channel error (not the error
-**         returned by a given method) occurs. The errors can be
-**         read using <GetError> method.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void  USB_OnError(void)
-{
-  /* Write your code here ... */
+ISR(TestADC) {
+	UINT16 adcval = ATD1R;
+}
+
+ISR(LowVoltageDetect) {
+	
 }
 
 /* END Events */

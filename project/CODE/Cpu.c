@@ -4,10 +4,10 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : MC13214
-**     Version   : Bean 01.065, Driver 01.29, CPU db: 2.87.123
+**     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/18/2008, 6:43 PM
+**     Date/Time : 9/24/2008, 8:15 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -21,7 +21,7 @@
 **         DisableInt   - void Cpu_DisableInt(void);
 **         Delay100US   - void Cpu_Delay100US(word us100);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2006
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -41,10 +41,12 @@
 #include "AudioLoader_MC1321X.h"
 #include "MIC_MC1321X.h"
 #include "KBI_MC1321X.h"
+#include "LowVoltage.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "Events.h"
 #include "Cpu.h"
 
 
@@ -143,10 +145,13 @@ void Cpu_Delay100US(word us100)
   /* jsr:  5 cycles overhead (jump to subroutine) */
   /* rts:  6 cycles overhead (return from subroutine) */
 
+  /* aproximate irremovable overhead for each 100us cycle (counted) : 8 cycles */
+  /* aix:  2 cycles overhead  */
+  /* cphx: 3 cycles overhead  */
+  /* bne:  3 cycles overhead  */
   asm {
 loop:
     /* 100 us delay block begin */
-
     psha                               /* (2 c) backup A */
     lda CpuMode                        /* (4 c) get CpuMode */
     cmp #HIGH_SPEED                    /* (2 c) compare it to HIGH_SPEED */
@@ -155,15 +160,15 @@ loop:
      * Delay
      *   - requested                  : 100 us @ 20MHz,
      *   - possible                   : 2000 c, 100000 ns
-     *   - without removable overhead : 1968 c, 98400 ns
+     *   - without removable overhead : 1976 c, 98800 ns
      */
     pshh                               /* (2 c: 100 ns) backup H */
     pshx                               /* (2 c: 100 ns) backup X */
-    ldhx #$00F4                        /* (3 c: 150 ns) number of iterations */
+    ldhx #$00F5                        /* (3 c: 150 ns) number of iterations */
 label1:
     aix #-1                            /* (2 c: 100 ns) decrement H:X */
     cphx #0                            /* (3 c: 150 ns) compare it to zero */
-    bne label1                         /* (3 c: 150 ns) repeat 244x */
+    bne label1                         /* (3 c: 150 ns) repeat 245x */
     pulx                               /* (3 c: 150 ns) restore X */
     pulh                               /* (3 c: 150 ns) restore H */
     nop                                /* (1 c: 50 ns) wait for 1 c */
@@ -175,21 +180,20 @@ label0:
      * Delay
      *   - requested                  : 100 us @ 15.552MHz,
      *   - possible                   : 1555 c, 99987.14 ns, delta -12.86 ns
-     *   - without removable overhead : 1526 c, 98122.43 ns
+     *   - without removable overhead : 1534 c, 98636.83 ns
      */
     pshh                               /* (2 c: 128.6 ns) backup H */
     pshx                               /* (2 c: 128.6 ns) backup X */
-    ldhx #$00BD                        /* (3 c: 192.9 ns) number of iterations */
+    ldhx #$00BE                        /* (3 c: 192.9 ns) number of iterations */
 label3:
     aix #-1                            /* (2 c: 128.6 ns) decrement H:X */
     cphx #0                            /* (3 c: 192.9 ns) compare it to zero */
-    bne label3                         /* (3 c: 192.9 ns) repeat 189x */
+    bne label3                         /* (3 c: 192.9 ns) repeat 190x */
     pulx                               /* (3 c: 192.9 ns) restore X */
     pulh                               /* (3 c: 192.9 ns) restore H */
     nop                                /* (1 c: 64.3 ns) wait for 1 c */
 label2:                                /* End of delays */
     pula                               /* (2 c) restore A */
-
     /* 100 us delay block end */
     aix #-1                            /* us100 parameter is passed via H:X registers */
     cphx #0
@@ -216,6 +220,7 @@ void Cpu_SetHighSpeed(void)
     EnterCritical();                   /* If yes then save the PS register */
     /* ICGC1: HGO=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
     ICGC1 = 0x5C;                      /* Initialization of the ICG control register 1 */
+    while(ICGS1_CLKST != 0x03) {}      /* Wait until clock domain is switched */
     /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
@@ -241,6 +246,7 @@ void Cpu_SetSlowSpeed(void)
     EnterCritical();                   /* If yes then save the PS register */
     /* ICGC1: HGO=0,RANGE=0,REFS=0,CLKS1=0,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
     ICGC1 = 0x0C;                      /* Initialization of the ICG control register 1 */
+    while(ICGS1_CLKST != 0x01) {}      /* Wait until clock domain is switched */
     /* ICGC2: LOLRE=0,MFD2=1,MFD1=0,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
@@ -378,7 +384,7 @@ const unsigned char NVOPT_INIT @0x0000FFBF = 0x7E;
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.01 [03.92]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

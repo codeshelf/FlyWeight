@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : InterruptVector
-**     Version   : Bean 02.022, Driver 01.07, CPU db: 2.87.123
+**     Version   : Bean 02.022, Driver 01.07, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 6/11/2008, 2:02 PM
+**     Date/Time : 9/17/2008, 7:25 PM
 **     Abstract  :
 **         This bean "InterruptVector" gives an access to interrupt vector.
 **         The purpose of this bean is to allocate the interrupt vector
@@ -21,7 +21,7 @@
 **     Contents  :
 **         No public methods
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2006
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -51,7 +51,7 @@ __interrupt void IRQIsr(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.01 [03.92]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

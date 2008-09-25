@@ -30,6 +30,8 @@ Module "KBI_MC1321X" (bean Init_KBI_HCS08)
                 settings. Call this method in user code to initialize the module. By default, the method is called by PE 
                 automatically; see "Call Init method" property of the bean for more details.
 
+Module "LowVoltage" (bean InterruptVector)
+
 Module "Cpu"       (bean MC13213)
    - Cpu_SetHighSpeed -Sets the high speed mode. The method is enabled only if low or slow speed mode is enabled in the bean as 
                 well.

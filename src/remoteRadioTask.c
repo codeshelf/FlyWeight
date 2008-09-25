@@ -265,9 +265,5 @@ void radioTransmitTask(void *pvParameters) {
 		} else {
 			
 		}
-		
-		// Blink LED1 to let us know we succeeded in transmitting the buffer.
-		//if (xQueueSend(gLEDBlinkQueue, &gLED1, (portTickType) 0)) {
-		//}
 	}
 }

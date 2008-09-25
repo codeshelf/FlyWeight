@@ -1,5 +1,5 @@
 [Version]
-PE_DesktopFileVersion=914
+PE_DesktopFileVersion=1031
 
 [Desktop]
 StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
@@ -41,7 +41,7 @@ BF_BA_AllQuestions=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[4|90|1064|668]
+Rect=[4|90|1107|764]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -59,11 +59,11 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[709|148|447|668]
+Rect=[673|99|447|764]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
-Peripheral=ATD1
+Peripheral=CPU
 
 [Editor]
 Rect=[-4|0|1199|990]

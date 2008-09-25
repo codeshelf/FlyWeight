@@ -25,6 +25,7 @@
 
 /* Including used modules for compiling procedure */
 #include "Cpu.h"
+#include "Events.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
@@ -32,6 +33,7 @@
 #include "AudioLoader_MC1321X.h"
 #include "MIC_MC1321X.h"
 #include "KBI_MC1321X.h"
+#include "LowVoltage.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

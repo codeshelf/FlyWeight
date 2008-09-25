@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_ADC
-**     Version   : Bean 01.115, Driver 01.12, CPU db: 2.87.123
+**     Version   : Bean 01.131, Driver 01.14, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 8/24/2008, 4:45 PM
+**     Date/Time : 9/24/2008, 8:15 PM
 **     Abstract  :
 **          This file implements the ADC (ATD) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -23,7 +23,7 @@
 **          Pins                                           : PTB2_AD2
 **          Interrupt                                      : Vatd1
 **          Conversion complete interrupt                  : Disabled
-**          ISR name                                       : testadc
+**          ISR name                                       : TestADC
 **          Initial channel select                         : Channel 2
 **          Call Init method                               : yes
 **          Enable module                                  : Enabled
@@ -31,7 +31,7 @@
 **     Contents  :
 **         Init - void MIC_MC1321X_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2006
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -62,7 +62,7 @@
 ** of the user modules (see MIC_MC1321X.c file for more information).
 ** ===================================================================
 */
-__interrupt void testadc(void);
+__interrupt void TestADC(void);
 
 void MIC_MC1321X_Init(void);
 /*
@@ -86,7 +86,7 @@ void MIC_MC1321X_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.01 [03.92]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

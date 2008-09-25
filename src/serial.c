@@ -12,8 +12,8 @@
 	#include "watchdog.h"
 #endif
 
-#define	kBufferSize		50
-#define	kHighWaterMark  40
+#define	kBufferSize		25
+#define	kHighWaterMark  10
 
 static UINT8			gCurrentBufferPos = 0;
 static UINT8			gCurrentBufferSize = 0;
@@ -205,11 +205,14 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 	we detect immediately when global interrupts resume.)
 */
 
+#define kEndCTSTicks		1 * portTICK_RATE_MS
+#define kEndReadTicks		2 * portTICK_RATE_MS
+
 void checkUSBInterface() {
 
 	byte 			ccrHolder;
-	UINT8			loopCheck;
-	USB_TComData	lostChar;
+	UINT8			readCheck;
+	//USB_TComData	lostChar;
 	
 	gCurrentBufferPos = 0;
 	gCurrentBufferSize = 0;
@@ -218,44 +221,37 @@ void checkUSBInterface() {
 	WatchDog_Clear();
 	#endif
 	
-	// Disable interrupts, so that this is all we're doing.
 	EnterCriticalArg(ccrHolder);
+
+	// Turn CTS on.
+	CTS_ON;
+
+	readCheck = 0;
+	while (TRUE) {
 	
-	// Turn RTS on.
-	RTS_ON;
-	
-	// Loop until RDRF is on, or until we timeout.
-	loopCheck = 0;
-	while (!SCIS1_RDRF) {
-		loopCheck++;
-		if (loopCheck > 100) {
-			RTS_OFF;
-			ExitCriticalArg(ccrHolder);
-			return;
-		}
-	}
-	
-	// Read characters until the high water mark, but keep reading characters until RDRF settles.
-	loopCheck = 0;
-	while (loopCheck < 250) {
-	
-		if (SCIS1_RDRF) {
-			if (gCurrentBufferSize <= kBufferSize) {
+		// Read characters until the high water mark, or keep reading characters until RDRF settles.
+		readCheck++;
+		while (SCIS1_RDRF) {
+		//	if (gCurrentBufferSize <= kBufferSize) {
 				gSCIBuffer[gCurrentBufferSize++] = SCID;
-			} else {
-				lostChar = SCID;
-			}
-		} else {
-			// No RDRF
-			loopCheck++;
+				// If we've read to the high water mark then turn CTS off.
+				if (gCurrentBufferSize > kHighWaterMark) {
+					CTS_OFF;
+				}
+		//	} else {
+		//		lostChar = SCID;
+		//	}
+			readCheck = 0;
 		}
-	
-		// If we've read to the high water mark then turn RTS off.
-		if (gCurrentBufferSize > kHighWaterMark) {
-			RTS_OFF;
+		
+		// If we haven't read anything in a while then prepare to exit.
+		if (readCheck > 50) {
+			break;
+		} else if (readCheck > 25) {
+			CTS_OFF;
 		}
 	}
-	
+		
 	// Resume normal OS/interrupt processing.
 	ExitCriticalArg(ccrHolder);
 }

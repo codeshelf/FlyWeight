@@ -124,9 +124,9 @@ void radioTransmitTask(void *pvParameters) {
 	BufferCntType	txBufferNum;
 
 	// Turn the SCi back on by taking RX out of standby.
-	RTS_PORTENABLE;
-	RTS_PORTDIRECTION;
-	RTS_ON;
+	CTS_SETUP;
+	RTS_SETUP;
+	CTS_ON;
 		
 	for (;;) {
 	
