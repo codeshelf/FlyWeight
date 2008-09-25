@@ -1488,7 +1488,7 @@ MLMESetMC13192ClockRate(2);
           <TxD v="PTE0_TxD1"/>
           <TxD_pin_signal v="TX"/>
         </boolgroup>
-        <Baud_rate v="312500 baud"/>
+        <Baud_rate v="1250000 baud"/>
         <Break_signal v="Disabled"/>
         <Wakeup_condition v="Idle line wakeup"/>
         <Stop_in_wait_mode v="no"/>

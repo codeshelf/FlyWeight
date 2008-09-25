@@ -200,7 +200,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		// --- RX MODE ---------------------------------------------
 
 		// Reset the timer for the next sample.
-		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// + gMasterSampleRateAdjust;
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate + gMasterSampleRateAdjust;
 
 		// The buffer for the current command doesn't contain an control/audio command, so advance to the next buffer.
 		if (!((getCommandID(gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage) == eCommandAudio)

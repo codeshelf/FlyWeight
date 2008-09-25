@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1001
+ProjectModificationStamp=1004
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=768
+ProjectCompNumb=772
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -12812,18 +12812,18 @@ RegCompType=
 ItemSymbol=_BdRate
 ReadOnly=No
 UserReadOnly=No
-Value=312500 baud
+Value=1250000 baud
 RuntimeSetting=0
-ReqDevPrescHigh=-2
-ReqDevPrescLow=-2
-ReqDevPrescSlow=-2
-ReqExtCompPrescHigh=-2
-ReqExtCompPrescLow=-2
-ReqExtCompPrescSlow=-2
-ReqSrcClkPrescHigh=-2
-ReqSrcClkPrescLow=-2
-ReqSrcClkPrescSlow=-2
-InitValue=312500 baud
+ReqDevPrescHigh=-1
+ReqDevPrescLow=-1
+ReqDevPrescSlow=-1
+ReqExtCompPrescHigh=-1
+ReqExtCompPrescLow=-1
+ReqExtCompPrescSlow=-1
+ReqSrcClkPrescHigh=-1
+ReqSrcClkPrescLow=-1
+ReqSrcClkPrescSlow=-1
+InitValue=1250000 baud
 Precision=10
 PrecInProc=Yes
 LowLimit=
