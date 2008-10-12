@@ -86,19 +86,19 @@ ISR(keyboardISR) {
 	bool	shouldRestartISR = FALSE;
 	UINT8	i;
 	UINT8	maxPresses;
-	UINT8	buttonArray[5];
+	UINT8	buttonArray[4];
 	
 	EnterCriticalArg(ccrHolder);
 	
 	// Disable the KBI interrupt
 	KBI1SC_KBIE = 0;
 	
-	// Debounce delay for 100ms
+	// Debounce delay
 	tickVal = xTaskGetTickCount() + (200 * portTICK_RATE_MS);
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
-	for (i = 0; i <=4; i++) {
+	for (i = 0; i < 4; i++) {
 		buttonArray[i] = 0;	
 	}
 	maxPresses = 0;	
@@ -127,8 +127,8 @@ ISR(keyboardISR) {
 	}																		
 	
 	buttonNum = 0;
-	for (i = 0; i <=4; i++) {
-		if (buttonArray[i] > buttonNum) {
+	for (i = 0; i < 4; i++) {
+		if (buttonArray[i] > maxPresses) {
 			maxPresses = buttonArray[i];
 			buttonNum = i;
 		}
@@ -170,6 +170,7 @@ void restartKeyboardISR(void) {
 
 bool buttonStillPressed() {
 	UINT8	col;
+	UINT8	sample;
 	bool	anyButtonPressed;
 	
 	anyButtonPressed = FALSE;									
@@ -177,12 +178,14 @@ bool buttonStillPressed() {
 	KB_ROW0 = 1;													
 	KB_ROW1 = 1;													
 																	
-	/* Now check the columns. */									
-	for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
-		/* If the column is high then this is the key pressed. */	
-		if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
-			anyButtonPressed = TRUE;					
-		}															
-	}																
+	for (sample = 0; sample < SAMPLES; sample++) {							
+		/* Now check the columns. */									
+		for (col = 0; col <= (KEYBOARD_COLS - 1); ++col) {				
+			/* If the column is high then this is the key pressed. */	
+			if (PTAD & (1 << (col + KB_BIT_COL_OFFSET))) {				
+				anyButtonPressed = TRUE;					
+			}															
+		}
+	}
 	return (anyButtonPressed);
 }

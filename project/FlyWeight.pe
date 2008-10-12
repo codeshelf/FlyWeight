@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1004
+ProjectModificationStamp=1007
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=772
+ProjectCompNumb=780
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -3999,7 +3999,7 @@ List=GrupItem
 ItemSymbol=ICLK
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4032,7 +4032,7 @@ ItemSymbol=ECLK
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4106,7 +4106,7 @@ Value=
 ItemSymbol=LowPowerModesSettingsGrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -4149,7 +4149,7 @@ List=ListItem
 ItemSymbol=InternalMappingGrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4219,7 +4219,7 @@ Base=3
 ItemSymbol=Intperiphgrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4268,7 +4268,7 @@ ItemSymbol=LVD
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4767,7 +4767,7 @@ Value=Yes
 ItemSymbol=CPUinterrupts
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -4829,7 +4829,7 @@ ItemSymbol=IntSWIGrp
 ReadOnly=No
 UserReadOnly=No
 Value=No
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -4903,7 +4903,7 @@ ItemSymbol=PLLselectHigh
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem

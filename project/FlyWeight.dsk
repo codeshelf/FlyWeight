@@ -11,29 +11,29 @@ StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
 [AppPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[-4|58|318|530]
+Rect=[-4|74|318|530]
 
 [CpuPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[88|236|860|624]
+Rect=[88|252|860|624]
 CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[33|640|722|313]
+Rect=[33|656|722|313]
 
 [ResourceMeter]
 Status=hiden
 WindowState=NORMAL
-Rect=[441|807|457|149]
+Rect=[441|823|457|149]
 
 [BeanSelector]
 Status=hiden
 WindowState=NORMAL
-Rect=[-16|510|457|446]
+Rect=[-16|526|457|446]
 BF_ForTgtCpuOnly=Yes
 BF_LicensedOnly=Yes
 BF_BA_AllQuestions=Yes
@@ -41,7 +41,7 @@ BF_BA_AllQuestions=Yes
 [ObjInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[4|90|1107|764]
+Rect=[4|106|1107|764]
 ObjInspectorDockedWithPrphInit=No
 ColWidth01=263
 ColWidth02=475
@@ -59,7 +59,7 @@ ViewItemLevel=EXPERT
 [PrphInspector]
 Status=hiden
 WindowState=NORMAL
-Rect=[673|99|447|764]
+Rect=[793|95|447|764]
 ViewMode=PrphRegInit
 SortRegsByAddr=Yes
 GroupRegisters=No
