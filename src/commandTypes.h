@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #ifndef COMMANDSTYPES_H
@@ -23,7 +23,7 @@
 
 /*
  * The format of a packet on the network is as follows:
- * 
+ *
  * 2b - Version
  * 3b - Network number
  * 3b - Reserved
@@ -32,9 +32,9 @@
  * 4b - Command ID
  * 4b - Command endpoint
  * nB - Command bytes
- * 
+ *
  * Where B = byte, b = bit
- * 
+ *
  */
 
 // Command format positioning constants.
@@ -63,6 +63,7 @@
 #define CMDPOS_ASSOCREQ_VER		12
 #define CMDPOS_ASSOCRESP_ADDR	12
 #define CMDPOS_ASSOCASCK_STATE	12
+#define CMDPOS_ASSOCREQ_SYSSTAT 13
 
 // Info Command
 #define CMDPOS_INFO_SUBCMD		3
@@ -98,11 +99,11 @@
 
 /*
  * The controller state machine;
- * 
+ *
  * ControllerStateInit
- * 
+ *
  * This is the state of the controller when the controller first starts.
- * 
+ *
  * 		-> ControllerStateRun - After initialization.
  */
 typedef enum {
@@ -113,17 +114,17 @@ typedef enum {
 
 /*
  * The remote device state machine.  (From the POV of the controller.)
- * 
+ *
  * RemoteStateInit
- * 
+ *
  * This is the state of the remote when the remote first starts.
- * 
+ *
  * 		-> RemoteStateWakeSent - After initialization the remote broadcasts the wake command.
- * 
+ *
  * RemoteStateWakeSent
- * 
+ *
  * Yhis is the state after the remote broadcasts the wake command
- * 
+ *
  * 		-> RemoteStateRun - After receiving an assign command.
  */
 typedef enum {
@@ -147,44 +148,44 @@ typedef enum {
 
 /*
  * Network  commands
- * 
+ *
  * CommandNetSetup
- * 
+ *
  * This command is sent to the gateway (dongle) by the controller and never gets transmitted to the
  * radio network.  It is used to negotiate the creation of a new network on behalf of the controller
  * when it restarts.
- * 
+ *
  * CommandAssocReq
- * 
+ *
  * When a remote first starts it broadcasts an associate command which contains a unique ID for the remote.
  * It does this on every channel until a controller responds with an associate response.
- * 
+ *
  * CommandAssocResp
- * 
+ *
  * The controller responds to the associate request command by assigning a local destination address for the remote.
  * The remote should then act on all messages sent to that address or the broadcast address.
- * 
+ *
  * CommandNetCheck
- * 
+ *
  * This command is used *after* the remote is associated with a remote.
  * The remote should send the net check request command from time-to-time.  The controller will respond.
  * If the contoller doesn't respond then the remote should assume the controller has quit or reset.
  *
  * QueryCommand
- * 
+ *
  * The controller sends a query to the remote asking for details of one or more facilities.
- * 
+ *
  * ResponseCommand
- * 
+ *
  * The remote responds to the query command with the requested information about the facility.
- * 
+ *
  * ControlAudio
- * 
+ *
  * The controller or the remote can send a control audio command that contains audio to be played on
  * an endpoint.
- * 
+ *
  * ControlMotor
- * 
+ *
  * The controller or the remote can send a control motor command that contains instructions to run a
  * motor at the specified enfpoint
  */
