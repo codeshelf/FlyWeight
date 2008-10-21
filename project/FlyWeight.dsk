@@ -11,7 +11,7 @@ StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
 [AppPanel]
 Status=hiden
 WindowState=NORMAL
-Rect=[-4|74|318|530]
+Rect=[-4|58|318|530]
 
 [CpuPanel]
 Status=hiden

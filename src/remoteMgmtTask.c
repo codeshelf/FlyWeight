@@ -51,7 +51,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			};
 			
 			// Wait up to 250ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 500 * portTICK_RATE_MS) == pdPASS) {
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					switch (gLocalDeviceState) {
 						case eLocalStateAssocRespRcvd:

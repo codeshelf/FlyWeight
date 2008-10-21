@@ -480,9 +480,9 @@ MLMESetMC13192ClockRate(2);
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
-          <enumgroup name="LVD operation" v="Reset">
+          <enumgroup name="LVD operation" v="Polling mode">
           </enumgroup>
-          <Enable_in_stop_mode v="yes"/>
+          <Enable_in_stop_mode v="no"/>
           <Low_voltage_detect_voltage v="Low trip point"/>
           <Low_voltage_warning_voltage v="Low trip point"/>
         </boolgroup>

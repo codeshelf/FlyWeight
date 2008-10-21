@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/12/2008, 8:48 AM
+**     Date/Time : 10/20/2008, 4:23 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -308,8 +308,8 @@ void _EntryPoint(void)
   /* Common initialization of the write once registers */
   /* SOPT: COPE=0,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
   setReg8(SOPT, 0x73);                  
-  /* SPMSC1: LVDF=0,LVDACK=0,LVDIE=0,LVDRE=1,LVDSE=1,LVDE=1,??=0,??=0 */
-  setReg8(SPMSC1, 0x1C);                
+  /* SPMSC1: LVDF=0,LVDACK=0,LVDIE=0,LVDRE=0,LVDSE=0,LVDE=1,??=0,??=0 */
+  setReg8(SPMSC1, 0x04);                
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
   setReg8(SPMSC2, 0x00);                
   /*  System clock initialization */

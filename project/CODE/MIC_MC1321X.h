@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.131, Driver 01.14, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/12/2008, 8:48 AM
+**     Date/Time : 10/20/2008, 4:23 PM
 **     Abstract  :
 **          This file implements the ADC (ATD) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
