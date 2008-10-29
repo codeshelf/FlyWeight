@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/20/2008, 4:23 PM
+**     Date/Time : 10/21/2008, 11:29 AM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -218,8 +218,8 @@ void Cpu_SetHighSpeed(void)
 {
   if (CpuMode != HIGH_SPEED) {         /* Is an actual cpu mode other than high speed mode? */
     EnterCritical();                   /* If yes then save the PS register */
-    /* ICGC1: HGO=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
-    ICGC1 = 0x5C;                      /* Initialization of the ICG control register 1 */
+    /* ICGC1: HGO=1,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
+    ICGC1 = 0xDC;                      /* Initialization of the ICG control register 1 */
     while(ICGS1_CLKST != 0x03) {}      /* Wait until clock domain is switched */
     /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
@@ -244,8 +244,8 @@ void Cpu_SetSlowSpeed(void)
 {
   if (CpuMode != SLOW_SPEED) {         /* Is an actual cpu mode other than slow speed mode? */
     EnterCritical();                   /* If yes then save the PS register */
-    /* ICGC1: HGO=0,RANGE=0,REFS=0,CLKS1=0,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
-    ICGC1 = 0x0C;                      /* Initialization of the ICG control register 1 */
+    /* ICGC1: HGO=1,RANGE=0,REFS=0,CLKS1=0,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
+    ICGC1 = 0x8C;                      /* Initialization of the ICG control register 1 */
     while(ICGS1_CLKST != 0x01) {}      /* Wait until clock domain is switched */
     /* ICGC2: LOLRE=0,MFD2=1,MFD1=0,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
@@ -313,8 +313,8 @@ void _EntryPoint(void)
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
   setReg8(SPMSC2, 0x00);                
   /*  System clock initialization */
-  /* ICGC1: HGO=0,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
-  setReg8(ICGC1, 0x5C);                 
+  /* ICGC1: HGO=1,RANGE=1,REFS=0,CLKS1=1,CLKS0=1,OSCSTEN=1,LOCD=0,??=0 */
+  setReg8(ICGC1, 0xDC);                 
   /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
   setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */

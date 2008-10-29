@@ -50,7 +50,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			if (transmitPacket(gTXCurBufferNum)) {
 			};
 			
-			// Wait up to 250ms for a response.
+			// Wait up to 100ms for a response.
 			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					switch (gLocalDeviceState) {

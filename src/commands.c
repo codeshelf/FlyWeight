@@ -176,6 +176,10 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
+	UINT8 saveATD1C;
+	UINT8 saveATD1SC;
+	INT8 batteryLevel;
+
 	// Create the command for checking if we're associated
 	createPacket(inTXBufferNum, eCommandAssoc, gMyNetworkID, gMyAddr, ADDR_BROADCAST);
 
@@ -187,8 +191,42 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 
 	// Set the device version
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
+	
+	// Save the ATD state and prepare to take a battery measurement.
+	saveATD1C = ATD1C;
+	saveATD1SC = ATD1SC;
+	ATD1C_DJM = 1;
+	ATD1C_RES8 = 1;
+	ATD1SC_ATDCH = 0x04;
+	ATD_ON;
+	
+	// Take an audio sample first.
+	// Start and wait for a ATD conversion.
+	ATD1SC_ATDCO = 0;
+	while (!ATD1SC_CCF) {
+	}
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_VER + 1;
+	// Get the measurement.
+	// Battery values will range from 1.6V to 3.1V, but there is a voltage divide
+	// in the circuit, so ATD values will range from 64-128.  The device starts failing
+	// around 70, and if we set 78 as the floor then 2x gives us a nice 100 scale.
+	// (Since 128 - 78 - 50)
+	batteryLevel = ATD1RH - 78;
+	
+	// Restore state.
+	ATD1SC = saveATD1SC;
+	ATD1C = saveATD1C;
+
+	// Nominalize to a 0-100 scale.
+	if (batteryLevel < 0) {	
+		batteryLevel = 0;
+	} else {
+		// Double to get to a 100 scale.
+		batteryLevel = batteryLevel << 1;
+	}
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCCHK_BATT] = batteryLevel;
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCCHK_BATT + 1;
 };
 
 // --------------------------------------------------------------------------

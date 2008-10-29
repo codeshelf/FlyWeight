@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1014
+ProjectModificationStamp=1016
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=788
+ProjectCompNumb=796
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -4032,7 +4032,7 @@ ItemSymbol=ECLK
 ReadOnly=No
 UserReadOnly=No
 Value=Yes
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -4060,8 +4060,8 @@ EnumSymbVal=1
 ItemSymbol=ExtOscOperatingMode
 ReadOnly=No
 UserReadOnly=No
-Index=1
-EnumSymbVal=0
+Index=0
+EnumSymbVal=1
 [ItemState]
 ItemSymbol=OSC1_Grp
 ReadOnly=No
@@ -4219,7 +4219,7 @@ Base=3
 ItemSymbol=Intperiphgrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -10828,7 +10828,7 @@ List=GrupItem
 ItemSymbol=ChannelsGrp
 ReadOnly=No
 UserReadOnly=No
-ListItemCount=1
+ListItemCount=2
 List=ListItem
 [ItemState]
 ItemSymbol=ChannelGrp0
@@ -10872,6 +10872,56 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=PinIODis0
+ReadOnly=No
+UserReadOnly=No
+Index=1
+Value=No
+
+[EndOfChilds]
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=ChannelGrp1
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=Pin1
+ReadOnly=No
+UserReadOnly=No
+Value=PTB4_AD4
+[ItemState]
+ItemSymbol=ChannelPinName1
+ReadOnly=No
+UserReadOnly=No
+Value=
+[ItemState]
+ItemSymbol=Symbol01
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=PinEn1
+ReadOnly=No
+UserReadOnly=No
+Index=0
+Value=Yes
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Symbol11
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=PinIODis1
 ReadOnly=No
 UserReadOnly=No
 Index=1

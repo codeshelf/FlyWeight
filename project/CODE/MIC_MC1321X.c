@@ -6,7 +6,7 @@
 **     Beantype  : Init_ADC
 **     Version   : Bean 01.131, Driver 01.14, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/20/2008, 4:23 PM
+**     Date/Time : 10/28/2008, 11:43 AM
 **     Abstract  :
 **          This file implements the ADC (ATD) module initialization 
 **          according to the Peripheral Initialization Bean settings, and defines
@@ -19,8 +19,9 @@
 **          Sample time                                    : 14.6 us
 **          Conversion mode                                : Continuous conversion
 **          Result data formats                            : 10-bit/left justified/signed
-**          ADC Channels                                   : 1
+**          ADC Channels                                   : 2
 **          Pins                                           : PTB2_AD2
+**                                                           PTB4_AD4
 **          Interrupt                                      : Vatd1
 **          Conversion complete interrupt                  : Disabled
 **          ISR name                                       : TestADC
@@ -89,8 +90,8 @@ ISR( TestADC)
 */
 void MIC_MC1321X_Init(void)
 {
-  /* ATD1PE: ATDPE7=0,ATDPE6=0,ATDPE5=0,ATDPE4=0,ATDPE3=0,ATDPE2=1,ATDPE1=0,ATDPE0=0 */
-  setReg8(ATD1PE, 0x04);               /* Write stops the conversion */ 
+  /* ATD1PE: ATDPE7=0,ATDPE6=0,ATDPE5=0,ATDPE4=1,ATDPE3=0,ATDPE2=1,ATDPE1=0,ATDPE0=0 */
+  setReg8(ATD1PE, 0x14);               /* Write stops the conversion */ 
   /* ATD1C: ATDPU=1,DJM=0,RES8=0,SGN=1,PRS3=0,PRS2=1,PRS1=0,PRS0=0 */
   setReg8(ATD1C, 0x94);                /* Write stops the conversion */ 
   /* ATD1SC: CCF=0,ATDIE=0,ATDCO=1,ATDCH4=0,ATDCH3=0,ATDCH2=0,ATDCH1=1,ATDCH0=0 */

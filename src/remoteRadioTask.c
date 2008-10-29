@@ -173,7 +173,7 @@ void radioReceiveTask(void *pvParameters) {
 									if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
 									}
 								} else if (assocSubCmd == eCmdAssocACK) {
-									if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCASCK_STATE])
+									if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE])
 										__asm DCB 0x8D;
 								}
 								RELEASE_RX_BUFFER(rxBufferNum);

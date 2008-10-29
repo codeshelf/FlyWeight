@@ -447,7 +447,7 @@ MLMESetMC13192ClockRate(2);
           <enumgroup name="Clock source" v="External oscillator">
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
-            <Operating_mode v="Low power"/>
+            <Operating_mode v="High gain"/>
             <group name="Clock input pin">
               <Pin_name v="PTG2_EXTAL"/>
               <Pin_signal v=""/>
@@ -987,7 +987,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="PWM_MC1321X" type="Init_TPM">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="PWM_MC1321X"/>
@@ -1222,7 +1222,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="AudioLoader_MC1321X" type="InterruptVector">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="AudioLoader_MC1321X"/>
@@ -1260,7 +1260,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="MIC_MC1321X" type="Init_ADC">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="MIC_MC1321X"/>
@@ -1401,7 +1401,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="KBI_MC1321X" type="Init_KBI">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="KBI_MC1321X"/>
@@ -1450,7 +1450,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="USB" type="AsynchroSerial">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="USB"/>
