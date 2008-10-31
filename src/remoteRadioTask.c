@@ -15,9 +15,7 @@
 #include "commands.h"
 #include "remoteMgmtTask.h"
 #include "CPU.h"
-#ifdef __WatchDog
-	#include "WatchDog.h"
-#endif
+#include "WatchDog.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -67,6 +65,9 @@ BufferCntType		gTXUsedBuffers = 0;
 // Now defined in Events.c
 //SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
 
+#define				kAssocCheckTickCount	5000 //5 * portTICK_RATE_MS * 1000;
+#define				RESET_MCU				__asm DCB 0x8D
+
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
@@ -74,6 +75,7 @@ void radioReceiveTask(void *pvParameters) {
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
 	ECmdAssocType		assocSubCmd;
+	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -140,10 +142,12 @@ void radioReceiveTask(void *pvParameters) {
 					gSleepCount++;
 					if (gSleepCount >= 9) {
 						gSleepCount = 0;
+						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 						if (transmitPacket(gTXCurBufferNum)){
 						};
 					}
+					// Send an AssocCheck every 5 seconds.
 								
 				} else {
 					// The last read got a packet, so we're active.
@@ -173,8 +177,10 @@ void radioReceiveTask(void *pvParameters) {
 									if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
 									}
 								} else if (assocSubCmd == eCmdAssocACK) {
+									// If the associate state is 1 then we're not associated with this controller anymore.
+									// We need to reset the device, so that we can start a whole new session.
 									if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE])
-										__asm DCB 0x8D;
+										RESET_MCU;
 								}
 								RELEASE_RX_BUFFER(rxBufferNum);
 								break;
@@ -212,12 +218,17 @@ void radioReceiveTask(void *pvParameters) {
 							
 						}
 					}
+					// If we're running then send an AssocCheck every 5 seconds.
+					if (gLocalDeviceState == eLocalStateRun) {
+						if (lastAssocCheckTickCount < xTaskGetTickCount()) {
+							lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+							createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+							if (transmitPacket(gTXCurBufferNum)){
+							}
+						}
+					}
 				}
 			}
-			
-			// Blink LED2 to let us know we succeeded in receiving a packet buffer.
-			//if (xQueueSend(gLEDBlinkQueue, &gLED2, (portTickType) 0)) {
-			//}	
 		}
 
 		/* Will only get here if the queue could not be created. */

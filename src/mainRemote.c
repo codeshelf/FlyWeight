@@ -25,9 +25,7 @@
 #include "commands.h"
 #include "CPU.h"
 #include "keyboard.h"
-#ifdef __WatchDog
-	#include "WatchDog.h"
-#endif
+#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
 // Globals

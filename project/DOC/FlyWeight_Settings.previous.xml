@@ -1275,9 +1275,14 @@ MLMESetMC13192ClockRate(2);
         <Result_data_format v="10-bit/left justified/signed"/>
       </group>
       <group name="Pins">
-        <list name="ADC Input Pins" v="1">
+        <list name="ADC Input Pins" v="2">
           <group name="Input Pin0">
             <Pin v="PTB2_AD2"/>
+            <Pin_Signal v=""/>
+            <Pin_enable v="yes"/>
+          </group>
+          <group name="Input Pin1">
+            <Pin v="PTB4_AD4"/>
             <Pin_Signal v=""/>
             <Pin_enable v="yes"/>
           </group>

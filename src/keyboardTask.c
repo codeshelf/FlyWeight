@@ -15,9 +15,7 @@
 #include "task.h"
 #include "queue.h"
 #include "pub_def.h"
-#ifdef __WatchDog
-	#include "Watchdog.h"
-#endif
+#include "Watchdog.h"
 
 #define			CHK_KEY_DELAY		10
 

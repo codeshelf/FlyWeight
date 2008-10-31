@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1016
+ProjectModificationStamp=1019
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=796
+ProjectCompNumb=800
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -6442,7 +6442,7 @@ Value4=No
 ItemId5=149
 Value5=No
 ItemId6=142
-Value6=No
+Value6=Yes
 ItemId7=87
 Value7=Yes
 ItemId8=60
@@ -8602,7 +8602,7 @@ List=Event
 
 [WatchDog:WatchDog]
 CompNumb=142
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=WATCHDOG
 Comment=0

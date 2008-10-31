@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.070, Driver 01.14, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/20/2008, 4:23 PM
+**     Date/Time : 10/31/2008, 9:24 AM
 **     Abstract  :
 **          This file implements the TPM (TPM2) module initialization
 **          according to the Peripheral Initialization Bean settings,
