@@ -86,7 +86,7 @@ ISR(keyboardISR) {
 	bool	shouldRestartISR = FALSE;
 	UINT8	i;
 	UINT8	maxPresses;
-	UINT8	buttonArray[4];
+	UINT8	buttonArray[KEYBOARD_ROWS * KEYBOARD_COLS + 1];
 	
 	EnterCriticalArg(ccrHolder);
 	
@@ -98,7 +98,7 @@ ISR(keyboardISR) {
 	while (xTaskGetTickCount() < tickVal) {	
 	}
 	
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i <= 4; i++) {
 		buttonArray[i] = 0;	
 	}
 	maxPresses = 0;	
@@ -127,7 +127,7 @@ ISR(keyboardISR) {
 	}																		
 	
 	buttonNum = 0;
-	for (i = 0; i < 4; i++) {
+	for (i = 1; i <= 4; i++) {
 		if (buttonArray[i] > maxPresses) {
 			maxPresses = buttonArray[i];
 			buttonNum = i;
