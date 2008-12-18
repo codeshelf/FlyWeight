@@ -15,12 +15,15 @@
 #include "Cpu.h"
 #include "PE_types.h"
 #include "pub_def.h"
+#include "Watchdog.h"
 
 // --------------------------------------------------------------------------
 // Definitions.
 #define	KEYBOARD_ROWS		2
 #define KEYBOARD_COLS		2
 #define SAMPLES				10
+
+portTickType				gLastPressSeenTick;
 
 // --------------------------------------------------------------------------
 // Functions.
@@ -77,26 +80,26 @@ void KBISetup() {
 
 ISR(keyboardISR) {
 	
-	byte 	ccrHolder;
-	UINT8 	row;
-	UINT8 	col;
-	UINT8 	buttonNum = 0;
-	UINT8 	tickVal;
-	UINT8	sample;
-	bool	shouldRestartISR = FALSE;
-	UINT8	i;
-	UINT8	maxPresses;
-	UINT8	buttonArray[KEYBOARD_ROWS * KEYBOARD_COLS + 1];
+	byte ccrHolder;
+	UINT8 row;
+	UINT8 col;
+	UINT8 buttonNum = 0;
+	portTickType tickVal;
+	UINT8 sample;
+	bool shouldRestartISR = FALSE;
+	UINT8 i;
+	UINT8 maxPresses;
+	UINT8 buttonArray[KEYBOARD_ROWS * KEYBOARD_COLS + 1];
 	
 	EnterCriticalArg(ccrHolder);
 	
 	// Disable the KBI interrupt
 	KBI1SC_KBIE = 0;
 	
+	gLastPressSeenTick = 0;
+	
 	// Debounce delay
-	tickVal = xTaskGetTickCount() + (200 * portTICK_RATE_MS);
-	while (xTaskGetTickCount() < tickVal) {	
-	}
+	Cpu_Delay100US(2);
 	
 	for (i = 0; i <= 4; i++) {
 		buttonArray[i] = 0;	
@@ -187,5 +190,15 @@ bool buttonStillPressed() {
 			}															
 		}
 	}
+	
+	if (anyButtonPressed) {
+		gLastPressSeenTick = xTaskGetTickCount();
+	} else {
+		// We need to wait at least 250ms since we last saw a button press to say if it's really no longer pressed.
+		if (xTaskGetTickCount() < gLastPressSeenTick + (100 * portTICK_RATE_MS)) {
+			anyButtonPressed = TRUE;
+		}
+	}
+	
 	return (anyButtonPressed);
 }

@@ -44,6 +44,7 @@ void keyboardTask(void *pvParameters) {
 				gShouldSleep = FALSE;
 				if (buttonStillPressed()) {
 					// The user is still holding the button.
+					WatchDog_Clear();
 				} else {
 					// The user just released the button.
 					if (gButtonPressed == PTT_BUTTON) {
@@ -106,7 +107,7 @@ void keyboardTask(void *pvParameters) {
 					
 					if (gButtonPressed == PTT_BUTTON) {
 						// Wait a few ms for the controller to stop sending audio packets.
-						vTaskDelay(5 * portTICK_RATE_MS);
+						vTaskDelay(200 * portTICK_RATE_MS);
 						
 						// Now put us into TX mode.
 						gAudioModeRX = FALSE;

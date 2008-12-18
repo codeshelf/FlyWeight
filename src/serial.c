@@ -8,6 +8,7 @@
 */
 
 #include "serial.h"
+#include "task.h"
 #ifdef __WatchDog
 	#include "watchdog.h"
 #endif
@@ -57,6 +58,10 @@ void readOneChar(USB_TComData *outDataPtr) {
 			return;
 		} else {
 			checkUSBInterface();
+			if (gCurrentBufferSize == 0) {
+				// If we didn't get any characters then delay for a short while.
+				vTaskDelay(5 * portTICK_RATE_MS);
+			}
 		}
 	}
 }
@@ -114,6 +119,7 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 	}
 		
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
+	sendOneChar(END);
 	sendOneChar(END);
 }
 
@@ -245,6 +251,7 @@ void checkUSBInterface() {
 		}
 		
 		// If we haven't read anything in a while then prepare to exit.
+		// (CTS is already off from the next test below.)
 		if (readCheck > 50) {
 			break;
 		} else if (readCheck > 25) {
