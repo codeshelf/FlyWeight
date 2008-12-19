@@ -960,7 +960,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
@@ -987,7 +987,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="PWM_MC1321X" type="Init_TPM">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="PWM_MC1321X"/>
@@ -1222,7 +1222,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="AudioLoader_MC1321X" type="InterruptVector">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="AudioLoader_MC1321X"/>
@@ -1260,7 +1260,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="MIC_MC1321X" type="Init_ADC">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="MIC_MC1321X"/>
@@ -1406,7 +1406,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="KBI_MC1321X" type="Init_KBI">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="KBI_MC1321X"/>
@@ -1455,7 +1455,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="USB" type="AsynchroSerial">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="USB"/>

@@ -154,49 +154,8 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
-	if (!gAudioModeRX) {
-#if defined(XBEE) || defined(MC1321X)
-		// --- TX MODE ---------------------------------------------
-
-		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
-		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// - 0x40;
-
-		// Take an audio sample first.
-		// Start and wait for a ATD conversion.
-		ATD1SC_ATDCO = 0;
-		while (!ATD1SC_CCF) {
-		}
-#if defined(XBEE)
-		sample16b = ATD1R << 4;
-#else
-		sample16b = ATD1R;
-#endif
-		sample8b = linear2ulaw(sample16b);
-
-		// If we haven't started a buffer yet then start one.
-		if (!gCurAudioTXBufferStarted) {
-			gCurAudioTXBuffer = gTXCurBufferNum;
-			advanceTXBuffer();
-			createAudioCommand(gCurAudioTXBuffer);
-			gCurAudioTXBufferPos = CMDPOS_AUDIO;
-			gCurAudioTXBufferStarted = TRUE;
-		}
-
-		// Put the sample into the buffer.
-		if (gCurAudioTXBufferStarted) {
-			gTXRadioBuffer[gCurAudioTXBuffer].bufferStorage[gCurAudioTXBufferPos++] = sample8b;
-		}
-
-		// If the buffer is full then schedule it for send.
-		if (gCurAudioTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
-			gTXRadioBuffer[gCurAudioTXBuffer].bufferSize = gCurAudioTXBufferPos;
-			transmitPacketFromISR(gCurAudioTXBuffer);
-			gCurAudioTXBufferStarted = FALSE;
-		}
-
-
-#endif
-	} else {
+//	if (gAudioModeRX)  {
+	{
 		// --- RX MODE ---------------------------------------------
 
 		// Reset the timer for the next sample.
@@ -271,11 +230,55 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				}
 			}
 		}
+	} /* else */ if (!gAudioModeRX) {
+		// --- TX MODE ---------------------------------------------
+	
+#if defined(XBEE) || defined(MC1321X)
+
+		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
+		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// - 0x40;
+
+		// Take an audio sample first.
+		// Start and wait for a ATD conversion.
+		ATD1SC_ATDCO = 0;
+		while (!ATD1SC_CCF) {
+		}
+#if defined(XBEE)
+		sample16b = ATD1R << 4;
+#else
+		sample16b = ATD1R;
+#endif
+		sample8b = linear2ulaw(sample16b);
+
+		// If we haven't started a buffer yet then start one.
+		if (!gCurAudioTXBufferStarted) {
+			gCurAudioTXBuffer = gTXCurBufferNum;
+			advanceTXBuffer();
+			createAudioCommand(gCurAudioTXBuffer);
+			gCurAudioTXBufferPos = CMDPOS_AUDIO;
+			gCurAudioTXBufferStarted = TRUE;
+		}
+
+		// Put the sample into the buffer.
+		if (gCurAudioTXBufferStarted) {
+			gTXRadioBuffer[gCurAudioTXBuffer].bufferStorage[gCurAudioTXBufferPos++] = sample8b;
+		}
+
+		// If the buffer is full then schedule it for send.
+		if (gCurAudioTXBufferPos >= (CMD_MAX_AUDIO_BYTES + CMDPOS_AUDIO)) {
+			gTXRadioBuffer[gCurAudioTXBuffer].bufferSize = gCurAudioTXBufferPos;
+			transmitPacketFromISR(gCurAudioTXBuffer);
+			gCurAudioTXBufferStarted = FALSE;
+		}
+
+
+#endif
 	}
 
 	// Reset the overflow flag.
 	if (TPMOF_AUDIO_LOADER)
 		TPMOF_AUDIO_LOADER = 0;
+
 }
 //#endif
 /*
@@ -322,6 +325,26 @@ ISR(TestADC) {
 
 ISR(LowVoltageDetect) {
 	
+}
+
+/*
+** ===================================================================
+**     Event       :  USB_OnError (module Events)
+**
+**     From bean   :  USB [AsynchroSerial]
+**     Description :
+**         This event is called when a channel error (not the error
+**         returned by a given method) occurs. The errors can be
+**         read using <GetError> method.
+**         The event is available only when the <Interrupt
+**         service/event> property is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void  USB_OnError(void)
+{
+  /* Write your code here ... */
 }
 
 /* END Events */

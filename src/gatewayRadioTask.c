@@ -57,6 +57,7 @@ RemoteAddrType		gMainRemote = INVALID_REMOTE;
 
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType			rxBufferNum;
+	portTickType			rxQueueTimeout = (portTickType) (200 * portTICK_RATE_MS);
 //	ECommandIDType			cmdID;
 //	ENetMgmtSubCmdIDType	subCmdID;
 	
@@ -90,7 +91,7 @@ void radioReceiveTask(void *pvParameters) {
 			//vTaskResume(gRadioTransmitTask);
 			
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
-			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, rxQueueTimeout) == pdPASS) {
 			
 //				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
 //				if (cmdID == eCommandNetMgmt) {

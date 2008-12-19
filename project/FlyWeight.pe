@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1019
+ProjectModificationStamp=1027
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=800
+ProjectCompNumb=824
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -6304,7 +6304,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6420,7 +6420,7 @@ Value=No
 [Configuration]
 CompNumb=594
 NodeName=GW0005 (Remote)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -8602,7 +8602,7 @@ List=Event
 
 [WatchDog:WatchDog]
 CompNumb=142
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=WATCHDOG
 Comment=0
@@ -9002,7 +9002,7 @@ LastUserSel=never
 
 [Init_TPM_HCS08:PWM_MC1321X]
 CompNumb=595
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10481,7 +10481,7 @@ List=Event
 
 [InterruptVector:AudioLoader_MC1321X]
 CompNumb=596
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10601,7 +10601,7 @@ List=Event
 
 [Init_ADC_HCS08:MIC_MC1321X]
 CompNumb=597
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11924,7 +11924,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_MC1321X]
 CompNumb=598
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12377,7 +12377,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0

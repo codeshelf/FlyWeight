@@ -808,11 +808,7 @@
                 <SETTING><NAME>MWAssembler_period</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_space</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_case_sensitive</NAME><VALUE>1</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_processor</NAME><VALUE>2</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_macprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_emacprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_CAUcoprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_model</NAME><VALUE>0</VALUE></SETTING>
+                <SETTING><NAME>MWAssembler_processor_name</NAME><VALUE>generic</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_big_endian</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_allow_64_bit</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_perform_C_preprocessing</NAME><VALUE>0</VALUE></SETTING>
@@ -829,10 +825,9 @@
                 <SETTING><NAME>MWAssembler_progress</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_warnings</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_code</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MAssember_coldfireFP</NAME><VALUE>0</VALUE></SETTING>
 
                 <!-- Settings for "ColdFire V1 CodeGen" panel -->
-                <SETTING><NAME>MWCodeGen_E68K_targetcpu</NAME><VALUE>CFM5100</VALUE></SETTING>
+                <SETTING><NAME>MWCodeGen_E68K_targetproc</NAME><VALUE>51QE</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_codemodel</NAME><VALUE>Smart (16/32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_datamodel</NAME><VALUE>Far (32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_structalignment</NAME><VALUE>word/long</VALUE></SETTING>
@@ -2708,11 +2703,7 @@
                 <SETTING><NAME>MWAssembler_period</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_space</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_case_sensitive</NAME><VALUE>1</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_processor</NAME><VALUE>2</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_macprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_emacprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_CAUcoprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_model</NAME><VALUE>0</VALUE></SETTING>
+                <SETTING><NAME>MWAssembler_processor_name</NAME><VALUE>generic</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_big_endian</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_allow_64_bit</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_perform_C_preprocessing</NAME><VALUE>0</VALUE></SETTING>
@@ -2729,10 +2720,9 @@
                 <SETTING><NAME>MWAssembler_progress</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_warnings</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_code</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MAssember_coldfireFP</NAME><VALUE>0</VALUE></SETTING>
 
                 <!-- Settings for "ColdFire V1 CodeGen" panel -->
-                <SETTING><NAME>MWCodeGen_E68K_targetcpu</NAME><VALUE>CFM5100</VALUE></SETTING>
+                <SETTING><NAME>MWCodeGen_E68K_targetproc</NAME><VALUE>51QE</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_codemodel</NAME><VALUE>Smart (16/32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_datamodel</NAME><VALUE>Far (32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_structalignment</NAME><VALUE>word/long</VALUE></SETTING>
@@ -4622,11 +4612,7 @@
                 <SETTING><NAME>MWAssembler_period</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_space</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_case_sensitive</NAME><VALUE>1</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_processor</NAME><VALUE>2</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_macprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_emacprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_CAUcoprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_model</NAME><VALUE>0</VALUE></SETTING>
+                <SETTING><NAME>MWAssembler_processor_name</NAME><VALUE>generic</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_big_endian</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_allow_64_bit</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_perform_C_preprocessing</NAME><VALUE>0</VALUE></SETTING>
@@ -4643,10 +4629,9 @@
                 <SETTING><NAME>MWAssembler_progress</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_warnings</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_code</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MAssember_coldfireFP</NAME><VALUE>0</VALUE></SETTING>
 
                 <!-- Settings for "ColdFire V1 CodeGen" panel -->
-                <SETTING><NAME>MWCodeGen_E68K_targetcpu</NAME><VALUE>CFM5100</VALUE></SETTING>
+                <SETTING><NAME>MWCodeGen_E68K_targetproc</NAME><VALUE>51QE</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_codemodel</NAME><VALUE>Smart (16/32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_datamodel</NAME><VALUE>Far (32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_structalignment</NAME><VALUE>word/long</VALUE></SETTING>
@@ -6516,7 +6501,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000015"</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000019"</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -6618,11 +6603,7 @@
                 <SETTING><NAME>MWAssembler_period</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_space</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_case_sensitive</NAME><VALUE>1</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_processor</NAME><VALUE>2</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_macprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_emacprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_CAUcoprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_model</NAME><VALUE>0</VALUE></SETTING>
+                <SETTING><NAME>MWAssembler_processor_name</NAME><VALUE>generic</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_big_endian</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_allow_64_bit</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_perform_C_preprocessing</NAME><VALUE>0</VALUE></SETTING>
@@ -6639,10 +6620,9 @@
                 <SETTING><NAME>MWAssembler_progress</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_warnings</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_code</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MAssember_coldfireFP</NAME><VALUE>0</VALUE></SETTING>
 
                 <!-- Settings for "ColdFire V1 CodeGen" panel -->
-                <SETTING><NAME>MWCodeGen_E68K_targetcpu</NAME><VALUE>CFM5100</VALUE></SETTING>
+                <SETTING><NAME>MWCodeGen_E68K_targetproc</NAME><VALUE>51QE</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_codemodel</NAME><VALUE>Smart (16/32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_datamodel</NAME><VALUE>Far (32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_structalignment</NAME><VALUE>word/long</VALUE></SETTING>
@@ -7304,13 +7284,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>EVBGateway.prm</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -7368,6 +7341,20 @@
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC1321X_Remote.prm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -7701,11 +7688,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>EVBGateway.prm</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>serial.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -7747,6 +7729,16 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>MC1321X_Remote.prm</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -8406,7 +8398,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X -DDUAL_PORT_ANTENNA -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -DGUID="00000021"</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X -DDUAL_PORT_ANTENNA -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -DGUID="00000022"</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -8508,11 +8500,7 @@
                 <SETTING><NAME>MWAssembler_period</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_space</NAME><VALUE>1</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_case_sensitive</NAME><VALUE>1</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_processor</NAME><VALUE>2</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_macprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_emacprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_CAUcoprocessor</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MWAssembler_model</NAME><VALUE>0</VALUE></SETTING>
+                <SETTING><NAME>MWAssembler_processor_name</NAME><VALUE>generic</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_big_endian</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_allow_64_bit</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_perform_C_preprocessing</NAME><VALUE>0</VALUE></SETTING>
@@ -8529,10 +8517,9 @@
                 <SETTING><NAME>MWAssembler_progress</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_warnings</NAME><VALUE>0</VALUE></SETTING>
                 <SETTING><NAME>MWAssembler_code</NAME><VALUE>0</VALUE></SETTING>
-                <SETTING><NAME>MAssember_coldfireFP</NAME><VALUE>0</VALUE></SETTING>
 
                 <!-- Settings for "ColdFire V1 CodeGen" panel -->
-                <SETTING><NAME>MWCodeGen_E68K_targetcpu</NAME><VALUE>CFM5100</VALUE></SETTING>
+                <SETTING><NAME>MWCodeGen_E68K_targetproc</NAME><VALUE>51QE</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_codemodel</NAME><VALUE>Smart (16/32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_datamodel</NAME><VALUE>Far (32 bit)</VALUE></SETTING>
                 <SETTING><NAME>MWCodeGen_E68K_structalignment</NAME><VALUE>word/long</VALUE></SETTING>
@@ -9318,6 +9305,27 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -9735,6 +9743,21 @@
                     <PATH>Events.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
             </LINKORDER>
         </TARGET>
     </TARGETLIST>
@@ -9748,8 +9771,6 @@
     </TARGETORDER>
 
     <GROUPLIST>
-        <GROUP><NAME>Rescued Items</NAME>
-        </GROUP>
         <GROUP><NAME>Sources</NAME>
             <GROUP><NAME>Kernel Source</NAME>
                 <FILEREF>
@@ -10030,12 +10051,6 @@
                     <PATH>USB.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>EVB Gateway</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>USB.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
             </GROUP>
             <GROUP><NAME>smac</NAME>
                 <GROUP><NAME>S08</NAME>
@@ -10196,7 +10211,7 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>GW0005 (Remote)</TARGETNAME>
+                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>MC1321X_Remote.prm</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -10386,9 +10401,21 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>USB.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LowVoltage.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>GW0005 (Remote)</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>WatchDog.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>
@@ -10440,14 +10467,18 @@
             <VALUE>
                 504543575F70726F6A6563745F66696C6500456E61626C65643D310D0A434F44
                 455C4370752E630D0A434F44455C525449312E630D0A434F44455C5357492E63
-                0D0A434F44455C4D4331333139314952512E630D0A434F44455C5553422E630D
-                0A434F44455C494F5F4D61702E630D0A434F44455C466C795765696768742E70
-                726D0D0A434F44455C566563746F72732E630D0A434F44455C4576656E74732E
-                630D0A434F44455C466C795765696768742E630D0A434F44455C4576656E7473
-                2E680D0A444F435C466C795765696768742E7478740D0A444F435C466C795765
-                696768745F5349474E414C532E7478740D0A444F435C466C795765696768742E
-                7478740D0A444F435C466C795765696768745F53657474696E67732E786D6C0D
-                0A444F435C466C795765696768745F5349474E414C532E7478740D0A
+                0D0A434F44455C4D4331333139314952512E630D0A434F44455C576174636844
+                6F672E630D0A434F44455C50574D5F4D4331333231582E630D0A434F44455C41
+                7564696F4C6F616465725F4D4331333231582E630D0A434F44455C4D49435F4D
+                4331333231582E630D0A434F44455C4B42495F4D4331333231582E630D0A434F
+                44455C4C6F77566F6C746167652E630D0A434F44455C494F5F4D61702E630D0A
+                434F44455C466C795765696768742E70726D0D0A434F44455C566563746F7273
+                2E630D0A434F44455C4576656E74732E630D0A434F44455C466C795765696768
+                742E630D0A434F44455C4576656E74732E680D0A444F435C466C795765696768
+                742E7478740D0A444F435C466C795765696768745F5349474E414C532E747874
+                0D0A444F435C466C795765696768742E7478740D0A444F435C466C7957656967
+                68745F53657474696E67732E786D6C0D0A444F435C466C795765696768745F53
+                49474E414C532E7478740D0A
             </VALUE></PLUGINDATA>
     </PLUGINDATALIST>
 </PROJECT>

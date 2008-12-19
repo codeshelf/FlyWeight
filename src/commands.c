@@ -261,11 +261,11 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 void createOutboundNetSetup() {
 	BufferCntType txBufferNum;
 
-	vTaskSuspend(gRadioReceiveTask);
-
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1 * portTICK_RATE_MS);
 	}
+
+	vTaskSuspend(gRadioReceiveTask);
 
 	txBufferNum = gTXCurBufferNum;
 	advanceTXBuffer();
@@ -355,8 +355,6 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	BufferCntType txBufferNum;
 
-	vTaskSuspend(gRadioReceiveTask);
-
 	/*
 	 * At this point we transmit one inbound interface test back over the serial link from the gateway (dongle) itself.
 	 *
@@ -370,6 +368,9 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1 * portTICK_RATE_MS);
 	}
+
+	vTaskSuspend(gRadioReceiveTask);
+
 	//EnterCritical();
 	txBufferNum = gTXCurBufferNum;
 	advanceTXBuffer();
