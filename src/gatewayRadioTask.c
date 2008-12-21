@@ -75,18 +75,18 @@ void radioReceiveTask(void *pvParameters) {
 				vTaskDelay(1);
 
 			// Don't try to set up an RX unless we're already done with TX.
-			while (gu8RTxMode != IDLE_MODE)
+			while (gu8RTxMode == TX_MODE)
 				vTaskDelay(1);
 			
 			//vTaskSuspend(gRadioTransmitTask);
 			
-			// Setup for the next RX cycle.
-			//if (gu8RTxMode != RX_MODE) {
+			// Setup for the next RX cycle (if needed since we already might be setup to read).
+			if (gu8RTxMode != RX_MODE) {
 				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
 				MLMERXEnableRequest(&gsRxPacket, 0L);
-			//}
+			}
 		
 			//vTaskResume(gRadioTransmitTask);
 			
@@ -123,6 +123,7 @@ void radioReceiveTask(void *pvParameters) {
 void radioTransmitTask(void *pvParameters) {
 	tTxPacket		gsTxPacket;
 	BufferCntType	txBufferNum;
+	byte			ccrHolder;
 
 	// Turn the SCi back on by taking RX out of standby.
 	CTS_SETUP;
@@ -142,7 +143,11 @@ void radioTransmitTask(void *pvParameters) {
 			// Setup for TX.
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
-			MCPSDataRequest(&gsTxPacket);
+			EnterCriticalArg(ccrHolder);
+			// Keep sending until we succeed.
+			while (MCPSDataRequest(&gsTxPacket) != SUCCESS)
+				;
+			ExitCriticalArg(ccrHolder);
 			
 			// Set the status of the TX buffer to free.
 			RELEASE_TX_BUFFER(txBufferNum);	

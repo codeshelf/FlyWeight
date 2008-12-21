@@ -1,0 +1,31 @@
+{ File OSParam.PRM, implementation for SOOM System/REM }
+{ R0..R7 = D0..D7, R8..R15 = A0..A7 }
+{ MSG = message displayed in Procedure Chain window }
+DL := MD(B+8);  { A6 in PD, dynamic link    }
+SP := MD(B+4);  { A7 in PD, stack pointer   }
+PC := MD(B+14); { PC in PD, program counter }
+SR := MW(B+12); { SR in PD, status register }
+STATUS := 1000; { Initialized with 1000 }
+IF MW(B+18) = 1 THEN
+{ IF (registers are saved in task Control Block) THEN }
+R0 := MD(B+22); R1 := MD(B+26); R2 := MD(B+30);
+R3 := MD(B+34); R4 := MD(B+38); R5 := MD(B+42); 
+R6 := MD(B+46); R7 := MD(B+50); R8 := MD(B+54);
+R9 := MD(B+58); R10 := MD(B+62); R11 := MD(B+66);
+R12 := MD(B+70)
+END;
+R13 := B;
+R14 := DL;
+R15 := SP;
+i := MB(B+112); { i contains the current state of the selected task. }
+IF i = 0 THEN MSG := "ReadyInCQSc" 
+ELSIF i = 1 THEN MSG := "BlockedByAccept"
+ELSIF i = 2 THEN MSG := "WaitForDReply"
+ELSIF i = 3 THEN MSG := "WaitForMail"
+ELSIF i = 4 THEN MSG := "DelayQueue"
+ELSIF i = 5 THEN MSG := "BlockedByReceive"
+ELSIF i = 6 THEN MSG := "WaitForSemaphore"
+ELSIF i = 7 THEN MSG := "Dummy"
+ELSIF i = 8 THEN MSG := "SysBlocked"
+ELSE  MSG := "jeff"
+END;
