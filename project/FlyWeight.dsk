@@ -21,7 +21,7 @@ CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
-Status=hiden
+Status=Visible
 WindowState=NORMAL
 Rect=[33|656|722|313]
 

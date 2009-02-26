@@ -17,7 +17,7 @@ SECTIONS
     DIRECT_PAGE_REGISTERS	    = READ_WRITE 0x0000 TO 0x007F; // This section contains often used registers
     DIRECT_ADDRESSING_MEMORY    = READ_WRITE 0x0080 TO 0x00FF; // Direct addressing memory
     USER_STACK                  = READ_WRITE 0x0100 TO 0x017f; // User stack
-    STATIC_USER_MEMORY          = READ_WRITE 0x0180 TO 0x08ff; // Static user memory
+    STATIC_USER_MEMORY          = READ_WRITE 0x0180 TO 0x107f; // Static user memory
 
     // Reserve space for NV RAM pointer - used by BootLoader of 802.15.4/App
     // The pointer is initialized by code.

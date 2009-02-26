@@ -238,6 +238,9 @@ void radioReceiveTask(void *pvParameters) {
 
 // --------------------------------------------------------------------------
 
+extern bool					gAudioModeRX;
+extern SampleRateType		gMasterSampleRate;
+
 void radioTransmitTask(void *pvParameters) {
 	tTxPacket			gsTxPacket;
 	BufferCntType		txBufferNum;
@@ -250,6 +253,10 @@ void radioTransmitTask(void *pvParameters) {
 
 			gShouldSleep = FALSE;
 			
+#ifdef __WatchDog
+			WatchDog_Clear();
+#endif
+
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
 			
@@ -257,7 +264,14 @@ void radioTransmitTask(void *pvParameters) {
 			
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
+			
+			//if (!gAudioModeRX)
+			//	TPMIE_AUDIO_LOADER = 0;
+			
 			MCPSDataRequest(&gsTxPacket);
+			
+			//if (!gAudioModeRX)
+			//	TPMIE_AUDIO_LOADER = 1;
 			
 			// Prepare to RX responses.
 			// Don't go into RX mode if the last thing we sent was an audio packet.

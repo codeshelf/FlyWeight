@@ -16,9 +16,7 @@
 #include "ledBlinkTask.h"
 #include "USB.h"
 #include "commands.h"
-#ifdef __WatchDog
-	#include "Watchdog.h"
-#endif
+#include "Watchdog.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -71,12 +69,16 @@ void radioReceiveTask(void *pvParameters) {
 			#endif
 			
 			// Don't try to RX if there is no free buffer.
-			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
+			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
 				vTaskDelay(1);
+				WatchDog_Clear();
+			}
 
 			// Don't try to set up an RX unless we're already done with TX.
-			while (gu8RTxMode == TX_MODE)
+			while (gu8RTxMode == TX_MODE) {
 				vTaskDelay(1);
+				WatchDog_Clear();
+			}
 			
 			//vTaskSuspend(gRadioTransmitTask);
 			

@@ -106,9 +106,6 @@
 #define CTS_OFF  				PTAD_PTAD6 = 1;
 #define CTS_SETUP      			PTAPE_PTAPE6 = 0; PTADD_PTADD6 = 1;
 
-#define RTS						PTAD_PTAD7
-#define RTS_SETUP				PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
-
 #define USB_STOP				CTS_OFF/*; gUSBState = eUSBStateStopped */
 #define USB_START				CTS_ON /*; gUSBState = eUSBStateStarted */
 

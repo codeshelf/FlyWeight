@@ -90,7 +90,8 @@
 #define	SCIC2_TE_MASK	SCI2C2_TE_MASK
 #define	SCIC2_RE_MASK	SCI2C2_RE_MASK
 #define	SCIC3			SCI2C3
-#define RTS				PTAD_PTAD6
+#define RTS				PTAD_PTAD7
+#define RTS_SETUP		PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
 #else
 #define	SCID			SCI1D
 #define	SCIBDH			SCI1BDH
@@ -108,6 +109,7 @@
 #define	SCIC2_RE_MASK	SCI1C2_RE_MASK
 #define	SCIC3			SCI1C3
 #define RTS				PTAD_PTAD7
+#define RTS_SETUP		PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
 #endif
 
 

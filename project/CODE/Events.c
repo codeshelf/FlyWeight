@@ -135,7 +135,7 @@ bool				gCurAudioTXBufferStarted = FALSE;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
-SampleRateType		gMasterSampleRate = 2500; // 20,000,000 Hz / 8,000 samples/sec;
+SampleRateType		gMasterSampleRate = 2500;//1810; // 20,000,000 Hz / 11,050 samples/sec;
 
 // The "tuning" time for the master rate to keep the packet flow balanced.
 INT16				gMasterSampleRateAdjust = 0;
@@ -154,7 +154,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
-//	if (gAudioModeRX)  {
+	if (gAudioModeRX)
 	{
 		// --- RX MODE ---------------------------------------------
 
@@ -230,7 +230,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				}
 			}
 		}
-	} /* else */ if (!gAudioModeRX) {
+	} else if (!gAudioModeRX) {
 		// --- TX MODE ---------------------------------------------
 	
 #if defined(XBEE) || defined(MC1321X)
@@ -252,6 +252,9 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 		// If we haven't started a buffer yet then start one.
 		if (!gCurAudioTXBufferStarted) {
+			// Don't try to start a new buffer if none are available.
+			if (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse)
+				return;
 			gCurAudioTXBuffer = gTXCurBufferNum;
 			advanceTXBuffer();
 			createAudioCommand(gCurAudioTXBuffer);
@@ -325,26 +328,6 @@ ISR(TestADC) {
 
 ISR(LowVoltageDetect) {
 	
-}
-
-/*
-** ===================================================================
-**     Event       :  USB_OnError (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when a channel error (not the error
-**         returned by a given method) occurs. The errors can be
-**         read using <GetError> method.
-**         The event is available only when the <Interrupt
-**         service/event> property is enabled.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void  USB_OnError(void)
-{
-  /* Write your code here ... */
 }
 
 /* END Events */

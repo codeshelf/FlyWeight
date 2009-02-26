@@ -964,7 +964,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
@@ -1463,13 +1463,13 @@ MLMESetMC13192ClockRate(2);
 
     <Properties>
       <Bean_name v="USB"/>
-      <Channel v="SCI1"/>
+      <Channel v="SCI2"/>
       <boolgroup name="Interrupt service/event" v="Enabled">
-        <Interrupt_RxD v="Vsci1rx"/>
+        <Interrupt_RxD v="Vsci2rx"/>
         <Interrupt_RxD_priority v="medium priority"/>
-        <Interrupt_TxD v="Vsci1tx"/>
+        <Interrupt_TxD v="Vsci2tx"/>
         <Interrupt_TxD_priority v="medium priority"/>
-        <Interrupt_Error v="Vsci1err"/>
+        <Interrupt_Error v="Vsci2err"/>
         <Interrupt_Error_priority v="medium priority"/>
         <Input_buffer_size v="150"/>
         <Output_buffer_size v="5"/>
@@ -1490,11 +1490,11 @@ MLMESetMC13192ClockRate(2);
         <enumgroup name="SCI output mode" v="Normal">
         </enumgroup>
         <boolgroup name="Receiver" v="Enabled">
-          <RxD v="PTE1_RxD1"/>
+          <RxD v="PTC1_RxD2"/>
           <RxD_pin_signal v="RX"/>
         </boolgroup>
         <boolgroup name="Transmitter" v="Enabled">
-          <TxD v="PTE0_TxD1"/>
+          <TxD v="PTC0_TxD2"/>
           <TxD_pin_signal v="TX"/>
         </boolgroup>
         <Baud_rate v="1250000 baud"/>
