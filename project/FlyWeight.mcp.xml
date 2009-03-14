@@ -2601,7 +2601,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -D"GUID=""00000006""" </VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC13192EVB -DANTENNA_SWITCH -DLNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -D"GUID=""00000001""" </VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -3440,28 +3440,77 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Tx.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Rx.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Error.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
@@ -3835,22 +3884,57 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Tx.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Rx.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>SCI2Error.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>SW4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED1.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED2.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED3.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LED4.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LowVoltage.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>Events.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -6501,7 +6585,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000019"</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000010"</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -7359,6 +7443,13 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -7739,6 +7830,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>MC1321X_Remote.prm</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -8398,7 +8494,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X -DDUAL_PORT_ANTENNA -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -DGUID="00000022"</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X -DDUAL_PORT_ANTENNA -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -DGUID="00000020"</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -9884,12 +9980,6 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>smacGlue.h</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>smacGlue.c</PATH>
@@ -9971,12 +10061,6 @@
                     <TARGETNAME>EVB Gateway</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>gatewayMgmtTask.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <TARGETNAME>XBee Remote</TARGETNAME>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>remoteRadioTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -10225,7 +10309,7 @@
         </GROUP>
         <GROUP><NAME>Linker Map</NAME>
             <FILEREF>
-                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>EVBGateway.map</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -10365,24 +10449,6 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>SCI2Tx.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>SCI2Rx.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>SCI2Error.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
                 <TARGETNAME>XBee Remote</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>AudioLoader_XBEE.c</PATH>
@@ -10407,13 +10473,55 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>LowVoltage.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>GW0005 (Remote)</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>SW2.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>SW3.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>SW4.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED1.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED2.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED3.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LED4.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>WatchDog.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -10447,7 +10555,7 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
+                <TARGETNAME>EVB Gateway</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>Events.h</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>

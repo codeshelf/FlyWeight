@@ -20,7 +20,6 @@
 #include "simple_mac.h"
 #include "gatewayRadioTask.h"
 #include "gatewayMgmtTask.h"
-#include "ledBlinkTask.h"
 #include "commands.h"
 #include "CPU.h"
 #ifdef __WatchDog

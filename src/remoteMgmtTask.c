@@ -146,7 +146,7 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 		ExitCriticalArg(ccrHolder);
 		
 		for (i = 0; i < inSleepSeconds; i++) {
-		//	__asm("STOP");
+			__asm("STOP");
 			
 			// If a KBI woke us up then don't keep sleeping.
 			if (KBI1SC_KBF) {
