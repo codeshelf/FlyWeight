@@ -6,7 +6,7 @@
 **     Beantype  : PE_Types
 **     Version   : Driver 01.09
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 2/25/2009, 11:19 AM
+**     Date/Time : 3/14/2009, 3:31 PM
 **     Abstract  :
 **         PE_Types.h - contains definitions of basic types,
 **         register access macros and hardware specific macros

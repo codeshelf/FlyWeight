@@ -390,7 +390,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_INTF_TEST_NUM] = 0;
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_INTF_TEST_NUM] = 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_INTF_TEST_NUM];
 
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_INTF_TEST_NUM + 1;
 

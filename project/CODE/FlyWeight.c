@@ -30,10 +30,7 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "PWM_MC1321X.h"
-#include "AudioLoader_MC1321X.h"
-#include "MIC_MC1321X.h"
-#include "KBI_MC1321X.h"
+#include "USB.h"
 #include "LowVoltage.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"

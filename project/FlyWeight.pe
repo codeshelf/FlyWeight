@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1043
+ProjectModificationStamp=1047
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=844
+ProjectCompNumb=848
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2093,7 +2093,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-Value=PTG2_EXTAL
+Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2111,7 +2111,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-Value=PTG1_XTAL
+Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2255,7 +2255,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-Value=PTG0_BKGD_MS
+Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2303,7 +2303,7 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-Value=Vlvd
+Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -2821,7 +2821,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -6304,7 +6304,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6420,7 +6420,7 @@ Value=No
 [Configuration]
 CompNumb=594
 NodeName=GW0005 (Remote)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -9002,7 +9002,7 @@ LastUserSel=never
 
 [Init_TPM_HCS08:PWM_MC1321X]
 CompNumb=595
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10481,7 +10481,7 @@ List=Event
 
 [InterruptVector:AudioLoader_MC1321X]
 CompNumb=596
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -10601,7 +10601,7 @@ List=Event
 
 [Init_ADC_HCS08:MIC_MC1321X]
 CompNumb=597
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11924,7 +11924,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_MC1321X]
 CompNumb=598
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12377,7 +12377,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
@@ -12395,7 +12395,7 @@ Value=USB
 ItemSymbol=Ser
 ReadOnly=No
 UserReadOnly=No
-Value=SCI2
+Value=SCI1
 [ItemState]
 ItemSymbol=IntService
 ReadOnly=No
@@ -12419,7 +12419,7 @@ Value=Vsci2err
 [EndOfChilds]
 [ItemState]
 ItemSymbol=InpInt
-Value=Vsci2rx
+Value=Vsci1rx
 [ItemState]
 ItemSymbol=InitPriority
 ReadOnly=No
@@ -12442,7 +12442,7 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=OutInt
-Value=Vsci2tx
+Value=Vsci1tx
 [ItemState]
 ItemSymbol=IntTxDPriority
 ReadOnly=No
@@ -12472,7 +12472,7 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ErrInt
-Value=Vsci2err
+Value=Vsci1err
 [ItemState]
 ItemSymbol=IntErrorPriority
 ReadOnly=No
@@ -12775,7 +12775,7 @@ List=GrupItem
 ItemSymbol=Inp
 ReadOnly=No
 UserReadOnly=No
-Value=PTC1_RxD2
+Value=PTE1_RxD1
 [ItemState]
 ItemSymbol=RxDpinSignal
 ReadOnly=No
@@ -12823,7 +12823,7 @@ List=GrupItem
 ItemSymbol=Out
 ReadOnly=No
 UserReadOnly=No
-Value=PTC0_TxD2
+Value=PTE0_TxD1
 [ItemState]
 ItemSymbol=TxDpinSignal
 ReadOnly=No

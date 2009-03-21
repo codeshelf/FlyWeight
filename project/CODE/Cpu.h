@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 2/25/2009, 11:19 AM
+**     Date/Time : 3/20/2009, 7:32 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -34,7 +34,7 @@
 #define __Cpu
 
 /* Active configuration define symbol */
-#define PEcfg_GW0005Remote 1
+#define PEcfg_GW0003Gateway 1
 
 
 /*Include shared modules, which are used for whole project*/

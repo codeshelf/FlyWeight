@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 2/25/2009, 6:40 PM
+**     Date/Time : 3/20/2009, 8:03 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -38,10 +38,7 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "PWM_MC1321X.h"
-#include "AudioLoader_MC1321X.h"
-#include "MIC_MC1321X.h"
-#include "KBI_MC1321X.h"
+#include "USB.h"
 #include "LowVoltage.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -245,6 +242,7 @@ void Cpu_SetHighSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
   }
+  USB_SetHigh();                       /* Set all beans in project to the high speed mode */
 }
 /*
 ** ===================================================================
@@ -273,6 +271,7 @@ void Cpu_SetSlowSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
   }
+  USB_SetSlow();                       /* Set all beans in project to the slow speed mode */
 }
 
 /*
@@ -360,10 +359,14 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
-  /* PTDPE: PTDPE6=0,PTDPE5=0 */
-  clrReg8Bits(PTDPE, 0x60);             
-  /* PTAPE: PTAPE5=1,PTAPE4=1 */
-  setReg8Bits(PTAPE, 0x30);             
+  /* PTED: PTED0=1 */
+  setReg8Bits(PTED, 0x01);              
+  /* PTEDD: PTEDD1=0,PTEDD0=1 */
+  clrSetReg8Bits(PTEDD, 0x02, 0x01);    
+  /* PTAD: PTAD6=1 */
+  setReg8Bits(PTAD, 0x40);              
+  /* PTADD: PTADD6=1 */
+  setReg8Bits(PTADD, 0x40);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -384,12 +387,8 @@ void PE_low_level_init(void)
    */
   /* ###  WatchDog "WatchDog" init code ... */
   SRS = 0x00;
-  /* ### Init_TPM "PWM_MC1321X" init code ... */
-  PWM_MC1321X_Init();
-  /* ### Init_ADC "MIC_MC1321X" init code ... */
-  MIC_MC1321X_Init();
-  /* ### Init_KBI "KBI_MC1321X" init code ... */
-  KBI_MC1321X_Init();
+  /* ### Asynchro serial "USB" init code ... */
+  USB_Init();
   __EI();                              /* Enable interrupts */
 }
 
