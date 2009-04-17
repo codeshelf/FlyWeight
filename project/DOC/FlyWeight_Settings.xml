@@ -20,7 +20,7 @@
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
             <group name="Clock input pin">
-              <Pin_name v=""/>
+              <Pin_name v="PTG2_EXTAL"/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -47,7 +47,7 @@
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v=""/>
+          <BDM_pin v="PTG0_BKGD_MS"/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -220,7 +220,7 @@
   </CPU_Bean>
 
   <CPU_Bean name="Cpu" type="MC9S08GT60_48">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="Cpu"/>
@@ -237,7 +237,7 @@
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
             <group name="Clock input pin">
-              <Pin_name v=""/>
+              <Pin_name v="PTG2_EXTAL"/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -264,7 +264,7 @@
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v=""/>
+          <BDM_pin v="PTG0_BKGD_MS"/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -430,7 +430,7 @@ MLMESetMC13192ClockRate(2);
   </CPU_Bean>
 
   <CPU_Bean name="Cpu" type="MC13214">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
     <Template v="MC13213"/>
 
     <Properties>
@@ -759,7 +759,7 @@ MLMESetMC13192ClockRate(2);
       <Bean_name v="LED1"/>
       <Pin_for_I_O v="PTD0_TPM1CH0"/>
       <Pin_signal v=""/>
-      <Pull_resistor v="autoselected pull"/>
+      <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
       <Direction v="Output"/>
       <group name="Initialization">
@@ -793,7 +793,7 @@ MLMESetMC13192ClockRate(2);
       <Bean_name v="LED2"/>
       <Pin_for_I_O v="PTD1_TPM1CH1"/>
       <Pin_signal v=""/>
-      <Pull_resistor v="autoselected pull"/>
+      <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
       <Direction v="Output"/>
       <group name="Initialization">
@@ -827,7 +827,7 @@ MLMESetMC13192ClockRate(2);
       <Bean_name v="LED3"/>
       <Pin_for_I_O v="PTD3_TPM2CH0"/>
       <Pin_signal v=""/>
-      <Pull_resistor v="autoselected pull"/>
+      <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
       <Direction v="Output"/>
       <group name="Initialization">
@@ -1014,11 +1014,11 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD5_TPM2CH2"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+              <Pull_resistor v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
-                <Interrupt v="Vtpm2ch2"/>
+                <Interrupt v=""/>
                 <Channel_Interrupt v="Disabled"/>
                 <ISR_name v=""/>
               </group>
@@ -1036,11 +1036,11 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD6_TPM2CH3"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
+              <Pull_resistor v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
-                <Interrupt v="Vtpm2ch3"/>
+                <Interrupt v=""/>
                 <Channel_Interrupt v="Disabled"/>
                 <ISR_name v=""/>
               </group>
@@ -1100,7 +1100,7 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD0_TPM1CH0"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor v="autoselected pull"/>
+              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
@@ -1122,7 +1122,7 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD1_TPM1CH1"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor v="autoselected pull"/>
+              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
@@ -1277,12 +1277,12 @@ MLMESetMC13192ClockRate(2);
       <group name="Pins">
         <list name="ADC Input Pins" v="2">
           <group name="Input Pin0">
-            <Pin v="PTB2_AD2"/>
+            <Pin v=""/>
             <Pin_Signal v=""/>
             <Pin_enable v="yes"/>
           </group>
           <group name="Input Pin1">
-            <Pin v="PTB4_AD4"/>
+            <Pin v=""/>
             <Pin_Signal v=""/>
             <Pin_enable v="yes"/>
           </group>
@@ -1372,7 +1372,7 @@ MLMESetMC13192ClockRate(2);
         <boolgroup name="Pin3" v="Disabled" />
         <boolgroup name="Pin4" v="Disabled" />
         <boolgroup name="Pin5" v="Enabled">
-          <Pin v="PTA5_KBIP5"/>
+          <Pin v="PTA5_KBI1P5"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
@@ -1420,13 +1420,13 @@ MLMESetMC13192ClockRate(2);
         <boolgroup name="Pin2" v="Disabled" />
         <boolgroup name="Pin3" v="Disabled" />
         <boolgroup name="Pin4" v="Enabled">
-          <Pin v="PTA4_KBIP4"/>
+          <Pin v="PTA4_KBI1P4"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
         </boolgroup>
         <boolgroup name="Pin5" v="Enabled">
-          <Pin v="PTA5_KBIP5"/>
+          <Pin v="PTA5_KBI1P5"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
@@ -1455,7 +1455,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="USB" type="AsynchroSerial">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="USB"/>
@@ -1630,6 +1630,86 @@ MLMESetMC13192ClockRate(2);
     </Properties>
 
     <Methods>
+    </Methods>
+
+    <Events>
+    </Events>
+  </Bean>
+
+  <Bean name="GPIO1" type="Init_GPIO">
+    <Enabled v="Y"/>
+
+    <Properties>
+      <Bean_name v="GPIO1"/>
+      <Device v="PTA"/>
+      <group name="Settings">
+        <boolgroup name="Port control" v="Individual pins" />
+      </group>
+      <boolgroup name="Pins" v="Enabled">
+        <boolgroup name="Pin0" v="Enabled">
+          <Pin v="PTA0_KBI1P0"/>
+          <Pin_signal v=""/>
+          <Direction v="Output"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA0 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin1" v="Enabled">
+          <Pin v="PTA1_KBI1P1"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA1 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin2" v="Enabled">
+          <Pin v="PTA2_KBI1P2"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA2 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin3" v="Enabled">
+          <Pin v="PTA3_KBI1P3"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA3 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin4" v="Enabled">
+          <Pin v="PTA4_KBI1P4"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA4 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin5" v="Enabled">
+          <Pin v="PTA5_KBI1P5"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA5 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin6" v="Disabled" />
+        <boolgroup name="Pin7" v="Disabled" />
+      </boolgroup>
+      <group name="Initialization">
+        <Call_Init_Method v="yes"/>
+      </group>
+    </Properties>
+
+    <Methods>
+      <Init v="generate code"/>
     </Methods>
 
     <Events>

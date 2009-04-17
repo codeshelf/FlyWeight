@@ -1,7 +1,7 @@
 /** ###################################################################
 **     Filename  : FlyWeight.C
 **     Project   : FlyWeight
-**     Processor : MC13213R2
+**     Processor : MC9S08GT60CFD
 **     Version   : Driver 01.09
 **     Compiler  : Metrowerks HCS08 C Compiler
 **     Date/Time : 3/12/2006, 4:32 PM
@@ -30,8 +30,8 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "USB.h"
 #include "LowVoltage.h"
+#include "GPIO1.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

@@ -14,6 +14,7 @@
 #include "queue.h"
 #include "pub_def.h"
 #include "simple_mac.h"
+#include "Watchdog.h"
 
 xQueueHandle 		gRemoteMgmtQueue;
 ELocalStatusType	gLocalDeviceState;
@@ -42,6 +43,11 @@ void remoteMgmtTask( void *pvParameters ) {
 		channel = 0;
 		associated = FALSE;
 		while (!associated) {
+
+		#ifdef __WatchDog
+		WatchDog_Clear();
+		#endif
+
 			// Set the channel to the current channel we're testing.
 			MLMESetChannelRequest(channel);
 			
@@ -130,6 +136,7 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 
 	byte ccrHolder;
 	int i;
+	UINT8 saveLoaderState;
 	
 	if (TRUE) {
 		//vTaskDelay(250 * portTICK_RATE_MS);
@@ -138,6 +145,7 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 		Cpu_SetSlowSpeed();
 		MLMEHibernateRequest();
 		//TPMIE_PWM = 0;
+		saveLoaderState = TPMIE_AUDIO_LOADER;
 		TPMIE_AUDIO_LOADER = 0;
 		SRTISC_RTICLKS = 0;
 		//SRTISC_RTIS = 0;
@@ -146,7 +154,7 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 		ExitCriticalArg(ccrHolder);
 		
 		for (i = 0; i < inSleepSeconds; i++) {
-			__asm("STOP");
+			//__asm("STOP");
 			
 			// If a KBI woke us up then don't keep sleeping.
 			if (KBI1SC_KBF) {
@@ -163,7 +171,7 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 		SRTISC_RTICLKS = 1;
 		SRTISC_RTIS = 4;
 		//TPMIE_PWM = 1;
-		TPMIE_AUDIO_LOADER = 1;
+		TPMIE_AUDIO_LOADER = saveLoaderState;
 		ExitCriticalArg(ccrHolder);
 	}
 }

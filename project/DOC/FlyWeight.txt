@@ -16,38 +16,14 @@ Module "MC13191IRQ" (bean InterruptVector)
 Module "WatchDog"  (bean WatchDog)
    - WatchDog_Clear -Clears the watchdog timer (it makes the timer restart from zero).
 
-Module "USB"       (bean AsynchroSerial)
-   - USB_SendChar -Sends one character to the channel. If the bean is temporarily disabled (Disable method) SendChar method 
-                only stores data into an output buffer. In case of a zero output buffer size, only one character can be stored. 
-                Enabling the bean (Enable method) starts the transmission of the stored data. This method is available only if 
-                the transmitter property is enabled.  Version specific information for Freescale 56800 derivatives ]   DMA mode:
-                If DMA controller is available on the selected CPU and the transmitter is configured to use DMA controller then 
-                this method only sets selected DMA channel. Then the status of the DMA transfer can be checked using 
-                GetCharsInTxBuf method. See an example of a typical usage for details about communication using DMA.
-   - USB_RecvBlock -If any data is received, this method returns the block of the data and its length (and incidental error), 
-                otherwise it returns an error code (it does not wait for data).  This method is available only if non-zero 
-                length of the input buffer is defined and the receiver property is enabled.  If less than requested number of 
-                characters is received only the available data is copied from the receive buffer to the user specified 
-                destination. The value ERR_EXEMPTY is returned and the value of variable pointed by the Rcv parameter is set to 
-                the number of received characters. Version specific information for Freescale 56800 derivatives ]   DMA mode:  
-                If DMA controller is available on the selected CPU and the receiver is configured to use DMA controller then 
-                this method only sets the selected DMA channel. Then the status of the DMA transfer can be checked using 
-                GetCharsInRxBuf method. See an example of a typical usage for details about communication using DMA.
-   - USB_SendBlock -Sends a block of characters to the channel.  This method is available only if non-zero length of the output 
-                buffer is defined and the transmitter property is enabled.  Version specific information for Freescale 56800 
-                derivatives ]   DMA mode:  If DMA controller is available on the selected CPU and the transmitter is configured 
-                to use DMA controller then this method only sets the selected DMA channel. Then the status of the DMA transfer 
-                can be checked using GetCharsInTxBuf method. See typical usage for details about communication using DMA.
-   - USB_GetCharsInRxBuf -Returns the number of characters in the input buffer. This method is available only if the receiver 
-                property is enabled. Version specific information for Freescale 56800 derivatives ]   DMA mode:  If DMA 
-                controller is available on the selected CPU and the receiver is configured to use DMA controller then this 
-                method returns the number of characters in the receive buffer.
-   - USB_GetError -Returns a set of errors on the channel (errors that cannot be returned by given methods). The errors 
-                accumulate in a set; after calling [GetError] this set is returned and cleared.
-
 Module "LowVoltage" (bean InterruptVector)
 
-Module "Cpu"       (bean MC13213)
+Module "GPIO1"     (bean Init_GPIO_HCS08)
+   - GPIO1_Init -This method initializes registers of the GPIO module according to this Peripheral Initialization Bean settings.
+                Call this method in the user code to initialize the module. By default, the method is called by PE 
+                automatically; see "Call Init method" property of the bean for more details.
+
+Module "Cpu"       (bean MC9S08GT60_48)
    - Cpu_SetHighSpeed -Sets the high speed mode. The method is enabled only if low or slow speed mode is enabled in the bean as 
                 well.
    - Cpu_SetSlowSpeed -Sets the slow speed mode. The method is enabled only if slow speed mode is enabled in the bean.

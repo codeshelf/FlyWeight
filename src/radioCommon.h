@@ -175,6 +175,7 @@ extern xTaskHandle			gSerialReceiveTask;
 extern xTaskHandle			gGatewayManagementTask;
 extern xTaskHandle			gRemoteManagementTask;
 extern xTaskHandle			gKeyboardTask;
+extern xTaskHandle			gStrainGageTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;
