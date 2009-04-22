@@ -178,7 +178,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 
 	UINT8 saveATD1C;
 	UINT8 saveATD1SC;
-	INT8 batteryLevel;
+	INT8 batteryLevel = 0;
 
 	// Create the command for checking if we're associated
 	createPacket(inTXBufferNum, eCommandAssoc, gMyNetworkID, gMyAddr, ADDR_BROADCAST);
@@ -192,6 +192,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 	// Set the device version
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
 	
+#if !defined(XBEE)
 	// Save the ATD state and prepare to take a battery measurement.
 	saveATD1C = ATD1C;
 	saveATD1SC = ATD1SC;
@@ -224,6 +225,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 		// Double to get to a 100 scale.
 		batteryLevel = batteryLevel << 1;
 	}
+#endif
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCCHK_BATT] = batteryLevel;
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCCHK_BATT + 1;
@@ -590,3 +592,35 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
 }
+
+// --------------------------------------------------------------------------
+
+void createDataSampleCommand(BufferCntType inTXBufferNum) {
+
+	createPacket(inTXBufferNum, eCommandDataSample, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT] = 0;
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_SAMPLE_CNT + 1;
+};
+
+// --------------------------------------------------------------------------
+
+void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample) {
+	
+	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize + 1;
+	
+	// Increase the sample count and adjust the packet length.
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT]++;
+	
+	// Add the time stamp.
+	memcpy((void *) &gTXRadioBuffer[inTXBufferNum].bufferStorage[pos], &inTimestamp, sizeof(inTimestamp));
+	pos += sizeof(inTimestamp);
+	
+	// Add the data sample.
+	memcpy((void *) &gTXRadioBuffer[inTXBufferNum].bufferStorage[pos], &inDataSample, sizeof(inDataSample));
+	pos += sizeof(inDataSample);
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
+	
+};

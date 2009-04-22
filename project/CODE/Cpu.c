@@ -7,7 +7,7 @@
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/16/2009, 6:56 PM
+**     Date/Time : 4/21/2009, 6:17 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -37,7 +37,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "LowVoltage.h"
 #include "GPIO1.h"
 #include "PE_Types.h"
@@ -162,18 +161,13 @@ loop:
      */
     pshh                               /* (2 c: 100 ns) backup H */
     pshx                               /* (2 c: 100 ns) backup X */
-    ldhx #$00A3                        /* (3 c: 150 ns) number of iterations */
+    ldhx #$00F5                        /* (3 c: 150 ns) number of iterations */
 label1:
-    STA SRS
     aix #-1                            /* (2 c: 100 ns) decrement H:X */
     cphx #0                            /* (3 c: 150 ns) compare it to zero */
-    bne label1                         /* (3 c: 150 ns) repeat 163x */
+    bne label1                         /* (3 c: 150 ns) repeat 245x */
     pulx                               /* (3 c: 150 ns) restore X */
     pulh                               /* (3 c: 150 ns) restore H */
-    nop                                /* (1 c: 50 ns) wait for 1 c */
-    nop                                /* (1 c: 50 ns) wait for 1 c */
-    nop                                /* (1 c: 50 ns) wait for 1 c */
-    nop                                /* (1 c: 50 ns) wait for 1 c */
     nop                                /* (1 c: 50 ns) wait for 1 c */
     nop                                /* (1 c: 50 ns) wait for 1 c */
     nop                                /* (1 c: 50 ns) wait for 1 c */
@@ -187,22 +181,13 @@ label0:
      */
     pshh                               /* (2 c: 128.6 ns) backup H */
     pshx                               /* (2 c: 128.6 ns) backup X */
-    ldhx #$007E                        /* (3 c: 192.9 ns) number of iterations */
+    ldhx #$00BE                        /* (3 c: 192.9 ns) number of iterations */
 label3:
-    STA SRS
     aix #-1                            /* (2 c: 128.6 ns) decrement H:X */
     cphx #0                            /* (3 c: 192.9 ns) compare it to zero */
-    bne label3                         /* (3 c: 192.9 ns) repeat 126x */
+    bne label3                         /* (3 c: 192.9 ns) repeat 190x */
     pulx                               /* (3 c: 192.9 ns) restore X */
     pulh                               /* (3 c: 192.9 ns) restore H */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
-    nop                                /* (1 c: 64.3 ns) wait for 1 c */
     nop                                /* (1 c: 64.3 ns) wait for 1 c */
 label2:                                /* End of delays */
     pula                               /* (2 c) restore A */
@@ -236,9 +221,7 @@ void Cpu_SetHighSpeed(void)
     /* ICGC2: LOLRE=0,MFD2=0,MFD1=1,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
-    while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     {asm sta SRS;}                    /* Reset watchdog counter */
-    }
+    while(!ICGS1_LOCK);                /* Wait */
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
   }
@@ -264,9 +247,7 @@ void Cpu_SetSlowSpeed(void)
     /* ICGC2: LOLRE=0,MFD2=1,MFD1=0,MFD0=1,LOCRE=0,RFD2=0,RFD1=0,RFD0=0 */
     ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
-    while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     {asm sta SRS;}                    /* Reset watchdog counter */
-    }
+    while(!ICGS1_LOCK);                /* Wait */
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
   }
@@ -311,8 +292,8 @@ void _EntryPoint(void)
   /* ### MC9S08GT60_48 "Cpu" init code ... */
   /*  PE initialization code after reset */
   /* Common initialization of the write once registers */
-  /* SOPT: COPE=1,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
-  setReg8(SOPT, 0xF3);                  
+  /* SOPT: COPE=0,COPT=1,STOPE=1,??=1,??=0,??=0,BKGDPE=1,??=1 */
+  setReg8(SOPT, 0x73);                  
   /* SPMSC1: LVDF=0,LVDACK=0,LVDIE=0,LVDRE=1,LVDSE=1,LVDE=1,??=0,??=0 */
   setReg8(SPMSC1, 0x1C);                
   /* SPMSC2: LVWF=0,LVWACK=0,LVDV=0,LVWV=0,PPDF=0,PPDACK=0,PDC=0,PPDC=0 */
@@ -324,7 +305,6 @@ void _EntryPoint(void)
   setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
-   {asm sta SRS;}                      /* Reset watchdog counter */
   }
   /*** End of PE initialization code after reset ***/
 
@@ -364,8 +344,6 @@ void PE_low_level_init(void)
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be
                  set the property Call Init method to 'yes'
    */
-  /* ###  WatchDog "WatchDog" init code ... */
-  SRS = 0x00;
   /* ### Init_GPIO "GPIO1" init code ... */
   GPIO1_Init();
   __EI();                              /* Enable interrupts */

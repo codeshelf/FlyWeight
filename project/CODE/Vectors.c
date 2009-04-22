@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/16/2009, 6:56 PM
+**     Date/Time : 4/21/2009, 6:17 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -27,7 +27,6 @@
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
-#include "WatchDog.h"
 #include "LowVoltage.h"
 #include "GPIO1.h"
 extern near void _EntryPoint(void);

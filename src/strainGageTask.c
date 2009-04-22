@@ -35,9 +35,8 @@ xQueueHandle 		gStrainGageQueue;
 // --------------------------------------------------------------------------
 
 void strainGageTask(void *pvParameters) {
-	BufferCntType txBufferNum;
-	UINT8 bit;
-	UINT32 sample;
+	UINT8			bit;
+	DataSampleType	sample;
 	
 	// Setup the ADS2032 interface.
 	
@@ -50,7 +49,7 @@ void strainGageTask(void *pvParameters) {
 	DOUT_DIR = 0;
 	
 	// Now setup the default interface.
-	TEMP = 1;
+	TEMP = 0;
 	INPSEL = 0;
 	SPEED = 0;
 	PWRDOWN = 0;
@@ -83,10 +82,13 @@ void strainGageTask(void *pvParameters) {
 			SCLK = 0;
 			
 			// Transmit the measurement.
-			
+			createDataSampleCommand(gTXCurBufferNum);
+			addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample);
+			if (transmitPacket(gTXCurBufferNum)){
+			};
 			
 			// Delay until the next measurement.
-			vTaskDelay(500);
+			vTaskDelay(2000);
 		}
 	}
 

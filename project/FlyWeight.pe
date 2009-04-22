@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1064
+ProjectModificationStamp=1065
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=855
+ProjectCompNumb=859
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -838,7 +838,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -4788,7 +4788,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -6224,7 +6224,7 @@ Value9=No
 ItemId10=126
 Value10=Yes
 ItemId11=142
-Value11=Yes
+Value11=No
 ItemId12=149
 Value12=No
 ItemId13=182
@@ -8612,7 +8612,7 @@ List=Event
 
 [WatchDog:WatchDog]
 CompNumb=142
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=WATCHDOG
 Comment=0

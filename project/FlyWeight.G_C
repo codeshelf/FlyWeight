@@ -32,11 +32,11 @@ ShrdCodeAge3=982549424
 ShrdAsemblAge3=-1
 GenExtraFiles=1
 Line=CODE\Vectors.c
-XtraAge0=982554380
+XtraAge0=982880833
 GenExtraFileType0=4
 GenEventModules=1
 Line=Events
-GenAllModules=12
+GenAllModules=11
 Line=Cpu
 Line=Events
 Line=GPIO1
@@ -48,25 +48,23 @@ Line=PE_Error
 Line=PE_Types
 Line=RTI1
 Line=SWI
-Line=WatchDog
 GenExternModules=0
-GenBeanModules=6
+GenBeanModules=5
 Line=RTI1
 Line=SWI
 Line=MC13191IRQ
-Line=WatchDog
 Line=LowVoltage
 Line=GPIO1
 SignalListFile=DOC\FlyWeight_SIGNALS.txt
 DestinationCompiler=MetrowerksHCS08CC
-ProjectModificationStamp=1064
+ProjectModificationStamp=1065
 
 [30]
 Generated=No
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=982549425
-CodeAge=982554380
+CodeAge=982880833
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -103,10 +101,6 @@ OnClockMonitor_Priority=interrupts disabled
 OnLvdINT_Selected=0
 OnLvdINT_Name=Cpu_OnLvdINT
 OnLvdINT_Priority=interrupts disabled
-ISR_ISRnameLVD=
-ISR_ISRnameReset=_Startup
-ISR_ISRnameClockMonitor=
-ISR_ISRnameSWI=
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -116,7 +110,7 @@ Generated=Yes
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=982549425
-CodeAge=982554380
+CodeAge=982880833
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -166,7 +160,7 @@ Generated=No
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=982549425
-CodeAge=982554380
+CodeAge=982880833
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -203,10 +197,6 @@ OnClockMonitor_Priority=interrupts disabled
 OnLvdINT_Selected=0
 OnLvdINT_Name=Cpu_OnLvdINT
 OnLvdINT_Priority=interrupts disabled
-ISR_ISRnameLVD=
-ISR_ISRnameReset=_Startup
-ISR_ISRnameClockMonitor=
-ISR_ISRnameSWI=
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -579,11 +569,11 @@ GenSmartUserChangesDetected_Asembl=No
 GenMethodPos=0
 
 [142]
-Generated=Yes
+Generated=No
 GenCompName=WatchDog
 GenEventModule=Events
-HeaderAge=982549684
-CodeAge=982549684
+HeaderAge=-1
+CodeAge=-1
 AsemblAge=-1
 GenNumMethods=1
 Clear=Yes
@@ -619,9 +609,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ChISRNameInt0=
-ISR_ChISRNameInt1=
-ISR_ISRNameInt=
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -647,9 +634,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ChISRNameInt0=
-ISR_ChISRNameInt1=
-ISR_ISRNameInt=
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -699,7 +683,6 @@ CodeAge=-1
 AsemblAge=-1
 GenNumMethods=0
 GenNumEvents=0
-ISR_Handle=AudioLoader_OnInterrupt
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -714,7 +697,6 @@ CodeAge=-1
 AsemblAge=-1
 GenNumMethods=0
 GenNumEvents=0
-ISR_Handle=AudioLoader_OnInterrupt
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -730,7 +712,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ISRHandleName=TestADC
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -756,7 +737,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ISRHandleName=testadc
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -782,7 +762,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ISRHandleName=keyboardISR
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -808,7 +787,6 @@ AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ISRHandleName=keyboardISR
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
 GenSmartUserChangesDetected_Asembl=No
@@ -1156,6 +1134,7 @@ SrcFile=Drivers\HCS08\MC9S08_Constants.prg=943224682
 SrcFile=Drivers\Common\MC9S08Settings.Inc=852918100
 SrcFile=Drivers\Common\MC9S08Abstract.Inc=852591940
 SrcFile=Drivers\HCS08\InternalPeripherals_IO.prg=948395633
+SrcFile=Drivers\Common\InitReg8.prg=922709704
 SrcFile=Drivers\HCS08\MC9S08_DefineCommonSymbols.prg=945457738
 SrcFile=Drivers\HCS08\MC9S08_DefineRegsAndBitsAccess.prg=946570807
 SrcFile=Drivers\Common\CommonInitializationSequenceNames.inc=877685223
@@ -1186,12 +1165,6 @@ SrcFile=Drivers\Common\Init_GPIO_HCS08Settings.Inc=948404720
 SrcFile=Drivers\Common\Init_GPIO_HCS08Abstract.Inc=858153548
 SrcFile=Drivers\HCS08\Init_GPIO_HCS08.drv=948207299
 SrcFile=Drivers\Init_GPIO_HCS08.src=857293627
-SrcFile=Drivers\Common\WatchDogClear.Inc=819826299
-SrcFile=Drivers\Common\WatchDogSettings.Inc=916016308
-SrcFile=Drivers\Common\WatchDogAbstract.Inc=941921646
-SrcFile=Drivers\Common\InitReg8.prg=922709704
-SrcFile=Drivers\HCS08\WatchDog.drv=945197786
-SrcFile=Drivers\WatchDog.src=946959692
 SrcFile=Drivers\HCS08\CreateCodeSection.prg=912029808
 SrcFile=Drivers\HCS08\CreateIntSection.prg=912029808
 SrcFile=Drivers\Common\InterruptVectorSettings.Inc=853247143

@@ -166,6 +166,9 @@ typedef struct {
 typedef UINT16				SampleRateType;
 typedef UINT8				SampleSizeType;
 
+typedef UINT32				TimestampType;
+typedef UINT32				DataSampleType;
+
 // --------------------------------------------------------------------------
 // Externs
 

@@ -47,38 +47,42 @@
 #define CMDPOS_STARTOFCMD		3
 
 // Network Mgmt
-#define CMDPOS_MGMT_SUBCMD		3
-#define CMDPOS_SETUP_CHANNEL	4
-#define CMDPOS_CHECK_TYPE		4
-#define CMDPOS_INTF_TEST_NUM	4
-#define CMDPOS_CHECK_NETID		5
-#define CMDPOS_CHECK_UID		6
-#define CMDPOS_CHECK_CHANNEL	14
-#define CMDPOS_CHECK_ENERGY		15
-#define CMDPOS_CHECK_LINKQ		16
+#define CMDPOS_MGMT_SUBCMD		CMDPOS_STARTOFCMD
+#define CMDPOS_SETUP_CHANNEL	CMDPOS_MGMT_SUBCMD + 1
+#define CMDPOS_CHECK_TYPE		CMDPOS_SETUP_CHANNEL + 0
+#define CMDPOS_INTF_TEST_NUM	CMDPOS_CHECK_TYPE + 0
+#define CMDPOS_CHECK_NETID		CMDPOS_INTF_TEST_NUM + 1
+#define CMDPOS_CHECK_UID		CMDPOS_CHECK_NETID + 1
+#define CMDPOS_CHECK_CHANNEL	CMDPOS_CHECK_UID + 8
+#define CMDPOS_CHECK_ENERGY		CMDPOS_CHECK_CHANNEL + 1
+#define CMDPOS_CHECK_LINKQ		CMDPOS_CHECK_ENERGY + 1
 
 // Assoc Command
-#define CMDPOS_ASSOC_SUBCMD		3
-#define CMDPOS_ASSOC_UID		4
-#define CMDPOS_ASSOCREQ_VER		12
-#define CMDPOS_ASSOCRESP_ADDR	12
-#define CMDPOS_ASSOCACK_STATE	12
-#define CMDPOS_ASSOCREQ_SYSSTAT 13
-#define CMDPOS_ASSOCCHK_BATT	13
+#define CMDPOS_ASSOC_SUBCMD		CMDPOS_STARTOFCMD
+#define CMDPOS_ASSOC_UID		CMDPOS_ASSOC_SUBCMD + 1
+#define CMDPOS_ASSOCREQ_VER		CMDPOS_ASSOC_UID + 8
+#define CMDPOS_ASSOCRESP_ADDR	CMDPOS_ASSOCREQ_VER + 0
+#define CMDPOS_ASSOCACK_STATE	CMDPOS_ASSOCRESP_ADDR + 0
+#define CMDPOS_ASSOCREQ_SYSSTAT CMDPOS_ASSOCACK_STATE + 1
+#define CMDPOS_ASSOCCHK_BATT	CMDPOS_ASSOCREQ_SYSSTAT + 0
 
 // Info Command
-#define CMDPOS_INFO_SUBCMD		3
-#define CMDPOS_INFO_QUERY		4
-#define CMDPOS_INFO_RESPONSE	4
+#define CMDPOS_INFO_SUBCMD		CMDPOS_STARTOFCMD
+#define CMDPOS_INFO_QUERY		CMDPOS_INFO_SUBCMD + 1
+#define CMDPOS_INFO_RESPONSE	CMDPOS_INFO_QUERY + 0
 
 // Control Command
-#define CMDPOS_CONTROL			3
-#define CMDPOS_CONTROL_SUBCMD	3
-#define CMDPOS_CONTROL_DATA		4
+#define CMDPOS_CONTROL			CMDPOS_STARTOFCMD
+#define CMDPOS_CONTROL_SUBCMD	CMDPOS_CONTROL + 0
+#define CMDPOS_CONTROL_DATA		CMDPOS_CONTROL_SUBCMD + 1
 
 // Audio Command
-#define CMDPOS_AUDIO			3
+#define CMDPOS_AUDIO			CMDPOS_STARTOFCMD
 #define CMD_MAX_AUDIO_BYTES		120
+
+// Data Sample Command
+#define CMDPOS_SAMPLE_CNT		CMDPOS_STARTOFCMD
+#define CMDPOS_SAMPLE_FIRST		CMDPOS_SAMPLE_CNT + 1
 
 // Command masks
 #define PACKETMASK_VERSION		0b11000000
@@ -180,15 +184,20 @@ typedef enum {
  *
  * The remote responds to the query command with the requested information about the facility.
  *
- * ControlAudio
+ * ControlAudioCommand
  *
  * The controller or the remote can send a control audio command that contains audio to be played on
  * an endpoint.
  *
- * ControlMotor
+ * ControlMotorCommand
  *
  * The controller or the remote can send a control motor command that contains instructions to run a
- * motor at the specified enfpoint
+ * motor at the specified endpoint
+ *
+ * DataSampleCommand
+ *
+ * The remote collects and sends a command that contains one or more data samples.
+ *
  */
 typedef enum {
 	eCommandInvalid = -1,
@@ -196,7 +205,8 @@ typedef enum {
 	eCommandAssoc = 1,
 	eCommandInfo = 2,
 	eCommandControl = 3,
-	eCommandAudio = 4
+	eCommandAudio = 4,
+	eCommandDataSample = 5
 } ECommandGroupIDType;
 
 typedef enum {

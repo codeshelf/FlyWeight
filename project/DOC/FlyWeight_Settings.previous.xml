@@ -659,6 +659,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA3 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -693,6 +694,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA4 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -727,6 +729,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA5 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -761,6 +764,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTD0 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -795,6 +799,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTD1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -829,6 +834,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTD3 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -1630,6 +1636,86 @@ MLMESetMC13192ClockRate(2);
     </Properties>
 
     <Methods>
+    </Methods>
+
+    <Events>
+    </Events>
+  </Bean>
+
+  <Bean name="GPIO1" type="Init_GPIO">
+    <Enabled v="Y"/>
+
+    <Properties>
+      <Bean_name v="GPIO1"/>
+      <Device v="PTA"/>
+      <group name="Settings">
+        <boolgroup name="Port control" v="Individual pins" />
+      </group>
+      <boolgroup name="Pins" v="Enabled">
+        <boolgroup name="Pin0" v="Enabled">
+          <Pin v="PTA0_KBI1P0"/>
+          <Pin_signal v=""/>
+          <Direction v="Output"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA0 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin1" v="Enabled">
+          <Pin v="PTA1_KBI1P1"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA1 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin2" v="Enabled">
+          <Pin v="PTA2_KBI1P2"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA2 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin3" v="Enabled">
+          <Pin v="PTA3_KBI1P3"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA3 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin4" v="Enabled">
+          <Pin v="PTA4_KBI1P4"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA4 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin5" v="Enabled">
+          <Pin v="PTA5_KBI1P5"/>
+          <Pin_signal v=""/>
+          <Direction v="Input"/>
+          <Output_value v="0"/>
+          <Pull_resistor v="no initialization"/>
+          <Open_drain v="push-pull"/>
+          <Slew_rate_control_for_PTA5 v="no"/>
+        </boolgroup>
+        <boolgroup name="Pin6" v="Disabled" />
+        <boolgroup name="Pin7" v="Disabled" />
+      </boolgroup>
+      <group name="Initialization">
+        <Call_Init_Method v="yes"/>
+      </group>
+    </Properties>
+
+    <Methods>
+      <Init v="generate code"/>
     </Methods>
 
     <Events>
