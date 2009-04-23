@@ -30,14 +30,32 @@
 #define	GAIN1		PTBD_PTBD6
 #define	GAIN1_DIR	PTBDD_PTBDD6
 
+#define getOneByteOfSample(tempVar) \
+\
+		tempVar = 0; \
+		for (bitNum = 0; bitNum < 8; bitNum++) {\
+			/* Trigger the DOUT pin. */ \
+			SCLK = 1;\
+			__asm("NOP");\
+			SCLK = 0;\
+			/* Cpu_Delay100US(1); */ \
+			/* Read the DOUT pin */ \
+			tempVar = (tempVar << 1) + DOUT;\
+		}
+
+
 xTaskHandle			gStrainGageTask = NULL;
 xQueueHandle 		gStrainGageQueue;
+UINT8				gSampleCount;
 
 // --------------------------------------------------------------------------
 
 DataSampleType collectSample() {
 	DataSampleType	result;
-	UINT8			bit;
+	UINT8			temp1;
+	UINT8			temp2;
+	UINT8			temp3;
+	UINT8			bitNum;
 	
 	// Take a measurement.
 	while (DOUT != 0) {
@@ -45,21 +63,23 @@ DataSampleType collectSample() {
 		vTaskDelay(1);
 	}
 	
-	result = 0;
 	// 24 bits read, MSB-first.
-	for (bit = 0; bit < 24; bit++) {
-		// Read the bit from the pin.
-		SCLK = 1;
-		Cpu_Delay100US(1);
-		SCLK = 0;
-		result <<= 1;
-		result |= DOUT;
-	}
+	getOneByteOfSample(temp1);
+	getOneByteOfSample(temp2);
+	getOneByteOfSample(temp3);
+	
 	// Force #DRDY/DOUT high
 	SCLK = 1;
-	Cpu_Delay100US(1);
+	__asm("NOP");
+	//Cpu_Delay100US(1);
 	SCLK = 0;
 	
+	result = temp1;
+	result = (result << 8) + temp2;
+	result = (result << 8) + temp3;
+
+	gSampleCount++;
+
 	return result;
 }
 
@@ -82,28 +102,26 @@ void strainGageTask(void *pvParameters) {
 	GAIN1_DIR = 1;
 	
 	// Now setup the default interface.
-	TEMP = 0;
 	INPSEL = 0;
 	SPEED = 0;
 	PWRDOWN = 0;
 	Cpu_Delay100US(1);
 	PWRDOWN = 1;
 	SCLK = 0;
-	GAIN1 = 1;
+	
+	// Set for temp
+	GAIN1 = 0;
+	TEMP = 1;
 
 	if (gStrainGageQueue) {
 		for (;;) {
 
-			// Capture strain: TEMP = off, Gain = 128x.
-			GAIN1 = 1;
-			TEMP = 0;
-			
 			// It takes at least 4 samples to settle the inputs after switching mode.
+			/*sample = collectSample();
 			sample = collectSample();
 			sample = collectSample();
-			sample = collectSample();
-			sample = collectSample();
-			sample = collectSample();
+			sample = collectSample();*/
+			sample = collectSample();			
 			
 			// Transmit the measurement.
 			createDataSampleCommand(gTXCurBufferNum, scaleEndpoint);
@@ -111,25 +129,34 @@ void strainGageTask(void *pvParameters) {
 			if (transmitPacket(gTXCurBufferNum)){
 			};
 			
-			// Capture temp: TEMP = on, Gain = 2x.
-			GAIN1 = 0;
-			TEMP = 1;
-			
-			// It takes at least 4 samples to settle the inputs after switching mode.
-			sample = collectSample();
-			sample = collectSample();
-			sample = collectSample();
-			sample = collectSample();
-			sample = collectSample();
+			if (gSampleCount >= 10) {
+				// Capture temp: TEMP = on, Gain = 2x.
+				GAIN1 = 1;
+				TEMP = 0;
+				
+				// It takes at least 4 samples to settle the inputs after switching mode.
+				/*sample = collectSample();
+				sample = collectSample();
+				sample = collectSample();
+				sample = collectSample();*/
+				vTaskDelay(500);
+				sample = collectSample();
 
-			// Transmit the measurement.
-			createDataSampleCommand(gTXCurBufferNum, tempEndpoint);
-			addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample);
-			if (transmitPacket(gTXCurBufferNum)){
-			};	
+				// Transmit the measurement.
+				createDataSampleCommand(gTXCurBufferNum, tempEndpoint);
+				addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample);
+				if (transmitPacket(gTXCurBufferNum)){
+				};
+
+				// Capture strain: TEMP = off, Gain = 128x.
+				GAIN1 = 0;
+				TEMP = 1;
+			
+				gSampleCount = 0;	
+			}
 			
 			// Delay until the next measurement.
-			vTaskDelay(2000);
+			vTaskDelay(1000);
 		}
 	}
 
