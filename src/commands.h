@@ -96,7 +96,7 @@ void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemote
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 
-void createDataSampleCommand(BufferCntType inTXBufferNum);
+void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample);
 
 // --------------------------------------------------------------------------

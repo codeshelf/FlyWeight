@@ -14,7 +14,6 @@
 #include "task.h"
 #include "queue.h"
 #include "pub_def.h"
-#include "Watchdog.h"
 
 #define	TEMP		PTBD_PTBD0
 #define	TEMP_DIR	PTBDD_PTBDD0
@@ -24,19 +23,52 @@
 #define	SPEED_DIR	PTBDD_PTBDD2
 #define	PWRDOWN		PTBD_PTBD3
 #define	PWRDOWN_DIR	PTBDD_PTBDD3
-#define	SCLK		PTBD_PTBD5
-#define	SCLK_DIR	PTBDD_PTBDD5
 #define	DOUT		PTBD_PTBD4
 #define	DOUT_DIR	PTBDD_PTBDD4
+#define	SCLK		PTBD_PTBD5
+#define	SCLK_DIR	PTBDD_PTBDD5
+#define	GAIN1		PTBD_PTBD6
+#define	GAIN1_DIR	PTBDD_PTBDD6
 
 xTaskHandle			gStrainGageTask = NULL;
 xQueueHandle 		gStrainGageQueue;
 
 // --------------------------------------------------------------------------
 
-void strainGageTask(void *pvParameters) {
+DataSampleType collectSample() {
+	DataSampleType	result;
 	UINT8			bit;
+	
+	// Take a measurement.
+	while (DOUT != 0) {
+		WatchDog_Clear();
+		vTaskDelay(1);
+	}
+	
+	result = 0;
+	// 24 bits read, MSB-first.
+	for (bit = 0; bit < 24; bit++) {
+		// Read the bit from the pin.
+		SCLK = 1;
+		Cpu_Delay100US(1);
+		SCLK = 0;
+		result <<= 1;
+		result |= DOUT;
+	}
+	// Force #DRDY/DOUT high
+	SCLK = 1;
+	Cpu_Delay100US(1);
+	SCLK = 0;
+	
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
+void strainGageTask(void *pvParameters) {
 	DataSampleType	sample;
+	EndpointNumType scaleEndpoint = 1;
+	EndpointNumType tempEndpoint = 2;
 	
 	// Setup the ADS2032 interface.
 	
@@ -47,6 +79,7 @@ void strainGageTask(void *pvParameters) {
 	PWRDOWN_DIR = 1;
 	SCLK_DIR = 1;
 	DOUT_DIR = 0;
+	GAIN1_DIR = 1;
 	
 	// Now setup the default interface.
 	TEMP = 0;
@@ -56,36 +89,44 @@ void strainGageTask(void *pvParameters) {
 	Cpu_Delay100US(1);
 	PWRDOWN = 1;
 	SCLK = 0;
+	GAIN1 = 1;
 
 	if (gStrainGageQueue) {
 		for (;;) {
 
-			// Take a measurement.
-			while (DOUT != 0) {
-#ifdef __WatchDog
-				WatchDog_Clear();
-#endif
-				vTaskDelay(1);
-			}
+			// Capture strain: TEMP = off, Gain = 128x.
+			GAIN1 = 1;
+			TEMP = 0;
 			
-			sample = 0;
-			for (bit = 0; bit < 24; bit++) {
-				// Read the bit from the pin.
-				SCLK = 1;
-				Cpu_Delay100US(1);
-				SCLK = 0;
-				sample |= DOUT << bit;
-			}
-			// Force #DRDY/DOUT high
-			SCLK = 1;
-			Cpu_Delay100US(1);
-			SCLK = 0;
+			// It takes at least 4 samples to settle the inputs after switching mode.
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
 			
 			// Transmit the measurement.
-			createDataSampleCommand(gTXCurBufferNum);
+			createDataSampleCommand(gTXCurBufferNum, scaleEndpoint);
 			addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample);
 			if (transmitPacket(gTXCurBufferNum)){
 			};
+			
+			// Capture temp: TEMP = on, Gain = 2x.
+			GAIN1 = 0;
+			TEMP = 1;
+			
+			// It takes at least 4 samples to settle the inputs after switching mode.
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
+			sample = collectSample();
+
+			// Transmit the measurement.
+			createDataSampleCommand(gTXCurBufferNum, tempEndpoint);
+			addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample);
+			if (transmitPacket(gTXCurBufferNum)){
+			};	
 			
 			// Delay until the next measurement.
 			vTaskDelay(2000);

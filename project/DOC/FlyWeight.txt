@@ -13,6 +13,9 @@ Module "SWI"       (bean InterruptVector)
 
 Module "MC13191IRQ" (bean InterruptVector)
 
+Module "WatchDog"  (bean WatchDog)
+   - WatchDog_Clear -Clears the watchdog timer (it makes the timer restart from zero).
+
 Module "LowVoltage" (bean InterruptVector)
 
 Module "GPIO1"     (bean Init_GPIO_HCS08)

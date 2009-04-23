@@ -14,7 +14,6 @@
 #include "queue.h"
 #include "pub_def.h"
 #include "simple_mac.h"
-#include "Watchdog.h"
 
 xQueueHandle 		gRemoteMgmtQueue;
 ELocalStatusType	gLocalDeviceState;
@@ -44,9 +43,7 @@ void remoteMgmtTask( void *pvParameters ) {
 		associated = FALSE;
 		while (!associated) {
 
-		#ifdef __WatchDog
 		WatchDog_Clear();
-		#endif
 
 			// Set the channel to the current channel we're testing.
 			MLMESetChannelRequest(channel);

@@ -7,13 +7,19 @@
   $Name$	
 */
 
-#include "toyQuery.h"
 #include "commands.h"
 #include "string.h"
 #include "stdlib.h"
 #include "deviceInfo.h"
 #include "PE_Types.h"
 #include "pub_def.h"
+
+#ifdef _TOY_NETWORK_
+	#include "deviceQuery.h"
+#else
+	#include "terminalQuery.h"
+#endif
+
 
 // --------------------------------------------------------------------------
 // Local function prototypes

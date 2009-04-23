@@ -7,8 +7,8 @@ $Id$
 $Name$	
 */
 
-#ifndef TOYQUERY_H
-#define TOYQUERY_H
+#ifndef DEVICEQUERY_H
+#define DEVICEQUERY_H
 
 // Project includes
 #include "PE_Types.h"
@@ -65,4 +65,4 @@ BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, Buffer
 // --------------------------------------------------------------------------
 // Globals.
 
-#endif TOYQUERY_H
+#endif DEVICEQUERY_H

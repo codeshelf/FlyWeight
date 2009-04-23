@@ -13,6 +13,7 @@
 #include "pub_def.h"
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "radioCommon.h"
 
 #define STRAINGAGE_QUEUE_SIZE		2
 
@@ -21,6 +22,7 @@ extern xQueueHandle	gStrainGageQueue;
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
+DataSampleType collectSample();
 void strainGageTask( void *pvParameters );
 
 #endif //STRAINGAGE_TASK_H

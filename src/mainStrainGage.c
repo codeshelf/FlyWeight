@@ -24,7 +24,6 @@
 #include "strainGageTask.h"
 #include "commands.h"
 #include "CPU.h"
-#include "WatchDog.h"
 
 // --------------------------------------------------------------------------
 // Globals
@@ -72,7 +71,5 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-#ifdef __WatchDog
 	WatchDog_Clear();
-#endif
 }

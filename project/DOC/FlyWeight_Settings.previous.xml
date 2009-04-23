@@ -20,7 +20,7 @@
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
             <group name="Clock input pin">
-              <Pin_name v="PTG2_EXTAL"/>
+              <Pin_name v=""/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -47,7 +47,7 @@
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v="PTG0_BKGD_MS"/>
+          <BDM_pin v=""/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -966,7 +966,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
@@ -1283,12 +1283,12 @@ MLMESetMC13192ClockRate(2);
       <group name="Pins">
         <list name="ADC Input Pins" v="2">
           <group name="Input Pin0">
-            <Pin v=""/>
+            <Pin v="PTB0_AD0"/>
             <Pin_Signal v=""/>
             <Pin_enable v="yes"/>
           </group>
           <group name="Input Pin1">
-            <Pin v=""/>
+            <Pin v="PTB1_AD1"/>
             <Pin_Signal v=""/>
             <Pin_enable v="yes"/>
           </group>

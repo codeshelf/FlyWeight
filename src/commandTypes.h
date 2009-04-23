@@ -13,6 +13,7 @@
 // Project includes
 #include "PE_Types.h"
 #include "pub_def.h"
+#include "WatchDog.h"
 //#include "radioCommon.h"
 
 // --------------------------------------------------------------------------
@@ -81,7 +82,8 @@
 #define CMD_MAX_AUDIO_BYTES		120
 
 // Data Sample Command
-#define CMDPOS_SAMPLE_CNT		CMDPOS_STARTOFCMD
+#define CMDPOS_DATA_SUBCMD		CMDPOS_STARTOFCMD
+#define CMDPOS_SAMPLE_CNT		CMDPOS_DATA_SUBCMD + 1
 #define CMDPOS_SAMPLE_FIRST		CMDPOS_SAMPLE_CNT + 1
 
 // Command masks
@@ -236,6 +238,13 @@ typedef enum {
 	eControlSubCmdMotor = 2,
 	eControlSubCmdButton = 3
 } EControlSubCmdIDType;
+
+typedef enum {
+	eRemoteDataSubCmdInvalid = -1,
+	eRemoteDataSubCmdSample = 1,
+	eRemoteDataSubCmdRateCtrl = 2,
+	eRemoteDataSubCmdCalibrate = 3
+} ERemoteDataSubCmdIDType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

@@ -22,7 +22,7 @@
 #include "flash.h"
 
 #ifdef _TOY_NETWORK_
-	#include "toyQuery.h"
+	#include "deviceQuery.h"
 #else
 	#include "terminalQuery.h"
 #endif
@@ -595,9 +595,13 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void createDataSampleCommand(BufferCntType inTXBufferNum) {
+void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint) {
 
 	createPacket(inTXBufferNum, eCommandDataSample, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ENDPOINT] |= (CMDMASK_ENDPOINT & inEndpoint);
+
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_DATA_SUBCMD] = eRemoteDataSubCmdSample;
 
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT] = 0;
 
@@ -608,7 +612,7 @@ void createDataSampleCommand(BufferCntType inTXBufferNum) {
 
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample) {
 	
-	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize + 1;
+	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize;
 	
 	// Increase the sample count and adjust the packet length.
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT]++;
