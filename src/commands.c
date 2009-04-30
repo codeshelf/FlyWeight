@@ -610,7 +610,7 @@ void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndp
 
 // --------------------------------------------------------------------------
 
-void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample) {
+void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte) {
 	
 	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize;
 	
@@ -624,6 +624,9 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 	// Add the data sample.
 	memcpy((void *) &gTXRadioBuffer[inTXBufferNum].bufferStorage[pos], &inDataSample, sizeof(inDataSample));
 	pos += sizeof(inDataSample);
+	
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[pos] = inUnitsByte;
+	pos += sizeof(inUnitsByte);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
 	
