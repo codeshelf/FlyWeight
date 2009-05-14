@@ -77,10 +77,16 @@ DataSampleType collectSample() {
 	//Cpu_Delay100US(1);
 	SCLK = 0;
 	
-	result = temp1;
+	// If the 24th bit is 1 then we need to sign-extend to all 32 bits.
+	result = 0;
+	if (temp1 & 0b10000000) {
+		result = 0xff;	
+	}
+
+	result = (result << 8) + temp1;
 	result = (result << 8) + temp2;
 	result = (result << 8) + temp3;
-
+	
 	gSampleCount++;
 
 	return result;
