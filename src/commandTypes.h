@@ -14,6 +14,8 @@
 #include "PE_Types.h"
 #include "pub_def.h"
 #include "WatchDog.h"
+#define WATCHDOG_RESET			WatchDog_Clear();
+//#define WATCHDOG_RESET
 //#include "radioCommon.h"
 
 // --------------------------------------------------------------------------
@@ -236,7 +238,8 @@ typedef enum {
 	eControlSubCmdInvalid = -1,
 	eControlSubCmdEndpointAdj = 1,
 	eControlSubCmdMotor = 2,
-	eControlSubCmdButton = 3
+	eControlSubCmdButton = 3,
+	eControlSubCmdMood = 4
 } EControlSubCmdIDType;
 
 typedef enum {

@@ -73,6 +73,8 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
+UINT8 getLEDVaue(UINT8 inLEDNum, BufferCntType inRXBufferNum);
+
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
@@ -95,6 +97,7 @@ void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAdd
 void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
+void processMoodSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);

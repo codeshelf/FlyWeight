@@ -43,7 +43,7 @@ void remoteMgmtTask( void *pvParameters ) {
 		associated = FALSE;
 		while (!associated) {
 
-		WatchDog_Clear();
+		WATCHDOG_RESET;
 
 			// Set the channel to the current channel we're testing.
 			MLMESetChannelRequest(channel);

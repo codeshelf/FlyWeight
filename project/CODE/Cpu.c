@@ -7,7 +7,7 @@
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/22/2009, 12:36 PM
+**     Date/Time : 5/26/2009, 7:38 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -38,6 +38,7 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
+#include "PWM_XBee.h"
 #include "LowVoltage.h"
 #include "GPIO1.h"
 #include "PE_Types.h"
@@ -346,6 +347,8 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
+  /* PTDPE: PTDPE1=0,PTDPE0=0 */
+  clrReg8Bits(PTDPE, 0x03);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -366,6 +369,8 @@ void PE_low_level_init(void)
    */
   /* ###  WatchDog "WatchDog" init code ... */
   SRS = 0x00;
+  /* ### Init_TPM "PWM_XBee" init code ... */
+  PWM_XBee_Init();
   /* ### Init_GPIO "GPIO1" init code ... */
   GPIO1_Init();
   __EI();                              /* Enable interrupts */

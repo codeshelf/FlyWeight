@@ -32,8 +32,8 @@ $Id$
 #define ENDPOINT_TYPE_LEN	4
 
 #define KVP_ENTRIES			2
-#define ENDPOINT_ENTRIES	1
-#define ENDPOINT_KVPS		1
+#define ENDPOINT_ENTRIES	2
+#define ENDPOINT_KVPS		2
 
 extern char DEVICE_DESC[];
 

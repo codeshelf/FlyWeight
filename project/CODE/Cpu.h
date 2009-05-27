@@ -7,7 +7,7 @@
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/22/2009, 11:24 AM
+**     Date/Time : 5/26/2009, 3:48 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -34,7 +34,7 @@
 #define __Cpu
 
 /* Active configuration define symbol */
-#define PEcfg_XBeeStrainGage 1
+#define PEcfg_XBeeHooBee 1
 
 
 /*Include shared modules, which are used for whole project*/

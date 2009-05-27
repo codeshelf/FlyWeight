@@ -449,7 +449,7 @@ MLMESetMC13192ClockRate(2);
             <Clock_range v="High frequency"/>
             <Operating_mode v="High gain"/>
             <group name="Clock input pin">
-              <Pin_name v="PTG2_EXTAL"/>
+              <Pin_name v=""/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -476,7 +476,7 @@ MLMESetMC13192ClockRate(2);
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v="PTG0_BKGD_MS"/>
+          <BDM_pin v=""/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -966,7 +966,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
@@ -1079,7 +1079,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="PWM_XBee" type="Init_TPM">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="PWM_XBee"/>
@@ -1151,7 +1151,7 @@ MLMESetMC13192ClockRate(2);
         </group>
       </group>
       <group name="Initialization">
-        <Call_Init_method v="no"/>
+        <Call_Init_method v="yes"/>
         <Enable_module v="yes"/>
       </group>
     </Properties>

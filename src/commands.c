@@ -532,6 +532,34 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+UINT8 getLEDVaue(UINT8 inLEDNum, BufferCntType inRXBufferNum) {
+
+	UINT8 result = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA + inLEDNum];
+
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
+void processMoodSubCommand(BufferCntType inRXBufferNum) {
+
+#define RED_LED		0
+#define GREEN_LED	1
+#define BLUE_LED	2
+
+	UINT8 blue;
+
+	// Map the endpoint to the LED number.
+	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
+	TPM1C0V = getLEDVaue(RED_LED, inRXBufferNum);
+	TPM1C1V = getLEDVaue(GREEN_LED, inRXBufferNum);
+	blue = getLEDVaue(BLUE_LED, inRXBufferNum);
+	
+	RELEASE_RX_BUFFER(inRXBufferNum);
+}
+
+// --------------------------------------------------------------------------
+
 void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 #define MOTOR1_FREE		0b11111100
