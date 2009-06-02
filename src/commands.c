@@ -32,6 +32,9 @@ RemoteAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
 extern byte			gCCRHolder;
 
+extern UINT8		gLEDRedSetValue;
+extern UINT8		gLEDGreenSetValue;
+extern UINT8		gLEDBlueSetValue;
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -547,13 +550,11 @@ void processMoodSubCommand(BufferCntType inRXBufferNum) {
 #define GREEN_LED	1
 #define BLUE_LED	2
 
-	UINT8 blue;
-
 	// Map the endpoint to the LED number.
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
-	TPM1C0V = getLEDVaue(RED_LED, inRXBufferNum);
+	TPM1C2V = getLEDVaue(RED_LED, inRXBufferNum);
 	TPM1C1V = getLEDVaue(GREEN_LED, inRXBufferNum);
-	blue = getLEDVaue(BLUE_LED, inRXBufferNum);
+	TPM1C0V = getLEDVaue(BLUE_LED, inRXBufferNum);
 	
 	RELEASE_RX_BUFFER(inRXBufferNum);
 }

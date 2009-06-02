@@ -6,7 +6,7 @@
 **     Beantype  : WatchDog
 **     Version   : Bean 02.087, Driver 01.10, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 5/26/2009, 7:38 PM
+**     Date/Time : 6/1/2009, 11:11 PM
 **     Abstract  :
 **         This device "WatchDog" implements a watchdog.
 **         When enabled, the watchdog timer counts until it reaches

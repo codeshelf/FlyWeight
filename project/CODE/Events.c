@@ -330,4 +330,32 @@ ISR(LowVoltageDetect) {
 	
 }
 
+UINT8	gLEDCheckValue;
+UINT8	gLEDRedSetValue;
+UINT8	gLEDGreenSetValue;
+UINT8	gLEDBlueSetValue;
+
+
+ISR(LEDCheck) {
+	if (TPM1C2V > 0)
+		PTBD_PTBD0 = 1;
+	TPM1SC_TOF = 0;
+//	LED2_SetVal();
+//	LED3_SetVal();
+}
+
+ISR(LEDRedOff) {
+	PTBD_PTBD0 = 0;
+	TPM1C2SC_CH2F = 0;
+}
+
+ISR(LEDGreenOff) {
+//	LED2_ClrVal();
+}
+
+ISR(LEDBlueOff) {
+//	LED3_ClrVal();
+}
+
+
 /* END Events */

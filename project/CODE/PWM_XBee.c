@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.070, Driver 01.14, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 5/26/2009, 7:54 PM
+**     Date/Time : 6/2/2009, 12:48 AM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -16,12 +16,12 @@
 **          Device                                         : TPM1
 **          Settings
 **            Clock settings
-**              Clock Source Select                        : Bus rate clock
+**              Clock Source Select                        : Fixed system clock
 **              Prescaler                                  : 128
 **              Modulo Counter                             : 255
-**              Period                                     : 1.638 ms
+**              Period                                     : 16.384 ms
 **            Aligned                                      : Left
-**          Channels                                       : 2
+**          Channels                                       : 3
 **            Channel0                                     : 1
 **              Capture/compare device                     : TPM10
 **              Settings
@@ -54,13 +54,25 @@
 **                  Interrupt                              : Vtpm1ch1
 **                  Channel Interrupt                      : Disabled
 **                  ISR Name                               : 
+**            Channel2                                     : 3
+**              Capture/compare device                     : TPM12
+**              Settings
+**                Mode                                     : Output compare
+**                  Output Action                          : Software compare only
+**                  ChannelValue                           : 0
+**              Pin                                        : Not Used
+**              Interrupt
+**                Channel Interrupt
+**                  Interrupt                              : Vtpm1ch2
+**                  Channel Interrupt                      : Enabled
+**                  ISR Name                               : LEDRedOff
 **          Pins
 **            External Clock Source                        : Disabled
 **          Interrupts
 **            Overflow Interrupt
 **              Interrupt                                  : Vtpm1ovf
-**              Overflow Interrupt                         : Disabled
-**              ISR Name                                   :
+**              Overflow Interrupt                         : Enabled
+**              ISR Name                                   :LEDCheck
 **          Initialization
 **          Call Init Method                               : yes
 **     Contents  :
@@ -79,6 +91,42 @@
 
 #include "PWM_XBee.h"
 
+/*
+** ###################################################################
+**
+**  The interrupt service routine(s) must be implemented
+**  by user in one of the following user modules.
+**
+**  If the "Generate ISR" option is enabled, Processor Expert generates
+**  ISR templates in the CPU event module.
+**
+**  User modules:
+**      FlyWeight.c
+**      Events.c
+**
+** ###################################################################
+      ISR(LEDCheck)
+      {
+      // NOTE: The routine should include the following actions to obtain
+      //       correct functionality of the hardware.
+      //
+      //       The TPM1SC register should be read and
+      //       TOF bit must be set to 0 to clear the interrupt request.
+      //       Example: TPM1SC;
+      //                TPM1SC_TOF = 0;
+      }
+      ISR(LEDRedOff)
+      {
+      // NOTE: The routine should include the following actions to obtain
+      //       correct functionality of the hardware.
+      //
+      //       The TPM1C2SC register should be read and
+      //       CH2F bit must be set to 0 to clear the interrupt request.
+      //       Example: TPM1C2SC;
+      //                TPM1C2SC_CH2F = 0;
+      }
+
+*/
 /*
 ** ===================================================================
 **     Method      :  PWM_XBee_Init (bean Init_TPM)
@@ -108,9 +156,13 @@ void PWM_XBee_Init(void)
   /* TPM1C1SC: CH1F=0,CH1IE=0,MS1B=1,MS1A=0,ELS1B=1,ELS1A=0,??=0,??=0 */
   setReg8(TPM1C1SC, 0x28);             /* Int. flag clearing (2nd part) and channel 1 contr. register setting */ 
   setReg16(TPM1C1V, 0x00);             /* Compare 1 value setting */ 
+  (void)getReg8(TPM1C2SC);             /* Channel 2 int. flag clearing (first part) */
+  /* TPM1C2SC: CH2F=0,CH2IE=1,MS2B=0,MS2A=1,ELS2B=0,ELS2A=0,??=0,??=0 */
+  setReg8(TPM1C2SC, 0x50);             /* Int. flag clearing (2nd part) and channel 2 contr. register setting */ 
+  setReg16(TPM1C2V, 0x00);             /* Compare 2 value setting */ 
   (void)getReg8(TPM1SC);               /* Overflow int. flag clearing (first part) */
-  /* TPM1SC: TOF=0,TOIE=0,CPWMS=0,CLKSB=0,CLKSA=1,PS2=1,PS1=1,PS0=1 */
-  setReg8(TPM1SC, 0x0F);               /* Int. flag clearing (2nd part) and timer control register setting */ 
+  /* TPM1SC: TOF=0,TOIE=1,CPWMS=0,CLKSB=1,CLKSA=0,PS2=1,PS1=1,PS0=1 */
+  setReg8(TPM1SC, 0x57);               /* Int. flag clearing (2nd part) and timer control register setting */ 
 
 }
 

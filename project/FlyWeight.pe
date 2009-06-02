@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1079
+ProjectModificationStamp=1100
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=873
+ProjectCompNumb=877
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -26,7 +26,7 @@ DontWriteGeneratedModules=0
 [UserFolder]
 NodeName=LEDs/Switches
 FolderType=Beans
-ExpandedAll=No
+ExpandedAll=Yes
 
 [MC9S08GT60_44:Cpu]
 CompNumb=30
@@ -6714,11 +6714,11 @@ Value18=Yes
 ItemId19=44
 Value19=No
 ItemId20=43
-Value20=No
+Value20=Yes
 ItemId21=42
-Value21=No
+Value21=Yes
 ItemId22=41
-Value22=No
+Value22=Yes
 ItemId23=57
 Value23=No
 ItemId24=54
@@ -7543,7 +7543,7 @@ List=Event
 
 [BitIO:LED1]
 CompNumb=41
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7562,7 +7562,7 @@ Value=LED1
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTD0_TPM1CH0
+Value=PTB0_AD1P0
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -7580,7 +7580,7 @@ ItemSymbol=PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePULL
-Index=5
+Index=0
 [ItemState]
 ItemSymbol=ODE
 ReadOnly=No
@@ -7628,8 +7628,8 @@ Value=No
 ItemSymbol=InitValue
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 
 [EndOfChilds]
 [ItemState]
@@ -7797,7 +7797,7 @@ List=Event
 
 [BitIO:LED2]
 CompNumb=42
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7816,7 +7816,7 @@ Value=LED2
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTD1_TPM1CH1
+Value=PTB1_AD1P1
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -7834,7 +7834,7 @@ ItemSymbol=PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePULL
-Index=5
+Index=0
 [ItemState]
 ItemSymbol=ODE
 ReadOnly=No
@@ -7882,8 +7882,8 @@ Value=No
 ItemSymbol=InitValue
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 
 [EndOfChilds]
 [ItemState]
@@ -8051,7 +8051,7 @@ List=Event
 
 [BitIO:LED3]
 CompNumb=43
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -8070,7 +8070,7 @@ Value=LED3
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTD3_TPM2CH0
+Value=PTB2_AD1P2
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -8088,7 +8088,7 @@ ItemSymbol=PullMode
 ReadOnly=No
 UserReadOnly=No
 TypeSpecNameState=typePULL
-Index=5
+Index=0
 [ItemState]
 ItemSymbol=ODE
 ReadOnly=No
@@ -8136,8 +8136,8 @@ Value=No
 ItemSymbol=InitValue
 ReadOnly=No
 UserReadOnly=No
-Index=0
-Value=Yes
+Index=1
+Value=No
 
 [EndOfChilds]
 [ItemState]
@@ -9831,7 +9831,7 @@ List=GrupItem
 ItemSymbol=ClockSourceSelect
 ReadOnly=No
 UserReadOnly=No
-Index=1
+Index=2
 
 [Childs]
 List=EnmGrpItm
@@ -9865,7 +9865,7 @@ Value=255
 Base=2
 [ItemState]
 ItemSymbol=Period
-Value=1.638 ms
+Value=16.384 ms
 
 [EndOfChilds]
 [ItemState]
@@ -9881,7 +9881,7 @@ List=GrupItem
 ItemSymbol=Channels
 ReadOnly=No
 UserReadOnly=No
-ListItemCount=2
+ListItemCount=3
 List=ListItem
 [ItemState]
 ItemSymbol=Channel0
@@ -10125,7 +10125,7 @@ Index=5
 ItemSymbol=Interrupts1
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -10189,6 +10189,159 @@ Value=
 [EndOfChilds]
 
 [EndOfChilds]
+[ItemState]
+ItemSymbol=Channel2
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=CptrCmprDev2
+ReadOnly=No
+UserReadOnly=No
+Value=TPM12
+[ItemState]
+ItemSymbol=ChSettings2
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=Mode2
+ReadOnly=No
+UserReadOnly=No
+Index=2
+
+[Childs]
+List=EnmGrpItm
+[ItemState]
+ItemSymbol=InputControl2
+ReadOnly=No
+UserReadOnly=No
+Index=0
+EnumSymbVal=4
+[ItemState]
+ItemSymbol=OutputAction2
+ReadOnly=No
+UserReadOnly=No
+Index=0
+EnumSymbVal=0
+[ItemState]
+ItemSymbol=PWMOutputAction2
+ReadOnly=No
+UserReadOnly=No
+Index=0
+EnumSymbVal=8
+[ItemState]
+ItemSymbol=ChannelValue2
+ReadOnly=No
+UserReadOnly=No
+Value=0
+Base=2
+[ItemState]
+ItemSymbol=DutyCycle2
+Value=0 us
+
+[EndOfChilds]
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Pins2
+Value=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ChannelPin2
+ReadOnly=No
+UserReadOnly=No
+Value=PTD2_TPM1CH2
+PortType=flipflop
+[ItemState]
+ItemSymbol=ChannelPinSignal2
+ReadOnly=No
+UserReadOnly=No
+Value=
+[ItemState]
+ItemSymbol=PullResist2
+ReadOnly=No
+UserReadOnly=No
+Index=5
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=Interrupts2
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ChannelInterrupt2
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=HCS08Family_32
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ChInterrupt2
+Value=Vtpm1ch2
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=ChannelIntEn2
+ReadOnly=No
+UserReadOnly=No
+Index=0
+Value=Yes
+[ItemState]
+ItemSymbol=Ch_IntPriorityFeaturegpr2
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=Ch_IntPriority2
+ReadOnly=No
+UserReadOnly=No
+Value=
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=HCS08Family_42
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=ChISRNameInt2
+ReadOnly=No
+UserReadOnly=No
+Value=LEDRedOff
+
+[EndOfChilds]
+
+[EndOfChilds]
+
+[EndOfChilds]
+
+[EndOfChilds]
 
 [EndOfChilds]
 [ItemState]
@@ -10224,7 +10377,7 @@ Value=
 ItemSymbol=TimInterrupts
 ReadOnly=No
 UserReadOnly=No
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -10252,8 +10405,8 @@ Value=Vtpm1ovf
 ItemSymbol=OverflowIntEn
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 [ItemState]
 ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
@@ -10279,7 +10432,7 @@ List=GrupItem
 ItemSymbol=ISRNameInt
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=LEDCheck
 
 [EndOfChilds]
 [ItemState]

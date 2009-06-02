@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 5/26/2009, 7:38 PM
+**     Date/Time : 6/1/2009, 11:56 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -24,6 +24,9 @@
 
 
 #include "Cpu.h"
+#include "LED1.h"
+#include "LED2.h"
+#include "LED3.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
@@ -51,8 +54,8 @@ void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
          Cpu_Interrupt,                /* Int.no. 11 Reserved14 (at FFE8)            Unassigned */
          Cpu_Interrupt,                /* Int.no. 10 Vtpm2ch1 (at FFEA)              Unassigned */
          Cpu_Interrupt,                /* Int.no.  9 Vtpm2ch0 (at FFEC)              Unassigned */
-         Cpu_Interrupt,                /* Int.no.  8 Vtpm1ovf (at FFEE)              Unassigned */
-         Cpu_Interrupt,                /* Int.no.  7 Vtpm1ch2 (at FFF0)              Unassigned */
+         LEDCheck,                     /* Int.no.  8 Vtpm1ovf (at FFEE)              Used */
+         LEDRedOff,                    /* Int.no.  7 Vtpm1ch2 (at FFF0)              Used */
          Cpu_Interrupt,                /* Int.no.  6 Vtpm1ch1 (at FFF2)              Unassigned */
          Cpu_Interrupt,                /* Int.no.  5 Vtpm1ch0 (at FFF4)              Unassigned */
          Cpu_VicgInterrupt,            /* Int.no.  4 Vicg (at FFF6)                  Used */
