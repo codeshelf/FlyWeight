@@ -15,7 +15,6 @@
 #include "Cpu.h"
 #include "PE_types.h"
 #include "pub_def.h"
-#include "Watchdog.h"
 
 // --------------------------------------------------------------------------
 // Definitions.

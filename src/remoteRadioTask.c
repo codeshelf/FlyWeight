@@ -199,8 +199,8 @@ void radioReceiveTask(void *pvParameters) {
 										processMotorControlSubCommand(rxBufferNum);
 										break;
 										
-									case eControlSubCmdMood:
-										processMoodSubCommand(rxBufferNum);
+									case eControlSubCmdHooBee:
+										processHooBeeSubCommand(rxBufferNum);
 										break;
 										
 									default:

@@ -32,9 +32,13 @@ RemoteAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
 extern byte			gCCRHolder;
 
-extern UINT8		gLEDRedSetValue;
-extern UINT8		gLEDGreenSetValue;
-extern UINT8		gLEDBlueSetValue;
+extern UINT8		gRedValue;
+extern UINT8		gGreenValue;
+extern UINT8		gBlueValue;
+extern UINT16		gTimeOnMillis;
+extern UINT16		gTimeOffMillis;
+extern UINT8		gRepeat;
+
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -194,7 +198,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 
 	// Set the device version
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
-	
+
 #if !defined(XBEE)
 	// Save the ATD state and prepare to take a battery measurement.
 	saveATD1C = ATD1C;
@@ -203,7 +207,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 	ATD1C_RES8 = 1;
 	ATD1SC_ATDCH = 0x04;
 	ATD_ON;
-	
+
 	// Take an audio sample first.
 	// Start and wait for a ATD conversion.
 	ATD1SC_ATDCO = 0;
@@ -216,13 +220,13 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 	// around 70, and if we set 78 as the floor then 2x gives us a nice 100 scale.
 	// (Since 128 - 78 - 50)
 	batteryLevel = ATD1RH - 78;
-	
+
 	// Restore state.
 	ATD1SC = saveATD1SC;
 	ATD1C = saveATD1C;
 
 	// Nominalize to a 0-100 scale.
-	if (batteryLevel < 0) {	
+	if (batteryLevel < 0) {
 		batteryLevel = 0;
 	} else {
 		// Double to get to a 100 scale.
@@ -535,32 +539,6 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-UINT8 getLEDVaue(UINT8 inLEDNum, BufferCntType inRXBufferNum) {
-
-	UINT8 result = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_DATA + inLEDNum];
-
-	return result;
-}
-
-// --------------------------------------------------------------------------
-
-void processMoodSubCommand(BufferCntType inRXBufferNum) {
-
-#define RED_LED		0
-#define GREEN_LED	1
-#define BLUE_LED	2
-
-	// Map the endpoint to the LED number.
-	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
-	TPM1C2V = getLEDVaue(RED_LED, inRXBufferNum);
-	TPM1C1V = getLEDVaue(GREEN_LED, inRXBufferNum);
-	TPM1C0V = getLEDVaue(BLUE_LED, inRXBufferNum);
-	
-	RELEASE_RX_BUFFER(inRXBufferNum);
-}
-
-// --------------------------------------------------------------------------
-
 void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 #define MOTOR1_FREE		0b11111100
@@ -624,6 +602,50 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
+
+	UINT8	pos = CMDPOS_BEHAVIOR_CNT;
+	UINT8	behaviorCnt;
+	UINT8	behaviorNum;
+	UINT8	behaviorType;
+	UINT8	dataByteCnt;
+
+	// Map the endpoint to the LED number.
+	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
+
+	behaviorCnt = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+
+	for (behaviorNum = 1; behaviorNum <= behaviorCnt; behaviorNum++) {
+
+		// Read the behavior type.
+		behaviorType = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+		dataByteCnt = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+
+		switch (behaviorType) {
+
+			case eHooBeeBehaviorLedFlash:
+				gRedValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				gGreenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				gBlueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				memcpy(&gTimeOnMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(gTimeOnMillis));
+				pos += sizeof(gTimeOnMillis);
+				memcpy(&gTimeOffMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(gTimeOffMillis));
+				pos += sizeof(gTimeOffMillis);
+				gRepeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				break;
+
+			default:
+				break;
+
+		}
+
+	}
+
+	RELEASE_RX_BUFFER(inRXBufferNum);
+}
+
+// --------------------------------------------------------------------------
+
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint) {
 
 	createPacket(inTXBufferNum, eCommandDataSample, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
@@ -640,23 +662,23 @@ void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndp
 // --------------------------------------------------------------------------
 
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte) {
-	
+
 	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize;
-	
+
 	// Increase the sample count and adjust the packet length.
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT]++;
-	
+
 	// Add the time stamp.
 	memcpy((void *) &gTXRadioBuffer[inTXBufferNum].bufferStorage[pos], &inTimestamp, sizeof(inTimestamp));
 	pos += sizeof(inTimestamp);
-	
+
 	// Add the data sample.
 	memcpy((void *) &gTXRadioBuffer[inTXBufferNum].bufferStorage[pos], &inDataSample, sizeof(inDataSample));
 	pos += sizeof(inDataSample);
-	
+
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[pos] = inUnitsByte;
 	pos += sizeof(inUnitsByte);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
-	
+
 };

@@ -966,7 +966,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
@@ -1141,17 +1141,12 @@ MLMESetMC13192ClockRate(2);
           <group name="Channel">
             <Capture_compare_device v="TPM12"/>
             <group name="Settings">
-              <enumgroup name="Mode" v="PWM">
-                <PWM_output_action v="Clear output on compare"/>
+              <enumgroup name="Mode" v="Output compare">
+                <Output_action v="Software compare only"/>
                 <Channel_compare_value v="0"/>
-                <Channel_duty v="0 us"/>
               </enumgroup>
             </group>
-            <boolgroup name="Pin" v="Used">
-              <Channel_pin v="PTD2_TPM1CH2"/>
-              <Channel_pin_signal v=""/>
-              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
-            </boolgroup>
+            <boolgroup name="Pin" v="Not Used" />
             <group name="Interrupt">
               <group name="Channel Interrupt">
                 <Interrupt v="Vtpm1ch2"/>

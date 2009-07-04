@@ -2,9 +2,9 @@
  FlyWeight
  © Copyright 2005, 2006 Jeffrey B. Williams
  All rights reserved
- 
+
  $Id$
- $Name$	
+ $Name$
  */
 
 #include "hooBeeTask.h"
@@ -15,36 +15,45 @@
 #include "queue.h"
 #include "pub_def.h"
 
-#define	TEMP			PTBD_PTBD0
-#define	TEMP_DIR		PTBDD_PTBDD0
-#define	INPSEL			PTBD_PTBD1
-#define	INPSEL_DIR		PTBDD_PTBDD1
-#define	SPEED			PTBD_PTBD2
-#define	SPEED_DIR		PTBDD_PTBDD2
-#define	PWRDOWN			PTBD_PTBD3
-#define	PWRDOWN_DIR		PTBDD_PTBDD3
-#define	DOUT			PTBD_PTBD4
-#define	DOUT_DIR		PTBDD_PTBDD4
-#define	SCLK			PTBD_PTBD5
-#define	SCLK_DIR		PTBDD_PTBDD5
-#define	GAIN1			PTBD_PTBD6
-#define	GAIN1_DIR		PTBDD_PTBDD6
-
-#define SETUP_STRAIN	GAIN1 = 1; TEMP = 0; vTaskDelay(600);
-#define SETUP_TEMP		GAIN1 = 0; TEMP = 1; vTaskDelay(600);
-
 xTaskHandle			gHooBeeTask = NULL;
 xQueueHandle 		gHooBeeQueue;
+
+UINT8	gRedValue;
+UINT8	gGreenValue;
+UINT8	gBlueValue;
+UINT16	gTimeOnMillis;
+UINT16	gTimeOffMillis;
+UINT8	gRepeat;
 
 // --------------------------------------------------------------------------
 
 void hooBeeTask(void *pvParameters) {
 
-	if (gHooBeeQueue) {
-		for (;;) {
+	UINT8 i;
 
+//	if (gHooBeeQueue) {
+		for (;;) {
+			for (i = 0; i < gRepeat; i++) {
+
+				TPM1C2V = gRedValue;
+				TPM1C1V = gGreenValue;
+				TPM1C0V = gBlueValue;
+
+				vTaskDelay(gTimeOnMillis);
+
+				TPM1C2V = 0;
+				TPM1C1V = 0;
+				TPM1C0V = 0;
+
+				vTaskDelay(gTimeOffMillis);
+			}
+
+			WATCHDOG_RESET;
+
+			// Delay for the whole cycle.
+			vTaskDelay(5000 * portTICK_RATE_MS);
 		}
-	}
+//	}
 
 	/* Will only get here if the queue could not be created. */
 	for (;;)

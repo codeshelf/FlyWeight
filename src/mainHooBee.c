@@ -2,9 +2,9 @@
    FlyWeight
    © Copyright 2005, 2006 Jeffrey B. Williams
    All rights reserved
-   
+
    $Id$
-   $Name$	
+   $Name$
 */
 
 // --------------------------------------------------------------------------
@@ -43,7 +43,7 @@ void vMain( void ) {
 #endif
 	gLocalDeviceState = eLocalStateStarted;
 	MLMEMC13192PAOutputAdjust(15);
-	if (MLMESetChannelRequest(0) == SUCCESS) 
+	if (MLMESetChannelRequest(0) == SUCCESS)
 		{}
 
 	/* Start the task that will handle the radio */
@@ -51,7 +51,7 @@ void vMain( void ) {
 	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
 	xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
 	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
-	//xTaskCreate(hooBeeTask, (const signed portCHAR * const) "HooBee", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gHooBeeTask );
+	xTaskCreate(hooBeeTask, (const signed portCHAR * const) "HooBee", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gHooBeeTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
@@ -61,13 +61,13 @@ void vMain( void ) {
 
 	// Setup the SMAC glue.
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
-	
+
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;
-	
+
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
-	
+
 	/* Should not reach here! */
 	for ( ;; );
 }

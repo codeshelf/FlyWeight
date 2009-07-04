@@ -16,7 +16,6 @@
 #include "WatchDog.h"
 #define WATCHDOG_RESET			WatchDog_Clear();
 //#define WATCHDOG_RESET
-//#include "radioCommon.h"
 
 // --------------------------------------------------------------------------
 // Definitions.
@@ -87,6 +86,11 @@
 #define CMDPOS_DATA_SUBCMD		CMDPOS_STARTOFCMD
 #define CMDPOS_SAMPLE_CNT		CMDPOS_DATA_SUBCMD + 1
 #define CMDPOS_SAMPLE_FIRST		CMDPOS_SAMPLE_CNT + 1
+
+// HooBee Command
+#define CMDPOS_BEHAVIOR			CMDPOS_STARTOFCMD
+#define CMDPOS_BEHAVIOR_CNT		CMDPOS_BEHAVIOR + 1
+#define CMDPOS_BEHAVIOR_SUBCMD	CMDPOS_BEHAVIOR_CNT + 1
 
 // Command masks
 #define PACKETMASK_VERSION		0b11000000
@@ -239,7 +243,7 @@ typedef enum {
 	eControlSubCmdEndpointAdj = 1,
 	eControlSubCmdMotor = 2,
 	eControlSubCmdButton = 3,
-	eControlSubCmdMood = 4
+	eControlSubCmdHooBee = 4
 } EControlSubCmdIDType;
 
 typedef enum {

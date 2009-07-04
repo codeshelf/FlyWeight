@@ -47,6 +47,13 @@ typedef enum {
 	eMotorCommandBrake = 3
 } EMotorCommandType;
 
+typedef enum {
+	eHooBeeBehaviorInvalid = -1,
+	eHooBeeBehaviorLedFlash = 1,
+	eHooBeeBehaviorSolenoidPush = 2,
+	eHooBeeBehaviorSolenoidPull = 3
+} EHooBeeBehaviorType;
+
 typedef UINT8 NetworkIDType;
 typedef UINT8 ChannelNumberType;
 
@@ -97,7 +104,7 @@ void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAdd
 void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
-void processMoodSubCommand(BufferCntType inRXBufferNum);
+void processHooBeeSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);
