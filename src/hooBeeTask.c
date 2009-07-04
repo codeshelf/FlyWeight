@@ -18,38 +18,35 @@
 xTaskHandle			gHooBeeTask = NULL;
 xQueueHandle 		gHooBeeQueue;
 
-UINT8	gRedValue;
-UINT8	gGreenValue;
-UINT8	gBlueValue;
-UINT16	gTimeOnMillis;
-UINT16	gTimeOffMillis;
-UINT8	gRepeat;
-
+LedFlashSeqCntType	gLedFlashSeqCount;
+LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 // --------------------------------------------------------------------------
 
 void hooBeeTask(void *pvParameters) {
 
 	UINT8 i;
+	UINT8 j;
 
 //	if (gHooBeeQueue) {
 		for (;;) {
-			for (i = 0; i < gRepeat; i++) {
+			for (j = 0; j < gLedFlashSeqCount; j++) {
+				
+				for (i = 0; i < gLedFlashSeqBuffer[j].repeat; i++) {
 
-				TPM1C2V = gRedValue;
-				TPM1C1V = gGreenValue;
-				TPM1C0V = gBlueValue;
+					TPM1C2V = gLedFlashSeqBuffer[j].redValue;
+					TPM1C1V = gLedFlashSeqBuffer[j].greenValue;
+					TPM1C0V = gLedFlashSeqBuffer[j].blueValue;
 
-				vTaskDelay(gTimeOnMillis);
+					vTaskDelay(gLedFlashSeqBuffer[j].timeOnMillis);
 
-				TPM1C2V = 0;
-				TPM1C1V = 0;
-				TPM1C0V = 0;
+					TPM1C2V = 0;
+					TPM1C1V = 0;
+					TPM1C0V = 0;
 
-				vTaskDelay(gTimeOffMillis);
+					vTaskDelay(gLedFlashSeqBuffer[j].timeOffMillis);
+				}
 			}
-
-			WATCHDOG_RESET;
-
+			
 			// Delay for the whole cycle.
 			vTaskDelay(5000 * portTICK_RATE_MS);
 		}

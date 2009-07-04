@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #ifndef KEYBOARD_H
@@ -15,11 +15,6 @@
 
 // --------------------------------------------------------------------------
 // Defines
-#define NO_BUTTON			0
-#define PTT_BUTTON			1
-#define UP_BUTTON			2
-#define DOWN_BUTTON			3
-#define AUX_BUTTON			4
 
 /*
 	 * The keyboard is a matrix:
@@ -42,10 +37,10 @@
 	 * output and the PTA pins input.  Then we iterate through the output pins looking for an input pin
 	 * that has the asserted value.  Knowing the row (output) and col (input) tells us the key that
 	 * the user pressed.
-	 * 
+	 *
 	 * In our application we want to know when the user let go of the key, so we run the process again
 	 * except that the KBI interrupts are looking for falling edges or low values.
-	 */	 
+	 */
 
 	#define KB_SETUP_ROW0		PTBDD_PTBDD0
 	#define KB_SETUP_ROW1		PTBDD_PTBDD1

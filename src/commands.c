@@ -30,15 +30,10 @@
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
 RemoteAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
-extern byte			gCCRHolder;
 
-extern UINT8		gRedValue;
-extern UINT8		gGreenValue;
-extern UINT8		gBlueValue;
-extern UINT16		gTimeOnMillis;
-extern UINT16		gTimeOffMillis;
-extern UINT8		gRepeat;
-
+extern byte					gCCRHolder;
+extern LedFlashSeqCntType	gLedFlashSeqCount;
+extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -613,6 +608,8 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 	// Map the endpoint to the LED number.
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
 
+	gLedFlashSeqCount = 0;
+	
 	behaviorCnt = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 
 	for (behaviorNum = 1; behaviorNum <= behaviorCnt; behaviorNum++) {
@@ -624,14 +621,17 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 		switch (behaviorType) {
 
 			case eHooBeeBehaviorLedFlash:
-				gRedValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-				gGreenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-				gBlueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-				memcpy(&gTimeOnMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(gTimeOnMillis));
-				pos += sizeof(gTimeOnMillis);
-				memcpy(&gTimeOffMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(gTimeOffMillis));
-				pos += sizeof(gTimeOffMillis);
-				gRepeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				if (gLedFlashSeqCount < MAX_LED_SEQUENCES) {	
+					gLedFlashSeqBuffer[gLedFlashSeqCount].redValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+					gLedFlashSeqBuffer[gLedFlashSeqCount].greenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+					gLedFlashSeqBuffer[gLedFlashSeqCount].blueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOnMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+					pos += sizeof(LedFlashTimeType);
+					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOffMillis, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+					pos += sizeof(LedFlashTimeType);
+					gLedFlashSeqBuffer[gLedFlashSeqCount].repeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+					gLedFlashSeqCount++;
+				}
 				break;
 
 			default:

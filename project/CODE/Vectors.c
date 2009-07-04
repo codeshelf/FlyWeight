@@ -5,7 +5,7 @@
 **     Processor : MC9S08GT60CFD
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/3/2009, 7:18 PM
+**     Date/Time : 7/4/2009, 8:41 AM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -32,6 +32,7 @@
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
 #include "PWM_XBee.h"
+#include "KBI_XBee.h"
 #include "LowVoltage.h"
 #include "GPIO1.h"
 extern near void _EntryPoint(void);
@@ -40,7 +41,7 @@ void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
          dispatchRTI,                  /* Int.no. 25 Vrti (at FFCC)                  Used */
          Cpu_Interrupt,                /* Int.no. 24 Viic1 (at FFCE)                 Unassigned */
          Cpu_Interrupt,                /* Int.no. 23 Vatd1 (at FFD0)                 Unassigned */
-         Cpu_Interrupt,                /* Int.no. 22 Vkeyboard1 (at FFD2)            Unassigned */
+         keyboardISR,                  /* Int.no. 22 Vkeyboard1 (at FFD2)            Used */
          Cpu_Interrupt,                /* Int.no. 21 Vsci2tx (at FFD4)               Unassigned */
          Cpu_Interrupt,                /* Int.no. 20 Vsci2rx (at FFD6)               Unassigned */
          Cpu_Interrupt,                /* Int.no. 19 Vsci2err (at FFD8)              Unassigned */

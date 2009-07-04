@@ -45,6 +45,11 @@ Module "PWM_XBee"  (bean Init_TPM_HCS08)
                 settings. Call this method in the user code to initialize the module. By default, the method is called by PE 
                 automatically; see "Call Init method" property of the bean for more details.
 
+Module "KBI_XBee"  (bean Init_KBI_HCS08)
+   - KBI_XBee_Init -This method initializes registers of the KBI module according to this Peripheral Initialization Bean 
+                settings. Call this method in user code to initialize the module. By default, the method is called by PE 
+                automatically; see "Call Init method" property of the bean for more details.
+
 Module "LowVoltage" (bean InterruptVector)
 
 Module "GPIO1"     (bean Init_GPIO_HCS08)

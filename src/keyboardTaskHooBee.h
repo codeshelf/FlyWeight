@@ -20,10 +20,7 @@
 #define BUTTON_RELEASED			2
 
 #define NO_BUTTON				0
-#define PTT_BUTTON				1
-#define UP_BUTTON				2
-#define DOWN_BUTTON				3
-#define AUX_BUTTON				4
+#define ACK_BUTTON				1
 
 extern xQueueHandle	gKeyboardQueue;
 

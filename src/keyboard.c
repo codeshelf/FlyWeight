@@ -57,14 +57,14 @@ portTickType				gLastPressSeenTick;
 void KBISetup() {
 
 	// KBI1SC: KBIE=0
-	clrReg8Bits(KBI1SC, 0x02);            
-	// KBI1PE: KBIPE7=0,KBIPE6=1,KBIPE5=1,KBIPE4=0,KBIPE3=0,KBIPE2=0,KBIPE1=0,KBIPE0=0
+	KBI1SC_KBIE = 0;
+	           
+	// Set the appropriate pin enable bits.
 	setReg8(KBI1PE, KB_PEBITS);                
+	setReg8(KBI1SC, KB_PEBITS);                
 	
-	// KBI1SC: KBACK=1
-	setReg8Bits(KBI1SC, 0x04);            
-	// KBI1SC: KBIE=1
-	setReg8Bits(KBI1SC, 0x02);            
+	KBI1SC_KBACK = 1;            
+	KBI1SC_KBIE = 1;          
 	
 	// Setup the rows as outputs and assert them. 
 	KB_SETUP_ROW0 = 1;
@@ -83,7 +83,6 @@ ISR(keyboardISR) {
 	UINT8 row;
 	UINT8 col;
 	UINT8 buttonNum = 0;
-	portTickType tickVal;
 	UINT8 sample;
 	bool shouldRestartISR = FALSE;
 	UINT8 i;

@@ -6,7 +6,7 @@
 **     Beantype  : Init_GPIO
 **     Version   : Bean 01.025, Driver 01.12, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 4/16/2009, 6:56 PM
+**     Date/Time : 7/4/2009, 8:41 AM
 **     Abstract  :
 **          This file implements the General Purpose Input Output (PTA)
 **          module initialization according to the Peripheral Initialization
@@ -26,7 +26,6 @@
 **                       2             |  PTA2_KBI1P2
 **                       3             |  PTA3_KBI1P3
 **                       4             |  PTA4_KBI1P4
-**                       5             |  PTA5_KBI1P5
 **             ----------------------------------------------------
 **
 **          Pin0                                           : PTA0_KBI1P0
@@ -54,12 +53,6 @@
 **            Open drain                                   : push-pull
 **
 **          Pin4                                           : PTA4_KBI1P4
-**            Direction                                    : Input
-**            Output value                                 : no initialization
-**            Pull resistor                                : no initialization
-**            Open drain                                   : push-pull
-**
-**          Pin5                                           : PTA5_KBI1P5
 **            Direction                                    : Input
 **            Output value                                 : no initialization
 **            Pull resistor                                : no initialization
@@ -98,8 +91,8 @@
 */
 void GPIO1_Init(void)
 {
-  /* PTADD: PTADD5=0,PTADD4=0,PTADD3=0,PTADD2=0,PTADD1=0,PTADD0=1 */
-  clrSetReg8Bits(PTADD, 0x3E, 0x01);    
+  /* PTADD: PTADD4=0,PTADD3=0,PTADD2=0,PTADD1=0,PTADD0=1 */
+  clrSetReg8Bits(PTADD, 0x1E, 0x01);    
 }
 
 /* END GPIO1. */

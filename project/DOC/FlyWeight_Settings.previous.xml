@@ -966,7 +966,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="WatchDog" type="WatchDog">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="WatchDog"/>
