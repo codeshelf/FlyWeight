@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1103
+ProjectModificationStamp=1105
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=885
+ProjectCompNumb=889
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -4788,7 +4788,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -7541,7 +7541,7 @@ UsrMethodName=GetRawVal
 [Events]
 List=Event
 
-[BitIO:LED1]
+[BitIO:LEDRed]
 CompNumb=41
 CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
@@ -7557,7 +7557,7 @@ List=Property
 ItemSymbol=DeviceName
 ReadOnly=No
 UserReadOnly=No
-Value=LED1
+Value=LEDRed
 [ItemState]
 ItemSymbol=_Pin
 ReadOnly=No
@@ -7795,7 +7795,7 @@ UsrMethodName=GetRawVal
 [Events]
 List=Event
 
-[BitIO:LED2]
+[BitIO:LEDGreen]
 CompNumb=42
 CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
@@ -7811,12 +7811,12 @@ List=Property
 ItemSymbol=DeviceName
 ReadOnly=No
 UserReadOnly=No
-Value=LED2
+Value=LEDGreen
 [ItemState]
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB1_AD1P1
+Value=PTD1_TPM1CH1
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -8049,7 +8049,7 @@ UsrMethodName=GetRawVal
 [Events]
 List=Event
 
-[BitIO:LED3]
+[BitIO:LEDBlue]
 CompNumb=43
 CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
@@ -8065,12 +8065,12 @@ List=Property
 ItemSymbol=DeviceName
 ReadOnly=No
 UserReadOnly=No
-Value=LED3
+Value=LEDBlue
 [ItemState]
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB2_AD1P2
+Value=PTB1_AD1P1
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -9908,7 +9908,7 @@ List=GrupItem
 ItemSymbol=Mode0
 ReadOnly=No
 UserReadOnly=No
-Index=3
+Index=2
 
 [Childs]
 List=EnmGrpItm
@@ -9945,8 +9945,8 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins0
-Value=Yes
-Expanded=Yes
+Value=No
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -9955,7 +9955,7 @@ ItemSymbol=ChannelPin0
 ReadOnly=No
 UserReadOnly=No
 Value=PTD0_TPM1CH0
-PortType=PPG
+PortType=flipflop
 [ItemState]
 ItemSymbol=ChannelPinSignal0
 ReadOnly=No
@@ -10000,8 +10000,8 @@ Value=Vtpm1ch0
 ItemSymbol=ChannelIntEn0
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 [ItemState]
 ItemSymbol=Ch_IntPriorityFeaturegpr0
 ReadOnly=No
@@ -10027,7 +10027,7 @@ List=GrupItem
 ItemSymbol=ChISRNameInt0
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=LEDRedOff
 
 [EndOfChilds]
 
@@ -10061,7 +10061,7 @@ List=GrupItem
 ItemSymbol=Mode1
 ReadOnly=No
 UserReadOnly=No
-Index=3
+Index=2
 
 [Childs]
 List=EnmGrpItm
@@ -10098,8 +10098,8 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins1
-Value=Yes
-Expanded=Yes
+Value=No
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -10108,7 +10108,7 @@ ItemSymbol=ChannelPin1
 ReadOnly=No
 UserReadOnly=No
 Value=PTD1_TPM1CH1
-PortType=PPG
+PortType=flipflop
 [ItemState]
 ItemSymbol=ChannelPinSignal1
 ReadOnly=No
@@ -10125,7 +10125,7 @@ Index=5
 ItemSymbol=Interrupts1
 ReadOnly=No
 UserReadOnly=No
-Expanded=No
+Expanded=Yes
 
 [Childs]
 List=GrupItem
@@ -10153,8 +10153,8 @@ Value=Vtpm1ch1
 ItemSymbol=ChannelIntEn1
 ReadOnly=No
 UserReadOnly=No
-Index=1
-Value=No
+Index=0
+Value=Yes
 [ItemState]
 ItemSymbol=Ch_IntPriorityFeaturegpr1
 ReadOnly=No
@@ -10180,7 +10180,7 @@ List=GrupItem
 ItemSymbol=ChISRNameInt1
 ReadOnly=No
 UserReadOnly=No
-Value=
+Value=LEDGreenOff
 
 [EndOfChilds]
 
@@ -10252,7 +10252,7 @@ Value=0 us
 [ItemState]
 ItemSymbol=Pins2
 Value=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -10333,7 +10333,7 @@ List=GrupItem
 ItemSymbol=ChISRNameInt2
 ReadOnly=No
 UserReadOnly=No
-Value=LEDRedOff
+Value=LEDBlueOff
 
 [EndOfChilds]
 
@@ -10348,7 +10348,7 @@ Value=LEDRedOff
 ItemSymbol=Pins
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -15121,7 +15121,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-Value=PTA5_KBI1P5
+Value=
 [ItemState]
 ItemSymbol=Pin5Signal
 ReadOnly=No

@@ -7,7 +7,7 @@
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/4/2009, 8:41 AM
+**     Date/Time : 7/14/2009, 3:03 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -34,9 +34,9 @@
 
 #pragma MESSAGE DISABLE C4002 /* WARNING C4002: Result not used is ignored */
 
-#include "LED1.h"
-#include "LED2.h"
-#include "LED3.h"
+#include "LEDRed.h"
+#include "LEDGreen.h"
+#include "LEDBlue.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"
@@ -351,14 +351,18 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
-  /* PTBD: PTBD2=0,PTBD1=0,PTBD0=0 */
-  clrReg8Bits(PTBD, 0x07);              
-  /* PTBPE: PTBPE2=0,PTBPE1=0,PTBPE0=0 */
-  clrReg8Bits(PTBPE, 0x07);             
-  /* PTBDD: PTBDD2=1,PTBDD1=1,PTBDD0=1 */
-  setReg8Bits(PTBDD, 0x07);             
-  /* PTDPE: PTDPE1=0,PTDPE0=0 */
-  clrReg8Bits(PTDPE, 0x03);             
+  /* PTBD: PTBD1=0,PTBD0=0 */
+  clrReg8Bits(PTBD, 0x03);              
+  /* PTBPE: PTBPE1=0,PTBPE0=0 */
+  clrReg8Bits(PTBPE, 0x03);             
+  /* PTBDD: PTBDD1=1,PTBDD0=1 */
+  setReg8Bits(PTBDD, 0x03);             
+  /* PTDD: PTDD1=0 */
+  clrReg8Bits(PTDD, 0x02);              
+  /* PTDPE: PTDPE1=0 */
+  clrReg8Bits(PTDPE, 0x02);             
+  /* PTDDD: PTDDD1=1 */
+  setReg8Bits(PTDDD, 0x02);             
   /* PTAPE: PTAPE5=1 */
   setReg8Bits(PTAPE, 0x20);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
@@ -374,9 +378,9 @@ void PE_low_level_init(void)
   /* PTGSE: PTGSE3=0,PTGSE2=0,PTGSE1=0,PTGSE0=0 */
   clrReg8Bits(PTGSE, 0x0F);             
   /* ### Shared modules init code ... */
-  /* ### BitIO "LED1" init code ... */
-  /* ### BitIO "LED2" init code ... */
-  /* ### BitIO "LED3" init code ... */
+  /* ### BitIO "LEDRed" init code ... */
+  /* ### BitIO "LEDGreen" init code ... */
+  /* ### BitIO "LEDBlue" init code ... */
   /* ### Init_RTI "RTI1" init code ... */
   /* ### Call "RTI1_Init();" init method in a user code, i.e. in the main code */
   /* ### Note:   To enable automatic calling of the "RTI1" init code here must be

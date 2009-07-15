@@ -13183,27 +13183,6 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED1.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED2.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED3.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -13229,6 +13208,27 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDRed.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDGreen.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDBlue.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
             </FILELIST>
             <LINKORDER>
@@ -13639,21 +13639,6 @@
                 </FILEREF>
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED1.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED2.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LED3.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>WatchDog.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
@@ -13670,6 +13655,21 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>keyboardTaskHooBee.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDRed.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDGreen.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>LEDBlue.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -14373,24 +14373,6 @@
             <FILEREF>
                 <TARGETNAME>XBee HooBee</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
-                <PATH>LED1.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>LED2.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>LED3.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
                 <PATH>WatchDog.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
@@ -14398,6 +14380,24 @@
                 <TARGETNAME>XBee HooBee</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>KBI_XBee.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>XBee HooBee</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LEDRed.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>XBee HooBee</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LEDGreen.c</PATH>
+                <PATHFORMAT>Windows</PATHFORMAT>
+            </FILEREF>
+            <FILEREF>
+                <TARGETNAME>XBee HooBee</TARGETNAME>
+                <PATHTYPE>Name</PATHTYPE>
+                <PATH>LEDBlue.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>
@@ -14452,14 +14452,15 @@
                 630D0A434F44455C4C4544332E630D0A434F44455C525449312E630D0A434F44
                 455C5357492E630D0A434F44455C4D4331333139314952512E630D0A434F4445
                 5C5761746368446F672E630D0A434F44455C50574D5F584265652E630D0A434F
-                44455C4C6F77566F6C746167652E630D0A434F44455C4750494F312E630D0A43
-                4F44455C494F5F4D61702E630D0A434F44455C466C795765696768742E70726D
-                0D0A434F44455C566563746F72732E630D0A434F44455C4576656E74732E630D
-                0A434F44455C466C795765696768742E630D0A434F44455C4576656E74732E68
-                0D0A444F435C466C795765696768742E7478740D0A444F435C466C7957656967
-                68745F5349474E414C532E7478740D0A444F435C466C795765696768742E7478
-                740D0A444F435C466C795765696768745F53657474696E67732E786D6C0D0A44
-                4F435C466C795765696768745F5349474E414C532E7478740D0A
+                44455C4B42495F584265652E630D0A434F44455C4C6F77566F6C746167652E63
+                0D0A434F44455C4750494F312E630D0A434F44455C494F5F4D61702E630D0A43
+                4F44455C466C795765696768742E70726D0D0A434F44455C566563746F72732E
+                630D0A434F44455C4576656E74732E630D0A434F44455C466C79576569676874
+                2E630D0A434F44455C4576656E74732E680D0A444F435C466C79576569676874
+                2E7478740D0A444F435C466C795765696768745F5349474E414C532E7478740D
+                0A444F435C466C795765696768742E7478740D0A444F435C466C795765696768
+                745F53657474696E67732E786D6C0D0A444F435C466C795765696768745F5349
+                474E414C532E7478740D0A
             </VALUE></PLUGINDATA>
     </PLUGINDATALIST>
 </PROJECT>

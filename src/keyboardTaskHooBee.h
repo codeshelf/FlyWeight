@@ -20,7 +20,7 @@
 #define BUTTON_RELEASED			2
 
 #define NO_BUTTON				0
-#define ACK_BUTTON				1
+#define HOOBEE_ACK_BUTTON		1
 
 extern xQueueHandle	gKeyboardQueue;
 

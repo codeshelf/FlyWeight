@@ -17,7 +17,6 @@
 
 #define HOOBEE_QUEUE_SIZE		2
 
-
 extern xQueueHandle	gHooBeeQueue;
 
 // --------------------------------------------------------------------------

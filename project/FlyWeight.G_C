@@ -32,7 +32,7 @@ ShrdCodeAge3=982549424
 ShrdAsemblAge3=-1
 GenExtraFiles=1
 Line=CODE\Vectors.c
-XtraAge0=988038443
+XtraAge0=988706928
 GenExtraFileType0=4
 GenEventModules=1
 Line=Events
@@ -42,9 +42,9 @@ Line=Events
 Line=GPIO1
 Line=IO_Map
 Line=KBI_XBee
-Line=LED1
-Line=LED2
-Line=LED3
+Line=LEDBlue
+Line=LEDGreen
+Line=LEDRed
 Line=LowVoltage
 Line=MC13191IRQ
 Line=PE_Const
@@ -56,9 +56,9 @@ Line=SWI
 Line=WatchDog
 GenExternModules=0
 GenBeanModules=11
-Line=LED1
-Line=LED2
-Line=LED3
+Line=LEDRed
+Line=LEDGreen
+Line=LEDBlue
 Line=RTI1
 Line=SWI
 Line=MC13191IRQ
@@ -69,14 +69,14 @@ Line=LowVoltage
 Line=GPIO1
 SignalListFile=DOC\FlyWeight_SIGNALS.txt
 DestinationCompiler=MetrowerksHCS08CC
-ProjectModificationStamp=1103
+ProjectModificationStamp=1105
 
 [30]
 Generated=No
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=985300482
-CodeAge=988038443
+CodeAge=988706928
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -122,7 +122,7 @@ Generated=Yes
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=985300482
-CodeAge=988038443
+CodeAge=988706928
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -172,7 +172,7 @@ Generated=No
 GenCompName=Cpu
 GenEventModule=Events
 HeaderAge=985300482
-CodeAge=988038443
+CodeAge=988706928
 AsemblAge=-1
 GenNumMethods=21
 Delay100US=Yes
@@ -314,10 +314,10 @@ LineEnd=83
 
 [41]
 Generated=Yes
-GenCompName=LED1
+GenCompName=LEDRed
 GenEventModule=
-HeaderAge=985775883
-CodeAge=985775883
+HeaderAge=988706927
+CodeAge=988706927
 AsemblAge=-1
 GenNumMethods=9
 NegVal=Yes
@@ -367,10 +367,10 @@ LineEnd=108
 
 [42]
 Generated=Yes
-GenCompName=LED2
+GenCompName=LEDGreen
 GenEventModule=
-HeaderAge=985775883
-CodeAge=985775883
+HeaderAge=988706927
+CodeAge=988706927
 AsemblAge=-1
 GenNumMethods=9
 NegVal=Yes
@@ -420,10 +420,10 @@ LineEnd=108
 
 [43]
 Generated=Yes
-GenCompName=LED3
+GenCompName=LEDBlue
 GenEventModule=
-HeaderAge=985775883
-CodeAge=985775883
+HeaderAge=988706927
+CodeAge=988706927
 AsemblAge=-1
 GenNumMethods=9
 NegVal=Yes
@@ -640,15 +640,15 @@ LineEnd=115
 Generated=Yes
 GenCompName=PWM_XBee
 GenEventModule=
-HeaderAge=985794051
-CodeAge=985794051
+HeaderAge=988706928
+CodeAge=988706928
 AsemblAge=-1
 GenNumMethods=1
 Init=Yes
 GenNumEvents=0
-ISR_ChISRNameInt0=
-ISR_ChISRNameInt1=
-ISR_ChISRNameInt2=LEDRedOff
+ISR_ChISRNameInt0=LEDRedOff
+ISR_ChISRNameInt1=LEDGreenOff
+ISR_ChISRNameInt2=LEDBlueOff
 ISR_ISRNameInt=LEDCheck
 GenSmartUserChangesDetected_Header=No
 GenSmartUserChangesDetected_Code=No
@@ -657,13 +657,13 @@ GenMethodPos=2
 MethodPos0=Init
 MethodType=method
 ModuleType=Header
-LineBeg=99
-LineEnd=115
+LineBeg=91
+LineEnd=107
 MethodPos1=Init
 MethodType=method
 ModuleType=Code
-LineBeg=129
-LineEnd=167
+LineBeg=141
+LineEnd=179
 
 [149]
 Generated=No
@@ -1178,6 +1178,7 @@ SrcFile=Drivers\Common\Init_GPIO_HCS08Settings.Inc=948404720
 SrcFile=Drivers\Common\Init_GPIO_HCS08Abstract.Inc=858153548
 SrcFile=Drivers\HCS08\Init_GPIO_HCS08.drv=948207299
 SrcFile=Drivers\Init_GPIO_HCS08.src=857293627
+SrcFile=Drivers\Common\InitReg8_PIB.prg=910649042
 SrcFile=Drivers\Common\setRegBits8.prg=923362502
 SrcFile=Drivers\Common\CheckRegBits8_Rst.prg=877623368
 SrcFile=Drivers\Common\SetRegBits8_Rst.prg=877616667
@@ -1188,7 +1189,6 @@ SrcFile=Drivers\HCS08\Init_KBI_HCS08.drv=948213468
 SrcFile=Drivers\Init_KBI_HCS08.src=857244303
 SrcFile=Drivers\Common\CommonInitialization_PIB.prg=886537717
 SrcFile=Drivers\Common\DummyReadReg8.prg=887585546
-SrcFile=Drivers\Common\InitReg8_PIB.prg=910649042
 SrcFile=Drivers\Common\setReg16.prg=922373591
 SrcFile=Drivers\Common\SetReg16_Rst.prg=877624839
 SrcFile=Drivers\Common\Init_TPM_HCS08Init.Inc=819742361

@@ -14,10 +14,12 @@
 #include "task.h"
 #include "queue.h"
 #include "pub_def.h"
+#include "remoteMgmtTask.h"
 
 xTaskHandle			gHooBeeTask = NULL;
 xQueueHandle 		gHooBeeQueue;
 
+LedFlashRunType		gLedFlashSequenceShouldRun;
 LedFlashSeqCntType	gLedFlashSeqCount;
 LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 // --------------------------------------------------------------------------
@@ -28,27 +30,30 @@ void hooBeeTask(void *pvParameters) {
 	UINT8 j;
 
 //	if (gHooBeeQueue) {
+		gLedFlashSequenceShouldRun = FALSE;
+
 		for (;;) {
 			for (j = 0; j < gLedFlashSeqCount; j++) {
 				
 				for (i = 0; i < gLedFlashSeqBuffer[j].repeat; i++) {
 
-					TPM1C2V = gLedFlashSeqBuffer[j].redValue;
-					TPM1C1V = gLedFlashSeqBuffer[j].greenValue;
-					TPM1C0V = gLedFlashSeqBuffer[j].blueValue;
+					if (gLedFlashSequenceShouldRun) {
+						TPM1C0V = gLedFlashSeqBuffer[j].redValue;
+						TPM1C1V = gLedFlashSeqBuffer[j].greenValue;
+						TPM1C2V = gLedFlashSeqBuffer[j].blueValue;
 
-					vTaskDelay(gLedFlashSeqBuffer[j].timeOnMillis);
+						vTaskDelay(gLedFlashSeqBuffer[j].timeOnMillis);
 
-					TPM1C2V = 0;
-					TPM1C1V = 0;
-					TPM1C0V = 0;
+						TPM1C0V = 0;
+						TPM1C1V = 0;
+						TPM1C2V = 0;
 
-					vTaskDelay(gLedFlashSeqBuffer[j].timeOffMillis);
+						vTaskDelay(gLedFlashSeqBuffer[j].timeOffMillis);
+					} else {
+						vTaskDelay(50);
+					}
 				}
 			}
-			
-			// Delay for the whole cycle.
-			vTaskDelay(5000 * portTICK_RATE_MS);
 		}
 //	}
 

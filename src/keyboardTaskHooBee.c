@@ -7,7 +7,7 @@
  $Name$
  */
 
-#include "keyboardTask.h"
+#include "keyboardTaskHooBee.h"
 #include "keyboard.h"
 #include "radioCommon.h"
 #include "commands.h"
@@ -18,13 +18,14 @@
 
 #define			CHK_KEY_DELAY		10
 
-xQueueHandle 			gKeyboardQueue;
-UINT8					gButtonPressed;
-extern bool 			gAudioModeRX;
-extern bool				gShouldSleep;
-extern BufferCntType	gCurAudioTXBuffer;
-extern BufferOffsetType	gCurAudioTXBufferPos;
-extern bool				gCurAudioTXBufferStarted;
+xQueueHandle 				gKeyboardQueue;
+UINT8						gButtonPressed;
+extern bool 				gAudioModeRX;
+extern bool					gShouldSleep;
+extern BufferCntType		gCurAudioTXBuffer;
+extern BufferOffsetType		gCurAudioTXBufferPos;
+extern bool					gCurAudioTXBufferStarted;
+extern LedFlashRunType		gLedFlashSequenceShouldRun;
 
 // --------------------------------------------------------------------------
 
@@ -72,6 +73,11 @@ void keyboardTask(void *pvParameters) {
 
 					// The user just pressed a button.
 					gButtonPressed = buttonNum;
+					
+					// This will stop the current flashing sequence.
+					if (gButtonPressed == HOOBEE_ACK_BUTTON) {
+						gLedFlashSequenceShouldRun = FALSE;	
+					}
 
 					// Send an associate request on the current channel.
 					txBufferNum = gTXCurBufferNum;

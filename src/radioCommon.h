@@ -117,7 +117,7 @@
 
 #define SMAC_TICKS_PER_MS		250
 
-#define MAX_LED_SEQUENCES		4
+#define MAX_LED_SEQUENCES		8
 
 #define RELEASE_RX_BUFFER(rxBufferNum)		EnterCriticalArg(gCCRHolder); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
@@ -171,6 +171,7 @@ typedef UINT8				SampleSizeType;
 typedef UINT32				TimestampType;
 typedef UINT32				DataSampleType;
 
+typedef bool				LedFlashRunType;
 typedef UINT8				LedFlashSeqCntType;
 typedef UINT8				LedValueType;
 typedef UINT16				LedFlashTimeType;

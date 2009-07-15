@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.070, Driver 01.14, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 6/2/2009, 12:48 AM
+**     Date/Time : 7/14/2009, 3:03 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -25,35 +25,27 @@
 **            Channel0                                     : 1
 **              Capture/compare device                     : TPM10
 **              Settings
-**                Mode                                     : PWM
-**                  PWM Output Action                      : Clear output on compare
+**                Mode                                     : Output compare
+**                  Output Action                          : Software compare only
 **                  ChannelValue                           : 0
-**                  DutyCycle                              : 0 us
-**              Pin                                        : Used
-**                Channel Pin                              : PTD0_TPM1CH0
-**                Channel Pin Signal                       : 
-**                Pull Resistor                            : autoselected pull
+**              Pin                                        : Not Used
 **              Interrupt
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch0
-**                  Channel Interrupt                      : Disabled
-**                  ISR Name                               : 
+**                  Channel Interrupt                      : Enabled
+**                  ISR Name                               : LEDRedOff
 **            Channel1                                     : 2
 **              Capture/compare device                     : TPM11
 **              Settings
-**                Mode                                     : PWM
-**                  PWM Output Action                      : Clear output on compare
+**                Mode                                     : Output compare
+**                  Output Action                          : Software compare only
 **                  ChannelValue                           : 0
-**                  DutyCycle                              : 0 us
-**              Pin                                        : Used
-**                Channel Pin                              : PTD1_TPM1CH1
-**                Channel Pin Signal                       : 
-**                Pull Resistor                            : autoselected pull
+**              Pin                                        : Not Used
 **              Interrupt
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch1
-**                  Channel Interrupt                      : Disabled
-**                  ISR Name                               : 
+**                  Channel Interrupt                      : Enabled
+**                  ISR Name                               : LEDGreenOff
 **            Channel2                                     : 3
 **              Capture/compare device                     : TPM12
 **              Settings
@@ -65,7 +57,7 @@
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch2
 **                  Channel Interrupt                      : Enabled
-**                  ISR Name                               : LEDRedOff
+**                  ISR Name                               : LEDBlueOff
 **          Pins
 **            External Clock Source                        : Disabled
 **          Interrupts
@@ -120,6 +112,26 @@
       // NOTE: The routine should include the following actions to obtain
       //       correct functionality of the hardware.
       //
+      //       The TPM1C0SC register should be read and
+      //       CH0F bit must be set to 0 to clear the interrupt request.
+      //       Example: TPM1C0SC;
+      //                TPM1C0SC_CH0F = 0;
+      }
+      ISR(LEDGreenOff)
+      {
+      // NOTE: The routine should include the following actions to obtain
+      //       correct functionality of the hardware.
+      //
+      //       The TPM1C1SC register should be read and
+      //       CH1F bit must be set to 0 to clear the interrupt request.
+      //       Example: TPM1C1SC;
+      //                TPM1C1SC_CH1F = 0;
+      }
+      ISR(LEDBlueOff)
+      {
+      // NOTE: The routine should include the following actions to obtain
+      //       correct functionality of the hardware.
+      //
       //       The TPM1C2SC register should be read and
       //       CH2F bit must be set to 0 to clear the interrupt request.
       //       Example: TPM1C2SC;
@@ -149,12 +161,12 @@ void PWM_XBee_Init(void)
   setReg8(TPM1SC, 0x00);               /* Stop and reset counter */ 
   setReg16(TPM1MOD, 0xFF);             /* Period value setting */ 
   (void)getReg8(TPM1C0SC);             /* Channel 0 int. flag clearing (first part) */
-  /* TPM1C0SC: CH0F=0,CH0IE=0,MS0B=1,MS0A=0,ELS0B=1,ELS0A=0,??=0,??=0 */
-  setReg8(TPM1C0SC, 0x28);             /* Int. flag clearing (2nd part) and channel 0 contr. register setting */ 
+  /* TPM1C0SC: CH0F=0,CH0IE=1,MS0B=0,MS0A=1,ELS0B=0,ELS0A=0,??=0,??=0 */
+  setReg8(TPM1C0SC, 0x50);             /* Int. flag clearing (2nd part) and channel 0 contr. register setting */ 
   setReg16(TPM1C0V, 0x00);             /* Compare 0 value setting */ 
   (void)getReg8(TPM1C1SC);             /* Channel 1 int. flag clearing (first part) */
-  /* TPM1C1SC: CH1F=0,CH1IE=0,MS1B=1,MS1A=0,ELS1B=1,ELS1A=0,??=0,??=0 */
-  setReg8(TPM1C1SC, 0x28);             /* Int. flag clearing (2nd part) and channel 1 contr. register setting */ 
+  /* TPM1C1SC: CH1F=0,CH1IE=1,MS1B=0,MS1A=1,ELS1B=0,ELS1A=0,??=0,??=0 */
+  setReg8(TPM1C1SC, 0x50);             /* Int. flag clearing (2nd part) and channel 1 contr. register setting */ 
   setReg16(TPM1C1V, 0x00);             /* Compare 1 value setting */ 
   (void)getReg8(TPM1C2SC);             /* Channel 2 int. flag clearing (first part) */
   /* TPM1C2SC: CH2F=0,CH2IE=1,MS2B=0,MS2A=1,ELS2B=0,ELS2A=0,??=0,??=0 */

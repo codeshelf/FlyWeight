@@ -6,7 +6,7 @@
 **     Beantype  : Init_TPM
 **     Version   : Bean 01.070, Driver 01.14, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 6/2/2009, 12:48 AM
+**     Date/Time : 7/14/2009, 3:03 PM
 **     Abstract  :
 **          This file implements the TPM (TPM1) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -25,35 +25,27 @@
 **            Channel0                                     : 1
 **              Capture/compare device                     : TPM10
 **              Settings
-**                Mode                                     : PWM
-**                  PWM Output Action                      : Clear output on compare
+**                Mode                                     : Output compare
+**                  Output Action                          : Software compare only
 **                  ChannelValue                           : 0
-**                  DutyCycle                              : 0 us
-**              Pin                                        : Used
-**                Channel Pin                              : PTD0_TPM1CH0
-**                Channel Pin Signal                       : 
-**                Pull Resistor                            : autoselected pull
+**              Pin                                        : Not Used
 **              Interrupt
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch0
-**                  Channel Interrupt                      : Disabled
-**                  ISR Name                               : 
+**                  Channel Interrupt                      : Enabled
+**                  ISR Name                               : LEDRedOff
 **            Channel1                                     : 2
 **              Capture/compare device                     : TPM11
 **              Settings
-**                Mode                                     : PWM
-**                  PWM Output Action                      : Clear output on compare
+**                Mode                                     : Output compare
+**                  Output Action                          : Software compare only
 **                  ChannelValue                           : 0
-**                  DutyCycle                              : 0 us
-**              Pin                                        : Used
-**                Channel Pin                              : PTD1_TPM1CH1
-**                Channel Pin Signal                       : 
-**                Pull Resistor                            : autoselected pull
+**              Pin                                        : Not Used
 **              Interrupt
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch1
-**                  Channel Interrupt                      : Disabled
-**                  ISR Name                               : 
+**                  Channel Interrupt                      : Enabled
+**                  ISR Name                               : LEDGreenOff
 **            Channel2                                     : 3
 **              Capture/compare device                     : TPM12
 **              Settings
@@ -65,7 +57,7 @@
 **                Channel Interrupt
 **                  Interrupt                              : Vtpm1ch2
 **                  Channel Interrupt                      : Enabled
-**                  ISR Name                               : LEDRedOff
+**                  ISR Name                               : LEDBlueOff
 **          Pins
 **            External Clock Source                        : Disabled
 **          Interrupts
@@ -123,6 +115,10 @@ void PWM_XBee_Init(void);
 __interrupt void LEDCheck(void);
 
 __interrupt void LEDRedOff(void);
+
+__interrupt void LEDGreenOff(void);
+
+__interrupt void LEDBlueOff(void);
 
 /* END PWM_XBee. */
 

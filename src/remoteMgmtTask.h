@@ -25,6 +25,6 @@ extern NetworkIDType			gMyNetworkID;
 // Local functions prototypes.
 
 void remoteMgmtTask( void *pvParameters );
-void sleepThisRemote( UINT8 inSleepSeconds );
+void sleepThisRemote( UINT8 inSleepMillis );
 
 #endif REMOTEMGMTTASK_H

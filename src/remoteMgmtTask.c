@@ -129,11 +129,12 @@ void remoteMgmtTask( void *pvParameters ) {
 	for ( ;; );
 }
 
-void sleepThisRemote(UINT8 inSleepSeconds) {
+void sleepThisRemote(UINT8 inSleepMillis) {
 
 	byte ccrHolder;
 	int i;
 	UINT8 saveLoaderState;
+	UINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
 	
 	if (TRUE) {
 		//vTaskDelay(250 * portTICK_RATE_MS);
@@ -147,11 +148,11 @@ void sleepThisRemote(UINT8 inSleepSeconds) {
 		SRTISC_RTICLKS = 0;
 		//SRTISC_RTIS = 0;
 		// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
-		SRTISC_RTIS = 6;
+		SRTISC_RTIS = 2;// 1 = 8ms, 2 = 32ms, 3 = 64, 4 = 128, 5 = 256, 6 = 1024ms;
 		ExitCriticalArg(ccrHolder);
 		
-		for (i = 0; i < inSleepSeconds; i++) {
-			//__asm("STOP");
+		for (i = 0; i < sleepCycles; i++) {
+			__asm("STOP");
 			
 			// If a KBI woke us up then don't keep sleeping.
 			if (KBI1SC_KBF) {

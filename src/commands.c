@@ -32,6 +32,7 @@ RemoteAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
 
 extern byte					gCCRHolder;
+extern LedFlashRunType		gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType	gLedFlashSeqCount;
 extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 
@@ -609,6 +610,7 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
 
 	gLedFlashSeqCount = 0;
+	gLedFlashSequenceShouldRun = TRUE;
 	
 	behaviorCnt = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 
