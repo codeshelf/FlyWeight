@@ -133,7 +133,7 @@ void radioReceiveTask(void *pvParameters) {
 						gShouldSleep = TRUE;
 					} else {
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						//sleepThisRemote(1);
+						sleepThisRemote(200);
 					}
 					
 					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.

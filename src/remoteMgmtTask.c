@@ -137,7 +137,10 @@ void sleepThisRemote(UINT8 inSleepMillis) {
 	UINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
 	
 	if (TRUE) {
-		//vTaskDelay(250 * portTICK_RATE_MS);
+		// "Fake sleep" for HooBeez
+		vTaskDelay(inSleepMillis * portTICK_RATE_MS);
+	} else {
+		// Real sleep for RocketPhones
 		EnterCriticalArg(ccrHolder);
 		gIsSleeping = TRUE;
 		Cpu_SetSlowSpeed();
