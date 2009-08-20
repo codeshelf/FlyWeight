@@ -760,11 +760,11 @@ MLMESetMC13192ClockRate(2);
 
     <Properties>
       <Bean_name v="LEDRed"/>
-      <Pin_for_I_O v="PTB0_AD1P0"/>
+      <Pin_for_I_O v="PTB2_AD1P2"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB0 v="no"/>
+      <Slew_rate_control_for_PTB2 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -795,11 +795,11 @@ MLMESetMC13192ClockRate(2);
 
     <Properties>
       <Bean_name v="LEDGreen"/>
-      <Pin_for_I_O v="PTD1_TPM1CH1"/>
+      <Pin_for_I_O v="PTB3_AD1P3"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTD1 v="no"/>
+      <Slew_rate_control_for_PTB3 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -830,11 +830,11 @@ MLMESetMC13192ClockRate(2);
 
     <Properties>
       <Bean_name v="LEDBlue"/>
-      <Pin_for_I_O v="PTB1_AD1P1"/>
+      <Pin_for_I_O v="PTB4_AD1P4"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB1 v="no"/>
+      <Slew_rate_control_for_PTB4 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>

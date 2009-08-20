@@ -332,29 +332,36 @@ ISR(LowVoltageDetect) {
 
 ISR(LEDCheck) {
 	if (TPM1C0V > 0)
-		PTBD_PTBD1 = 1;
+		//PTBD_PTBD1 = 1;
+		PTBD_PTBD2 = 1;
 	if (TPM1C1V > 0)
-		PTDD_PTDD1 = 1;
+		//PTDD_PTDD1 = 1;
+		PTBD_PTBD3 = 1;
 	if (TPM1C2V > 0)
-		PTDD_PTDD0 = 1;
+		//PTDD_PTDD0 = 1;
+		PTBD_PTBD4 = 1;
 	TPM1SC_TOF = 0;
 //	LEDGreen_SetVal();
 //	LEDBlue_SetVal();
 }
 
 ISR(LEDRedOff) {
-	PTBD_PTBD1 = 0;
+	//PTBD_PTBD1 = 0;
+	PTBD_PTBD2 = 0;
 	TPM1C0SC_CH0F = 0;
+//	LEDRed_ClrVal();
 }
 
 ISR(LEDGreenOff) {
-	PTDD_PTDD1 = 0;
+	//PTDD_PTDD1 = 0;
+	PTBD_PTBD3 = 0;
 	TPM1C1SC_CH1F = 0;
 //	LEDGreen_ClrVal();
 }
 
 ISR(LEDBlueOff) {
-	PTDD_PTDD0 = 0;
+	//PTDD_PTDD0 = 0;
+	PTBD_PTBD4 = 0;
 	TPM1C2SC_CH2F = 0;
 //	LEDBlue_ClrVal();
 }

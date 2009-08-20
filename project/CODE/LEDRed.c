@@ -6,7 +6,7 @@
 **     Beantype  : BitIO
 **     Version   : Bean 02.071, Driver 03.16, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/14/2009, 3:03 PM
+**     Date/Time : 8/19/2009, 2:21 PM
 **     Abstract  :
 **         This bean "BitIO" implements an one-bit input/output.
 **         It uses one bit/pin of a port.
@@ -18,13 +18,13 @@
 **             ----------------------------------------------------
 **                Number (on package)  |    Name
 **             ----------------------------------------------------
-**                       25            |  PTB0_AD1P0
+**                       27            |  PTB2_AD1P2
 **             ----------------------------------------------------
 **
 **         Port name                   : PTB
 **
-**         Bit number (in port)        : 0
-**         Bit mask of the port        : $0001
+**         Bit number (in port)        : 2
+**         Bit mask of the port        : $0004
 **
 **         Initial direction           : Output (direction cannot be changed)
 **         Initial output value        : 0

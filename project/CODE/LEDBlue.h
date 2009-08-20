@@ -6,7 +6,7 @@
 **     Beantype  : BitIO
 **     Version   : Bean 02.071, Driver 03.16, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/14/2009, 3:03 PM
+**     Date/Time : 8/19/2009, 2:21 PM
 **     Abstract  :
 **         This bean "BitIO" implements an one-bit input/output.
 **         It uses one bit/pin of a port.
@@ -18,13 +18,13 @@
 **             ----------------------------------------------------
 **                Number (on package)  |    Name
 **             ----------------------------------------------------
-**                       26            |  PTB1_AD1P1
+**                       29            |  PTB4_AD1P4
 **             ----------------------------------------------------
 **
 **         Port name                   : PTB
 **
-**         Bit number (in port)        : 1
-**         Bit mask of the port        : $0002
+**         Bit number (in port)        : 4
+**         Bit mask of the port        : $0010
 **
 **         Initial direction           : Output (direction cannot be changed)
 **         Initial output value        : 0
@@ -72,7 +72,7 @@
 ** ===================================================================
 */
 #define LEDBlue_ClrVal() ( \
-    (void)clrReg8Bits(PTBD, 0x02)      /* PTBD1=0x00 */ \
+    (void)clrReg8Bits(PTBD, 0x10)      /* PTBD4=0x00 */ \
   )
 
 /*
@@ -86,7 +86,7 @@
 ** ===================================================================
 */
 #define LEDBlue_SetVal() ( \
-    (void)setReg8Bits(PTBD, 0x02)      /* PTBD1=0x01 */ \
+    (void)setReg8Bits(PTBD, 0x10)      /* PTBD4=0x01 */ \
   )
 
 /*
@@ -100,7 +100,7 @@
 ** ===================================================================
 */
 #define LEDBlue_NegVal() ( \
-    (void)invertReg8Bits(PTBD, 0x02)   /* PTBD1=invert */ \
+    (void)invertReg8Bits(PTBD, 0x10)   /* PTBD4=invert */ \
   )
 
 

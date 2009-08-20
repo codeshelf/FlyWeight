@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1105
+ProjectModificationStamp=1106
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=889
+ProjectCompNumb=893
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -7562,7 +7562,7 @@ Value=LEDRed
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB0_AD1P0
+Value=PTB2_AD1P2
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -7816,7 +7816,7 @@ Value=LEDGreen
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTD1_TPM1CH1
+Value=PTB3_AD1P3
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -8070,7 +8070,7 @@ Value=LEDBlue
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB1_AD1P1
+Value=PTB4_AD1P4
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No

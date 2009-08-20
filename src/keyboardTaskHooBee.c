@@ -11,6 +11,7 @@
 #include "keyboard.h"
 #include "radioCommon.h"
 #include "commands.h"
+#include "LEDRed.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -60,6 +61,12 @@ void keyboardTask(void *pvParameters) {
 					};
 					gButtonPressed = NO_BUTTON;
 
+					// Indicate button released.
+					LEDRed_ClrVal();
+					TPM1C0SC_CH0IE = 1;
+					TPM1C1SC_CH1IE = 1;
+					TPM1C2SC_CH2IE = 1;
+					
 					// Wait 250ms before restarting to read another button.
 					vTaskDelay(250 * portTICK_RATE_MS);
 
@@ -76,9 +83,15 @@ void keyboardTask(void *pvParameters) {
 					
 					// This will stop the current flashing sequence.
 					if (gButtonPressed == HOOBEE_ACK_BUTTON) {
-						gLedFlashSequenceShouldRun = FALSE;	
+						gLedFlashSequenceShouldRun = FALSE;
+						TPM1C0SC_CH0IE = 0;
+						TPM1C1SC_CH1IE = 0;
+						TPM1C2SC_CH2IE = 0;
+						
+						// Indicate button released.
+						LEDRed_SetVal();
 					}
-
+					
 					// Send an associate request on the current channel.
 					txBufferNum = gTXCurBufferNum;
 					advanceTXBuffer();

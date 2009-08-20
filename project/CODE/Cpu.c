@@ -7,7 +7,7 @@
 **     Version   : Bean 01.118, Driver 01.31, CPU db: 2.87.109
 **     Datasheet : MC9S08GB60/D Rev. 2.3 12/2004
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/14/2009, 3:03 PM
+**     Date/Time : 8/19/2009, 2:21 PM
 **     Abstract  :
 **         This bean "MC9S08GT60_48" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -351,18 +351,12 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
-  /* PTBD: PTBD1=0,PTBD0=0 */
-  clrReg8Bits(PTBD, 0x03);              
-  /* PTBPE: PTBPE1=0,PTBPE0=0 */
-  clrReg8Bits(PTBPE, 0x03);             
-  /* PTBDD: PTBDD1=1,PTBDD0=1 */
-  setReg8Bits(PTBDD, 0x03);             
-  /* PTDD: PTDD1=0 */
-  clrReg8Bits(PTDD, 0x02);              
-  /* PTDPE: PTDPE1=0 */
-  clrReg8Bits(PTDPE, 0x02);             
-  /* PTDDD: PTDDD1=1 */
-  setReg8Bits(PTDDD, 0x02);             
+  /* PTBD: PTBD4=0,PTBD3=0,PTBD2=0 */
+  clrReg8Bits(PTBD, 0x1C);              
+  /* PTBPE: PTBPE4=0,PTBPE3=0,PTBPE2=0 */
+  clrReg8Bits(PTBPE, 0x1C);             
+  /* PTBDD: PTBDD4=1,PTBDD3=1,PTBDD2=1 */
+  setReg8Bits(PTBDD, 0x1C);             
   /* PTAPE: PTAPE5=1 */
   setReg8Bits(PTAPE, 0x20);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
