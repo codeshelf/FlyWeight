@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1106
+ProjectModificationStamp=1108
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=893
+ProjectCompNumb=897
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -4788,7 +4788,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=
+Value=Vreset
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No

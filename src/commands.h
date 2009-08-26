@@ -27,8 +27,8 @@
 #define DEVICE_VER_BYTES		1
 
 #define PACKET_HEADER_BYTES		1
-#define PACKET_VERSION			0x01
-#define BROADCAST_NETID			0b111
+#define PACKET_VERSION			0x00
+#define BROADCAST_NETID			0b1111
 
 #define INVALID_CHANNEL			-1
 #define AUTOMATIC_CHANNEL		127
@@ -70,7 +70,9 @@ typedef UINT8 ChannelNumberType;
 UINT8 transmitPacket(BufferCntType inTXBufferNum);
 UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 
+bool getAckRequired(BufferStoragePtrType inBufferPtr);
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
+NetworkIDType getNetworkID(BufferCntType inRXBufferNum);
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum);

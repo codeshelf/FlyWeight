@@ -73,8 +73,11 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	RemoteAddrType		cmdDstAddr;
+	NetworkIDType		networkID;
 	ECmdAssocType		assocSubCmd;
 	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+	bool				ackReq;
+	int					assocCheckCount;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -144,6 +147,10 @@ void radioReceiveTask(void *pvParameters) {
 						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 						if (transmitPacket(gTXCurBufferNum)){
 						};
+						assocCheckCount++;
+						if (assocCheckCount > 10) {
+							RESET_MCU;
+						}
 					}
 					// Send an AssocCheck every 5 seconds.
 								
@@ -152,72 +159,77 @@ void radioReceiveTask(void *pvParameters) {
 					gShouldSleep = FALSE;
 					
 					// We just received a valid packet.
-					// We don't really do anything here since 
-					// the PWM audio processor is working at interrupt
-					// to get bytes out of the buffer.
+					networkID = getNetworkID(rxBufferNum);
 					
-					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
-					cmdDstAddr = getCommandDstAddr(rxBufferNum);
-					
-					// Only process broadcast commands or commands addressed to us.
-					if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
+					// Only process packets sent to the broadcast network ID and our assigned network ID.
+					if ((networkID != BROADCAST_NETID) && (networkID != gMyNetworkID)) {
 						RELEASE_RX_BUFFER(rxBufferNum);
 					} else {
-					
-						switch (cmdID) {
+						cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
+						cmdDstAddr = getCommandDstAddr(rxBufferNum);
+
+						// Only process commands sent to the broadcast address or our assigned address.
+						if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
+							RELEASE_RX_BUFFER(rxBufferNum);
+						} else {
 						
-							case eCommandAssoc:
-								assocSubCmd = getAssocSubCommand(rxBufferNum);
-								if (assocSubCmd == eCmdAssocRESP) {
-									
-									gLocalDeviceState = eLocalStateAssocRespRcvd;
-									// Signal the manager about the new state.
-									if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+							ackReq = getAckRequired(gRXRadioBuffer[rxBufferNum].bufferStorage);
+							switch (cmdID) {
+								case eCommandAssoc:
+									assocSubCmd = getAssocSubCommand(rxBufferNum);
+									if (assocSubCmd == eCmdAssocRESP) {
+
+										gLocalDeviceState = eLocalStateAssocRespRcvd;
+										// Signal the manager about the new state.
+										if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+										}
+									} else if (assocSubCmd == eCmdAssocACK) {
+										assocCheckCount = 0;
+										// If the associate state is 1 then we're not associated with this controller anymore.
+										// We need to reset the device, so that we can start a whole new session.
+										if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE]) {
+											RESET_MCU;
+										}
 									}
-								} else if (assocSubCmd == eCmdAssocACK) {
-									// If the associate state is 1 then we're not associated with this controller anymore.
-									// We need to reset the device, so that we can start a whole new session.
-									if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE])
-										RESET_MCU;
-								}
-								RELEASE_RX_BUFFER(rxBufferNum);
-								break;
+									RELEASE_RX_BUFFER(rxBufferNum);
+									break;
+
+								case eCommandInfo:
+									// Now that the remote has an assigned address we need to ask it to describe
+									// it's capabilities and characteristics.
+									processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
+									break;
+									
+								case eCommandControl:
+									// Make sure that there is a valid sub-command in the control command.
+									switch (getControlSubCommand(rxBufferNum)) {
+										case eControlSubCmdEndpointAdj:
+											break;
+
+										case eControlSubCmdMotor:
+											processMotorControlSubCommand(rxBufferNum);
+											break;
+
+										case eControlSubCmdHooBee:
+											processHooBeeSubCommand(rxBufferNum);
+											break;
+
+										default:
+											RELEASE_RX_BUFFER(rxBufferNum);
+									}
+									break;
+
+								case eCommandAudio:
+									// Audio commands are handled by an interrupt routine.
+									break;
+
+								default:
+									// Bogus command.
+									// Immediately free this command buffer since we'll never do anything with it.
+									RELEASE_RX_BUFFER(rxBufferNum);
+									break;
 								
-							case eCommandInfo:
-								// Now that the remote has an assigned address we need to ask it to describe
-								// it's capabilities and characteristics.
-								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
-								break;
-								
-							case eCommandControl:
-								// Make sure that there is a valid sub-command in the control command.
-								switch (getControlSubCommand(rxBufferNum)) {
-									case eControlSubCmdEndpointAdj:
-										break;
-										
-									case eControlSubCmdMotor:
-										processMotorControlSubCommand(rxBufferNum);
-										break;
-										
-									case eControlSubCmdHooBee:
-										processHooBeeSubCommand(rxBufferNum);
-										break;
-										
-									default:
-										RELEASE_RX_BUFFER(rxBufferNum);
-								}
-								break;
-								
-							case eCommandAudio:
-								// Audio commands are handled by an interrupt routine.
-								break;
-														
-							default:
-								// Bogus command.
-								// Immediately free this command buffer since we'll never do anything with it.
-								RELEASE_RX_BUFFER(rxBufferNum);
-								break;
-							
+							}
 						}
 					}
 					// If we're running then send an AssocCheck every 5 seconds.

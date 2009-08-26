@@ -6,7 +6,7 @@
 **     Beantype  : Init_GPIO
 **     Version   : Bean 01.025, Driver 01.12, CPU db: 2.87.109
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 7/4/2009, 8:41 AM
+**     Date/Time : 8/25/2009, 4:25 PM
 **     Abstract  :
 **          This file implements the General Purpose Input Output (PTA)
 **          module initialization according to the Peripheral Initialization

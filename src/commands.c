@@ -70,6 +70,15 @@ UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+bool getAckRequired(BufferStoragePtrType inBufferPtr) {
+
+	// The command number is in the third half-byte of the packet.
+	bool result = (inBufferPtr[PCKPOS_PACKET_NUM] != 0);
+	return result;
+};
+
+// --------------------------------------------------------------------------
+
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 
 	// The command number is in the third half-byte of the packet.
@@ -77,8 +86,10 @@ ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 	return result;
 };
 
+// --------------------------------------------------------------------------
+
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & SHIFTBITS_PKT_NETID >> SHIFTBITS_PKT_NETID);
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID >> SHIFTBITS_PKT_NETID);
 }
 
 // --------------------------------------------------------------------------
@@ -497,8 +508,8 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 	// Let's first make sure that this assign command is for us.
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
-		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGNID) >> SHIFTBITS_CMDID;
-		gMyNetworkID = getNetworkID(inRXBufferNum);
+		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGN_ADDR) >> SHIFTBITS_CMD_ASGNADDR;
+		gMyNetworkID = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_NET] & CMDMASK_ASSIGN_NETID) >> SHIFTBITS_CMD_ASGNNETID;
 		gLocalDeviceState = eLocalStateAssociated;
 	}
 
