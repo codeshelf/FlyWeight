@@ -94,6 +94,12 @@ NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+bool getCommandRequiresACK(BufferCntType inRXBufferNum) {
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID >> SHIFTBITS_PKT_NETID);
+}
+
+// --------------------------------------------------------------------------
+
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.

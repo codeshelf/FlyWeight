@@ -201,6 +201,11 @@ void radioReceiveTask(void *pvParameters) {
 									break;
 									
 								case eCommandControl:
+									// If the packet requires an ACK then send it now.
+									if (getCommandRequiresACK(rxBufferNum)) {
+
+									}
+
 									// Make sure that there is a valid sub-command in the control command.
 									switch (getControlSubCommand(rxBufferNum)) {
 										case eControlSubCmdEndpointAdj:
