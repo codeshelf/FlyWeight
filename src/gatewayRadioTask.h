@@ -16,7 +16,7 @@
 // --------------------------------------------------------------------------
 // Externs
 
-extern RemoteAddrType	gMainRemote;
+extern NetAddrType	gMainRemote;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

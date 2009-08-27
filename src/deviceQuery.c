@@ -33,7 +33,7 @@ void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType i
 
 // --------------------------------------------------------------------------
 
-void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr) {
+void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, NetAddrType inSrcAddr) {
 
 	BufferOffsetType responseSize;
 	

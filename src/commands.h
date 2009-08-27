@@ -73,24 +73,26 @@ UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 bool getAckRequired(BufferStoragePtrType inBufferPtr);
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum);
+AckIDType getAckId(BufferCntType inRXBufferNum);
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum);
 EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum);
 
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
-RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
-RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
+NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
+NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 UINT8 getLEDVaue(UINT8 inLEDNum, BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
+void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType);
-void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr);
+void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr);
 void createAudioCommand(BufferCntType inTXBufferNum);
-void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr);
+void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr);
 #ifdef IS_GATEWAY
 void createOutboundNetSetup(void);
 #endif
@@ -102,8 +104,8 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum);
 #endif
 void processNetSetupCommand(BufferCntType inRXBufferNum);
 void processAssocRespCommand(BufferCntType inRXBufferNum);
-void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
-void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr);
+void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
+void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 void processHooBeeSubCommand(BufferCntType inRXBufferNum);

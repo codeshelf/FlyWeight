@@ -72,11 +72,11 @@ BufferCntType		gTXUsedBuffers = 0;
 void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
-	RemoteAddrType		cmdDstAddr;
+	NetAddrType			cmdDstAddr;
 	NetworkIDType		networkID;
 	ECmdAssocType		assocSubCmd;
 	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-	bool				ackReq;
+	AckIDType			ackId;
 	int					assocCheckCount;
 
 	// Start the audio processing.
@@ -173,7 +173,6 @@ void radioReceiveTask(void *pvParameters) {
 							RELEASE_RX_BUFFER(rxBufferNum);
 						} else {
 						
-							ackReq = getAckRequired(gRXRadioBuffer[rxBufferNum].bufferStorage);
 							switch (cmdID) {
 								case eCommandAssoc:
 									assocSubCmd = getAssocSubCommand(rxBufferNum);
@@ -202,8 +201,11 @@ void radioReceiveTask(void *pvParameters) {
 									
 								case eCommandControl:
 									// If the packet requires an ACK then send it now.
-									if (getCommandRequiresACK(rxBufferNum)) {
-
+									ackId = getAckId(rxBufferNum);
+									if (ackId != 0) {
+										createAckCommand(gTXCurBufferNum, ackId);
+										if (transmitPacket(gTXCurBufferNum)){
+										}
 									}
 
 									// Make sure that there is a valid sub-command in the control command.

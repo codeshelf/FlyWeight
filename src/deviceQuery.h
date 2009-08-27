@@ -57,7 +57,7 @@ typedef byte QueryIDType[QUERYID_SIZE];
 
 // --------------------------------------------------------------------------
 // Function prototypes.
-void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, RemoteAddrType inSrcAddr);
+void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, NetAddrType inSrcAddr);
 BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
 BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);	
 BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);	

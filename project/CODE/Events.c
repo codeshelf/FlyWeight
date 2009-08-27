@@ -154,8 +154,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	// Figure out if we're in the RX or TX mode for audio.
 	// When the user presses the "push-to-talk" button the audio is only going back to the controller.
 	// Otherwise the audio is coming from the controller.
-	if (gAudioModeRX)
-	{
+	if (gAudioModeRX) {
 		// --- RX MODE ---------------------------------------------
 
 		// Reset the timer for the next sample.
@@ -230,7 +229,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 				}
 			}
 		}
-	} else if (!gAudioModeRX) {
+	} else /* if (!gAudioModeRX) */ {
 		// --- TX MODE ---------------------------------------------
 	
 #if defined(XBEE) || defined(MC1321X)

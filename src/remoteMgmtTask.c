@@ -129,17 +129,22 @@ void remoteMgmtTask( void *pvParameters ) {
 	for ( ;; );
 }
 
+// Define this if the MCU should really sleep (hibernate in FSL parlance).
+//#define REAL_SLEEP
+
 void sleepThisRemote(UINT8 inSleepMillis) {
 
+#ifdef REAL_SLEEP
 	byte ccrHolder;
 	int i;
 	UINT8 saveLoaderState;
-	UINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
-	
-	if (TRUE) {
+	UINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.	
+#endif
+
+#ifndef REAL_SLEEP
 		// "Fake sleep" for HooBeez
 		vTaskDelay(inSleepMillis * portTICK_RATE_MS);
-	} else {
+#else
 		// Real sleep for RocketPhones
 		EnterCriticalArg(ccrHolder);
 		gIsSleeping = TRUE;
@@ -174,5 +179,5 @@ void sleepThisRemote(UINT8 inSleepMillis) {
 		//TPMIE_PWM = 1;
 		TPMIE_AUDIO_LOADER = saveLoaderState;
 		ExitCriticalArg(ccrHolder);
-	}
+#endif
 }

@@ -28,7 +28,7 @@
 #endif
 
 RemoteDescStruct	gRemoteStateTable[MAX_REMOTES];
-RemoteAddrType		gMyAddr = INVALID_REMOTE;
+NetAddrType		gMyAddr = INVALID_REMOTE;
 NetworkIDType		gMyNetworkID = BROADCAST_NETID;
 
 extern byte					gCCRHolder;
@@ -39,7 +39,7 @@ extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 // --------------------------------------------------------------------------
 // Local function prototypes
 
-void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr);
+void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr, NetAddrType inDestAddr);
 
 // --------------------------------------------------------------------------
 
@@ -70,11 +70,9 @@ UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-bool getAckRequired(BufferStoragePtrType inBufferPtr) {
-
-	// The command number is in the third half-byte of the packet.
-	bool result = (inBufferPtr[PCKPOS_PACKET_NUM] != 0);
-	return result;
+AckIDType getAckId(BufferCntType inRXBufferNum) {
+	// We know we need to ACK if the command ID is not zero.
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ACKID]);
 };
 
 // --------------------------------------------------------------------------
@@ -109,19 +107,19 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-RemoteAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
+NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
 
 	// The source address is in the first half-byte of the packet.
-	RemoteAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_SRC_ADDR) >> 4;
+	NetAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_SRC_ADDR) >> 4;
 	return result;
 };
 
 // --------------------------------------------------------------------------
 
-RemoteAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
+NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 
 	// The source address is in the first half-byte of the packet.
-	RemoteAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_DST_ADDR);
+	NetAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_DST_ADDR);
 	return result;
 };
 
@@ -148,7 +146,7 @@ EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, RemoteAddrType inSrcAddr, RemoteAddrType inDestAddr) {
+void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr, NetAddrType inDestAddr) {
 
 	// First clear the packet header.
 	memset((void *) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMDID);
@@ -253,7 +251,20 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 
 // --------------------------------------------------------------------------
 
-void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr) {
+void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId) {
+
+	createPacket(inTXBufferNum, eCommandNetMgmt, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdAck;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ACK_ID] = inAckId;
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ACK_ID + 1;
+};
+
+
+// --------------------------------------------------------------------------
+
+void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr) {
 
 	createPacket(inTXBufferNum, eCommandInfo, gMyNetworkID, gMyAddr, inRemoteAddr);
 
@@ -264,7 +275,7 @@ void createQueryCommand(BufferCntType inTXBufferNum, RemoteAddrType inRemoteAddr
 
 // --------------------------------------------------------------------------
 
-void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, RemoteAddrType inRemoteAddr) {
+void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr) {
 
 	// Describe the capabilities and channels of the device.
 	// This is free-format command that uses XML for content.
@@ -509,7 +520,7 @@ void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {
 
 void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
-	RemoteAddrType result = INVALID_REMOTE;
+	NetAddrType result = INVALID_REMOTE;
 
 	// Let's first make sure that this assign command is for us.
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
@@ -524,7 +535,7 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) {
+void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
 
 	processQuery(inRXBufferNum, CMDPOS_INFO_QUERY, inSrcAddr);
 	RELEASE_RX_BUFFER(inRXBufferNum);
@@ -532,7 +543,7 @@ void processQueryCommand(BufferCntType inRXBufferNum, RemoteAddrType inSrcAddr) 
 
 // --------------------------------------------------------------------------
 
-void processResponseCommand(BufferCntType inRXBufferNum, RemoteAddrType inRemoteAddr) {
+void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr) {
 
 	// Indicate that we received a response for the remote.
 	gRemoteStateTable[inRemoteAddr].remoteState = eRemoteStateRespRcvd;

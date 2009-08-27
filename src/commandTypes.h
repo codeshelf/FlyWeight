@@ -60,6 +60,7 @@
 #define CMDPOS_CHECK_CHANNEL	CMDPOS_CHECK_UID + 8
 #define CMDPOS_CHECK_ENERGY		CMDPOS_CHECK_CHANNEL + 1
 #define CMDPOS_CHECK_LINKQ		CMDPOS_CHECK_ENERGY + 1
+#define CMDPOS_ACK_ID			CMDPOS_MGMT_SUBCMD + 1
 
 // Assoc Command
 #define CMDPOS_ASSOC_SUBCMD		CMDPOS_STARTOFCMD
@@ -78,7 +79,8 @@
 
 // Control Command
 #define CMDPOS_CONTROL			CMDPOS_STARTOFCMD
-#define CMDPOS_CONTROL_SUBCMD	CMDPOS_CONTROL + 0
+#define CMDPOS_ACKID			CMDPOS_CONTROL + 0
+#define CMDPOS_CONTROL_SUBCMD	CMDPOS_ACKID + 1
 #define CMDPOS_CONTROL_DATA		CMDPOS_CONTROL_SUBCMD + 1
 
 // Audio Command
@@ -227,7 +229,8 @@ typedef enum {
 	eNetMgmtSubCmdInvalid = -1,
 	eNetMgmtSubCmdNetSetup = 1,
 	eNetMgmtSubCmdNetCheck = 2,
-	eNetMgmtSubCmdNetIntfTest = 3
+	eNetMgmtSubCmdNetIntfTest = 3,
+	eNetMgmtSubCmdAck = 4
 } ENetMgmtSubCmdIDType;
 
 typedef enum {

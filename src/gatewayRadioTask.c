@@ -48,7 +48,7 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-RemoteAddrType		gMainRemote = INVALID_REMOTE;
+NetAddrType		gMainRemote = INVALID_REMOTE;
 
 // --------------------------------------------------------------------------
 

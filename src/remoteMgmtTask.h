@@ -18,7 +18,7 @@
 #define GATEWAY_MGMT_QUEUE_SIZE		10
 
 extern xQueueHandle				gRemoteMgmtQueue;
-extern RemoteAddrType			gMyAddr;
+extern NetAddrType			gMyAddr;
 extern NetworkIDType			gMyNetworkID;
 
 // --------------------------------------------------------------------------

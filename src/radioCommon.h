@@ -155,7 +155,8 @@ typedef struct {
 } RadioBufferStruct;
 
 typedef UINT8				NetworkIDType;
-typedef UINT8				RemoteAddrType;
+typedef UINT8				AckIDType;
+typedef UINT8				NetAddrType;
 typedef UINT8				EndpointNumType;
 typedef UINT8				KVPNumType;
 typedef byte				RemoteUniqueIDType[UNIQUE_ID_BYTES + 1];
