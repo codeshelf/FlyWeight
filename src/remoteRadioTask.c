@@ -66,7 +66,7 @@ int					gAssocCheckCount = 0;
 // Now defined in Events.c
 //SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
 
-#define				kAssocCheckTickCount	5000 //5 * portTICK_RATE_MS * 1000;
+#define				kAssocCheckTickCount	3000 //2.5 * portTICK_RATE_MS * 1000;
 #define				RESET_MCU				__asm DCB 0x8D
 
 // --------------------------------------------------------------------------
