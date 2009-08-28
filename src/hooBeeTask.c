@@ -28,16 +28,29 @@ void hooBeeTask(void *pvParameters) {
 
 	UINT8 i;
 	UINT8 j;
+	portTickType	baseTime;
 
-//	if (gHooBeeQueue) {
-		gLedFlashSequenceShouldRun = FALSE;
+	gLedFlashSequenceShouldRun = FALSE;
 
-		for (;;) {
+#if defined(HW_GW0009R1)
+		PTBDD_PTBDD1 = 1;
+		PTDDD_PTDDD1 = 1;
+		PTDDD_PTDDD0 = 1;
+#elif defined(HW_GW0009R2)
+		PTBDD_PTBDD2 = 1;
+		PTBDD_PTBDD3 = 1;
+		PTBDD_PTBDD4 = 1;
+#endif
+
+	for (;;) {
+		if (gLedFlashSequenceShouldRun) {
+			// Make the sequence start on an even 5 seconds.
+			baseTime = (xTaskGetTickCount() % 5000);
+			vTaskDelayUntil(&baseTime, 5000);
+
 			for (j = 0; j < gLedFlashSeqCount; j++) {
-				
 				for (i = 0; i < gLedFlashSeqBuffer[j].repeat; i++) {
 
-					if (gLedFlashSequenceShouldRun) {
 						TPM1C0V = gLedFlashSeqBuffer[j].redValue;
 						TPM1C1V = gLedFlashSeqBuffer[j].greenValue;
 						TPM1C2V = gLedFlashSeqBuffer[j].blueValue;
@@ -49,13 +62,12 @@ void hooBeeTask(void *pvParameters) {
 						TPM1C2V = 0;
 
 						vTaskDelay(gLedFlashSeqBuffer[j].timeOffMillis);
-					} else {
-						vTaskDelay(50);
-					}
 				}
 			}
+		} else {
+			vTaskDelay(50);
 		}
-//	}
+	}
 
 	/* Will only get here if the queue could not be created. */
 	for (;;)

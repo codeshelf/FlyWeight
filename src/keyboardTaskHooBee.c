@@ -11,7 +11,6 @@
 #include "keyboard.h"
 #include "radioCommon.h"
 #include "commands.h"
-#include "LEDRed.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -62,7 +61,7 @@ void keyboardTask(void *pvParameters) {
 					gButtonPressed = NO_BUTTON;
 
 					// Indicate button released.
-					LEDRed_ClrVal();
+					LEDRedOFF;
 					TPM1C0SC_CH0IE = 1;
 					TPM1C1SC_CH1IE = 1;
 					TPM1C2SC_CH2IE = 1;
@@ -89,7 +88,7 @@ void keyboardTask(void *pvParameters) {
 						TPM1C2SC_CH2IE = 0;
 						
 						// Indicate button released.
-						LEDRed_SetVal();
+						LEDRedON;
 					}
 					
 					// Send an associate request on the current channel.

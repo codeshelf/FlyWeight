@@ -449,7 +449,7 @@ MLMESetMC13192ClockRate(2);
             <Clock_range v="High frequency"/>
             <Operating_mode v="High gain"/>
             <group name="Clock input pin">
-              <Pin_name v="PTG2_EXTAL"/>
+              <Pin_name v=""/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -476,7 +476,7 @@ MLMESetMC13192ClockRate(2);
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v="PTG0_BKGD_MS"/>
+          <BDM_pin v=""/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -756,15 +756,15 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDRed" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDRed"/>
-      <Pin_for_I_O v="PTB2_AD1P2"/>
+      <Pin_for_I_O v="PTB1_AD1P1"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB2 v="no"/>
+      <Slew_rate_control_for_PTB1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -791,15 +791,15 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDGreen" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDGreen"/>
-      <Pin_for_I_O v="PTB3_AD1P3"/>
+      <Pin_for_I_O v="PTD1_TPM1CH1"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB3 v="no"/>
+      <Slew_rate_control_for_PTD1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -826,15 +826,15 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDBlue" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDBlue"/>
-      <Pin_for_I_O v="PTB4_AD1P4"/>
+      <Pin_for_I_O v="PTD0_TPM1CH0"/>
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB4 v="no"/>
+      <Slew_rate_control_for_PTD0 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>

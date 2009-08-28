@@ -11646,7 +11646,7 @@
             </LINKORDER>
         </TARGET>
         <TARGET>
-            <NAME>XBee HooBee</NAME>
+            <NAME>XBee HooBee (GW0009)</NAME>
             <SETTINGLIST>
 
                 <!-- Settings for "Source Trees" panel -->
@@ -11876,7 +11876,7 @@
                 <SETTING><NAME>Linker</NAME><VALUE>Linker for HC08</VALUE></SETTING>
                 <SETTING><NAME>PreLinker</NAME><VALUE>PE options</VALUE></SETTING>
                 <SETTING><NAME>PostLinker</NAME><VALUE></VALUE></SETTING>
-                <SETTING><NAME>Targetname</NAME><VALUE>XBee HooBee</VALUE></SETTING>
+                <SETTING><NAME>Targetname</NAME><VALUE>XBee HooBee (GW0009)</VALUE></SETTING>
                 <SETTING><NAME>OutputDirectory</NAME>
                     <SETTING><NAME>Path</NAME><VALUE>bin</VALUE></SETTING>
                     <SETTING><NAME>PathFormat</NAME><VALUE>Windows</VALUE></SETTING>
@@ -12300,7 +12300,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DXBEE -DANTENNA_SWITCH -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -D"GUID=""00000060"""</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DXBEE -DANTENNA_SWITCH -D_TOY_NETWORK_ -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSe1801 -DHW_GW0009R2 -D"GUID=""00000060"""</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -13221,27 +13221,6 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS></FILEFLAGS>
                 </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDRed.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDGreen.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
-                <FILE>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDBlue.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                    <FILEKIND>Text</FILEKIND>
-                    <FILEFLAGS>Debug</FILEFLAGS>
-                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -13669,21 +13648,6 @@
                     <PATH>keyboardTaskHooBee.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDRed.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDGreen.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
-                <FILEREF>
-                    <PATHTYPE>Name</PATHTYPE>
-                    <PATH>LEDBlue.c</PATH>
-                    <PATHFORMAT>Windows</PATHFORMAT>
-                </FILEREF>
             </LINKORDER>
         </TARGET>
     </TARGETLIST>
@@ -13695,7 +13659,7 @@
         <ORDEREDTARGET><NAME>GW0003 (Gateway)</NAME></ORDEREDTARGET>
         <ORDEREDTARGET><NAME>GW0005 (Remote)</NAME></ORDEREDTARGET>
         <ORDEREDTARGET><NAME>XBee StrainGage</NAME></ORDEREDTARGET>
-        <ORDEREDTARGET><NAME>XBee HooBee</NAME></ORDEREDTARGET>
+        <ORDEREDTARGET><NAME>XBee HooBee (GW0009)</NAME></ORDEREDTARGET>
     </TARGETORDER>
 
     <GROUPLIST>
@@ -13800,7 +13764,7 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>mainHooBee.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
@@ -13824,7 +13788,7 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>deviceInfoHooBee.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
@@ -13950,13 +13914,13 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>keyboardTaskHooBee.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>keyboardTaskHooBee.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
@@ -14016,13 +13980,13 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>hooBeeTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
-                    <TARGETNAME>XBee HooBee</TARGETNAME>
+                    <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>hooBeeTask.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
@@ -14377,7 +14341,7 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
+                <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>PWM_XBee.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -14389,27 +14353,9 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
+                <TARGETNAME>XBee HooBee (GW0009)</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>KBI_XBee.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>LEDRed.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>LEDGreen.c</PATH>
-                <PATHFORMAT>Windows</PATHFORMAT>
-            </FILEREF>
-            <FILEREF>
-                <TARGETNAME>XBee HooBee</TARGETNAME>
-                <PATHTYPE>Name</PATHTYPE>
-                <PATH>LEDBlue.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
         </GROUP>

@@ -57,6 +57,8 @@ BufferCntType		gRXUsedBuffers = 0;
 RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
+int					gAssocCheckCount = 0;
+
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
@@ -77,7 +79,6 @@ void radioReceiveTask(void *pvParameters) {
 	ECmdAssocType		assocSubCmd;
 	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 	AckIDType			ackId;
-	int					assocCheckCount;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -136,22 +137,22 @@ void radioReceiveTask(void *pvParameters) {
 						gShouldSleep = TRUE;
 					} else {
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						sleepThisRemote(200);
+						sleepThisRemote(50);
 					}
 					
 					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.
-					gSleepCount++;
-					if (gSleepCount >= 9) {
-						gSleepCount = 0;
-						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-						if (transmitPacket(gTXCurBufferNum)){
-						};
-						assocCheckCount++;
-						if (assocCheckCount > 10) {
-							RESET_MCU;
-						}
-					}
+//					gSleepCount++;
+//					if (gSleepCount >= 9) {
+//						gSleepCount = 0;
+//						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+//						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+//						if (transmitPacket(gTXCurBufferNum)){
+//						};
+//						gAssocCheckCount++;
+//						if (gAssocCheckCount > 10) {
+//							RESET_MCU;
+//						}
+//					}
 					// Send an AssocCheck every 5 seconds.
 								
 				} else {
@@ -177,18 +178,19 @@ void radioReceiveTask(void *pvParameters) {
 								case eCommandAssoc:
 									assocSubCmd = getAssocSubCommand(rxBufferNum);
 									if (assocSubCmd == eCmdAssocRESP) {
-
-										gLocalDeviceState = eLocalStateAssocRespRcvd;
-										// Signal the manager about the new state.
-										if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+										// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
+										if (gLocalDeviceState != eLocalStateRun) {
+											if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
+											}
 										}
 									} else if (assocSubCmd == eCmdAssocACK) {
-										assocCheckCount = 0;
+										gAssocCheckCount = 0;
 										// If the associate state is 1 then we're not associated with this controller anymore.
 										// We need to reset the device, so that we can start a whole new session.
 										if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE]) {
 											RESET_MCU;
 										}
+										//processAssociationAck(rxBufferNum);
 									}
 									RELEASE_RX_BUFFER(rxBufferNum);
 									break;
@@ -239,13 +241,13 @@ void radioReceiveTask(void *pvParameters) {
 							}
 						}
 					}
-					// If we're running then send an AssocCheck every 5 seconds.
-					if (gLocalDeviceState == eLocalStateRun) {
-						if (lastAssocCheckTickCount < xTaskGetTickCount()) {
-							lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-							createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-							if (transmitPacket(gTXCurBufferNum)){
-							}
+				}
+				// If we're running then send an AssocCheck every 5 seconds.
+				if (gLocalDeviceState == eLocalStateRun) {
+					if (lastAssocCheckTickCount < xTaskGetTickCount()) {
+						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+						if (transmitPacket(gTXCurBufferNum)){
 						}
 					}
 				}

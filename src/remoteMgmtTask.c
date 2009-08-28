@@ -15,11 +15,14 @@
 #include "pub_def.h"
 #include "simple_mac.h"
 
+#define				RESET_MCU				__asm DCB 0x8D
+
 xQueueHandle 		gRemoteMgmtQueue;
 ELocalStatusType	gLocalDeviceState;
 bool				gIsSleeping;
 bool				gShouldSleep;
 UINT8				gSleepCount;
+extern int			gAssocCheckCount;
 
 // --------------------------------------------------------------------------
 
@@ -29,6 +32,8 @@ void remoteMgmtTask( void *pvParameters ) {
 	bool				associated;
 	UINT8				trim = 128;
 	UINT8				assocAttempts = 0;
+	ECommandGroupIDType	cmdID;
+	ECmdAssocType		assocSubCmd;
 
 	if ( gRemoteMgmtQueue ) {
 		
@@ -56,13 +61,17 @@ void remoteMgmtTask( void *pvParameters ) {
 			// Wait up to 100ms for a response.
 			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
-					switch (gLocalDeviceState) {
-						case eLocalStateAssocRespRcvd:
+					// Check to see what kind of command we just got.
+					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
+					if (cmdID == eCommandAssoc) {
+						assocSubCmd = getAssocSubCommand(rxBufferNum);
+						if (assocSubCmd == eCmdAssocRESP) {
+							gLocalDeviceState = eLocalStateAssocRespRcvd;
 							processAssocRespCommand(rxBufferNum);
 							if (gLocalDeviceState == eLocalStateAssociated) {
 								associated = TRUE;
 							}
-							break;
+						}
 					}
 				}
 			}
@@ -85,44 +94,20 @@ void remoteMgmtTask( void *pvParameters ) {
 		gLocalDeviceState = eLocalStateRun;
 				
 		vTaskSuspend(gRemoteManagementTask);
+
 //		for ( ;; ) {
-//
-//			// Whenever we need to handle a state change for a  device, we handle it in this management task.
-//			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
-//			
-//				// Get the state of the remote at the named slot.
-//				switch (gLocalDeviceState) {
-//
-//					case eCommandAssoc:
-//						processAssocRespCommand(rxBufferNum);
-//						break;
-//					
-//					// If we're in the run state, and receive a command then we need to handle that command.
-//					case eLocalStateRun:
-//						
-//						switch (getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage)) {
-//						
-//							case eCommandInfo:
-//								// Now that the remote has an assigned address we need to ask it to describe
-//								// it's capabilities and characteristics.
-//								processQueryCommand(rxBufferNum, getCommandSrcAddr(rxBufferNum));
-//								break;		
-//								
-//							case eCommandControl:
-//								break;
-//								
-//							default:
-//								break;
-//						}
-//						break;
-//						
-//					default:
-//						RELEASE_RX_BUFFER(rxBufferNum);
-//				
+//			// Periodically send a NetCheck packet to the controller.
+//			vTaskDelay(2500 * portTICK_RATE_MS);
+//			if (gLocalDeviceState == eLocalStateRun) {
+//				createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+//				if (transmitPacket(gTXCurBufferNum)){
+//				};
+//				gAssocCheckCount++;
+//				if (gAssocCheckCount > 10) {
+//					RESET_MCU;
 //				}
 //			}
 //		}
-
 	}
 
 	/* Will only get here if the queue could not be created. */

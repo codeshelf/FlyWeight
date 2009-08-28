@@ -36,6 +36,24 @@
 #define MOTOR1_ENDPOINT		2
 #define MOTOR2_ENDPOINT		3
 
+#if defined(HW_GW0009R1)
+	#define LEDRedON	PTBD_PTBD1 = 1;
+	#define LEDGreenON	PTDD_PTDD1 = 1;
+	#define LEDBlueON	PTDD_PTDD0 = 1;
+
+	#define LEDRedOFF	PTBD_PTBD1 = 0;
+	#define LEDGreenOFF	PTDD_PTDD1 = 0;
+	#define LEDBlueOFF	PTDD_PTDD0 = 0;
+#elif defined(HW_GW0009R2)
+	#define LEDRedON	PTBD_PTBD2 = 1;
+	#define LEDGreenON	PTBD_PTBD3 = 1;
+	#define LEDBlueON	PTBD_PTBD4 = 1;
+
+	#define LEDRedOFF	PTBD_PTBD2 = 0;
+	#define LEDGreenOFF	PTBD_PTBD3 = 0;
+	#define LEDBlueOFF	PTBD_PTBD4 = 0;
+#endif
+
 // --------------------------------------------------------------------------
 // Typedefs.
 

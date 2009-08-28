@@ -72,7 +72,7 @@ UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 
 AckIDType getAckId(BufferCntType inRXBufferNum) {
 	// We know we need to ACK if the command ID is not zero.
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ACKID]);
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_ACKID]);
 };
 
 // --------------------------------------------------------------------------
@@ -531,6 +531,13 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum);
+};
+
+// --------------------------------------------------------------------------
+
+void processAssocAckCommand(BufferCntType inRXBufferNum) {
+	// No can do in FreeRTOS :-(
+	//xTaskSetTickCount(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCACK_TIME)]);
 };
 
 // --------------------------------------------------------------------------

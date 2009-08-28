@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1108
+ProjectModificationStamp=1114
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=897
+ProjectCompNumb=907
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -4072,7 +4072,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-Value=PTG2_EXTAL
+Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -4090,7 +4090,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-Value=PTG1_XTAL
+Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -4234,7 +4234,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-Value=PTG0_BKGD_MS
+Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -4282,7 +4282,7 @@ Index=2
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-Value=Vlvd
+Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -4788,7 +4788,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -6663,7 +6663,7 @@ Value=No
 
 [Configuration]
 CompNumb=872
-NodeName=XBee HooBee
+NodeName=XBee HooBee (GW0009)
 CnfgEnabled=Yes
 TargetCPU=40
 ConfigurationComment=0
@@ -6714,11 +6714,11 @@ Value18=Yes
 ItemId19=44
 Value19=No
 ItemId20=43
-Value20=Yes
+Value20=No
 ItemId21=42
-Value21=Yes
+Value21=No
 ItemId22=41
-Value22=Yes
+Value22=No
 ItemId23=57
 Value23=No
 ItemId24=54
@@ -7543,7 +7543,7 @@ List=Event
 
 [BitIO:LEDRed]
 CompNumb=41
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7562,7 +7562,7 @@ Value=LEDRed
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB2_AD1P2
+Value=PTB1_AD1P1
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -7797,7 +7797,7 @@ List=Event
 
 [BitIO:LEDGreen]
 CompNumb=42
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -7816,7 +7816,7 @@ Value=LEDGreen
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB3_AD1P3
+Value=PTD1_TPM1CH1
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
@@ -8051,7 +8051,7 @@ List=Event
 
 [BitIO:LEDBlue]
 CompNumb=43
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=BITIO
 UserFolderName=LEDs/Switches
@@ -8070,7 +8070,7 @@ Value=LEDBlue
 ItemSymbol=_Pin
 ReadOnly=No
 UserReadOnly=No
-Value=PTB4_AD1P4
+Value=PTD0_TPM1CH0
 [ItemState]
 ItemSymbol=PinSignal
 ReadOnly=No
