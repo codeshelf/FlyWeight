@@ -120,7 +120,7 @@ void TimerInt(void)
 bool				gAudioModeRX = TRUE;
 
 //UINT16			gPWMMaxValue = 0xff;
-#if defined(XBEE) || defined(MC1321X)
+#if defined(XBEE_PINOUT) || defined(MC1321X)
 //UINT16				gPWMCenterValue = 0x7fff;
 UINT16				gPWMCenterValue = 0x7f;
 #else
@@ -144,7 +144,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 	byte	ccrHolder;
 	UINT8	sample8b;
-#if defined(XBEE) || defined(MC1321X)
+#if defined(XBEE_PINOUT) || defined(MC1321X)
 	INT16	sample16b;
 	UINT8	lsbSample;
 	UINT8	msbSample;
@@ -176,7 +176,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 
 			SPKR_AMP_ON;
 			sample8b = gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStorage[gCurPWMOffset];
-#if defined(XBEE) || defined(MC1321X)
+#if defined(XBEE_PINOUT) || defined(MC1321X)
 			// On the MC1321X or XBee module we support 16bit converted uLaw samples.
 			// One to 8-bit channel 0, and one to 8-bit channel 1.
 			// The two channels are tied together with different resistor values to give us 16 bit resolution.
@@ -232,7 +232,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 	} else /* if (!gAudioModeRX) */ {
 		// --- TX MODE ---------------------------------------------
 	
-#if defined(XBEE) || defined(MC1321X)
+#if defined(XBEE_PINOUT) || defined(MC1321X)
 
 		// Reset the timer for the next sample. (speed up a little in transmit to make up for broadcast overhead.
 		TPMMOD_AUDIO_LOADER = gMasterSampleRate;// - 0x40;
@@ -242,7 +242,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 		ATD1SC_ATDCO = 0;
 		while (!ATD1SC_CCF) {
 		}
-#if defined(XBEE)
+#if defined(XBEE_PINOUT)
 		sample16b = ATD1R << 4;
 #else
 		sample16b = ATD1R;

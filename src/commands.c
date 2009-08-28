@@ -210,7 +210,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 	// Set the device version
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
 
-#if !defined(XBEE)
+#if !defined(XBEE_PINOUT)
 	// Save the ATD state and prepare to take a battery measurement.
 	saveATD1C = ATD1C;
 	saveATD1SC = ATD1SC;

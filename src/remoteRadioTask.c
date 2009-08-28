@@ -18,10 +18,10 @@
 
 // SMAC includes
 #include "pub_def.h"
-#if defined(XBEE)
-//	#include "PWM_XBee.h"
+#if defined(XBEE_PINOUT)
+	#include "LED_XBee.h"
 #elif defined(MC1321X)
-	#include "PWM_MC1321X.h"
+//	#include "PWM_MC1321X.h"
 #elif defined(MC13192EVB)
 	#include "PWM_EVB.h"
 #endif
@@ -88,19 +88,19 @@ void radioReceiveTask(void *pvParameters) {
 	
 		gSleepCount = 0;
 	
-#if !defined(XBEE)
+#if !defined(XBEE_PINOUT)
 		// Setup the TPM2 timer.
 		TPMSC_AUDIO_LOADER = 0b01001000;
 		// 16MHz bus clock with a 7.4kHz interrupt freq.
 		TPMMOD_AUDIO_LOADER = gMasterSampleRate;	
 #endif		
 
-#if defined(XBEE)
+#if defined(XBEE_PINOUT)
 		//PWM_XBee_Init();
 #elif defined(MC1321X)
-		PWM_MC1321X_Init();
+		//PWM_MC1321X_Init();
 #else
-		PWM_EVB_Init();
+		//PWM_EVB_Init();
 #endif
 
 		for (;;) {

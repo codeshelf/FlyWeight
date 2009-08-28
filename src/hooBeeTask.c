@@ -32,11 +32,11 @@ void hooBeeTask(void *pvParameters) {
 
 	gLedFlashSequenceShouldRun = FALSE;
 
-#if defined(HW_GW0009R1)
+#if defined(GW0009R1)
 		PTBDD_PTBDD1 = 1;
 		PTDDD_PTDDD1 = 1;
 		PTDDD_PTDDD0 = 1;
-#elif defined(HW_GW0009R2)
+#elif defined(GW0009R2)
 		PTBDD_PTBDD2 = 1;
 		PTBDD_PTBDD3 = 1;
 		PTBDD_PTBDD4 = 1;

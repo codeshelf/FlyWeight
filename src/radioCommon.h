@@ -53,7 +53,7 @@
 #define KEYBOARD_QUEUE_SIZE		2
 
 //#define MASTER_TPM2_RATE		0x873
-#if defined(XBEE)
+#if defined(XBEE_PINOUT)
 	#define SETUP_SPKR_CONTROL		PTCDD |= 0b10000000;
 	#define SPKR_AMP_OFF			PTCD  |= 0b10000000;
 	#define SPKR_AMP_ON				PTCD  &= 0b01111111;

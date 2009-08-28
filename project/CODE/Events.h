@@ -34,7 +34,7 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "PWM_XBee.h"
+#include "LED_XBee.h"
 #include "KBI_XBee.h"
 #include "LowVoltage.h"
 #include "GPIO1.h"

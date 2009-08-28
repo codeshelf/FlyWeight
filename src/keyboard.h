@@ -46,7 +46,7 @@
 	#define KB_SETUP_ROW1		PTBDD_PTBDD1
 	#define KB_ROW0				PTBD_PTBD0
 	#define KB_ROW1				PTBD_PTBD1
-#if defined(XBEE)
+#if defined(XBEE_PINOUT)
     #define KB_SETUP_COL0       PTADD_PTADD5
     #define KB_SETUP_COL1       PTADD_PTADD6
     #define KB_PEBITS           0b01100000
