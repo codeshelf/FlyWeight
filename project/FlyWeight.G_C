@@ -36,6 +36,7 @@ XtraAge0=991664221
 GenExtraFileType0=4
 GenEventModules=1
 Line=Events
+GenMethodsInEvents=0
 GenAllModules=14
 Line=Cpu
 Line=Events

@@ -249,6 +249,10 @@ void radioReceiveTask(void *pvParameters) {
 						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 						if (transmitPacket(gTXCurBufferNum)){
 						}
+						gAssocCheckCount++;
+						if (gAssocCheckCount > 10) {
+							RESET_MCU;
+						}
 					}
 				}
 			}
