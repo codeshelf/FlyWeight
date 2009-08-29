@@ -328,6 +328,7 @@ ISR(TestADC) {
 ISR(LowVoltageDetect) {
 	
 }
+#if !defined(IS_GATEWAY) 
 
 ISR(LEDCheck) {
 	if (TPM1C0V > 0) {
@@ -357,6 +358,26 @@ ISR(LEDGreenOff) {
 ISR(LEDBlueOff) {
 	LEDBlueOFF;
 	TPM1C2SC_CH2F = 0;
+}
+#endif
+/*
+** ===================================================================
+**     Event       :  USB_OnError (module Events)
+**
+**     From bean   :  USB [AsynchroSerial]
+**     Description :
+**         This event is called when a channel error (not the error
+**         returned by a given method) occurs. The errors can be
+**         read using <GetError> method.
+**         The event is available only when the <Interrupt
+**         service/event> property is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void  USB_OnError(void)
+{
+  /* Write your code here ... */
 }
 
 /* END Events */
