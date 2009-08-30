@@ -15,7 +15,6 @@
 #include "simple_mac.h"
 #include "USB.h"
 #include "commands.h"
-#include "Watchdog.h"
 
 // SMAC includes
 #include "pub_def.h"
@@ -70,13 +69,13 @@ void radioReceiveTask(void *pvParameters) {
 			// Don't try to RX if there is no free buffer.
 			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
 				vTaskDelay(1);
-				WatchDog_Clear();
+				WATCHDOG_RESET;
 			}
 
 			// Don't try to set up an RX unless we're already done with TX.
 			while (gu8RTxMode == TX_MODE) {
 				vTaskDelay(1);
-				WatchDog_Clear();
+				WATCHDOG_RESET;
 			}
 			
 			//vTaskSuspend(gRadioTransmitTask);

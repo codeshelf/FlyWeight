@@ -79,6 +79,7 @@ void radioReceiveTask(void *pvParameters) {
 	ECmdAssocType		assocSubCmd;
 	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 	AckIDType			ackId;
+	portTickType		rxDelay;
 
 	// Start the audio processing.
 	//AudioLoader_Enable();
@@ -122,10 +123,14 @@ void radioReceiveTask(void *pvParameters) {
 				gsRxPacket.u8Status = 0;
 
 				if (gShouldSleep) {
-					MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
+					rxDelay = 25 * SMAC_TICKS_PER_MS;
+					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
 				} else {
-					MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
+					rxDelay = 1000 * SMAC_TICKS_PER_MS;
+					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
 				}
+				rxDelay = 50;
+				MLMERXEnableRequest(&gsRxPacket, rxDelay);
 			}
 
 			// Wait until we receive a queue message from the radio receive ISR.
@@ -134,7 +139,8 @@ void radioReceiveTask(void *pvParameters) {
 				if ((rxBufferNum == 255) && (!gButtonPressed)) {
 				
 					if (!gShouldSleep) {
-						gShouldSleep = TRUE;
+						// We're not sleeping for now until we figure out a better way.
+						//gShouldSleep = TRUE;
 					} else {
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
 						sleepThisRemote(50);
@@ -176,8 +182,13 @@ void radioReceiveTask(void *pvParameters) {
 						
 							switch (cmdID) {
 								case eCommandAssoc:
+									// This will only return sub-commands if the command GUID matches out GUID
 									assocSubCmd = getAssocSubCommand(rxBufferNum);
-									if (assocSubCmd == eCmdAssocRESP) {
+									if (assocSubCmd == eCmdAssocInvalid) {
+										RELEASE_RX_BUFFER(rxBufferNum);
+									} else if (assocSubCmd == eCmdAssocRESP) {
+										// Reset the clock on the assoc check.
+										lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 										// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
 										if (gLocalDeviceState != eLocalStateRun) {
 											if (xQueueSend(gRemoteMgmtQueue, &rxBufferNum, (portTickType) 0)) {
@@ -190,9 +201,8 @@ void radioReceiveTask(void *pvParameters) {
 										if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE]) {
 											RESET_MCU;
 										}
-										//processAssociationAck(rxBufferNum);
+										RELEASE_RX_BUFFER(rxBufferNum);
 									}
-									RELEASE_RX_BUFFER(rxBufferNum);
 									break;
 
 								case eCommandInfo:

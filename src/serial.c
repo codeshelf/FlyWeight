@@ -9,7 +9,6 @@
 
 #include "serial.h"
 #include "task.h"
-#include "watchdog.h"
 
 #define	kBufferSize		25
 #define	kHighWaterMark  10
@@ -59,7 +58,8 @@ void readOneChar(USB_TComData *outDataPtr) {
 			if (gCurrentBufferSize == 0) {
 				// If we didn't get any characters then delay for a short while.
 				vTaskDelay(5 * portTICK_RATE_MS);
-				WatchDog_Clear();			}
+				WATCHDOG_RESET;
+			}
 		}
 	}
 }

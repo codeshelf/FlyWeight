@@ -116,6 +116,7 @@
 #define SHIFTBITS_CMDID			4
 #define SHIFTBITS_CMD_ASGNADDR	4
 #define SHIFTBITS_CMD_ASGNNETID	0
+#define SHIFTBITS_CMD_ENDPOINT	0
 // --------------------------------------------------------------------------
 // Typedefs
 

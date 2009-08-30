@@ -31,7 +31,7 @@
 
 // The gateway needs fewer buffers.
 #ifdef IS_GATEWAY
-	#define RX_QUEUE_SIZE			5
+	#define RX_QUEUE_SIZE			10
 	#define RX_QUEUE_LOW_WATER		2
 	#define RX_QUEUE_HIGH_WATER		RX_QUEUE_SIZE - 2
 //	#define RX_QUEUE_BALANCE		1

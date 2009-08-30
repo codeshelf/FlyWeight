@@ -8,6 +8,7 @@
 */
 
 #include "remoteMgmtTask.h"
+#include "radioCommon.h"
 #include "commands.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -17,12 +18,13 @@
 
 #define				RESET_MCU				__asm DCB 0x8D
 
-xQueueHandle 		gRemoteMgmtQueue;
-ELocalStatusType	gLocalDeviceState;
-bool				gIsSleeping;
-bool				gShouldSleep;
-UINT8				gSleepCount;
-extern int			gAssocCheckCount;
+xQueueHandle 			gRemoteMgmtQueue;
+ELocalStatusType		gLocalDeviceState;
+bool					gIsSleeping;
+bool					gShouldSleep;
+UINT8					gSleepCount;
+extern int				gAssocCheckCount;
+extern byte				gCCRHolder;
 
 // --------------------------------------------------------------------------
 
@@ -58,8 +60,8 @@ void remoteMgmtTask( void *pvParameters ) {
 			if (transmitPacket(gTXCurBufferNum)) {
 			};
 			
-			// Wait up to 100ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
+			// Wait up to 200ms for a response.
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 200 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					// Check to see what kind of command we just got.
 					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
@@ -73,6 +75,7 @@ void remoteMgmtTask( void *pvParameters ) {
 							}
 						}
 					}
+					RELEASE_RX_BUFFER(rxBufferNum);
 				}
 			}
 			

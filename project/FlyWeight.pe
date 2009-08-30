@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1129
+ProjectModificationStamp=1143
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=912
+ProjectCompNumb=932
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -1995,7 +1995,7 @@ MC9S08GT60CFB
 
 [MC9S08GT60_48:Cpu]
 CompNumb=40
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -2093,7 +2093,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-Value=PTG2_EXTAL
+Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2111,7 +2111,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-Value=PTG1_XTAL
+Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2255,7 +2255,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-Value=PTG0_BKGD_MS
+Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2303,7 +2303,7 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-Value=Vlvd
+Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -2821,7 +2821,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -3968,7 +3968,7 @@ MC9S08GT60CFD
 
 [MC13214:Cpu]
 CompNumb=592
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=ALWAYS_WRITE
 IconName=CPU_CHIP2
 Comment=0
@@ -6310,7 +6310,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6664,7 +6664,7 @@ Value=No
 [Configuration]
 CompNumb=872
 NodeName=XBee HooBee (GW0009)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=40
 ConfigurationComment=0
 
@@ -9567,7 +9567,7 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt0
-Value=
+Value=Vtpm2ch2
 
 [EndOfChilds]
 [ItemState]
@@ -9720,7 +9720,7 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt1
-Value=
+Value=Vtpm2ch3
 
 [EndOfChilds]
 [ItemState]
@@ -9910,7 +9910,7 @@ List=Event
 
 [Init_TPM_HCS08:LED_XBee]
 CompNumb=342
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11988,7 +11988,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_XBee]
 CompNumb=473
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12042,7 +12042,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PinHidden0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
 ReadOnly=No
@@ -12054,7 +12054,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
 ReadOnly=No
@@ -12077,7 +12077,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
 ReadOnly=No
@@ -12089,7 +12089,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
 ReadOnly=No
@@ -12112,7 +12112,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
 ReadOnly=No
@@ -12124,7 +12124,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
 ReadOnly=No
@@ -12147,7 +12147,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
 ReadOnly=No
@@ -12159,7 +12159,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
 ReadOnly=No
@@ -12182,7 +12182,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
 ReadOnly=No
@@ -12194,7 +12194,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
 ReadOnly=No
@@ -12217,7 +12217,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden5
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
 ReadOnly=No
@@ -12229,7 +12229,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
 ReadOnly=No
@@ -12287,7 +12287,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden7
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
 ReadOnly=No
@@ -12299,7 +12299,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin7
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
 ReadOnly=No
@@ -12495,7 +12495,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PinHidden0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
 ReadOnly=No
@@ -12507,7 +12507,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
 ReadOnly=No
@@ -12530,7 +12530,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
 ReadOnly=No
@@ -12542,7 +12542,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
 ReadOnly=No
@@ -12565,7 +12565,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
 ReadOnly=No
@@ -12577,7 +12577,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
 ReadOnly=No
@@ -12600,7 +12600,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
 ReadOnly=No
@@ -12612,7 +12612,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
 ReadOnly=No
@@ -12635,7 +12635,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
 ReadOnly=No
@@ -12647,7 +12647,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
 ReadOnly=No
@@ -12670,7 +12670,7 @@ EnumSymbVal=1
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden5
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
 ReadOnly=No
@@ -12682,7 +12682,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
 ReadOnly=No
@@ -12740,7 +12740,7 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden7
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
 ReadOnly=No
@@ -12752,7 +12752,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin7
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
 ReadOnly=No
@@ -12894,7 +12894,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
@@ -12912,7 +12912,7 @@ Value=USB
 ItemSymbol=Ser
 ReadOnly=No
 UserReadOnly=No
-Value=SCI1
+Value=SCI2
 [ItemState]
 ItemSymbol=IntService
 ReadOnly=No
@@ -12931,12 +12931,12 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=SpecInt
-Value=Vsci1err
+Value=Vsci2err
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=InpInt
-Value=Vsci1rx
+Value=Vsci2rx
 [ItemState]
 ItemSymbol=InitPriority
 ReadOnly=No
@@ -12959,7 +12959,7 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=OutInt
-Value=Vsci1tx
+Value=Vsci2tx
 [ItemState]
 ItemSymbol=IntTxDPriority
 ReadOnly=No
@@ -12989,7 +12989,7 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ErrInt
-Value=Vsci1err
+Value=Vsci2err
 [ItemState]
 ItemSymbol=IntErrorPriority
 ReadOnly=No
@@ -13091,7 +13091,7 @@ UserReadOnly=No
 Value=
 [ItemState]
 ItemSymbol=CtsInt
-Value=Vkeyboard1
+Value=
 [ItemState]
 ItemSymbol=IntCtsPriority
 ReadOnly=No
@@ -13292,7 +13292,7 @@ List=GrupItem
 ItemSymbol=Inp
 ReadOnly=No
 UserReadOnly=No
-Value=PTE1_RxD1
+Value=PTC1_RxD2
 [ItemState]
 ItemSymbol=RxDpinSignal
 ReadOnly=No
@@ -13340,7 +13340,7 @@ List=GrupItem
 ItemSymbol=Out
 ReadOnly=No
 UserReadOnly=No
-Value=PTE0_TxD1
+Value=PTC0_TxD2
 [ItemState]
 ItemSymbol=TxDpinSignal
 ReadOnly=No
@@ -14782,7 +14782,7 @@ List=Event
 
 [Init_GPIO_HCS08:GPIO1]
 CompNumb=854
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -14873,28 +14873,28 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=HiddenPin0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=HiddenPin1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=HiddenPin2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=HiddenPin3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=HiddenPin4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=HiddenPin5
-Value=PTA5_KBI1P5
+Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=HiddenPin6
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=HiddenPin7
-Value=PTA7_KBI1P7
+Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=HiddenPin8
 Value=
@@ -14939,7 +14939,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-Value=PTA0_KBI1P0
+Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pin0Signal
 ReadOnly=No
@@ -14999,7 +14999,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-Value=PTA1_KBI1P1
+Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pin1Signal
 ReadOnly=No
@@ -15059,7 +15059,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-Value=PTA2_KBI1P2
+Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pin2Signal
 ReadOnly=No
@@ -15119,7 +15119,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-Value=PTA3_KBI1P3
+Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pin3Signal
 ReadOnly=No
@@ -15179,7 +15179,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-Value=PTA4_KBI1P4
+Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pin4Signal
 ReadOnly=No

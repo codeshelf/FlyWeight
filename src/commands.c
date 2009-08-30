@@ -87,13 +87,13 @@ ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 // --------------------------------------------------------------------------
 
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID >> SHIFTBITS_PKT_NETID);
+	return ((gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID) >> SHIFTBITS_PKT_NETID);
 }
 
 // --------------------------------------------------------------------------
 
 bool getCommandRequiresACK(BufferCntType inRXBufferNum) {
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID >> SHIFTBITS_PKT_NETID);
+	return ((gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID) >> SHIFTBITS_PKT_NETID);
 }
 
 // --------------------------------------------------------------------------
@@ -101,7 +101,7 @@ bool getCommandRequiresACK(BufferCntType inRXBufferNum) {
 EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
-	EndpointNumType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ENDPOINT] & CMDMASK_ENDPOINT);
+	EndpointNumType result = ((gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ENDPOINT] & CMDMASK_ENDPOINT) >> SHIFTBITS_CMD_ENDPOINT);
 	return result;
 };
 
@@ -133,7 +133,11 @@ ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
 // --------------------------------------------------------------------------
 
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
-	ECmdAssocType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+	ECmdAssocType result = eCmdAssocInvalid;
+	// Make sure the command is actually for us.
+	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
+		result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_SUBCMD]);
+	}
 	return result;
 };
 
