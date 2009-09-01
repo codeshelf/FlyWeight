@@ -122,44 +122,45 @@ void radioReceiveTask(void *pvParameters) {
 				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gsRxPacket.u8Status = 0;
 
-/*				if (gShouldSleep) {
+			/*	if (gShouldSleep) {
 					rxDelay = 25 * SMAC_TICKS_PER_MS;
 					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
 				} else {
 					rxDelay = 1000 * SMAC_TICKS_PER_MS;
 					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
 				}
-				rxDelay = 1000; */
-				MLMERXEnableRequest(&gsRxPacket, 0);
+				rxDelay = 50; */
+				MLMERXEnableRequest(&gsRxPacket, 50 * SMAC_TICKS_PER_MS);
 			}
 
 			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
+			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 5 * portTICK_RATE_MS) == pdPASS) {
 				
 				if ((rxBufferNum == 255) && (!gButtonPressed)) {
 				
 					if (!gShouldSleep) {
 						// We're not sleeping for now until we figure out a better way.
-						gShouldSleep = TRUE;
+						//gShouldSleep = TRUE;
 					} else {
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						//sleepThisRemote(50);
+						sleepThisRemote(50);
 					}
 					
-					// Every 5th time we wake from sleep send an AssocCheckCommand to the controller.
-/*					gSleepCount++;
-					if (gSleepCount >= 10) {
-						gSleepCount = 0;
-						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-						if (transmitPacket(gTXCurBufferNum)){
-						};
-						gAssocCheckCount++;
-						if (gAssocCheckCount > 10) {
-							RESET_MCU;
-						}
-					}
-*/								
+					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.
+//					gSleepCount++;
+//					if (gSleepCount >= 9) {
+//						gSleepCount = 0;
+//						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+//						createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+//						if (transmitPacket(gTXCurBufferNum)){
+//						};
+//						gAssocCheckCount++;
+//						if (gAssocCheckCount > 10) {
+//							RESET_MCU;
+//						}
+//					}
+					// Send an AssocCheck every 5 seconds.
+								
 				} else {
 					// The last read got a packet, so we're active.
 					gShouldSleep = FALSE;
