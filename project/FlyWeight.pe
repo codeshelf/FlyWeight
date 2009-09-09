@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1143
+ProjectModificationStamp=1151
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=932
+ProjectCompNumb=952
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2093,7 +2093,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-Value=
+Value=PTG2_EXTAL
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2111,7 +2111,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-Value=
+Value=PTG1_XTAL
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2255,7 +2255,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-Value=
+Value=PTG0_BKGD_MS
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2303,7 +2303,7 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-Value=
+Value=Vlvd
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -2821,7 +2821,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=
+Value=Vreset
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -5470,7 +5470,7 @@ List=GrupItem
 ItemSymbol=EntryPoint_UserDecl
 ReadOnly=No
 Value=(string list)
-StrgList=7
+StrgList=9
 Line=#include "pub_def.h"
 Line=#include "mcu_hw_config.h"
 Line=#include "MC13192_hw_config.h"
@@ -5478,11 +5478,33 @@ Line=#include "simple_mac.h"
 Line=#include "NV_Data.h"
 Line=//#include "update_nvm.h"
 Line=//#include "flash.h"
+Line=
+Line=UINT8    gFIFO[16];
 [ItemState]
 ItemSymbol=EntryPoint_UserCodeBefore
 ReadOnly=No
 Value=(string list)
-StrgList=17
+StrgList=37
+Line=// Copy the FIO bytes into a structure we can later read.
+Line=
+Line=int pos = 0;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[pos++] = DBGFH;
+Line=gFIFO[pos++] = DBGFL;
+Line=
 Line=	PTADD = 0xFF;
 Line=	PTAD  = 0x00;
 Line=	PTBDD = 0xFF;
@@ -6310,7 +6332,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6782,7 +6804,7 @@ Value=No
 [Configuration]
 CompNumb=911
 NodeName=Xbee2 HooBee (GW0009)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -9910,7 +9932,7 @@ List=Event
 
 [Init_TPM_HCS08:LED_XBee]
 CompNumb=342
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -11988,7 +12010,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_XBee]
 CompNumb=473
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12894,7 +12916,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
@@ -12912,7 +12934,7 @@ Value=USB
 ItemSymbol=Ser
 ReadOnly=No
 UserReadOnly=No
-Value=SCI2
+Value=SCI1
 [ItemState]
 ItemSymbol=IntService
 ReadOnly=No
@@ -12931,12 +12953,12 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=SpecInt
-Value=Vsci2err
+Value=Vsci1err
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=InpInt
-Value=Vsci2rx
+Value=Vsci1rx
 [ItemState]
 ItemSymbol=InitPriority
 ReadOnly=No
@@ -12959,7 +12981,7 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=OutInt
-Value=Vsci2tx
+Value=Vsci1tx
 [ItemState]
 ItemSymbol=IntTxDPriority
 ReadOnly=No
@@ -12989,7 +13011,7 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ErrInt
-Value=Vsci2err
+Value=Vsci1err
 [ItemState]
 ItemSymbol=IntErrorPriority
 ReadOnly=No
@@ -13292,7 +13314,7 @@ List=GrupItem
 ItemSymbol=Inp
 ReadOnly=No
 UserReadOnly=No
-Value=PTC1_RxD2
+Value=PTE1_RxD1
 [ItemState]
 ItemSymbol=RxDpinSignal
 ReadOnly=No
@@ -13340,7 +13362,7 @@ List=GrupItem
 ItemSymbol=Out
 ReadOnly=No
 UserReadOnly=No
-Value=PTC0_TxD2
+Value=PTE0_TxD1
 [ItemState]
 ItemSymbol=TxDpinSignal
 ReadOnly=No
@@ -14782,7 +14804,7 @@ List=Event
 
 [Init_GPIO_HCS08:GPIO1]
 CompNumb=854
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0

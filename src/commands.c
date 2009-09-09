@@ -35,6 +35,7 @@ extern byte					gCCRHolder;
 extern LedFlashRunType		gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType	gLedFlashSeqCount;
 extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
+extern UINT8				gFIFO[16];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -177,6 +178,8 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
+	int pos;
+	
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
 	createPacket(inTXBufferNum, eCommandAssoc, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
 
@@ -190,8 +193,12 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_VER] = 0x01;
 	// Set the system status register
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT] = SRS;
+	
+	for( pos = 0; pos < 16; pos++ ) {
+		gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT + 1 + pos] = gFIFO[pos];
+	}
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_SYSSTAT + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_SYSSTAT + pos;
 };
 
 // --------------------------------------------------------------------------

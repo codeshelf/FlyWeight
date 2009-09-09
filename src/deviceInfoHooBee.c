@@ -14,6 +14,7 @@ $Id$
 #include "PE_Types.h"
 #include "pub_def.h"
 #include "radioCommon.h"
+#include "version.h"
 
 const char DEVICE_DESC[] = "HooBee";
 
@@ -24,8 +25,8 @@ const char DEVICE_DESC[] = "HooBee";
 const UINT8 kActorKVPs = KVP_ENTRIES;
 const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2] = {
 	// Key, value
-	{ "hw_version", "gw0009.r1" },
-	{ "sw_version", "1.0" }
+	{ "hw_version", BOARD_REV },
+	{ "sw_version", FIRMWARE_REV }
 };
 
 const UINT8 kActorEndpoints = ENDPOINT_ENTRIES;

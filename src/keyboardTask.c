@@ -34,14 +34,14 @@ void keyboardTask(void *pvParameters) {
 
 	if (gKeyboardQueue) {
 		for (;;) {
-			WATCHDOG_RESET;
+			//WATCHDOG_RESET;
 			
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {
 				gShouldSleep = FALSE;
 				if (buttonStillPressed()) {
 					// The user is still holding the button.
-					WATCHDOG_RESET;
+					//WATCHDOG_RESET;
 				} else {
 					// The user just released the button.
 					if (gButtonPressed == PTT_BUTTON) {

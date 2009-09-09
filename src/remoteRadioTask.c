@@ -106,7 +106,7 @@ void radioReceiveTask(void *pvParameters) {
 
 		for (;;) {
 
-			WATCHDOG_RESET;
+			//WATCHDOG_RESET;
 			
 			// Don't try to RX if there is no free buffer.
 			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
@@ -290,7 +290,7 @@ void radioTransmitTask(void *pvParameters) {
 
 			gShouldSleep = FALSE;
 			
-			WATCHDOG_RESET;
+			//WATCHDOG_RESET;
 
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();

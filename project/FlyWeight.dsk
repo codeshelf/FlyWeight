@@ -23,7 +23,7 @@ ViewSizeIndex=0
 [ErrorPanel]
 Status=Visible
 WindowState=NORMAL
-Rect=[33|656|722|313]
+Rect=[8|645|722|313]
 
 [ResourceMeter]
 Status=hiden

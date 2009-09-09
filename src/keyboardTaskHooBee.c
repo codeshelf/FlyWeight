@@ -35,14 +35,14 @@ void keyboardTask(void *pvParameters) {
 
 	if (gKeyboardQueue) {
 		for (;;) {
-			WATCHDOG_RESET;
+			//WATCHDOG_RESET;
 
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {
 				gShouldSleep = FALSE;
 				if (buttonStillPressed()) {
 					// The user is still holding the button.
-					WATCHDOG_RESET;
+					//WATCHDOG_RESET;
 				} else {
 					// Wait  a few ms for the remote to stop sending audio packets.
 					vTaskDelay(25 * portTICK_RATE_MS);

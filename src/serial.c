@@ -58,7 +58,7 @@ void readOneChar(USB_TComData *outDataPtr) {
 			if (gCurrentBufferSize == 0) {
 				// If we didn't get any characters then delay for a short while.
 				vTaskDelay(5 * portTICK_RATE_MS);
-				WATCHDOG_RESET;
+				//WATCHDOG_RESET;
 			}
 		}
 	}
