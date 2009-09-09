@@ -35,7 +35,7 @@ void keyboardTask(void *pvParameters) {
 
 	if (gKeyboardQueue) {
 		for (;;) {
-			//WATCHDOG_RESET;
+			WATCHDOG_RESET;
 
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {

@@ -35,7 +35,7 @@ extern byte					gCCRHolder;
 extern LedFlashRunType		gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType	gLedFlashSeqCount;
 extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
-extern UINT8				gFIFO[16];
+extern UINT16				gFIFO[8];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -205,8 +205,10 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
+#if !defined(XBEE_PINOUT)
 	UINT8 saveATD1C;
 	UINT8 saveATD1SC;
+#endif
 	INT8 batteryLevel = 0;
 
 	// Create the command for checking if we're associated

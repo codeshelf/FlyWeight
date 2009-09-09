@@ -35,6 +35,7 @@ extern bool			gShouldSleep;
 extern UINT8		gSleepCount;
 extern UINT8		gButtonPressed;
 extern byte			gCCRHolder;
+extern portTickType	gLastPacketReceivedTick;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -65,9 +66,6 @@ int					gAssocCheckCount = 0;
 // We further divide this by two since we average the cur and prev sample to smooth the waveform.
 // Now defined in Events.c
 //SampleRateType		gMasterSampleRate = 2000 / SAMPLE_SMOOTH_STEPS;
-
-#define				kAssocCheckTickCount	3000 //2.5 * portTICK_RATE_MS * 1000;
-#define				RESET_MCU				__asm DCB 0x8D
 
 // --------------------------------------------------------------------------
 
@@ -106,6 +104,9 @@ void radioReceiveTask(void *pvParameters) {
 
 		for (;;) {
 
+			// Wait until we receive a queue message from the radio receive ISR.
+			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 50 * portTICK_RATE_MS) == pdPASS) {
+				
 			//WATCHDOG_RESET;
 			
 			// Don't try to RX if there is no free buffer.
@@ -133,10 +134,7 @@ void radioReceiveTask(void *pvParameters) {
 				MLMERXEnableRequest(&gsRxPacket, 50 * SMAC_TICKS_PER_MS);
 			}
 
-			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 5 * portTICK_RATE_MS) == pdPASS) {
-				
-				if ((rxBufferNum == 255) && (!gButtonPressed)) {
+			if ((rxBufferNum == 255) && (!gButtonPressed)) {
 				
 					if (!gShouldSleep) {
 						// We're not sleeping for now until we figure out a better way.
@@ -195,6 +193,9 @@ void radioReceiveTask(void *pvParameters) {
 											}
 										}
 									} else if (assocSubCmd == eCmdAssocACK) {
+										// Record the time of the last ACK packet we received.
+										gLastPacketReceivedTick = xTaskGetTickCount();
+							
 										gAssocCheckCount = 0;
 										// If the associate state is 1 then we're not associated with this controller anymore.
 										// We need to reset the device, so that we can start a whole new session.
@@ -262,7 +263,7 @@ void radioReceiveTask(void *pvParameters) {
 					}
 					gAssocCheckCount++;
 					if (gAssocCheckCount > 10) {
-						RESET_MCU;
+					//	RESET_MCU;
 					}
 				}
 			}

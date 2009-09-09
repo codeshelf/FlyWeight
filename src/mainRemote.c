@@ -83,8 +83,15 @@ void vMain( void ) {
 
 // --------------------------------------------------------------------------
 
+portTickType	gLastPacketReceivedTick;
+
 void vApplicationIdleHook( void ) {
 #ifdef __WatchDog
-	WatchDog_Clear();
+//	WatchDog_Clear();
 #endif
+
+	// If we haven't received a packet in 15 seconds then reset.
+	if (xTaskGetTickCount() > (gLastPacketReceivedTick + kAssocCheckTickCount)) {
+		RESET_MCU;	
+	}
 }

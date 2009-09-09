@@ -30,6 +30,8 @@
 // --------------------------------------------------------------------------
 // Globals
 
+portTickType	gLastPacketReceivedTick;
+
 // --------------------------------------------------------------------------
 
 void vMain( void ) {
@@ -67,6 +69,9 @@ void vMain( void ) {
 
 	// Setup the keyboard.
 	KBISetup();
+	
+	// Initialize the network check.
+	gLastPacketReceivedTick = xTaskGetTickCount();
 
 	/* All the tasks have been created - start the scheduler. */
 	vTaskStartScheduler();
@@ -78,5 +83,12 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-	WATCHDOG_RESET;
+#ifdef __WatchDog
+//	WatchDog_Clear();
+#endif
+
+	// If we haven't received a packet in by timeout seconds then reset.
+	if (xTaskGetTickCount() > (gLastPacketReceivedTick + kNetCheckTickCount)) {
+		RESET_MCU;	
+	}
 }
