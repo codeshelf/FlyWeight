@@ -30,6 +30,7 @@ extern LedFlashRunType		gLedFlashSequenceShouldRun;
 // --------------------------------------------------------------------------
 
 void keyboardTask(void *pvParameters) {
+	UINT8 i;
 	UINT8 buttonNum;
 	BufferCntType txBufferNum;
 
@@ -44,8 +45,12 @@ void keyboardTask(void *pvParameters) {
 					// The user is still holding the button.
 					//WATCHDOG_RESET;
 				} else {
-					// Wait  a few ms for the remote to stop sending audio packets.
-					vTaskDelay(25 * portTICK_RATE_MS);
+					// Wait a few ms for the remote to stop sending audio packets.
+					// (But we need a watchdog here, because the background task won't get called.)
+					for (i=0; i < 3; i++) {	
+						vTaskDelay(10 * portTICK_RATE_MS);
+						WATCHDOG_RESET;
+					}
 
 					// Wait until a TX packet is free.
 					while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
@@ -66,8 +71,11 @@ void keyboardTask(void *pvParameters) {
 					TPM1C1SC_CH1IE = 1;
 					TPM1C2SC_CH2IE = 1;
 					
-					// Wait 250ms before restarting to read another button.
-					vTaskDelay(250 * portTICK_RATE_MS);
+					// Wait 200ms before restarting to read another button.
+					for (i=0; i < 20; i++) {	
+						vTaskDelay(10 * portTICK_RATE_MS);
+						WATCHDOG_RESET;
+					}
 
 					// Start looking for another keypress.
 					restartKeyboardISR();
