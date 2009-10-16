@@ -16,6 +16,9 @@
 #include "pub_def.h"
 #include "remoteMgmtTask.h"
 
+#define getMax(a,b)    (((a) > (b)) ? (a) : (b))
+#define getMin(a,b)    (((a) < (b)) ? (a) : (b))
+
 xTaskHandle			gHooBeeTask = NULL;
 xQueueHandle 		gHooBeeQueue;
 
@@ -28,7 +31,10 @@ void hooBeeTask(void *pvParameters) {
 
 	UINT8 i;
 	UINT8 j;
+	UINT8 k;
 	portTickType	baseTime;
+	portTickType	offtime;
+	portTickType	ontime;
 
 	gLedFlashSequenceShouldRun = FALSE;
 
@@ -45,23 +51,31 @@ void hooBeeTask(void *pvParameters) {
 	for (;;) {
 		if (gLedFlashSequenceShouldRun) {
 			// Make the sequence start on an even 5 seconds.
-			baseTime = (xTaskGetTickCount() % 5000);
-			vTaskDelayUntil(&baseTime, 5000);
+			//baseTime = (xTaskGetTickCount() % 5000);
+			//vTaskDelayUntil(&baseTime, 5000);
 
-			for (j = 0; j < gLedFlashSeqCount; j++) {
-				for (i = 0; i < gLedFlashSeqBuffer[j].repeat; i++) {
-
-						TPM1C0V = gLedFlashSeqBuffer[j].redValue;
-						TPM1C1V = gLedFlashSeqBuffer[j].greenValue;
-						TPM1C2V = gLedFlashSeqBuffer[j].blueValue;
-
-						vTaskDelay(gLedFlashSeqBuffer[j].timeOnMillis);
-
-						TPM1C0V = 0;
-						TPM1C1V = 0;
-						TPM1C2V = 0;
-
-						vTaskDelay(gLedFlashSeqBuffer[j].timeOffMillis);
+			for (i = 0; i < gLedFlashSeqCount; i++) {
+				ontime = gLedFlashSeqBuffer[i].timeOnMillis;
+				offtime = gLedFlashSeqBuffer[i].timeOffMillis;
+				for (j = 0; j < gLedFlashSeqBuffer[i].repeat; j++) {
+					for (k = ontime; k > 0; k--) {
+						TPM1C0V = getMax(0, gLedFlashSeqBuffer[i].redValue - k);
+						TPM1C1V = getMax(0, gLedFlashSeqBuffer[i].greenValue - k);
+						TPM1C2V = getMax(0, gLedFlashSeqBuffer[i].blueValue - k);
+						vTaskDelay(1);
+					}
+					
+					for (k = 0; k < ontime; k++) {
+						TPM1C0V = getMax(0, gLedFlashSeqBuffer[i].redValue - k);
+						TPM1C1V = getMax(0, gLedFlashSeqBuffer[i].greenValue - k);
+						TPM1C2V = getMax(0, gLedFlashSeqBuffer[i].blueValue - k);
+						vTaskDelay(1);
+					}
+					
+					TPM1C0V = 0;
+					TPM1C1V = 0;
+					TPM1C2V = 0;
+					vTaskDelay(offtime);
 				}
 			}
 		} else {
