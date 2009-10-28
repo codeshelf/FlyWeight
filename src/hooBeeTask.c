@@ -32,7 +32,6 @@ void hooBeeTask(void *pvParameters) {
 	UINT8 i;
 	UINT8 j;
 	UINT8 k;
-	portTickType	baseTime;
 	portTickType	offtime;
 	portTickType	ontime;
 
@@ -58,18 +57,18 @@ void hooBeeTask(void *pvParameters) {
 				ontime = gLedFlashSeqBuffer[i].timeOnMillis;
 				offtime = gLedFlashSeqBuffer[i].timeOffMillis;
 				for (j = 0; j < gLedFlashSeqBuffer[i].repeat; j++) {
-					for (k = ontime; k > 0; k--) {
+					for (k = ontime; k > 0; k-=2) {
 						TPM1C0V = getMax(0, gLedFlashSeqBuffer[i].redValue - k);
 						TPM1C1V = getMax(0, gLedFlashSeqBuffer[i].greenValue - k);
 						TPM1C2V = getMax(0, gLedFlashSeqBuffer[i].blueValue - k);
-						vTaskDelay(1);
+						vTaskDelay(2);
 					}
 					
-					for (k = 0; k < ontime; k++) {
+					for (k = 0; k < ontime; k+=2) {
 						TPM1C0V = getMax(0, gLedFlashSeqBuffer[i].redValue - k);
 						TPM1C1V = getMax(0, gLedFlashSeqBuffer[i].greenValue - k);
 						TPM1C2V = getMax(0, gLedFlashSeqBuffer[i].blueValue - k);
-						vTaskDelay(1);
+						vTaskDelay(2);
 					}
 					
 					TPM1C0V = 0;
