@@ -628,23 +628,22 @@ UINT8    gFIFO[16];
         <User_code_before_PE_initialization>
 // Copy the FIO bytes into a structure we can later read.
 
-int pos = 0;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
-gFIFO[pos++] = DBGFH;
-gFIFO[pos++] = DBGFL;
+gFIFO[0] = DBGFH;
+gFIFO[1] = DBGFL;
+gFIFO[2] = DBGFH;
+gFIFO[3] = DBGFL;
+gFIFO[4] = DBGFH;
+gFIFO[5] = DBGFL;
+gFIFO[6] = DBGFH;
+gFIFO[7] = DBGFL;
+gFIFO[8] = DBGFH;
+gFIFO[9] = DBGFL;
+gFIFO[10] = DBGFH;
+gFIFO[11] = DBGFL;
+gFIFO[12] = DBGFH;
+gFIFO[13] = DBGFL;
+gFIFO[14] = DBGFH;
+gFIFO[15] = DBGFL;
 
 	PTADD = 0xFF;
 	PTAD  = 0x00;

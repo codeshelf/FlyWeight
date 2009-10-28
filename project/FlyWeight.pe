@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1151
+ProjectModificationStamp=1169
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=952
+ProjectCompNumb=992
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2170,7 +2170,7 @@ List=ListItem
 ItemSymbol=InternalMappingGrp
 ReadOnly=No
 UserReadOnly=No
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -2898,7 +2898,7 @@ List=GrupItem
 [ItemState]
 ItemSymbol=HighSpeed
 Value=Yes
-Expanded=Yes
+Expanded=No
 
 [Childs]
 List=GrupItem
@@ -5484,26 +5484,25 @@ Line=UINT8    gFIFO[16];
 ItemSymbol=EntryPoint_UserCodeBefore
 ReadOnly=No
 Value=(string list)
-StrgList=37
+StrgList=36
 Line=// Copy the FIO bytes into a structure we can later read.
 Line=
-Line=int pos = 0;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
-Line=gFIFO[pos++] = DBGFH;
-Line=gFIFO[pos++] = DBGFL;
+Line=gFIFO[0] = DBGFH;
+Line=gFIFO[1] = DBGFL;
+Line=gFIFO[2] = DBGFH;
+Line=gFIFO[3] = DBGFL;
+Line=gFIFO[4] = DBGFH;
+Line=gFIFO[5] = DBGFL;
+Line=gFIFO[6] = DBGFH;
+Line=gFIFO[7] = DBGFL;
+Line=gFIFO[8] = DBGFH;
+Line=gFIFO[9] = DBGFL;
+Line=gFIFO[10] = DBGFH;
+Line=gFIFO[11] = DBGFL;
+Line=gFIFO[12] = DBGFH;
+Line=gFIFO[13] = DBGFL;
+Line=gFIFO[14] = DBGFH;
+Line=gFIFO[15] = DBGFL;
 Line=
 Line=	PTADD = 0xFF;
 Line=	PTAD  = 0x00;

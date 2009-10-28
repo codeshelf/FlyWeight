@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 9/8/2009, 4:00 PM
+**     Date/Time : 10/28/2009, 1:41 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -239,7 +239,7 @@ void Cpu_SetHighSpeed(void)
     ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
     while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     {asm sta SRS;}                    /* Reset watchdog counter */
+     //{asm sta SRS;}                    /* Reset watchdog counter */
     }
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
@@ -267,7 +267,7 @@ void Cpu_SetSlowSpeed(void)
     ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
     while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     {asm sta SRS;}                    /* Reset watchdog counter */
+     //{asm sta SRS;}                    /* Reset watchdog counter */
     }
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
@@ -305,23 +305,22 @@ void _EntryPoint(void)
 
   /*** User code before PE initialization ***/
   // Copy the FIO bytes into a structure we can later read.
-  int pos = 0;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
-  gFIFO[pos++] = DBGFH;
-  gFIFO[pos++] = DBGFL;
+  gFIFO[0] = DBGFH;
+  gFIFO[1] = DBGFL;
+  gFIFO[2] = DBGFH;
+  gFIFO[3] = DBGFL;
+  gFIFO[4] = DBGFH;
+  gFIFO[5] = DBGFL;
+  gFIFO[6] = DBGFH;
+  gFIFO[7] = DBGFL;
+  gFIFO[8] = DBGFH;
+  gFIFO[9] = DBGFL;
+  gFIFO[10] = DBGFH;
+  gFIFO[11] = DBGFL;
+  gFIFO[12] = DBGFH;
+  gFIFO[13] = DBGFL;
+  gFIFO[14] = DBGFH;
+  gFIFO[15] = DBGFL;
         PTADD = 0xFF;
         PTAD  = 0x00;
         PTBDD = 0xFF;
@@ -356,7 +355,7 @@ void _EntryPoint(void)
   setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
-   {asm sta SRS;}                      /* Reset watchdog counter */
+   //{asm sta SRS;}                      /* Reset watchdog counter */
   }
   /*** End of PE initialization code after reset ***/
 
