@@ -237,7 +237,7 @@
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
             <group name="Clock input pin">
-              <Pin_name v="PTG2_EXTAL"/>
+              <Pin_name v=""/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -264,7 +264,7 @@
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v="PTG0_BKGD_MS"/>
+          <BDM_pin v=""/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -680,7 +680,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTA3 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -715,7 +714,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTA4 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -750,7 +748,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTA5 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -785,7 +782,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTB1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -854,7 +850,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTD0 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>

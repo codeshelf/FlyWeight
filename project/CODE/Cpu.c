@@ -7,7 +7,7 @@
 **     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/28/2009, 1:41 PM
+**     Date/Time : 11/25/2009, 3:49 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -239,7 +239,7 @@ void Cpu_SetHighSpeed(void)
     ICGC2 = 0x30;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
     while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     //{asm sta SRS;}                    /* Reset watchdog counter */
+     {asm sta SRS;}                    /* Reset watchdog counter */
     }
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
@@ -267,7 +267,7 @@ void Cpu_SetSlowSpeed(void)
     ICGC2 = 0x50;                      /* Initialization of the ICG control register 2 */
     ICGTRM = *(byte*)0xFFBE;           /* Initialize ICGTRM register from a non volatile memory */
     while(!ICGS1_LOCK) {               /* Wait until FLL is locked */
-     //{asm sta SRS;}                    /* Reset watchdog counter */
+     {asm sta SRS;}                    /* Reset watchdog counter */
     }
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
@@ -355,7 +355,7 @@ void _EntryPoint(void)
   setReg8(ICGC2, 0x30);                 
   ICGTRM = *(unsigned char*)0xFFBE;    /* Initialize ICGTRM register from a non volatile memory */
   while(!ICGS1_LOCK) {                 /* Wait */
-   //{asm sta SRS;}                      /* Reset watchdog counter */
+   {asm sta SRS;}                      /* Reset watchdog counter */
   }
   /*** End of PE initialization code after reset ***/
 
