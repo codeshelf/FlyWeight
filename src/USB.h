@@ -52,11 +52,11 @@
 **
 **
 **     Contents  :
-**         SendChar        - byte USB_SendChar(USB_TComData Chr);
-**         RecvBlock       - byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
-**         SendBlock       - byte USB_SendBlock(USB_TComData *Ptr,word Size,word *Snd);
-**         GetCharsInRxBuf - word USB_GetCharsInRxBuf(void);
-**         GetError        - byte USB_GetError(USB_TError *Err);
+**         SendChar        - gwUINT8 USB_SendChar(USB_TComData Chr);
+**         RecvBlock       - gwUINT8 USB_RecvBlock(USB_TComData *Ptr,gwUINT16 Size,gwUINT16 *Rcv);
+**         SendBlock       - gwUINT8 USB_SendBlock(USB_TComData *Ptr,gwUINT16 Size,gwUINT16 *Snd);
+**         GetCharsInRxBuf - gwUINT16 USB_GetCharsInRxBuf(void);
+**         GetError        - gwUINT8 USB_GetError(USB_TError *Err);
 **
 **     (c) Copyright UNIS, spol. s r.o. 1997-2005
 **     UNIS, spol. s r.o.
@@ -72,7 +72,9 @@
 
 /* MODULE USB. */
 
-#include "Cpu.h"
+//#include "Cpu.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 
 #if defined(MC13192EVB)
 #define	SCID			SCI2D
@@ -92,6 +94,9 @@
 #define	SCIC3			SCI2C3
 #define RTS				PTAD_PTAD7
 #define RTS_SETUP		PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
+#define CTS_ON  		PTAD_PTAD6 = 0;
+#define CTS_OFF  		PTAD_PTAD6 = 1;
+#define CTS_SETUP      	PTAPE_PTAPE6 = 0; PTADD_PTADD6 = 1;
 #else
 #define	SCID			SCI1D
 #define	SCIBDH			SCI1BDH
@@ -110,49 +115,54 @@
 #define	SCIC3			SCI1C3
 #define RTS				PTAD_PTAD7
 #define RTS_SETUP		PTAPE_PTAPE7 = 0; PTADD_PTADD7 = 0;
+#define CTS_ON  		PTAD_PTAD6 = 0;
+#define CTS_OFF  		PTAD_PTAD6 = 1;
+#define CTS_SETUP      	PTAPE_PTAPE6 = 0; PTADD_PTADD6 = 1;
 #endif
 
 
 #ifndef __BWUserType_tItem
 #define __BWUserType_tItem
   typedef struct {                     /* Item of the index table for possible baudrates */
-    word div;                          /* divisor */
-    byte val;                          /* values of the prescalers */
+	gwUINT16 div;                          /* divisor */
+	gwUINT8 val;                          /* values of the prescalers */
   } tItem;
 #endif
 #ifndef __BWUserType_USB_TError
 #define __BWUserType_USB_TError
   typedef union {
-    byte err;
+    gwUINT8 err;
     struct {
-      bool OverRun  : 1;               /* Overrun error flag */
-      bool Framing  : 1;               /* Framing error flag */
-      bool Parity   : 1;               /* Parity error flag */
-      bool RxBufOvf : 1;               /* Rx buffer full error flag */
-      bool Noise    : 1;               /* Noise error flag */
-      bool Break    : 1;               /* Break detect */
-      bool LINSync  : 1;               /* LIN synchronization error */
+      gwBoolean OverRun  : 1;               /* Overrun error flag */
+      gwBoolean Framing  : 1;               /* Framing error flag */
+      gwBoolean Parity   : 1;               /* Parity error flag */
+      gwBoolean RxBufOvf : 1;               /* Rx buffer full error flag */
+      gwBoolean Noise    : 1;               /* Noise error flag */
+      gwBoolean Break    : 1;               /* Break detect */
+      gwBoolean LINSync  : 1;               /* LIN synchronization error */
     } errName;
   } USB_TError;                        /* Error flags. For languages which don't support bit access is byte access only to error flags possible. */
 #endif
 
 #ifndef __BWUserType_USB_TComData
 #define __BWUserType_USB_TComData
-  typedef byte USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
+  typedef gwUINT8 USB_TComData ;          /* User type for communication. Size of this type depends on the communication data witdh. */
 #endif
 
 #define USB_INP_BUF_SIZE 150           /* Input buffer size */
 #define USB_OUT_BUF_SIZE 5             /* Output buffer size */
 #define USB_RTS_BUF_SIZE 130           /* Number of characters in rcv. buffer when RTS signal gets activated */
 
-extern byte USB_OutLen;                /* Length of the output buffer content */
-extern byte USB_InpLen;                /* Length of the input buffer content */
+extern gwUINT8 USB_OutLen;                /* Length of the output buffer content */
+extern gwUINT8 USB_InpLen;                /* Length of the input buffer content */
 
 void getFromRXBuffer(void);
 void USB_SetHigh(void);
 void USB_SetSlow(void);
 
-byte USB_RecvChar(USB_TComData *Chr);
+void USB_ReadOneChar(USB_TComData *outDataPtr);
+void USB_CheckInterface();
+gwUINT8 USB_RecvChar(USB_TComData *Chr);
 /*
 ** ===================================================================
 **     Method      :  USB_RecvChar (bean AsynchroSerial)
@@ -161,7 +171,7 @@ byte USB_RecvChar(USB_TComData *Chr);
 **         If any data is received, this method returns one
 **         character, otherwise it returns an error code (it does
 **         not wait for data). This method is enabled only if the
-**         receiver property is enabled. 
+**         receiver property is enabled.
 **         DMA mode:
 **         If DMA controller is available on the selected CPU and
 **         the receiver is configured to use DMA controller then
@@ -193,7 +203,7 @@ byte USB_RecvChar(USB_TComData *Chr);
 ** ===================================================================
 */
 
-byte USB_SendChar(USB_TComData Chr);
+gwUINT8 USB_SendChar(USB_TComData Chr);
 /*
 ** ===================================================================
 **     Method      :  USB_SendChar (bean AsynchroSerial)
@@ -225,7 +235,7 @@ byte USB_SendChar(USB_TComData Chr);
 ** ===================================================================
 */
 
-byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
+gwUINT8 USB_RecvBlock(USB_TComData *Ptr,gwUINT16 Size,gwUINT16 *Rcv);
 /*
 ** ===================================================================
 **     Method      :  USB_RecvBlock (bean AsynchroSerial)
@@ -270,7 +280,7 @@ byte USB_RecvBlock(USB_TComData *Ptr,word Size,word *Rcv);
 ** ===================================================================
 */
 
-byte USB_SendBlock(USB_TComData * Ptr,word Size,word *Snd);
+gwUINT8 USB_SendBlock(USB_TComData * Ptr,gwUINT16 Size,gwUINT16 *Snd);
 /*
 ** ===================================================================
 **     Method      :  USB_SendBlock (bean AsynchroSerial)
@@ -325,7 +335,7 @@ byte USB_SendBlock(USB_TComData * Ptr,word Size,word *Snd);
 ** ===================================================================
 */
 
-byte USB_GetError(USB_TError *Err);
+gwUINT8 USB_GetError(USB_TError *Err);
 /*
 ** ===================================================================
 **     Method      :  USB_GetError (bean AsynchroSerial)
@@ -347,37 +357,37 @@ byte USB_GetError(USB_TError *Err);
 ** ===================================================================
 */
 
-__interrupt void USB_InterruptRx(void);
+gwISR USB_InterruptRx(void);
 /*
 ** ===================================================================
 **     Method      :  USB_InterruptRx (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the receive interrupt of the selected 
+**         The method services the receive interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
 */
 
-__interrupt void USB_InterruptTx(void);
+gwISR USB_InterruptTx(void);
 /*
 ** ===================================================================
 **     Method      :  USB_InterruptTx (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the transmit interrupt of the selected 
+**         The method services the transmit interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
 */
 
-__interrupt void USB_InterruptError(void);
+gwISR USB_InterruptError(void);
 /*
 ** ===================================================================
 **     Method      :  USB_InterruptError (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the error interrupt of the selected 
+**         The method services the error interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
@@ -390,8 +400,8 @@ void USB_Init(void);
 **     Method      :  USB_Init (bean AsynchroSerial)
 **
 **     Description :
-**         Initializes the associated peripheral(s) and the bean's 
-**         internal variables. The method is called automatically as a 
+**         Initializes the associated peripheral(s) and the bean's
+**         internal variables. The method is called automatically as a
 **         part of the application initialization code.
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================

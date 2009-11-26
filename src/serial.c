@@ -2,31 +2,25 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #include "serial.h"
 #include "task.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 
-#define	kBufferSize		25
-#define	kHighWaterMark  10
-
-static UINT8			gCurrentBufferPos = 0;
-static UINT8			gCurrentBufferSize = 0;
-static USB_TComData		gSCIBuffer[kBufferSize];
 ELocalStatusType		gLocalDeviceState;
-
-void checkUSBInterface(void);
 
 // --------------------------------------------------------------------------
 
 void sendOneChar(USB_TComData inDataPtr) {
 
-	// Send a character. 
+	// Send a character.
 	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	while (USB_SendChar(inDataPtr) != ERR_OK) {
+	while (USB_SendChar(inDataPtr) != GW_USB_OK) {
 		// Consider a timeout where we just reset the MCU.
 	};
 
@@ -35,43 +29,17 @@ void sendOneChar(USB_TComData inDataPtr) {
 // --------------------------------------------------------------------------
 
 void readOneChar(USB_TComData *outDataPtr) {
-
-	// Read a character. 
-	// (For some stupid reason the Freescale USB routine doesn't try very hard, so we have to loop until it succeeds.)
-/*	UINT8 error;
-	do {
-		error = USB_RecvChar(inDataPtr);
-		if ((error != ERR_OK) && (error != ERR_RXEMPTY)) {
-			error ++;
-			error --;
-		}
-	} while (error == ERR_RXEMPTY);
-*/
-	// New way of reading.
-#pragma MESSAGE DISABLE C4000 /* WARNING C4000: Always true */
-	while (TRUE) {
-		if (gCurrentBufferPos < gCurrentBufferSize) {
-			*outDataPtr = gSCIBuffer[gCurrentBufferPos++];
-			return;
-		} else {
-			checkUSBInterface();
-			if (gCurrentBufferSize == 0) {
-				// If we didn't get any characters then delay for a short while.
-				vTaskDelay(5 * portTICK_RATE_MS);
-				//WATCHDOG_RESET;
-			}
-		}
-	}
+	USB_ReadOneChar(outDataPtr);
 }
 
 // --------------------------------------------------------------------------
 
-void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
+void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 
 //	UINT16	bytesSent;
-	UINT16	totalBytesSent;
-//	byte	status;
- 	word 	charsSent;
+	gwUINT16	totalBytesSent;
+//	gwUINT8	status;
+ 	gwUINT16 	charsSent;
 
 	// Send the packet contents to the controller via the serial port.
 	// First send the framing character.
@@ -85,9 +53,9 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 //		status = USB_SendBlock(inDataPtr + totalBytesSent, inSize - totalBytesSent, &bytesSent);
 //		totalBytesSent += bytesSent;
 //	}
- 
+
 	for (charsSent = 0; charsSent < inSize; charsSent++) {
-		
+
         switch(*inDataPtr) {
 			/* if it's the same code as an END character, we send a
 			 * special two character code so as not to make the
@@ -115,7 +83,7 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 
 		inDataPtr++;
 	}
-		
+
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
 	sendOneChar(END);
 	sendOneChar(END);
@@ -126,12 +94,12 @@ void serialTransmitFrame(USB_TComData *inDataPtr, word inSize) {
 BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
-//	byte result;
+//	gwUINT8 result;
 //	USB_TError usbError;
 
 	// Loop reading bytes until we put together a whole packet.
 	// Make sure not to copy them into the packet if we run out of room.
-	
+
 	// If there's no character waiting then delay until we get one.
 //	if (USB_GetCharsInRxBuf() == 0)
 //		vTaskDelay(1);
@@ -146,23 +114,23 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 //			USB_GetError(&usbError);
 //		} else {
 		readOneChar(&nextByte);
-		
-		{		
+
+		{
 			switch (nextByte) {
-	
+
 				// If it's an END character then we're done with the packet.
 				case END:
 					if (bytesReceived)
 						return bytesReceived;
 					else
 						break;
-	
+
 				/* If it's the same code as an ESC character, wait and get another character and then figure out
 				 * what to store in the packet based on that.
 				 */
 				case ESC:
 					readOneChar(&nextByte);
-	
+
 					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
 					 * seems to be to leave the byte alone and just stuff it into the packet
 					 */
@@ -174,7 +142,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 							nextByte = ESC;
 							break;
 					}
-	
+
 				// Here we fall into the default handler and let it store the character for us.
 				default:
 					if (bytesReceived < inMaxPacketSize)
@@ -184,79 +152,3 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 	}
 }
 
-// --------------------------------------------------------------------------
-
-/*
-	We're not able to read the SCI using interrupts.  The problem is that the data rate is very
-	high (in order to support multiple audio channels).  The RDRF fills very fast,	and if we 
-	(or FreeRTOS or SMAC) have suspended global interrupts then we don't get the Rx interrupt
-	for that RDRF flag.  Moreover, when interrupts get turned back on we have no way of knowing
-	we just missed the RDRF flag.  The result is that the Rx buffer doesn't get cleared and we end
-	up with a serial overrun error.  At 250000 baud we're missing about 2-3% of the characters.
-	Due to the low-power nature of the device, we are not really able to handle such a high
-	level of data loss.  (There is no retry, ECC, etc.)
-	
-	So...
-	
-	What we do instead is we poll the SCI.  We've ramped the baud rate to the maximum (1250000 baud)
-	and when we need a character we check to see if a local buffer has any.  If that buffer is empty
-	then we disable global interrupts, assert RTS and check for arriving characters.  After we
-	get a certain numbers of characters into the local buffer, we unassert RTS and keep reading characters 
-	until RDRF settles.  After that we reenable global interrupts and continue processing of the 
-	normal OS tasks.  At 1250000 baud it takes about 20-30 uSecs to read 10 or so characters.  
-	This is only 1/10th of an OS quantum.  Since the gateway only services the SCI and the radio 
-	it is safe to suspend global interrupts for this short time.  (The radio asserts the IRQ pin which
-	we detect immediately when global interrupts resume.)
-*/
-
-#define kEndCTSTicks		1 * portTICK_RATE_MS
-#define kEndReadTicks		2 * portTICK_RATE_MS
-
-void checkUSBInterface() {
-
-	byte 			ccrHolder;
-	UINT8			readCheck;
-	//USB_TComData	lostChar;
-	
-	gCurrentBufferPos = 0;
-	gCurrentBufferSize = 0;
-	
-	#ifdef __WatchDog
-	WatchDog_Clear();
-	#endif
-	
-	EnterCriticalArg(ccrHolder);
-
-	// Turn CTS on.
-	CTS_ON;
-
-	readCheck = 0;
-	while (TRUE) {
-	
-		// Read characters until the high water mark, or keep reading characters until RDRF settles.
-		readCheck++;
-		while (SCIS1_RDRF) {
-		//	if (gCurrentBufferSize <= kBufferSize) {
-				gSCIBuffer[gCurrentBufferSize++] = SCID;
-				// If we've read to the high water mark then turn CTS off.
-				if (gCurrentBufferSize > kHighWaterMark) {
-					CTS_OFF;
-				}
-		//	} else {
-		//		lostChar = SCID;
-		//	}
-			readCheck = 0;
-		}
-		
-		// If we haven't read anything in a while then prepare to exit.
-		// (CTS is already off from the next test below.)
-		if (readCheck > 50) {
-			break;
-		} else if (readCheck > 25) {
-			CTS_OFF;
-		}
-	}
-		
-	// Resume normal OS/interrupt processing.
-	ExitCriticalArg(ccrHolder);
-}

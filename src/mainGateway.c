@@ -2,9 +2,15 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
+<<<<<<< mainGateway.c
+
+	$Id$
+	$Name$
+=======
 	
 	$Id$
 	$Name$	
+>>>>>>> 1.22
 */
 
 // --------------------------------------------------------------------------
@@ -13,57 +19,68 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "pub_def.h"
-#include "smac_config.h"
-#include "mcu_hw_config.h"
-#include "MC13192_hw_config.h"
-#include "simple_mac.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 #include "gatewayRadioTask.h"
 #include "gatewayMgmtTask.h"
 #include "commands.h"
-#include "CPU.h"
-#ifdef __WatchDog
-	#include "WatchDog.h"
+#ifdef MC1322X
+    #include "MacaInterrupt.h"
+    #include "TransceiverConfigMngmnt.h"
+	#include "Leds.h"
 #endif
-#include "NV_Data.h"
 
 // --------------------------------------------------------------------------
 // Globals
 
-extern volatile const Init_NV_RAM_Struct_t NV_RAM0;
-extern volatile const NV_RAM_Struct_t NV_RAM1;
-extern volatile NV_RAM_Struct_t *NV_RAM_ptr;
+extern void ResetMaca(void);
+
 // --------------------------------------------------------------------------
 
-void vMain( void ) {
+void Main( void ) {
+
+#if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
 	// The EXTAL has to be setup and reserved BEFORE initialization of the ICG in PE init.
 	//MCUInit();
 	//MC13192Init();
 	//MLMESetMC13192ClockRate(0);
-#ifdef XBEE
-	xbeeInit();
-#endif
-	gControllerState = eControllerStateInit;
-	MLMEMC13192PAOutputAdjust(15);
+
+	// Setup the SMAC glue.
+	initSMACRadioQueueGlue(gRadioReceiveQueue);
+
+#else
+	ITC_Init();
+	IntAssignHandler(gMacaInt_c, (IntHandlerFunc_t) MACA_Interrupt);
+	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c
+	ITC_EnableInterrupt(gMacaInt_c);
+	IntDisableAll();
+	ResetMaca();
+	MLMERadioInit();
+	IntEnableAll();
 	
+	LED_Init();
+	
+	crmCopCntl_t copCntl;
+	copCntl.bit.copEn = TRUE;
+	copCntl.bit.copTimeOut = 127;
+	copCntl.bit.copWP = TRUE;
+	copCntl.bit.copOut = 0;
+	CRM_CopCntl(copCntl);
+	
+#endif
+
+	gControllerState = eControllerStateInit;
+	GW_RADIO_GAIN_ADJUST(15);
+
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
 	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
 	xTaskCreate(serialReceiveTask, (const signed portCHAR * const) "SerialRecv", configMINIMAL_STACK_SIZE, NULL, SERIAL_RECV_PRIORITY, &gSerialReceiveTask );
-#if  defined(MC13192EVB) || defined (MC13192SARD)
-	//xTaskCreate(LEDBlinkTask, (const signed portCHAR * const) "LED Blink", configMINIMAL_STACK_SIZE, NULL, LED_BLINK_PRIORITY, NULL );
-#endif
-//	xTaskCreate(gatewayMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gGatewayManagementTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
-//	gLEDBlinkQueue = xQueueCreate(LED_BLINK_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(UINT8));
-//	gGatewayMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(RemoteAddrType));
 
-	// Setup the SMAC glue.
-	initSMACRadioQueueGlue(gRadioReceiveQueue);
-	
 	// Set the state to running
 	gControllerState = eControllerStateRun;
 
@@ -77,7 +94,5 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-	#ifdef __WatchDog
-	WatchDog_Clear();
-	#endif
+	GW_WATCHDOG_RESET;
 }

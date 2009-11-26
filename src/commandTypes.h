@@ -11,12 +11,10 @@
 #define COMMANDSTYPES_H
 
 // Project includes
-#include "PE_Types.h"
-#include "pub_def.h"
+#include "gwTypes.h"
 #include "WatchDog.h"
 #define WATCHDOG_RESET			WatchDog_Clear();
 //#define WATCHDOG_RESET
-
 // --------------------------------------------------------------------------
 // Definitions.
 
@@ -99,15 +97,15 @@
 #define CMDPOS_BEHAVIOR_SUBCMD	CMDPOS_BEHAVIOR_CNT + 1
 
 // Command masks
-#define PACKETMASK_VERSION		0b11000000
-#define PACKETMASK_RSV_HDR		0b00110000
-#define PACKETMASK_NETID		0b00001111
-#define CMDMASK_SRC_ADDR		0b11110000
-#define CMDMASK_DST_ADDR		0b00001111
-#define CMDMASK_CMDID			0b11110000
-#define CMDMASK_ENDPOINT		0b00001111
-#define CMDMASK_ASSIGN_ADDR		0b11110000
-#define CMDMASK_ASSIGN_NETID	0b00001111
+#define PACKETMASK_VERSION		0xc0    /* 0b11000000 */
+#define PACKETMASK_RSV_HDR		0x30	/* 0b00110000 */
+#define PACKETMASK_NETID		0x38    /* 0b00111000 */
+#define CMDMASK_SRC_ADDR		0xf0    /* 0b11110000 */
+#define CMDMASK_DST_ADDR		0x0f    /* 0b00001111 */
+#define CMDMASK_CMDID			0xf0    /* 0b11110000 */
+#define CMDMASK_ENDPOINT		0x0f    /* 0b00001111 */
+#define CMDMASK_ASSIGN_ADDR		0xf0    /* 0b11110000 */
+#define CMDMASK_ASSIGN_NETID	0xe0    /* 0b11100000 */
 
 #define SHIFTBITS_PKT_VER		6
 #define SHIFTBITS_RSV_HDR		4
@@ -272,4 +270,4 @@ typedef enum {
 // Globals.
 
 
-#endif COMMANDSTYPES_H
+#endif /* COMMANDSTYPES_H */

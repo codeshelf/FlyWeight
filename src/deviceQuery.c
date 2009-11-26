@@ -14,7 +14,7 @@
 #include "PE_Types.h"
 #include "pub_def.h"
 
-#ifdef _TOY_NETWORK_
+#ifdef IS_TOY_NETWORK
 	#include "deviceQuery.h"
 #else
 	#include "terminalQuery.h"

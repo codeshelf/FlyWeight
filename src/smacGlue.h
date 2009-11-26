@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #ifndef SMACGLUE_H
@@ -16,11 +16,11 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "task.h"
-#include "pub_def.h"
+#include "gwTypes.h"
 
-typedef enum { 
-	eRadioUnknown, 
-	eRadioReceive, 
+typedef enum {
+	eRadioUnknown,
+	eRadioReceive,
 	eRadioReset
 } ERadioState;
 

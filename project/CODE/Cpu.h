@@ -4,10 +4,10 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : MC13214
-**     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
+**     Version   : Bean 01.065, Driver 01.30, CPU db: 2.87.124
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 3:49 PM
+**     Date/Time : 11/25/2009, 5:40 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -21,7 +21,7 @@
 **         DisableInt   - void Cpu_DisableInt(void);
 **         Delay100US   - void Cpu_Delay100US(word us100);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2008
+**     (c) Copyright UNIS, spol. s r.o. 1997-2007
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -65,7 +65,7 @@
 #define CPU_EXT_CLK_HZ              0x003D0900UL /* Value of the main clock frequency (crystal or external clock) in Hz */
 #define CPU_INT_CLK_HZ              0x0003B538UL /* Value of the internal oscillator clock frequency in Hz */
 
-#define CPU_TICK_NS                 0xFAU /* CPU tick is a unit derived from the frequency of external clock source. If no external clock is enabled or available it is derived from the value of internal clock source. The value of this constant represents period of the clock source in ns. */
+#define CPU_TICK_NS                 0xFAU /* CPU tick is a unit derived from the frequency of external clock source. If no external clock is enabled od available it is derived from the value of internal clock source. The value of this constant represents period of the clock source in ns */
 
 #define CPU_CORE_HCS08                 /* Specification of the core type of the selected cpu */
 #define CPU_DERIVATIVE_MC13213         /* Name of the selected cpu derivative */
@@ -189,7 +189,7 @@ void PE_low_level_init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.03 [04.07]
+**     This file was created by UNIS Processor Expert 3.02 [04.05]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

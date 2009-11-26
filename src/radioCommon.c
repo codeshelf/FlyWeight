@@ -8,18 +8,17 @@
 */
 
 #include "radioCommon.h"
-#include "cpu.h"
 
-byte	gCCRHolder;
+gwUINT8	gCCRHolder;
 
 // --------------------------------------------------------------------------
 
 void advanceRXBuffer() {
 
-	byte ccrHolder;
+	gwUINT8 ccrHolder;
 	
 	// The buffers are a shared, critical resource, so we have to protect them before we update.
-	EnterCriticalArg(ccrHolder);
+	GW_ENTER_CRITICAL(ccrHolder);
 	
 		gRXRadioBuffer[gRXCurBufferNum].bufferStatus = eBufferStateInUse;
 		
@@ -39,10 +38,10 @@ void advanceRXBuffer() {
 
 void advanceTXBuffer() {
 
-	byte ccrHolder;
+	gwUINT8 ccrHolder;
 	
 	// The buffers are a shared, critical resource, so we have to protect them before we update.
-	EnterCriticalArg(ccrHolder);
+	GW_ENTER_CRITICAL(ccrHolder);
 	
 		gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
 		

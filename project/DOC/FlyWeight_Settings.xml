@@ -1,6 +1,6 @@
 <PE_PROJECT_SETTINGS_DOCUMENTATION>
-  <PE_product_version v="version 3.03 for Freescale HC(S)08/RS08/CFV1"/>
-  <PE_core_version v="Processor Expert Version 0407"/>
+  <PE_product_version v="version 3.02 for Freescale HC(S)08/RS08/CFV1"/>
+  <PE_core_version v="Processor Expert Version 0405"/>
 
   <CPU_Bean name="Cpu" type="MC9S08GT60_44">
     <Enabled v="N"/>
@@ -237,7 +237,7 @@
             <Clock_frequency__MHz_ v="4"/>
             <Clock_range v="High frequency"/>
             <group name="Clock input pin">
-              <Pin_name v=""/>
+              <Pin_name v="PTG2_EXTAL"/>
               <Pin_signal v=""/>
             </group>
           </enumgroup>
@@ -264,7 +264,7 @@
       </list>
       <group name="Internal peripherals">
         <boolgroup name="BDM pin support" v="Enabled">
-          <BDM_pin v=""/>
+          <BDM_pin v="PTG0_BKGD_MS"/>
           <BDM_pin_signal v=""/>
         </boolgroup>
         <boolgroup name="LVD module" v="Enabled">
@@ -680,6 +680,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA3 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -714,6 +715,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA4 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -748,6 +750,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="pull up"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTA5 v="no"/>
       <Direction v="Input"/>
       <group name="Initialization">
         <Init__direction v="Input"/>
@@ -782,6 +785,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTB1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -850,6 +854,7 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
+      <Slew_rate_control_for_PTD0 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -1556,8 +1561,8 @@ MLMESetMC13192ClockRate(2);
       <TurnTxOff v="don&apos;t generate code"/>
       <TurnRxOn v="don&apos;t generate code"/>
       <TurnRxOff v="don&apos;t generate code"/>
-      <LoopMode v="don&apos;t generate code"/>
       <SetIdle v="don&apos;t generate code"/>
+      <LoopMode v="don&apos;t generate code"/>
       <Standby v="don&apos;t generate code"/>
       <SetDirection v="don&apos;t generate code"/>
       <GetRxIdle v="don&apos;t generate code"/>

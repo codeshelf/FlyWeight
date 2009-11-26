@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_GPIO
-**     Version   : Bean 01.025, Driver 01.12, CPU db: 2.87.125
+**     Version   : Bean 01.023, Driver 01.11, CPU db: 2.87.124
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 3:49 PM
+**     Date/Time : 11/25/2009, 5:40 PM
 **     Abstract  :
 **          This file implements the General Purpose Input Output (PTA)
 **          module initialization according to the Peripheral Initialization
@@ -62,7 +62,7 @@
 **     Contents  :
 **         Init - void GPIO1_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2008
+**     (c) Copyright UNIS, spol. s r.o. 1997-2007
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -108,7 +108,7 @@ void GPIO1_Init(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.03 [04.07]
+**     This file was created by UNIS Processor Expert 3.02 [04.05]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

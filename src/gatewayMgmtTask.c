@@ -13,16 +13,16 @@ $Name$
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "pub_def.h"
+#include "gwSystemMacros.h"
+#include "gwTypes.h"
+#include "commands.h"
 #include "USB.h"
 #include "serial.h"
-#include "PE_Types.h"
-#include "simple_mac.h"
 #include "string.h"
 
 xQueueHandle			gGatewayMgmtQueue;
 ControllerStateType		gControllerState;
-extern byte				gCCRHolder;
+extern gwUINT8			gCCRHolder;
 
 
 // --------------------------------------------------------------------------
@@ -54,7 +54,7 @@ void serialReceiveTask( void *pvParameters ) {
 
 	ECommandGroupIDType			cmdID;
 	ENetMgmtSubCmdIDType		subCmdID;
-	BufferCntType				txBufferNum;
+	BufferCntType				txBufferNum = 0;
 	
 	// Setup the USB interface.
 	USB_Init();
@@ -62,20 +62,18 @@ void serialReceiveTask( void *pvParameters ) {
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.
 	createOutboundNetSetup();
-	serialTransmitFrame((byte*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
 	RELEASE_TX_BUFFER(txBufferNum);
 	
 	
 	for ( ;; ) {
 	
-		#ifdef __WatchDog
-		WatchDog_Clear();
-		#endif
+		GW_WATCHDOG_RESET;
 
 		// Don't try to get a frame if there is no free buffer.
 		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 			vTaskDelay(1);
-			WATCHDOG_RESET;
+			GW_WATCHDOG_RESET;
 		}
 
 		gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);

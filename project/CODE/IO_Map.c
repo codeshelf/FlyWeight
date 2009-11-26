@@ -6,7 +6,7 @@
 **     Beantype  : IO_Map
 **     Version   : Driver 01.06
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/29/2009, 4:36 PM
+**     Date/Time : 11/25/2009, 5:40 PM
 **     Abstract  :
 **         IO_Map.h - implements an IO device's mapping. 
 **         This module contains symbol definitions of all peripheral 
@@ -16,7 +16,7 @@
 **     Contents  :
 **         No public methods
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2008
+**     (c) Copyright UNIS, spol. s r.o. 1997-2007
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -24,10 +24,10 @@
 **     http      : www.processorexpert.com
 **     mail      : info@processorexpert.com
 ** ###################################################################*/
-/* Based on CPU DB MC13214, version 2.87.125 (RegistersPrg V2.23) */
+/* Based on CPU DB MC13214, version 2.87.124 (RegistersPrg V2.20) */
 /* DataSheet : MC1321xRM Rev. 1.1 10/2006 */
 
-#include "PE_Types.h"
+#include "PE_types.h"
 #include "IO_Map.h"
 
 /*lint -save -esym(765, *) */
@@ -162,7 +162,7 @@ volatile DBGFSTR _DBGF;                                    /* Debug FIFO Registe
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.03 [04.07]
+**     This file was created by UNIS Processor Expert 3.02 [04.05]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

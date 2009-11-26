@@ -2,15 +2,14 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #ifndef SERIAL_H
 #define SERIAL_H
 
-#include "pub_def.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "usb.h"
@@ -32,7 +31,7 @@
 void sendOneChar(USB_TComData inDataPtr);
 void readOneChar(USB_TComData *outDataPtr);
 void serialReceiveTask(void *pvParameters);
-void serialTransmitFrame(USB_TComData *inDataPtr, word inSize);
+void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize);
 BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize);
 
 #endif // SERIAL_H

@@ -12,18 +12,16 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "simple_mac.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 #include "USB.h"
 #include "commands.h"
-
-// SMAC includes
-#include "pub_def.h"
 
 // --------------------------------------------------------------------------
 // Global variables.
 
-UINT8 				gu8RTxMode;
-extern byte			gCCRHolder;
+gwUINT8 			gu8RTxMode;
+extern gwUINT8		gCCRHolder;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -34,8 +32,8 @@ xTaskHandle			gGatewayManagementTask = NULL;
 xQueueHandle		gRadioTransmitQueue = NULL;
 xQueueHandle		gRadioReceiveQueue = NULL;
 
-tTxPacket			gsTxPacket;
-tRxPacket			gsRxPacket;
+gwTxPacket			gsTxPacket;
+gwRxPacket			gRxPacket;
 
 // Radio input buffer
 // There's a 2-byte ID on the front of every packet.
@@ -47,7 +45,7 @@ RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 BufferCntType		gTXCurBufferNum = 0;
 BufferCntType		gTXUsedBuffers = 0;
 
-NetAddrType		gMainRemote = INVALID_REMOTE;
+RemoteAddrType		gMainRemote = INVALID_REMOTE;
 
 // --------------------------------------------------------------------------
 
@@ -56,43 +54,41 @@ void radioReceiveTask(void *pvParameters) {
 	portTickType			rxQueueTimeout = (portTickType) (200 * portTICK_RATE_MS);
 //	ECommandIDType			cmdID;
 //	ENetMgmtSubCmdIDType	subCmdID;
-	
+
 	// The radio receive task will return a pointer to a radio data packet.
 	if (gRadioReceiveQueue) {
-	
+
 		for (;;) {
 
-			#ifdef __WatchDog
-			WatchDog_Clear();
-			#endif
-			
+			GW_WATCHDOG_RESET;
+
 			// Don't try to RX if there is no free buffer.
 			while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
 				vTaskDelay(1);
-				WATCHDOG_RESET;
+				GW_WATCHDOG_RESET;
 			}
 
 			// Don't try to set up an RX unless we're already done with TX.
 			while (gu8RTxMode == TX_MODE) {
 				vTaskDelay(1);
-				WATCHDOG_RESET;
+				GW_WATCHDOG_RESET;
 			}
-			
+
 			//vTaskSuspend(gRadioTransmitTask);
-			
+
 			// Setup for the next RX cycle (if needed since we already might be setup to read).
 			if (gu8RTxMode != RX_MODE) {
-				gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
-				gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
-				gsRxPacket.u8Status = 0;
-				MLMERXEnableRequest(&gsRxPacket, 0L);
+				gRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+				gRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+				gRxPacket.u8Status = 0;
+				MLMERXEnableRequest(&gRxPacket, 0L);
 			}
-		
+
 			//vTaskResume(gRadioTransmitTask);
-			
+
 			// Packets received by the SMAC get put onto the receive queue, and we process them here.
 			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, rxQueueTimeout) == pdPASS) {
-			
+
 //				cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
 //				if (cmdID == eCommandNetMgmt) {
 //					subCmdID = getNetMgmtSubCommand(gRXRadioBuffer[rxBufferNum].bufferStorage);
@@ -104,9 +100,9 @@ void radioReceiveTask(void *pvParameters) {
 //				}
 
 				// Send the packet to the controller.
-				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+				serialTransmitFrame((gwUINT8*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
 				RELEASE_RX_BUFFER(rxBufferNum);
-				
+
 				// Blink LED2 to let us know we succeeded in receiving a packet buffer.
 				//if (xQueueSend(gLEDBlinkQueue, &gLED2, (portTickType) 0)) {
 				//}
@@ -121,51 +117,49 @@ void radioReceiveTask(void *pvParameters) {
 // --------------------------------------------------------------------------
 
 void radioTransmitTask(void *pvParameters) {
-	tTxPacket		gsTxPacket;
+	gwTxPacket		txPacket;
 	BufferCntType	txBufferNum;
-	byte			ccrHolder;
+	gwUINT8			ccrHolder;
 
 	// Turn the SCi back on by taking RX out of standby.
-	CTS_SETUP;
-	RTS_SETUP;
-	CTS_ON;
-		
+	GW_USB_INIT;
+
 	for (;;) {
-	
+
 		// Wait until the SCI controller signals us that we have a full buffer to transmit.
 		if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, 5) == pdPASS ) {
 
 			vTaskSuspend(gRadioReceiveTask);
-			
+
 			// Disable the RX to prepare for TX.
 			MLMERXDisableRequest();
 
 			// Setup for TX.
 			gsTxPacket.pu8Data = gTXRadioBuffer[txBufferNum].bufferStorage;
 			gsTxPacket.u8DataLength = gTXRadioBuffer[txBufferNum].bufferSize;
-			EnterCriticalArg(ccrHolder);
+			GW_ENTER_CRITICAL(ccrHolder);
 			// Keep sending until we succeed.
 			while (MCPSDataRequest(&gsTxPacket) != SUCCESS)
 				;
-			ExitCriticalArg(ccrHolder);
-			
+			GW_EXIT_CRITICAL(ccrHolder);
+
 			// Set the status of the TX buffer to free.
-			RELEASE_TX_BUFFER(txBufferNum);	
-			
+			RELEASE_TX_BUFFER(txBufferNum);
+
 			// Prepare to RX responses.
-			gsRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
-			gsRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
-			gsRxPacket.u8Status = 0;
-			MLMERXEnableRequest(&gsRxPacket, 0L);
-						
+			gRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+			gRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
+			gRxPacket.u8Status = 0;
+			MLMERXEnableRequest(&gRxPacket, 0L);
+
 			vTaskResume(gRadioReceiveTask);
-			
+
 			// Blink LED1 to let us know we succeeded in transmitting the buffer.
 			//if (xQueueSend(gLEDBlinkQueue, &gLED1, (portTickType) 0)) {
 			//}
-			
+
 		} else {
-			
+
 		}
 	}
 }

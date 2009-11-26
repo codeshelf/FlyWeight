@@ -6,14 +6,14 @@
 **     Beantype  : PE_Error
 **     Version   : Driver 01.00
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 10/29/2009, 4:36 PM
+**     Date/Time : 11/25/2009, 5:40 PM
 **     Abstract  :
 **         This bean "PE_Error" contains internal definitions
 **         of the error constants.
 **     Contents  :
 **         No public methods
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2008
+**     (c) Copyright UNIS, spol. s r.o. 1997-2007
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno

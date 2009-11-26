@@ -11,8 +11,7 @@
 #define COMMANDS_H
 
 // Project includes
-#include "PE_Types.h"
-#include "pub_def.h"
+#include "gwTypes.h"
 #include "commandTypes.h"
 #include "radioCommon.h"
 #include "serial.h"
@@ -27,8 +26,8 @@
 #define DEVICE_VER_BYTES		1
 
 #define PACKET_HEADER_BYTES		1
-#define PACKET_VERSION			0x00
-#define BROADCAST_NETID			0b1111
+#define PACKET_VERSION			0x01
+#define BROADCAST_NETID			0x07
 
 #define INVALID_CHANNEL			-1
 #define AUTOMATIC_CHANNEL		127
@@ -72,8 +71,8 @@ typedef enum {
 	eHooBeeBehaviorSolenoidPull = 3
 } EHooBeeBehaviorType;
 
-typedef UINT8 NetworkIDType;
-typedef UINT8 ChannelNumberType;
+typedef gwUINT8 NetworkIDType;
+typedef gwUINT8 ChannelNumberType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.
@@ -85,8 +84,8 @@ typedef UINT8 ChannelNumberType;
  * to the RX or TX buffer that contains the command.
  */
 
-UINT8 transmitPacket(BufferCntType inTXBufferNum);
-UINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
+gwUINT8 transmitPacket(BufferCntType inTXBufferNum);
+gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 
 bool getAckRequired(BufferStoragePtrType inBufferPtr);
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
@@ -107,7 +106,7 @@ void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
-void createButtonControlCommand(BufferCntType inTXBufferNum, UINT8 inButtonNumber, UINT8 inFunctionType);
+void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNumber, gwUINT8 inFunctionType);
 void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr);
 void createAudioCommand(BufferCntType inTXBufferNum);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr);
@@ -137,4 +136,4 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 extern ControllerStateType gControllerState;
 extern ELocalStatusType gLocalDeviceState;
 
-#endif COMMANDS_H
+#endif /* COMMANDS_H */

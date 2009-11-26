@@ -11,10 +11,10 @@
 #define RADIOCOMMON_H
 
 // Project includes
-#include "PE_Types.h"
-#include "cpu.h"
 #include "smacGlue.h"
 #include "commandTypes.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 
 // --------------------------------------------------------------------------
 // Definitions.
@@ -102,13 +102,6 @@
 	#define TPMOF_AUDIO_LOADER		TPM2SC_TOF
 #endif
 
-#define CTS_ON  				PTAD_PTAD6 = 0;
-#define CTS_OFF  				PTAD_PTAD6 = 1;
-#define CTS_SETUP      			PTAPE_PTAPE6 = 0; PTADD_PTADD6 = 1;
-
-#define USB_STOP				CTS_OFF/*; gUSBState = eUSBStateStopped */
-#define USB_START				CTS_ON /*; gUSBState = eUSBStateStarted */
-
 #define MAX_REMOTES				14
 #define INVALID_REMOTE			MAX_REMOTES + 1
 
@@ -119,15 +112,15 @@
 
 #define MAX_LED_SEQUENCES		8
 
-#define RELEASE_RX_BUFFER(rxBufferNum)		EnterCriticalArg(gCCRHolder); \
+#define RELEASE_RX_BUFFER(rxBufferNum)		GW_ENTER_CRITICAL(gCCRHolder); \
 											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
 											gRXUsedBuffers--; \
-											ExitCriticalArg(gCCRHolder);
+											GW_EXIT_CRITICAL(gCCRHolder);
 
-#define RELEASE_TX_BUFFER(txBufferNum)		EnterCriticalArg(gCCRHolder); \
+#define RELEASE_TX_BUFFER(txBufferNum)		GW_ENTER_CRITICAL(gCCRHolder); \
 											gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
 											gTXUsedBuffers--; \
-											ExitCriticalArg(gCCRHolder);
+											GW_EXIT_CRITICAL(gCCRHolder);
 
 // --------------------------------------------------------------------------
 // Typedefs
@@ -137,9 +130,9 @@ typedef enum {
 	eUSBStateStarted
 } USBStateType;
 
-typedef UINT8				BufferCntType;
-typedef UINT8				BufferOffsetType;
-typedef UINT8				BufferStorageType;
+typedef gwUINT8				BufferCntType;
+typedef gwUINT8				BufferOffsetType;
+typedef gwUINT8				BufferStorageType;
 typedef BufferStorageType	*BufferStoragePtrType;
 
 typedef enum {
@@ -154,20 +147,20 @@ typedef struct {
 	BufferCntType			bufferSize;
 } RadioBufferStruct;
 
-typedef UINT8				NetworkIDType;
-typedef UINT8				AckIDType;
-typedef UINT8				NetAddrType;
-typedef UINT8				EndpointNumType;
-typedef UINT8				KVPNumType;
-typedef byte				RemoteUniqueIDType[UNIQUE_ID_BYTES + 1];
+typedef gwUINT8				NetworkIDType;
+typedef gwUINT8				AckIDType;
+typedef gwUINT8				NetAddrType;
+typedef gwUINT8				EndpointNumType;
+typedef gwUINT8				KVPNumType;
+typedef gwUINT8				RemoteUniqueIDType[UNIQUE_ID_BYTES + 1];
 typedef RemoteUniqueIDType	*RemoteUniqueIDPtrType;
 typedef struct {
 	ERemoteStatusType		remoteState;
 	RemoteUniqueIDType		remoteUniqueID;
 } RemoteDescStruct;
 
-typedef UINT16				SampleRateType;
-typedef UINT8				SampleSizeType;
+typedef gwUINT16			SampleRateType;
+typedef gwUINT8				SampleSizeType;
 
 typedef UINT32				TimestampType;
 typedef UINT32				DataSampleType;
@@ -213,8 +206,8 @@ extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 extern BufferCntType		gTXCurBufferNum;
 extern BufferCntType		gTXUsedBuffers;
 
-extern tTxPacket			gsTxPacket;
-extern tRxPacket			gsRxPacket;
+extern gwTxPacket			gTxPacket;
+extern gwRxPacket			gRxPacket;
 
 extern SampleRateType		gMasterSampleRate;
 
@@ -226,4 +219,4 @@ extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 void advanceRXBuffer(void);
 void advanceTXBuffer(void);
 
-#endif RADIOCOMMON_H
+#endif /* RADIOCOMMON_H */

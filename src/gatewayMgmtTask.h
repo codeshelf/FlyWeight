@@ -10,7 +10,7 @@
 #ifndef GATEWAYMGMTTASK_H
 #define GATEWAYMGMTTASK_H
 
-#include "pub_def.h"
+#include "gwTypes.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "usb.h"

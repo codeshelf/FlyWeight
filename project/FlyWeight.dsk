@@ -1,5 +1,5 @@
 [Version]
-PE_DesktopFileVersion=1031
+PE_DesktopFileVersion=1029
 
 [Desktop]
 StartupPrj=C:\eclipsework\FlyWeight\project\FlyWeight.pe
@@ -21,9 +21,9 @@ CpuPanViewMode=Default
 ViewSizeIndex=0
 
 [ErrorPanel]
-Status=hiden
+Status=Visible
 WindowState=NORMAL
-Rect=[8|645|722|313]
+Rect=[7|518|722|313]
 
 [ResourceMeter]
 Status=hiden
@@ -66,7 +66,7 @@ GroupRegisters=No
 Peripheral=TPM1
 
 [Editor]
-Rect=[-4|0|1199|990]
+Rect=[-4|0|1199|866]
 FontName=Courier New
 FontSize=10
 FontBold=No
@@ -151,7 +151,7 @@ Rect=[0|116|256|624]
 WindowVisible=No
 
 [BeanManager]
-Rect=[-4|0|876|880]
+Rect=[-4|0|876|866]
 BeanInfoFilter=&all
 DriverFilter=&all
 DriverInfoFilter=&all

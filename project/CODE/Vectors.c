@@ -3,9 +3,9 @@
 **     Filename  : Vectors.C
 **     Project   : FlyWeight
 **     Processor : MC13213R2
-**     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
+**     Version   : Bean 01.065, Driver 01.30, CPU db: 2.87.124
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 3:49 PM
+**     Date/Time : 11/25/2009, 5:40 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -13,7 +13,7 @@
 **     Settings  :
 **
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2008
+**     (c) Copyright UNIS, spol. s r.o. 1997-2007
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -66,7 +66,7 @@ void (* near const _vect[])() @0xFFCC = { /* Interrupt vector table */
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.03 [04.07]
+**     This file was created by UNIS Processor Expert 3.02 [04.05]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

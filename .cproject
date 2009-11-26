@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?fileVersion 4.0.0?>
 
 <cproject>
@@ -77,6 +77,8 @@
 
 
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
 <pathentry base-path="FlyWeight" include="project/CODE" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Source/include" kind="inc" path="" system="true"/>
@@ -84,6 +86,7 @@
 <pathentry base-path="FreeRTOS" include="Source/portable/CodeWarrior/HCS08" kind="inc" path="" system="true"/>
 <pathentry kind="mac" name="IS_GATEWAY" path="" value="1"/>
 <pathentry kind="mac" name="XBEE" path="" value="1"/>
+<pathentry kind="mac" name="MC1321X" path="" value="1"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>

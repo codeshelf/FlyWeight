@@ -74,7 +74,8 @@
 
 #include "USB.h"
 #include "Events.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
 
 
 #define OVERRUN_ERR      0x01          /* Overrun error flag bit   */
@@ -114,7 +115,7 @@ static USB_TComData OutBuffer[USB_OUT_BUF_SIZE]; /* Output buffer for SCI commmu
 **         If any data is received, this method returns one
 **         character, otherwise it returns an error code (it does
 **         not wait for data). This method is enabled only if the
-**         receiver property is enabled. 
+**         receiver property is enabled.
 **         DMA mode:
 **         If DMA controller is available on the selected CPU and
 **         the receiver is configured to use DMA controller then
@@ -384,7 +385,7 @@ byte USB_GetError(USB_TError *Err)
 **     Method      :  USB_InterruptRx (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the receive interrupt of the selected 
+**         The method services the receive interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
@@ -434,7 +435,7 @@ void getFromRXBuffer() {
 **     Method      :  USB_InterruptTx (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the transmit interrupt of the selected 
+**         The method services the transmit interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
@@ -462,7 +463,7 @@ ISR(USB_InterruptTx)
 **     Method      :  USB_InterruptError (bean AsynchroSerial)
 **
 **     Description :
-**         The method services the error interrupt of the selected 
+**         The method services the error interrupt of the selected
 **         peripheral(s) and eventually invokes the bean's event(s).
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
@@ -494,8 +495,8 @@ ISR(USB_InterruptError)
 **     Method      :  USB_Init (bean AsynchroSerial)
 **
 **     Description :
-**         Initializes the associated peripheral(s) and the bean's 
-**         internal variables. The method is called automatically as a 
+**         Initializes the associated peripheral(s) and the bean's
+**         internal variables. The method is called automatically as a
 **         part of the application initialization code.
 **         This method is internal. It is used by Processor Expert only.
 ** ===================================================================
@@ -508,11 +509,11 @@ void USB_Init(void)
   USB_OutLen = 0;                      /* No char in the transmit buffer */
   OutIndxR = OutIndxW = 0;             /* Reset indices */
   /* SCIC1: LOOPS=0,SCISWAI=0,RSRC=0,M=0,WAKE=0,ILT=0,PE=0,PT=0 */
-  setReg8(SCIC1, 0x00);               /* Configure the SCI */ 
+  setReg8(SCIC1, 0x00);               /* Configure the SCI */
   /* SCIC3: R8=0,T8=0,TXDIR=0,??=0,ORIE=0,NEIE=0,FEIE=0,PEIE=0 */
-  setReg8(SCIC3, 0x00);               /* Disable error interrupts */ 
+  setReg8(SCIC3, 0x00);               /* Disable error interrupts */
   /* SCIC2: TIE=0,TCIE=0,RIE=0,ILIE=0,TE=0,RE=0,RWU=0,SBK=0 */
-  setReg8(SCIC2, 0x00);               /* Disable all interrupts */ 
+  setReg8(SCIC2, 0x00);               /* Disable all interrupts */
   SCIBDH = 0x00;                      /* Set high divisor register (enable device) */
   SCIBDL = 0x01;                      /* Set low divisor register (enable device) */
       /* SCI2C3: ORIE=1,NEIE=1,FEIE=1,PEIE=1 */
@@ -529,14 +530,101 @@ void USB_SetHigh(void) {
 void USB_SetSlow(void) {
 
 }
-/* END USB. */
 
+// --------------------------------------------------------------------------
 
 /*
-** ###################################################################
-**
-**     This file was created by UNIS Processor Expert 2.97 [03.74]
-**     for the Freescale HCS08 series of microcontrollers.
-**
-** ###################################################################
+	We're not able to read the SCI using interrupts.  The problem is that the data rate is very
+	high (in order to support multiple audio channels).  The RDRF fills very fast,	and if we
+	(or FreeRTOS or SMAC) have suspended global interrupts then we don't get the Rx interrupt
+	for that RDRF flag.  Moreover, when interrupts get turned back on we have no way of knowing
+	we just missed the RDRF flag.  The result is that the Rx buffer doesn't get cleared and we end
+	up with a serial overrun error.  At 250000 baud we're missing about 2-3% of the characters.
+	Due to the low-power nature of the device, we are not really able to handle such a high
+	level of data loss.  (There is no retry, ECC, etc.)
+
+	So...
+
+	What we do instead is we poll the SCI.  We've ramped the baud rate to the maximum (1250000 baud)
+	and when we need a character we check to see if a local buffer has any.  If that buffer is empty
+	then we disable global interrupts, assert RTS and check for arriving characters.  After we
+	get a certain numbers of characters into the local buffer, we unassert RTS and keep reading characters
+	until RDRF settles.  After that we reenable global interrupts and continue processing of the
+	normal OS tasks.  At 1250000 baud it takes about 20-30 uSecs to read 10 or so characters.
+	This is only 1/10th of an OS quantum.  Since the gateway only services the SCI and the radio
+	it is safe to suspend global interrupts for this short time.  (The radio asserts the IRQ pin which
+	we detect immediately when global interrupts resume.)
 */
+#define kEndCTSTicks		1 * portTICK_RATE_MS
+#define kEndReadTicks		2 * portTICK_RATE_MS
+#define	kBufferSize			25
+#define	kHighWaterMark  	10
+
+static gwUINT8			gCurrentBufferPos = 0;
+static gwUINT8			gCurrentBufferSize = 0;
+static USB_TComData		gSCIBuffer[kBufferSize];
+
+void USB_CheckInterface() {
+
+	gwUINT8			ccrHolder;
+	gwUINT8			readCheck;
+	//USB_TComData	lostChar;
+
+	gCurrentBufferPos = 0;
+	gCurrentBufferSize = 0;
+
+	GW_WATCHDOG_RESET;
+
+	GW_ENTER_CRITICAL(ccrHolder);
+
+	// Turn CTS on.
+	GW_CTS_ON;
+
+	readCheck = 0;
+	while (TRUE) {
+
+		// Read characters until the high water mark, or keep reading characters until RDRF settles.
+		readCheck++;
+		while (GW_USB_BYTE_READY) {
+		//	if (gCurrentBufferSize <= kBufferSize) {
+				gSCIBuffer[gCurrentBufferSize++] = GW_GET_USB_BYTE;
+				// If we've read to the high water mark then turn CTS off.
+				if (gCurrentBufferSize > kHighWaterMark) {
+					GW_CTS_OFF;
+				}
+		//	} else {
+		//		lostChar = SCID;
+		//	}
+			readCheck = 0;
+		}
+
+		// If we haven't read anything in a while then prepare to exit.
+		// (CTS is already off from the next test below.)
+		if (readCheck > 50) {
+			break;
+		} else if (readCheck > 25) {
+			GW_CTS_OFF;
+		}
+	}
+
+	// Resume normal OS/interrupt processing.
+	GW_EXIT_CRITICAL(ccrHolder);
+}
+
+// --------------------------------------------------------------------------
+
+// Read a character.
+void USB_ReadOneChar(USB_TComData *outDataPtr) {
+	while (TRUE) {
+		if (gCurrentBufferPos < gCurrentBufferSize) {
+			*outDataPtr = gSCIBuffer[gCurrentBufferPos++];
+			return;
+		} else {
+			USB_CheckInterface();
+			if (gCurrentBufferSize == 0) {
+				// If we didn't get any characters then delay for a short while.
+				vTaskDelay(5 * portTICK_RATE_MS);
+				//GW_WATCHDOG_RESET;			}
+		}
+	}
+}
