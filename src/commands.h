@@ -71,7 +71,6 @@ typedef enum {
 	eHooBeeBehaviorSolenoidPull = 3
 } EHooBeeBehaviorType;
 
-typedef gwUINT8 NetworkIDType;
 typedef gwUINT8 ChannelNumberType;
 
 // --------------------------------------------------------------------------
@@ -87,7 +86,7 @@ typedef gwUINT8 ChannelNumberType;
 gwUINT8 transmitPacket(BufferCntType inTXBufferNum);
 gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 
-bool getAckRequired(BufferStoragePtrType inBufferPtr);
+gwBoolean getAckRequired(BufferStoragePtrType inBufferPtr);
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum);
 AckIDType getAckId(BufferCntType inRXBufferNum);
@@ -100,7 +99,7 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum);
 NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
-UINT8 getLEDVaue(UINT8 inLEDNum, BufferCntType inRXBufferNum);
+gwUINT8 getLEDVaue(gwUINT8 inLEDNum, BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId);

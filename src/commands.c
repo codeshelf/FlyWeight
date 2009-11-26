@@ -24,11 +24,10 @@
 RemoteDescStruct        	gRemoteStateTable[MAX_REMOTES];
 NetAddrType	            	gMyAddr = INVALID_REMOTE;
 NetworkIDType	        	gMyNetworkID = BROADCAST_NETID;
-extern gwUINT8	        	gCCRHolder;
 extern LedFlashRunType		gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType	gLedFlashSeqCount;
 extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
-extern UINT16				gFIFO[8];
+extern gwUINT16				gFIFO[8];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -86,7 +85,7 @@ NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-bool getCommandRequiresACK(BufferCntType inRXBufferNum) {
+gwBoolean getCommandRequiresACK(BufferCntType inRXBufferNum) {
 	return ((gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID) >> SHIFTBITS_PKT_NETID);
 }
 
@@ -163,7 +162,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (inCmdID << SHIFTBITS_CMDID);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;
-	gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
+	//gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 };
 
 
@@ -172,7 +171,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID) {
 
 	int pos;
-	
+
 	// The remote doesn't have an assigned address yet, so we send the broadcast addr as the source.
 	createPacket(inTXBufferNum, eCommandAssoc, BROADCAST_NETID, ADDR_CONTROLLER, ADDR_BROADCAST);
 
@@ -279,15 +278,11 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 #ifdef IS_GATEWAY
 void createOutboundNetSetup() {
 	BufferCntType txBufferNum;
+	gwUINT8 ccrHolder;
 
-	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-		vTaskDelay(1 * portTICK_RATE_MS);
-	}
+	txBufferNum = lockTXBuffer();
 
 	vTaskSuspend(gRadioReceiveTask);
-
-	txBufferNum = gTXCurBufferNum;
-	advanceTXBuffer();
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -299,7 +294,7 @@ void createOutboundNetSetup() {
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+	//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetSetup;
@@ -308,7 +303,7 @@ void createOutboundNetSetup() {
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_SETUP_CHANNEL + 1;
 
 	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-	RELEASE_TX_BUFFER(txBufferNum);
+	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 	vTaskResume(gRadioReceiveTask);
 
@@ -342,6 +337,7 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 void processNetSetupCommand(BufferCntType inTXBufferNum) {
 
 	ChannelNumberType	channel;
+	gwUINT8				ccrHolder;
 
 	// Network Setup ALWAYS comes in via the serial interface to the gateway (dongle)
 	// This means we process it FROM the TX buffers and SEND from the TX buffers.
@@ -362,7 +358,7 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 //	}
 
 	MLMESetChannelRequest(channel);
-	RELEASE_TX_BUFFER(inTXBufferNum);
+	RELEASE_TX_BUFFER(inTXBufferNum, ccrHolder);
 
 	gLocalDeviceState = eLocalStateRun;
 };
@@ -373,6 +369,7 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	BufferCntType txBufferNum;
+	gwUINT8			ccrHolder;
 
 	/*
 	 * At this point we transmit one inbound interface test back over the serial link from the gateway (dongle) itself.
@@ -383,17 +380,9 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	 * the only safe buffer available to us comes from the TX buffer.
 	 */
 
-	// Wait until we can get an TX buffer
-	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-		vTaskDelay(1 * portTICK_RATE_MS);
-	}
+	txBufferNum = lockTXBuffer();
 
 	vTaskSuspend(gRadioReceiveTask);
-
-	//EnterCritical();
-	txBufferNum = gTXCurBufferNum;
-	advanceTXBuffer();
-	//ExitCritical();
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -405,7 +394,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+	//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
@@ -414,7 +403,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_INTF_TEST_NUM + 1;
 
 	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-	RELEASE_TX_BUFFER(txBufferNum);
+	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 	vTaskResume(gRadioReceiveTask);
 
@@ -453,14 +442,10 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	 */
 
 	if (gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CHECK_TYPE] == eCmdAssocREQ) {
-		// Wait until we can get an TX buffer
-		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-			vTaskDelay(1);
-		}
-		//EnterCritical();
-			txBufferNum = gTXCurBufferNum;
-			advanceTXBuffer();
-		//ExitCritical();
+
+		gwUINT8			ccrHolder;
+
+		txBufferNum = lockTXBuffer();
 
 		// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 		// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -472,7 +457,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_NETID] |= (BROADCAST_NETID << SHIFTBITS_PKT_NETID);
 		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_ADDR] = (ADDR_CONTROLLER << SHIFTBITS_PKT_SRCADDR) | ADDR_CONTROLLER;
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMDID] = (eCommandNetMgmt << SHIFTBITS_CMDID);
-		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
+		//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 		// Set the sub-command.
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_MGMT_SUBCMD] = eNetMgmtSubCmdNetCheck;
@@ -487,7 +472,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 		gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_CHECK_LINKQ + 1;
 
 		serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-		RELEASE_TX_BUFFER(txBufferNum);
+		RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 		vTaskResume(gRadioReceiveTask);
 
@@ -507,6 +492,7 @@ void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {
 void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
 	NetAddrType result = INVALID_REMOTE;
+	gwUINT8			ccrHolder;
 
 	// Let's first make sure that this assign command is for us.
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
@@ -516,7 +502,7 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 		gLocalDeviceState = eLocalStateAssociated;
 	}
 
-	RELEASE_RX_BUFFER(inRXBufferNum);
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 };
 
 // --------------------------------------------------------------------------
@@ -530,18 +516,22 @@ void processAssocAckCommand(BufferCntType inRXBufferNum) {
 
 void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
 
+	gwUINT8			ccrHolder;
+
 	processQuery(inRXBufferNum, CMDPOS_INFO_QUERY, inSrcAddr);
-	RELEASE_RX_BUFFER(inRXBufferNum);
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 };
 
 // --------------------------------------------------------------------------
 
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr) {
 
+	gwUINT8			ccrHolder;
+	
 	// Indicate that we received a response for the remote.
 	gRemoteStateTable[inRemoteAddr].remoteState = eRemoteStateRespRcvd;
 
-	RELEASE_RX_BUFFER(inRXBufferNum);
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 
 }
 
@@ -622,18 +612,19 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
-	UINT8	pos = CMDPOS_BEHAVIOR_CNT;
-	UINT8	behaviorCnt;
-	UINT8	behaviorNum;
-	UINT8	behaviorType;
-	UINT8	dataByteCnt;
+	gwUINT8	ccrHolder;
+	gwUINT8	pos = CMDPOS_BEHAVIOR_CNT;
+	gwUINT8	behaviorCnt;
+	gwUINT8	behaviorNum;
+	gwUINT8	behaviorType;
+	gwUINT8	dataByteCnt;
 
 	// Map the endpoint to the LED number.
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
 
 	gLedFlashSeqCount = 0;
 	gLedFlashSequenceShouldRun = TRUE;
-	
+
 	behaviorCnt = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 
 	for (behaviorNum = 1; behaviorNum <= behaviorCnt; behaviorNum++) {
@@ -645,7 +636,7 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 		switch (behaviorType) {
 
 			case eHooBeeBehaviorLedFlash:
-				if (gLedFlashSeqCount < MAX_LED_SEQUENCES) {	
+				if (gLedFlashSeqCount < MAX_LED_SEQUENCES) {
 					gLedFlashSeqBuffer[gLedFlashSeqCount].redValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 					gLedFlashSeqBuffer[gLedFlashSeqCount].greenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 					gLedFlashSeqBuffer[gLedFlashSeqCount].blueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
@@ -665,7 +656,7 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 	}
 
-	RELEASE_RX_BUFFER(inRXBufferNum);
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
 
 // --------------------------------------------------------------------------
@@ -687,7 +678,7 @@ void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndp
 
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte) {
 
-	UINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize;
+	gwUINT8 pos = gTXRadioBuffer[inTXBufferNum].bufferSize;
 
 	// Increase the sample count and adjust the packet length.
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SAMPLE_CNT]++;

@@ -1,41 +1,58 @@
 /*
-	FreeRTOS V3.2.4 - Copyright (C) 2003-2005 Richard Barry.
+	FreeRTOS.org V5.1.1 - Copyright (C) 2003-2008 Richard Barry.
 
-	This file is part of the FreeRTOS distribution.
+	This file is part of the FreeRTOS.org distribution.
 
-	FreeRTOS is free software; you can redistribute it and/or modify
+	FreeRTOS.org is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation; either version 2 of the License, or
 	(at your option) any later version.
 
-	FreeRTOS is distributed in the hope that it will be useful,
+	FreeRTOS.org is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with FreeRTOS; if not, write to the Free Software
+	along with FreeRTOS.org; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	A special exception to the GPL can be applied should you wish to distribute
-	a combined work that includes FreeRTOS, without being obliged to provide
+	a combined work that includes FreeRTOS.org, without being obliged to provide
 	the source code for any proprietary components.  See the licensing section
 	of http://www.FreeRTOS.org for full details of how and when the exception
 	can be applied.
 
 	***************************************************************************
-	See http://www.FreeRTOS.org for documentation, latest information, license
-	and contact details.  Please ensure to read the configuration and relevant
-	port sections of the online documentation.
 	***************************************************************************
+    *                                                                         *
+    * SAVE TIME AND MONEY!  We can port FreeRTOS.org to your own hardware,    *
+    * and even write all or part of your application on your behalf.          *
+    * See http://www.OpenRTOS.com for details of the services we provide to   *
+    * expedite your project.                                                  *
+    *                                                                         *
+    ***************************************************************************
+    ***************************************************************************
+
+	Please ensure to read the configuration and relevant port sections of the
+	online documentation.
+
+	http://www.FreeRTOS.org - Documentation, latest information, license and
+	contact details.
+
+	http://www.SafeRTOS.com - A version that is certified for use in safety
+	critical systems.
+
+	http://www.OpenRTOS.com - Commercial support, development, porting,
+	licensing and training services.
 */
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#include <hidef.h>			/* common defines and macros */
-#include "PE_Types.h"
-#include "IO_Map.h"
+#if defined(MC1321X) || defined(MC13192EVB)
+	#include "gwTypes.h"
+#endif
 
 /*-----------------------------------------------------------
  * Application specific definitions.
@@ -45,6 +62,8 @@
  *
  * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
  * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
+ *
+ * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
 #define configUSE_PREEMPTION		1
@@ -53,14 +72,15 @@
 // This project is largely for Freescale SMAC which is for MCUs tied to a MC1319x radio that provides
 // external osc of 16MHz then using an RTI multiple of that rate.  The result is a 1.024ms quantum.
 // Hence 1000/1024 = 976.5.
-#define configTICK_RATE_HZ			( ( portTickType ) 1000 )
-#define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 4 )
-#define configMINIMAL_STACK_SIZE	( ( unsigned portSHORT ) 0x7f )
-#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 1152 ) )  // was 960
-#define configMAX_TASK_NAME_LEN		( 1 )
-#define configUSE_TRACE_FACILITY	0
-#define configUSE_16_BIT_TICKS		0
-#define configIDLE_SHOULD_YIELD		1
+#define configTICK_RATE_HZ		    	( ( portTickType ) 1000 )
+#define configMAX_PRIORITIES	      	( ( unsigned portBASE_TYPE ) 4 )
+#define configMINIMAL_STACK_SIZE    	( ( unsigned portSHORT ) 0x7f )
+#define configTOTAL_HEAP_SIZE	    	( ( size_t ) ( 1152 ) )  // was 960
+#define configMAX_TASK_NAME_LEN	    	( 1 )
+#define configUSE_TRACE_FACILITY    	0
+#define configUSE_16_BIT_TICKS	    	0
+#define configIDLE_SHOULD_YIELD	    	1
+#define configCHECK_FOR_STACK_OVERFLOW  0
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 		0
@@ -72,6 +92,8 @@ the Processor Expert, making this definition obsolete.
 
 #define configCPU_CLOCK_HZ			( ( unsigned portLONG ) 24000000 )
 */
+#define configCPU_CLOCK_HZ			( ( unsigned portLONG ) 24000000 )	/* =24.0MHz xtal. */
+
 
 
 /* Set the following definitions to 1 to include the API function, or zero

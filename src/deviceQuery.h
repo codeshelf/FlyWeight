@@ -4,15 +4,14 @@ FlyWeight
 All rights reserved
 
 $Id$
-$Name$	
+$Name$
 */
 
 #ifndef DEVICEQUERY_H
 #define DEVICEQUERY_H
 
 // Project includes
-#include "PE_Types.h"
-#include "pub_def.h"
+#include "gwTypes.h"
 #include "radioCommon.h"
 #include "commandTypes.h"
 
@@ -53,16 +52,16 @@ $Name$
 
 // --------------------------------------------------------------------------
 // Typedefs.
-typedef byte QueryIDType[QUERYID_SIZE];
+typedef gwUINT8 QueryIDType[QUERYID_SIZE];
 
 // --------------------------------------------------------------------------
 // Function prototypes.
 void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, NetAddrType inSrcAddr);
 BufferOffsetType processQueryActorDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
-BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);	
-BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);	
-BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);	
+BufferOffsetType processQueryActorKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
+BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
+BufferOffsetType processQueryEndpointKVP(BufferStoragePtrType inQueryPtr, BufferStoragePtrType inResponsePtr);
 // --------------------------------------------------------------------------
 // Globals.
 
-#endif DEVICEQUERY_H
+#endif /* DEVICEQUERY_H */

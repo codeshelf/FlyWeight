@@ -220,7 +220,7 @@
   </CPU_Bean>
 
   <CPU_Bean name="Cpu" type="MC9S08GT60_48">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="Cpu"/>
@@ -430,7 +430,7 @@ MLMESetMC13192ClockRate(2);
   </CPU_Bean>
 
   <CPU_Bean name="Cpu" type="MC13214">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
     <Template v="MC13213"/>
 
     <Properties>
@@ -672,7 +672,7 @@ MLMESetMC13192ClockRate(2);
   </CPU_Bean>
 
   <Bean name="SW2" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="SW2"/>
@@ -707,7 +707,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="SW3" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="SW3"/>
@@ -742,7 +742,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="SW4" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="SW4"/>
@@ -777,7 +777,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDRed" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDRed"/>
@@ -812,7 +812,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDGreen" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDGreen"/>
@@ -820,7 +820,6 @@ MLMESetMC13192ClockRate(2);
       <Pin_signal v=""/>
       <Pull_resistor v="no pull resistor"/>
       <Open_drain v="push-pull"/>
-      <Slew_rate_control_for_PTD1 v="no"/>
       <Direction v="Output"/>
       <group name="Initialization">
         <Init__direction v="Output"/>
@@ -847,7 +846,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LEDBlue" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LEDBlue"/>
@@ -882,7 +881,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LED4" type="BitIO">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="LED4"/>
@@ -1041,11 +1040,11 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD5_TPM2CH2"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor v="autoselected pull"/>
+              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
-                <Interrupt v=""/>
+                <Interrupt v="Vtpm2ch2"/>
                 <Channel_Interrupt v="Disabled"/>
                 <ISR_name v=""/>
               </group>
@@ -1063,11 +1062,11 @@ MLMESetMC13192ClockRate(2);
             <boolgroup name="Pin" v="Used">
               <Channel_pin v="PTD6_TPM2CH3"/>
               <Channel_pin_signal v=""/>
-              <Pull_resistor v="autoselected pull"/>
+              <Pull_resistor sel_value="no pull resistor" v="autoselected pull"/>
             </boolgroup>
             <group name="Interrupt">
               <group name="Channel Interrupt">
-                <Interrupt v=""/>
+                <Interrupt v="Vtpm2ch3"/>
                 <Channel_Interrupt v="Disabled"/>
                 <ISR_name v=""/>
               </group>
@@ -1100,7 +1099,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="LED_XBee" type="Init_TPM">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="LED_XBee"/>
@@ -1391,7 +1390,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="KBI_XBee" type="Init_KBI">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="KBI_XBee"/>
@@ -1406,7 +1405,7 @@ MLMESetMC13192ClockRate(2);
         <boolgroup name="Pin3" v="Disabled" />
         <boolgroup name="Pin4" v="Disabled" />
         <boolgroup name="Pin5" v="Enabled">
-          <Pin v="PTA5_KBI1P5"/>
+          <Pin v="PTA5_KBIP5"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
@@ -1449,13 +1448,13 @@ MLMESetMC13192ClockRate(2);
         <boolgroup name="Pin2" v="Disabled" />
         <boolgroup name="Pin3" v="Disabled" />
         <boolgroup name="Pin4" v="Enabled">
-          <Pin v="PTA4_KBI1P4"/>
+          <Pin v="PTA4_KBIP4"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
         </boolgroup>
         <boolgroup name="Pin5" v="Enabled">
-          <Pin v="PTA5_KBI1P5"/>
+          <Pin v="PTA5_KBIP5"/>
           <Pin_signal v=""/>
           <Pull_resistor v="pull up"/>
           <Interrupt_polarity v="high level and/or rising edge"/>
@@ -1484,7 +1483,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="USB" type="AsynchroSerial">
-    <Enabled v="Y"/>
+    <Enabled v="N"/>
 
     <Properties>
       <Bean_name v="USB"/>
@@ -1666,7 +1665,7 @@ MLMESetMC13192ClockRate(2);
   </Bean>
 
   <Bean name="GPIO1" type="Init_GPIO">
-    <Enabled v="N"/>
+    <Enabled v="Y"/>
 
     <Properties>
       <Bean_name v="GPIO1"/>
@@ -1676,7 +1675,7 @@ MLMESetMC13192ClockRate(2);
       </group>
       <boolgroup name="Pins" v="Enabled">
         <boolgroup name="Pin0" v="Enabled">
-          <Pin v="PTA0_KBI1P0"/>
+          <Pin v="PTA0_KBIP0"/>
           <Pin_signal v=""/>
           <Direction v="Output"/>
           <Output_value v="0"/>
@@ -1685,7 +1684,7 @@ MLMESetMC13192ClockRate(2);
           <Slew_rate_control_for_PTA0 v="no"/>
         </boolgroup>
         <boolgroup name="Pin1" v="Enabled">
-          <Pin v="PTA1_KBI1P1"/>
+          <Pin v="PTA1_KBIP1"/>
           <Pin_signal v=""/>
           <Direction v="Input"/>
           <Output_value v="0"/>
@@ -1694,7 +1693,7 @@ MLMESetMC13192ClockRate(2);
           <Slew_rate_control_for_PTA1 v="no"/>
         </boolgroup>
         <boolgroup name="Pin2" v="Enabled">
-          <Pin v="PTA2_KBI1P2"/>
+          <Pin v="PTA2_KBIP2"/>
           <Pin_signal v=""/>
           <Direction v="Input"/>
           <Output_value v="0"/>
@@ -1703,7 +1702,7 @@ MLMESetMC13192ClockRate(2);
           <Slew_rate_control_for_PTA2 v="no"/>
         </boolgroup>
         <boolgroup name="Pin3" v="Enabled">
-          <Pin v="PTA3_KBI1P3"/>
+          <Pin v="PTA3_KBIP3"/>
           <Pin_signal v=""/>
           <Direction v="Input"/>
           <Output_value v="0"/>
@@ -1712,7 +1711,7 @@ MLMESetMC13192ClockRate(2);
           <Slew_rate_control_for_PTA3 v="no"/>
         </boolgroup>
         <boolgroup name="Pin4" v="Enabled">
-          <Pin v="PTA4_KBI1P4"/>
+          <Pin v="PTA4_KBIP4"/>
           <Pin_signal v=""/>
           <Direction v="Input"/>
           <Output_value v="0"/>

@@ -1,0 +1,38 @@
+[JLinkDriver]
+WatchCond=_ 0
+Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+[DebugChecksum]
+Checksum=1453409342
+[DisAssemblyWindow]
+NumStates=_ 1
+State 1=_ 1
+[InstructionProfiling]
+Enabled=_ 0
+[CodeCoverage]
+Enabled=_ 0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[DriverProfiling]
+Enabled=0
+Source=2
+Graph=0
+[Disassemble mode]
+mode=0
+[Breakpoints]
+Bp0=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.387.15@1" 0 0 0 0 "" 0 "" 0
+Bp1=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.566.11@1" 1 0 0 0 "" 0 "" 0
+Bp2=_ "STD_CODE" "0x004011A0" 0 0 0 0 "" 0 "" 0
+Bp3=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.349.9@1" 0 0 0 0 "" 0 "" 0
+Bp4=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.444.9@1" 0 0 0 0 "" 0 "" 0
+Bp5=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.556.9@1" 1 0 0 0 "" 0 "" 0
+Bp6=_ "STD_CODE" "{C:\eclipsework\MC1322x\SMAC\Source\RadioManagement.c}.640.9@1" 1 0 0 0 "" 0 "" 0
+Bp7=_ "STD_CODE" "0x00403C34" 0 0 0 0 "" 0 "" 0
+Bp8=_ "STD_CODE" "{C:\eclipsework\MC1322x\Application\FlyWeight\radioCommon.c}.31.3@1" 1 0 0 0 "" 0 "" 0
+Bp9=_ "STD_CODE" "{C:\eclipsework\MC1322x\Application\FlyWeight\mainGateway.c}.35.1@1" 1 0 0 0 "" 0 "" 0
+Count=10

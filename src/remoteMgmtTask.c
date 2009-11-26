@@ -29,6 +29,7 @@ extern byte				gCCRHolder;
 // --------------------------------------------------------------------------
 
 void remoteMgmtTask( void *pvParameters ) {
+	gwUINT8		    	ccrHolder;
 	BufferCntType		rxBufferNum = 0;
 	ChannelNumberType	channel;
 	bool				associated;
@@ -75,7 +76,7 @@ void remoteMgmtTask( void *pvParameters ) {
 							}
 						}
 					}
-					RELEASE_RX_BUFFER(rxBufferNum);
+					RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 				}
 			}
 			

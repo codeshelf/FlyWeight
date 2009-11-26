@@ -53,14 +53,14 @@ gwRxPacket			gRxPacket;
 
 // Radio input buffer
 // There's a 2-byte ID on the front of every packet.
-RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
-BufferCntType		gRXCurBufferNum = 0;
-BufferCntType		gRXUsedBuffers = 0;
+extern RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
+extern BufferCntType		gRXCurBufferNum;
+extern BufferCntType		gRXUsedBuffers;
 
-RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
-BufferCntType		gTXCurBufferNum = 0;
-BufferCntType		gTXUsedBuffers = 0;
-int					gAssocCheckCount = 0;
+extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
+extern BufferCntType		gTXCurBufferNum;
+extern BufferCntType		gTXUsedBuffers;
+int				        	gAssocCheckCount = 0;
 
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
@@ -72,6 +72,7 @@ int					gAssocCheckCount = 0;
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
+    gwUINT8		    	ccrHolder;
 	BufferCntType		rxBufferNum;
 	ECommandGroupIDType	cmdID;
 	NetAddrType			cmdDstAddr;
@@ -170,14 +171,14 @@ void radioReceiveTask(void *pvParameters) {
 
 					// Only process packets sent to the broadcast network ID and our assigned network ID.
 					if ((networkID != BROADCAST_NETID) && (networkID != gMyNetworkID)) {
-						RELEASE_RX_BUFFER(rxBufferNum);
+						RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 						} else {
 						cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
 						cmdDstAddr = getCommandDstAddr(rxBufferNum);
 
 							// Only process commands sent to the broadcast address or our assigned address.
 						if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
-							RELEASE_RX_BUFFER(rxBufferNum);
+							RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 						} else {
 
 							switch (cmdID) {
@@ -186,7 +187,7 @@ void radioReceiveTask(void *pvParameters) {
 										// This will only return sub-commands if the command GUID matches out GUID
 									assocSubCmd = getAssocSubCommand(rxBufferNum);
 										if (assocSubCmd == eCmdAssocInvalid) {
-											RELEASE_RX_BUFFER(rxBufferNum);
+											RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 										} else if (assocSubCmd == eCmdAssocRESP) {
 											// Reset the clock on the assoc check.
 											lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
@@ -205,7 +206,7 @@ void radioReceiveTask(void *pvParameters) {
 											if (1 == gRXRadioBuffer[rxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE]) {
 											RESET_MCU;
 									}
-									RELEASE_RX_BUFFER(rxBufferNum);
+									RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 										}
 									break;
 
@@ -239,7 +240,7 @@ void radioReceiveTask(void *pvParameters) {
 												break;
 
 										default:
-											RELEASE_RX_BUFFER(rxBufferNum);
+											RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 									}
 									break;
 
@@ -250,7 +251,7 @@ void radioReceiveTask(void *pvParameters) {
 								default:
 									// Bogus command.
 									// Immediately free this command buffer since we'll never do anything with it.
-									RELEASE_RX_BUFFER(rxBufferNum);
+									RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 									break;
 
 							}
@@ -284,6 +285,7 @@ extern bool					gAudioModeRX;
 extern SampleRateType		gMasterSampleRate;
 
 void radioTransmitTask(void *pvParameters) {
+	gwUINT8		    	ccrHolder;
 	gwTxPacket			gsTxPacket;
 	BufferCntType		txBufferNum;
 	//portTickType		lastTick;
@@ -323,7 +325,7 @@ void radioTransmitTask(void *pvParameters) {
 			}
 
 			// Set the status of the TX buffer to free.
-			RELEASE_TX_BUFFER(txBufferNum);
+			RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 			vTaskResume(gRadioReceiveTask);
 

@@ -24,5 +24,5 @@ extern NetAddrType	gMainRemote;
 void radioReceiveTask(void *pvParameters);
 void radioTransmitTask(void *pvParameters);
 
-#endif GATEWAYRADIOTASK_H
+#endif /* GATEWAYRADIOTASK_H */
 

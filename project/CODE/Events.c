@@ -253,8 +253,7 @@ interrupt void AudioLoader_OnInterrupt(void) {
 			// Don't try to start a new buffer if none are available.
 			if (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse)
 				return;
-			gCurAudioTXBuffer = gTXCurBufferNum;
-			advanceTXBuffer();
+			gCurAudioTXBuffer = lockTXBuffer();
 			createAudioCommand(gCurAudioTXBuffer);
 			gCurAudioTXBufferPos = CMDPOS_AUDIO;
 			gCurAudioTXBufferStarted = TRUE;

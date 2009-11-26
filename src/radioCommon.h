@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #ifndef RADIOCOMMON_H
@@ -49,6 +49,9 @@
 
 #define TX_BUFFER_COUNT			TX_QUEUE_SIZE
 #define TX_BUFFER_SIZE			MAX_PACKET_SIZE
+
+#define INVALID_RX_BUFFER		99
+#define INVALID_TX_BUFFER		99
 
 #define KEYBOARD_QUEUE_SIZE		2
 
@@ -112,15 +115,17 @@
 
 #define MAX_LED_SEQUENCES		8
 
-#define RELEASE_RX_BUFFER(rxBufferNum)		GW_ENTER_CRITICAL(gCCRHolder); \
-											gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
-											gRXUsedBuffers--; \
-											GW_EXIT_CRITICAL(gCCRHolder);
+#define RELEASE_RX_BUFFER(rxBufferNum, ccrHolder)	\
+	GW_ENTER_CRITICAL(ccrHolder); \
+	gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
+	gRXUsedBuffers--; \
+	GW_EXIT_CRITICAL(ccrHolder);
 
-#define RELEASE_TX_BUFFER(txBufferNum)		GW_ENTER_CRITICAL(gCCRHolder); \
-											gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
-											gTXUsedBuffers--; \
-											GW_EXIT_CRITICAL(gCCRHolder);
+#define RELEASE_TX_BUFFER(txBufferNum, ccrHolder)	\
+	GW_ENTER_CRITICAL(ccrHolder); \
+	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
+	gTXUsedBuffers--; \
+	GW_EXIT_CRITICAL(ccrHolder);
 
 // --------------------------------------------------------------------------
 // Typedefs
@@ -143,6 +148,13 @@ typedef enum {
 
 typedef struct {
 	EBufferStatusType		bufferStatus;
+#ifdef MC1322X
+	// SMAC 2 has a completely brain-dead way of placing the SMAC header bytes into a message.
+	// We deal with that by providing two places where a message can get accessed.
+	// For our internal purposes we always use bufferStorage[], but we pass bufferRadioHeader[]
+	// to any SMAC routines.
+	BufferStorageType		bufferRadioHeader[3];
+#endif
 	BufferStorageType		bufferStorage[MAX_PACKET_SIZE];
 	BufferCntType			bufferSize;
 } RadioBufferStruct;
@@ -162,14 +174,50 @@ typedef struct {
 typedef gwUINT16			SampleRateType;
 typedef gwUINT8				SampleSizeType;
 
-typedef UINT32				TimestampType;
-typedef UINT32				DataSampleType;
+typedef union UnixTimeUnionType {
+	struct{
+		gwUINT8 byte1;
+		gwUINT8 byte2;
+		gwUINT8 byte3;
+		gwUINT8 byte4;
+	} byteFields;
+	gwTime value;
+} UnixTimeType;
 
-typedef bool				LedFlashRunType;
-typedef UINT8				LedFlashSeqCntType;
-typedef UINT8				LedValueType;
-typedef UINT16				LedFlashTimeType;
-typedef UINT8				LedRepeatCntType;
+#ifdef MC1322X
+
+// From RadioManagement.c
+#define MAX_NUM_MSG	4
+
+#define RX_MESSAGE_PENDING(msg) ( \
+	   (msg.u8Status.msg_state == MSG_RX_RQST) \
+		|| (msg.u8Status.msg_state == MSG_RX_PASSED_TO_DEVICE) \
+		|| (msg.u8Status.msg_state == MSG_RX_ACTION_STARTED) \
+		|| (msg.u8Status.msg_state == MSG_RX_SYNC_FOUND) \
+	/*	|| (msg.u8Status.msg_state == MSG_RX_RQST_ABORT) */ \
+	)
+
+#define TX_MESSAGE_PENDING(msg) ( \
+	   (msg.u8Status.msg_state == MSG_TX_RQST) \
+		|| (msg.u8Status.msg_state == MSG_TX_PASSED_TO_DEVICE) \
+		|| (msg.u8Status.msg_state == MSG_TX_ACTION_STARTED) \
+		|| (msg.u8Status.msg_state == MSG_TX_RQST_ABORT) \
+	)
+
+typedef struct {
+	message_t		msg;
+	BufferCntType	bufferNum;
+} EMessageHolderType;
+
+#endif
+typedef gwUINT32			TimestampType;
+typedef gwUINT32			DataSampleType;
+
+typedef gwBoolean			LedFlashRunType;
+typedef gwUINT8				LedFlashSeqCntType;
+typedef gwUINT8				LedValueType;
+typedef gwUINT16			LedFlashTimeType;
+typedef gwUINT8				LedRepeatCntType;
 
 typedef struct {
 	LedValueType		redValue;
@@ -217,6 +265,7 @@ extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 // Function prototypes
 
 void advanceRXBuffer(void);
-void advanceTXBuffer(void);
+BufferCntType lockRXBuffer(void);
+BufferCntType lockTXBuffer(void);
 
 #endif /* RADIOCOMMON_H */

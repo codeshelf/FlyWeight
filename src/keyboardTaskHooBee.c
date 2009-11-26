@@ -36,7 +36,7 @@ void keyboardTask(void *pvParameters) {
 
 	if (gKeyboardQueue) {
 		for (;;) {
-			WATCHDOG_RESET;
+			GW_WATCHDOG_RESET;
 
 			// If the user has already pressed a button then wait until released
 			if (gButtonPressed) {
@@ -49,7 +49,7 @@ void keyboardTask(void *pvParameters) {
 					// (But we need a watchdog here, because the background task won't get called.)
 					for (i=0; i < 3; i++) {	
 						vTaskDelay(10 * portTICK_RATE_MS);
-						WATCHDOG_RESET;
+						GW_WATCHDOG_RESET;
 					}
 
 					// Wait until a TX packet is free.
@@ -58,8 +58,7 @@ void keyboardTask(void *pvParameters) {
 					}
 
 					//  Send a button up message.
-					txBufferNum = gTXCurBufferNum;
-					advanceTXBuffer();
+					txBufferNum = lockTXBuffer();
 					createButtonControlCommand(txBufferNum, gButtonPressed, BUTTON_RELEASED);
 					if (transmitPacket(txBufferNum)) {
 					};
@@ -74,7 +73,7 @@ void keyboardTask(void *pvParameters) {
 					// Wait 200ms before restarting to read another button.
 					for (i=0; i < 20; i++) {	
 						vTaskDelay(10 * portTICK_RATE_MS);
-						WATCHDOG_RESET;
+						GW_WATCHDOG_RESET;
 					}
 
 					// Start looking for another keypress.
@@ -100,8 +99,7 @@ void keyboardTask(void *pvParameters) {
 					}
 					
 					// Send an associate request on the current channel.
-					txBufferNum = gTXCurBufferNum;
-					advanceTXBuffer();
+					txBufferNum = lockTXBuffer();
 					createButtonControlCommand(txBufferNum, buttonNum, BUTTON_PRESSED);
 					if (transmitPacket(txBufferNum)) {
 					};

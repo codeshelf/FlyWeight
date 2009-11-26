@@ -12,9 +12,7 @@
 
 // Project includes
 #include "gwTypes.h"
-#include "WatchDog.h"
-#define WATCHDOG_RESET			WatchDog_Clear();
-//#define WATCHDOG_RESET
+
 // --------------------------------------------------------------------------
 // Definitions.
 

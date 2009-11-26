@@ -19,10 +19,11 @@ $Name$
 #include "USB.h"
 #include "serial.h"
 #include "string.h"
+//#include "Delay.h"
+#include "Leds.h"
 
 xQueueHandle			gGatewayMgmtQueue;
 ControllerStateType		gControllerState;
-extern gwUINT8			gCCRHolder;
 
 
 // --------------------------------------------------------------------------
@@ -55,36 +56,29 @@ void serialReceiveTask( void *pvParameters ) {
 	ECommandGroupIDType			cmdID;
 	ENetMgmtSubCmdIDType		subCmdID;
 	BufferCntType				txBufferNum = 0;
+	gwUINT8					ccrHolder;
 	
 	// Setup the USB interface.
+	//DelayMs(100);
 	USB_Init();
 
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.
 	createOutboundNetSetup();
 	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-	RELEASE_TX_BUFFER(txBufferNum);
+	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 	
 	
 	for ( ;; ) {
 	
 		GW_WATCHDOG_RESET;
 
-		// Don't try to get a frame if there is no free buffer.
-		while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-			vTaskDelay(1);
-			GW_WATCHDOG_RESET;
-		}
+		// Acquire and lock a TX buffer.
+		txBufferNum = lockTXBuffer();
 
-		gTXRadioBuffer[gTXCurBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[gTXCurBufferNum].bufferStorage, TX_BUFFER_SIZE);
+		gTXRadioBuffer[txBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[txBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
-		if (gTXRadioBuffer[gTXCurBufferNum].bufferSize > 0) {
-			// Mark the transmit buffer full.
-			gTXRadioBuffer[gTXCurBufferNum].bufferStatus = eBufferStateInUse;
-			
-			// Remember the buffer we just filled and then advance the buffer system.
-			txBufferNum = gTXCurBufferNum;
-			advanceTXBuffer();
+		if (gTXRadioBuffer[txBufferNum].bufferSize > 0) {
 
 			cmdID = getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage);
 			if (cmdID == eCommandNetMgmt) {
@@ -97,14 +91,14 @@ void serialReceiveTask( void *pvParameters ) {
 					case eNetMgmtSubCmdNetSetup:
 						processNetSetupCommand(txBufferNum);
 						// We don't ever want to broadcast net-setup, so continue.
-						RELEASE_TX_BUFFER(txBufferNum);
+						RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 						continue;
 						break;
 						
 					case eNetMgmtSubCmdNetIntfTest:
 						processNetIntfTestCommand(txBufferNum);
 						// We don't ever want to broadcast intf-test, so continue.
-						RELEASE_TX_BUFFER(txBufferNum);
+						RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 						continue;
 						break;
 				}
