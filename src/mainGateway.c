@@ -1,16 +1,9 @@
 /*
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
-<<<<<<< mainGateway.c
-
-	$Id$
-	$Name$
-=======
-	
+	All rights reserved	
 	$Id$
 	$Name$	
->>>>>>> 1.22
 */
 
 // --------------------------------------------------------------------------

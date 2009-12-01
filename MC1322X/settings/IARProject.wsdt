@@ -20,13 +20,13 @@
           
           
           
-        <Column0>243</Column0><Column1>2</Column1><Column2>27</Column2><Column3>1242260</Column3></ColumnWidths>
+        <Column0>205</Column0><Column1>2</Column1><Column2>27</Column2><Column3>1242260</Column3></ColumnWidths>
       </Workspace>
-    </Static>
+    <TerminalIO/><Debug-Log><ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1381</ColumnWidth1></Debug-Log></Static>
     <Windows>
       
       
-    <Wnd2>
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-15731-22314</Identity>
@@ -34,9 +34,9 @@
             <Factory>Build</Factory>
             <Session/>
           </Tab>
-        </Tabs>
+        <Tab><Identity>TabID-1276-32319</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
         <Tabs>
           <Tab>
             <Identity>TabID-26479-22317</Identity>
@@ -44,24 +44,24 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/Application/FlyWeight</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable/IAR</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable/IAR/MC1322x</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM/Interface</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/Application/FlyWeight</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/Application/Utilities</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable/IAR</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/FreeRTOS/Source/portable/IAR/MC1322x</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM/Interface</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM/Source</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM/Source/Common</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/PLM/Source/Common/Sys</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC/Drivers</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC/Drivers/Interface</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC/Drivers/Lib</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC/Drivers/Source</ExpandedNode><ExpandedNode>&lt;ws>/Board-SRB/SMAC/Source</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+      <SelectedTab>0</SelectedTab></Wnd1></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>230</SelStart><SelEnd>230</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\FreeRTOSConfig.h</Filename><XPos>0</XPos><YPos>40</YPos><SelStart>2374</SelStart><SelEnd>2374</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\radioCommon.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>627</SelStart><SelEnd>627</SelEnd></Tab><ActiveTab>2</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\gatewayMgmtTask.c</Filename><XPos>0</XPos><YPos>70</YPos><SelStart>2408</SelStart><SelEnd>2408</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>55</YPos><SelStart>1856</SelStart><SelEnd>1856</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Drivers\Source\Delay.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>530</SelStart><SelEnd>530</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>114</YPos><SelStart>4274</SelStart><SelEnd>4274</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\gatewayRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>20</YPos><SelStart>959</SelStart><SelEnd>977</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\portmacro.h</Filename><XPos>0</XPos><YPos>85</YPos><SelStart>3783</SelStart><SelEnd>3783</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\MC1322x\Application\FlyWeight\mainGateway.c</Filename><XPos>0</XPos><YPos>59</YPos><SelStart>1888</SelStart><SelEnd>1888</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\Board-SRB\Utilities\Leds.c</Filename><XPos>0</XPos><YPos>44</YPos><SelStart>2724</SelStart><SelEnd>2724</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\tasks.c</Filename><XPos>0</XPos><YPos>953</YPos><SelStart>31580</SelStart><SelEnd>31580</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\MemMang\heap_1.c</Filename><XPos>0</XPos><YPos>108</YPos><SelStart>4299</SelStart><SelEnd>4299</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Drivers\Source\MacaInterrupt.c</Filename><XPos>0</XPos><YPos>83</YPos><SelStart>4656</SelStart><SelEnd>4656</SelEnd></Tab><ActiveTab>10</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00aba5e8><key>iaridepm.enu1</key></Toolbar-00aba5e8></Sizes></Row0></Top><Left><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>578</Bottom><Right>309</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>138889</sizeHorzCX><sizeHorzCY>243902</sizeHorzCY><sizeVertCX>215972</sizeVertCX><sizeVertCY>707317</sizeVertCY></Rect></Wnd3></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1442</Right><x>-2</x><y>-2</y><xscreen>1444</xscreen><yscreen>200</yscreen><sizeHorzCX>1002778</sizeHorzCX><sizeHorzCY>243902</sizeHorzCY><sizeVertCX>138889</sizeVertCX><sizeVertCY>243902</sizeVertCY></Rect></Wnd2></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00abacc0><key>iaridepm.enu1</key></Toolbar-00abacc0></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>567</Bottom><Right>271</Right><x>-2</x><y>-2</y><xscreen>0</xscreen><yscreen>0</yscreen><sizeHorzCX>0</sizeHorzCX><sizeHorzCY>0</sizeHorzCY><sizeVertCX>189583</sizeVertCX><sizeVertCY>693902</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>209</Bottom><Right>1442</Right><x>-2</x><y>-2</y><xscreen>1444</xscreen><yscreen>211</yscreen><sizeHorzCX>1002778</sizeHorzCX><sizeHorzCY>257317</sizeHorzCY><sizeVertCX>0</sizeVertCX><sizeVertCY>0</sizeVertCY></Rect></Wnd0></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 
