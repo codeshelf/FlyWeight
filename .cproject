@@ -84,9 +84,16 @@
 <pathentry base-path="FreeRTOS" include="Source/include" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Demo/common/include" kind="inc" path="" system="true"/>
 <pathentry base-path="FreeRTOS" include="Source/portable/CodeWarrior/HCS08" kind="inc" path="" system="true"/>
-<pathentry kind="mac" name="IS_GATEWAY" path="" value="1"/>
-<pathentry kind="mac" name="XBEE" path="" value="1"/>
-<pathentry kind="mac" name="MC1321X" path="" value="1"/>
+<pathentry base-path="FlyWeight" include="MC1322X/SMAC/Interface" kind="inc" path="" system="true"/>
+<pathentry base-path="FlyWeight" include="MC1322X/SMAC/Drivers/Interface" kind="inc" path="" system="true"/>
+<pathentry base-path="FlyWeight" include="MC1322X/PLM/Interface" kind="inc" path="" system="true"/>
+<pathentry base-path="FlyWeight" include="MC1322X/PLM/LibInterface" kind="inc" path="" system="true"/>
+<pathentry base-path="FlyWeight" include="MC1322X/Board-PFC/PLM-conf" kind="inc" path="" system="true"/>
+<pathentry kind="mac" name="IS_GATEWAY" path="" value="0"/>
+<pathentry kind="mac" name="XBEE" path="" value="0"/>
+<pathentry kind="mac" name="MC1322X" path="" value="1"/>
+<pathentry kind="mac" name="IS_TOY_NETWORK" path="" value="1"/>
+<pathentry kind="mac" name="MC1322X_IAR" path="" value="1"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>

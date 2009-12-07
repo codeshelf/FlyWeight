@@ -3535,6 +3535,13 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB-HCS08.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -3947,6 +3954,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>version.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB-HCS08.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -6597,7 +6609,7 @@
 
                 <!-- Settings for "Panel for Compiler for HC08" panel -->
                 <SETTING><NAME>Panel for Compiler for HC08</NAME>
-                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -D_TOY_NETWORK_ -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000109"</VALUE></SETTING>
+                    <SETTING><NAME>Options</NAME><VALUE>-Cs08 -DMC1321X  -DSINGLE_PORT_ANTENNA -DIS_TOY_NETWORK -DIS_GATEWAY -Ms -Onu -Onf -Ol0 -OnB -Onbt -Onca -Oncn -One -OnP -Ont= -WmsgSd1420 -WmsgSd3303 -WmsgSd5703 -WmsgSd5904 -WmsgSd5905 -WmsgSd5909 -WmsgSe1801 -DGUID="00000109"</VALUE></SETTING>
                     <SETTING><NAME>UseDecoder</NAME><VALUE>0</VALUE></SETTING>
                     <SETTING><NAME>EchoCommandLine</NAME><VALUE>0</VALUE></SETTING>
                 </SETTING>
@@ -7444,6 +7456,13 @@
                 </FILE>
                 <FILE>
                     <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB-HCS08.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                    <FILEKIND>Text</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
                     <PATH>Events.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                     <FILEKIND>Text</FILEKIND>
@@ -7821,6 +7840,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>version.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB-HCS08.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -16032,6 +16056,12 @@
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>smacGlue.h</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>smacGlue.c</PATH>
@@ -16089,6 +16119,12 @@
                     <TARGETNAME>EVB Gateway</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>gatewayMgmtTask.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>XBee Remote</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>remoteRadioTask.h</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -16167,6 +16203,12 @@
                     <TARGETNAME>EVB Remote</TARGETNAME>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>ulaw.c</PATH>
+                    <PATHFORMAT>Windows</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <TARGETNAME>EVB Gateway</TARGETNAME>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>USB-HCS08.c</PATH>
                     <PATHFORMAT>Windows</PATHFORMAT>
                 </FILEREF>
                 <FILEREF>
@@ -16507,7 +16549,7 @@
                 <PATHFORMAT>Windows</PATHFORMAT>
             </FILEREF>
             <FILEREF>
-                <TARGETNAME>EVB Gateway</TARGETNAME>
+                <TARGETNAME>GW0003 (Gateway)</TARGETNAME>
                 <PATHTYPE>Name</PATHTYPE>
                 <PATH>USB.c</PATH>
                 <PATHFORMAT>Windows</PATHFORMAT>
@@ -16638,12 +16680,11 @@
                 584265652E630D0A434F44455C4C6F77566F6C746167652E630D0A434F44455C
                 4750494F312E630D0A434F44455C494F5F4D61702E630D0A434F44455C466C79
                 5765696768742E70726D0D0A434F44455C566563746F72732E630D0A434F4445
-                5C4576656E74732E630D0A434F44455C466C795765696768742E630D0A434F44
-                455C4576656E74732E680D0A444F435C466C795765696768742E7478740D0A44
-                4F435C466C795765696768745F5349474E414C532E7478740D0A444F435C466C
-                795765696768742E7478740D0A444F435C466C795765696768745F5365747469
-                6E67732E786D6C0D0A444F435C466C795765696768745F5349474E414C532E74
-                78740D0A
+                5C466C795765696768742E630D0A444F435C466C795765696768742E7478740D
+                0A444F435C466C795765696768745F5349474E414C532E7478740D0A444F435C
+                466C795765696768742E7478740D0A444F435C466C795765696768745F536574
+                74696E67732E786D6C0D0A444F435C466C795765696768745F5349474E414C53
+                2E7478740D0A
             </VALUE></PLUGINDATA>
     </PLUGINDATALIST>
 </PROJECT>

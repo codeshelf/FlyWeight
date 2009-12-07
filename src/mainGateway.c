@@ -1,9 +1,9 @@
 /*
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved	
+	All rights reserved
 	$Id$
-	$Name$	
+	$Name$
 */
 
 // --------------------------------------------------------------------------
@@ -30,7 +30,7 @@ extern void ResetMaca(void);
 
 // --------------------------------------------------------------------------
 
-void Main( void ) {
+void vMain( void ) {
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
@@ -51,16 +51,16 @@ void Main( void ) {
 	ResetMaca();
 	MLMERadioInit();
 	IntEnableAll();
-	
+
 	LED_Init();
-	
+
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = TRUE;
 	copCntl.bit.copTimeOut = 127;
 	copCntl.bit.copWP = TRUE;
 	copCntl.bit.copOut = 0;
 	CRM_CopCntl(copCntl);
-	
+
 #endif
 
 	gControllerState = eControllerStateInit;

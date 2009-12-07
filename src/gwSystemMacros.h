@@ -27,8 +27,10 @@
 	#define GW_USB_BYTE_READY					SCIS1_RDRF
 	#define GW_GET_USB_BYTE						SCID
 
+	#define	GW_SMAC_SUCCESS						SUCCESS
 	#define	GW_ENERGY_DETECT(channel)			MLMEEnergyDetect()
 	#define GW_RADIO_GAIN_ADJUST(val)			MLMEMC13192PAOutputAdjust(val)
+	#define GW_SET_RADIO_CHANNEL(channel)		MLMESetChannelRequest(channel)
 
     #define GW_PREP_ATD(saveATD1C, saveATD1SC) \
                                         \
@@ -75,17 +77,19 @@
 	#define	GW_WATCHDOG_RESET					CRM_CopReset()
 
 	#define GW_USB_INIT
-	#define GW_USB_OK						0
+	#define GW_USB_OK							0
 	#define GW_CTS_ON
 	#define GW_CTS_OFF
-	#define GW_USB_BYTE_READY				TRUE
-	#define GW_GET_USB_BYTE					UartReadData()
+	#define GW_USB_BYTE_READY					TRUE
+	#define GW_GET_USB_BYTE						UartReadData()
 
+	#define	GW_SMAC_SUCCESS						gSuccess_c
 	#define	GW_ENERGY_DETECT(channel)			portMLMEEnergyDetect(channel)
 	#define GW_RADIO_GAIN_ADJUST(val)			MLMEFEGainAdjust(val)
+	#define GW_SET_RADIO_CHANNEL(channel)		MLMESetChannelRequest(channel)
 
-	#define GW_PREP_ATD(saveATD1, saveATD1SC)			Adc_StartManualConv(gAdcPrimary_c, gAdcBatt_c)
-	#define GW_MEASURE_BATTERY(batteryLevel)			Adc_ManualRead(gAdcPrimary_c, &batteryLevel)
+	#define GW_PREP_ATD(saveATD1, saveATD1SC)	Adc_StartManualConv(gAdcPrimary_c, gAdcBatt_c)
+	#define GW_MEASURE_BATTERY(batteryLevel)	Adc_ManualRead(gAdcPrimary_c, &batteryLevel)
 	#define GW_RESTORE_ATD(restoreATD1, restoreATD1SC)
 
 #endif

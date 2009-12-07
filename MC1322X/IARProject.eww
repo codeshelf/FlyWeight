@@ -5,6 +5,9 @@
 		<path>$WS_DIR$\Board-SRB\Board-SRB.xml</path>
 	</project>
 	<project>
+		<path>$WS_DIR$\Board-PFC\Board-PFC.xml</path>
+	</project>
+	<project>
 		<path>$WS_DIR$\Board-NCB\Board-NCB.xml</path>
 	</project>
 <batchBuild/>

@@ -12,14 +12,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "simple_mac.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
 #include "commands.h"
 #include "remoteMgmtTask.h"
-#include "CPU.h"
-#include "WatchDog.h"
 
-// SMAC includes
-#include "pub_def.h"
 #if defined(XBEE_PINOUT)
 	#include "LED_XBee.h"
 #elif defined(MC1321X)
@@ -31,12 +28,12 @@
 // --------------------------------------------------------------------------
 // Global variables.
 
-UINT8 				gu8RTxMode;
-extern bool			gIsSleeping;
-extern bool			gShouldSleep;
-extern UINT8		gSleepCount;
-extern UINT8		gButtonPressed;
-extern byte			gCCRHolder;
+gwUINT8 			gu8RTxMode;
+extern gwBoolean	gIsSleeping;
+extern gwBoolean	gShouldSleep;
+extern gwUINT8		gSleepCount;
+extern gwUINT8		gButtonPressed;
+extern gwUINT8		gCCRHolder;
 extern portTickType	gLastPacketReceivedTick;
 
 xTaskHandle			gRadioReceiveTask = NULL;
@@ -60,7 +57,7 @@ extern BufferCntType		gRXUsedBuffers;
 extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 extern BufferCntType		gTXCurBufferNum;
 extern BufferCntType		gTXUsedBuffers;
-int				        	gAssocCheckCount = 0;
+gwUINT8			        	gAssocCheckCount = 0;
 
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
@@ -90,19 +87,11 @@ void radioReceiveTask(void *pvParameters) {
 
 		gSleepCount = 0;
 
-#if !defined(XBEE_PINOUT)
+#if !defined(XBEE_PINOUT) && !defined(MC1322X)
 		// Setup the TPM2 timer.
 		TPMSC_AUDIO_LOADER = 0b01001000;
 		// 16MHz bus clock with a 7.4kHz interrupt freq.
 		TPMMOD_AUDIO_LOADER = gMasterSampleRate;
-#endif
-
-#if defined(XBEE_PINOUT)
-		//PWM_XBee_Init();
-#elif defined(MC1321X)
-		//PWM_MC1321X_Init();
-#else
-		//PWM_EVB_Init();
 #endif
 
 		for (;;) {
@@ -122,7 +111,7 @@ void radioReceiveTask(void *pvParameters) {
 
 			// Setup for the next RX cycle.
 			if (gu8RTxMode != RX_MODE) {
-				gRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+				gRxPacket.pu8Data = (gwUINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gRxPacket.u8Status = 0;
 
@@ -281,7 +270,7 @@ void radioReceiveTask(void *pvParameters) {
 
 // --------------------------------------------------------------------------
 
-extern bool					gAudioModeRX;
+extern gwBoolean			gAudioModeRX;
 extern SampleRateType		gMasterSampleRate;
 
 void radioTransmitTask(void *pvParameters) {
@@ -318,7 +307,7 @@ void radioTransmitTask(void *pvParameters) {
 			// Prepare to RX responses.
 			// Don't go into RX mode if the last thing we sent was an audio packet.
 			if (!(getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) == eCommandAudio)) {
-				gRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
+				gRxPacket.pu8Data = (gwUINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 				gRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 				gRxPacket.u8Status = 0;
 				MLMERXEnableRequest(&gRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);

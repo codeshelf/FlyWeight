@@ -6,7 +6,7 @@
 **     Beantype  : Init_KBI
 **     Version   : Bean 01.020, Driver 01.08, CPU db: 2.87.124
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 5:40 PM
+**     Date/Time : 12/7/2009, 2:56 PM
 **     Abstract  :
 **          This file implements the KBI (KBI) module initialization
 **          according to the Peripheral Initialization Bean settings, and defines

@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #include "gatewayRadioTask.h"
@@ -37,19 +37,20 @@ gwRxPacket			gRxPacket;
 
 // Radio input buffer
 // There's a 2-byte ID on the front of every packet.
-RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
-BufferCntType		gRXCurBufferNum = 0;
-BufferCntType		gRXUsedBuffers = 0;
+extern RadioBufferStruct	gRXRadioBuffer[RX_BUFFER_COUNT];
+extern BufferCntType		gRXCurBufferNum;
+extern BufferCntType		gRXUsedBuffers;
 
-RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
-BufferCntType		gTXCurBufferNum = 0;
-BufferCntType		gTXUsedBuffers = 0;
+extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
+extern BufferCntType		gTXCurBufferNum;
+extern BufferCntType		gTXUsedBuffers;
 
-RemoteAddrType		gMainRemote = INVALID_REMOTE;
+NetAddrType	    	gMainRemote = INVALID_REMOTE;
 
 // --------------------------------------------------------------------------
 
 void radioReceiveTask(void *pvParameters) {
+    gwUINT8                 ccrHolder;
 	BufferCntType			rxBufferNum;
 	portTickType			rxQueueTimeout = (portTickType) (200 * portTICK_RATE_MS);
 //	ECommandIDType			cmdID;
@@ -101,7 +102,7 @@ void radioReceiveTask(void *pvParameters) {
 
 				// Send the packet to the controller.
 				serialTransmitFrame((gwUINT8*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
-				RELEASE_RX_BUFFER(rxBufferNum);
+				RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 
 				// Blink LED2 to let us know we succeeded in receiving a packet buffer.
 				//if (xQueueSend(gLEDBlinkQueue, &gLED2, (portTickType) 0)) {
@@ -144,7 +145,7 @@ void radioTransmitTask(void *pvParameters) {
 			GW_EXIT_CRITICAL(ccrHolder);
 
 			// Set the status of the TX buffer to free.
-			RELEASE_TX_BUFFER(txBufferNum);
+			RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 			// Prepare to RX responses.
 			gRxPacket.pu8Data = (UINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);

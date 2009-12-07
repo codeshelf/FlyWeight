@@ -3,7 +3,7 @@ FlyWeight
 Copyright 2005, 2006 Jeffrey B. Williams
 All rights reserved
 
-$Id$	
+$Id$
 */
 
 /**
@@ -14,8 +14,7 @@ $Id$
 #ifndef DEVICEINFO_H
 #define DEVICEINFO_H
 
-#include "PE_Types.h"
-#include "pub_def.h"
+#include "gwTypes.h"
 #include "radioCommon.h"
 
 #define KEY_INDEX			0
@@ -37,13 +36,13 @@ $Id$
 
 extern char DEVICE_DESC[];
 
-extern const UINT8 kActorKVPs;
+extern const gwUINT8 kActorKVPs;
 extern const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2];
 
-extern const UINT8 kActorEndpoints;
+extern const gwUINT8 kActorEndpoints;
 extern const BufferStoragePtrType kActorEndpointTable[ENDPOINT_ENTRIES][3];
 
-extern const UINT8 kEndpointKVPs;
+extern const gwUINT8 kEndpointKVPs;
 extern const BufferStoragePtrType kEndpointKVPTable[ENDPOINT_KVPS][3];
 
-#endif DEVICEINFO_H
+#endif // DEVICEINFO_H

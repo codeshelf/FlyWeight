@@ -28,7 +28,7 @@ __SUP_stack_size     EQU   64*4
 
   EXPORT _start_vector_
 
-  IMPORT Main
+  IMPORT vMain
 #if (__VER__ >= 5020000)
     IMPORT    __iar_data_init2
     EXPORT    __iar_data_init
@@ -146,7 +146,7 @@ __start_
 
 __call_main
 ;// the main function was renamed to Main in order to avoid inclusion of C library code for supplementary initializations
-    B       Main         ; // jump to "Main()"
+    B       vMain         ; // jump to "Main()"
 
 __reserved_
     MOVS     pc,lr

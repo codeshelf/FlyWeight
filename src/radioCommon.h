@@ -239,6 +239,7 @@ extern xTaskHandle			gRemoteManagementTask;
 extern xTaskHandle			gKeyboardTask;
 extern xTaskHandle			gStrainGageTask;
 extern xTaskHandle			gHooBeeTask;
+extern xTaskHandle			gPFCTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;

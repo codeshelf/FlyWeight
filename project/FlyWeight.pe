@@ -1,5 +1,5 @@
 Processor Expert Version 0405
-ProjectModificationStamp=1178
+ProjectModificationStamp=1180
 
 [Options]
 EventsDirectory=CODE\
@@ -16,7 +16,7 @@ ReviewCodeGenChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=1028
+ProjectCompNumb=1032
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2134,7 +2134,7 @@ List=GrupItem
 ItemSymbol=OSC1Pin
 ReadOnly=Yes
 UserReadOnly=Yes
-Value=PTG2_EXTAL
+Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2154,7 +2154,7 @@ List=GrupItem
 ItemSymbol=OSC2Pin
 ReadOnly=Yes
 UserReadOnly=Yes
-Value=PTG1_XTAL
+Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2308,7 +2308,7 @@ List=GrupItem
 ItemSymbol=BDMPin
 ReadOnly=Yes
 UserReadOnly=Yes
-Value=PTG0_BKGD_MS
+Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2358,7 +2358,7 @@ List=EnmGrpItm
 ItemSymbol=LVDIntName
 ReadOnly=Yes
 UserReadOnly=Yes
-Value=Vlvd
+Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -2878,7 +2878,7 @@ List=GrupItem
 ItemSymbol=IntVreset
 ReadOnly=Yes
 UserReadOnly=Yes
-Value=Vreset
+Value=
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No

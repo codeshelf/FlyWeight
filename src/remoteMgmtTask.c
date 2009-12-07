@@ -2,9 +2,9 @@
 	FlyWeight
 	© Copyright 2005, 2006 Jeffrey B. Williams
 	All rights reserved
-	
+
 	$Id$
-	$Name$	
+	$Name$
 */
 
 #include "remoteMgmtTask.h"
@@ -13,18 +13,17 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "pub_def.h"
-#include "simple_mac.h"
-
-#define				RESET_MCU				__asm DCB 0x8D
+#include "gwSystemMacros.h"
+#include "gwTypes.h"
+#include "commands.h"
 
 xQueueHandle 			gRemoteMgmtQueue;
 ELocalStatusType		gLocalDeviceState;
-bool					gIsSleeping;
-bool					gShouldSleep;
-UINT8					gSleepCount;
-extern int				gAssocCheckCount;
-extern byte				gCCRHolder;
+gwBoolean				gIsSleeping;
+gwBoolean				gShouldSleep;
+gwUINT8					gSleepCount;
+extern gwUINT8			gAssocCheckCount;
+extern gwUINT8			gCCRHolder;
 
 // --------------------------------------------------------------------------
 
@@ -32,14 +31,14 @@ void remoteMgmtTask( void *pvParameters ) {
 	gwUINT8		    	ccrHolder;
 	BufferCntType		rxBufferNum = 0;
 	ChannelNumberType	channel;
-	bool				associated;
-	UINT8				trim = 128;
-	UINT8				assocAttempts = 0;
+	gwBoolean			associated;
+	gwUINT8				trim = 128;
+	gwUINT8				assocAttempts = 0;
 	ECommandGroupIDType	cmdID;
 	ECmdAssocType		assocSubCmd;
 
 	if ( gRemoteMgmtQueue ) {
-		
+
 		/*
 		 * Attempt to associate with our controller.
 		 * 1. Send an associate request.
@@ -55,12 +54,12 @@ void remoteMgmtTask( void *pvParameters ) {
 
 			// Set the channel to the current channel we're testing.
 			MLMESetChannelRequest(channel);
-			
+
 			// Send an associate request on the current channel.
 			createAssocReqCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
 			if (transmitPacket(gTXCurBufferNum)) {
 			};
-			
+
 			// Wait up to 200ms for a response.
 			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 200 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
@@ -79,7 +78,7 @@ void remoteMgmtTask( void *pvParameters ) {
 					RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 				}
 			}
-			
+
 			// If we're still not associated then change channels.
 			if (!associated) {
 			//	MLMEMC13192XtalAdjust(trim--);
@@ -96,7 +95,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			}
 		}
 		gLocalDeviceState = eLocalStateRun;
-				
+
 		vTaskSuspend(gRemoteManagementTask);
 
 //		for ( ;; ) {
@@ -121,13 +120,13 @@ void remoteMgmtTask( void *pvParameters ) {
 // Define this if the MCU should really sleep (hibernate in FSL parlance).
 //#define REAL_SLEEP
 
-void sleepThisRemote(UINT8 inSleepMillis) {
+void sleepThisRemote(gwUINT8 inSleepMillis) {
 
 #ifdef REAL_SLEEP
-	byte ccrHolder;
-	int i;
-	UINT8 saveLoaderState;
-	UINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.	
+	gwUINT8 ccrHolder;
+	gwUINT8 i;
+	gwUINT8 saveLoaderState;
+	gwUINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
 #endif
 
 #ifndef REAL_SLEEP
@@ -147,16 +146,16 @@ void sleepThisRemote(UINT8 inSleepMillis) {
 		// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
 		SRTISC_RTIS = 2;// 1 = 8ms, 2 = 32ms, 3 = 64, 4 = 128, 5 = 256, 6 = 1024ms;
 		ExitCriticalArg(ccrHolder);
-		
+
 		for (i = 0; i < sleepCycles; i++) {
 			__asm("STOP");
-			
+
 			// If a KBI woke us up then don't keep sleeping.
 			if (KBI1SC_KBF) {
 				break;
 			}
 		}
-		
+
 		EnterCriticalArg(ccrHolder);
 		gIsSleeping = FALSE;
 		MLMEWakeRequest();

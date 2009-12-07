@@ -29,5 +29,5 @@
 void radioReceiveTask( void *pvParameters );
 void radioTransmitTask( void *pvParameters );
 
-#endif REMOTERADIOTASK_H
+#endif // REMOTERADIOTASK_H
 

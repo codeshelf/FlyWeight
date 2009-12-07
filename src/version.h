@@ -3,7 +3,7 @@ FlyWeight
 Copyright 2005, 2006 Jeffrey B. Williams
 All rights reserved
 
-$Id$	
+$Id$
 */
 
 /**
@@ -14,14 +14,16 @@ $Id$
 #ifndef VERSION_H
 #define VERSION_H
 
-#define FIRMWARE_REV			"1.0.3"
+#define FIRMWARE_REV			"1.1.0"
 
 #if defined(GW0009R1)
 	#define BOARD_REV				"GW0009.v1.r01"
 #elif defined(GW0009R2)
 	#define BOARD_REV				"GW0009.v1.r02"
+#elif defined(GW0010R1)
+	#define BOARD_REV				"GW0010.v1.r01"
 #else
 	#define BOARD_REV				"undefined"
 #endif
 
-#endif VERSION_H
+#endif /* VERSION_H */

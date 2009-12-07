@@ -27,7 +27,7 @@ NetworkIDType	        	gMyNetworkID = BROADCAST_NETID;
 extern LedFlashRunType		gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType	gLedFlashSeqCount;
 extern LedFlashStruct		gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
-extern gwUINT16				gFIFO[8];
+//extern gwUINT16				gFIFO[8];
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -186,9 +186,9 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 	// Set the system status register
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT] = GW_GET_SYSTEM_STATUS;
 
-	for( pos = 0; pos < 16; pos++ ) {
-		gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT + 1 + pos] = gFIFO[pos];
-	}
+//	for( pos = 0; pos < 16; pos++ ) {
+//		gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT + 1 + pos] = gFIFO[pos];
+//	}
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_SYSSTAT + pos;
 };
@@ -527,7 +527,7 @@ void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr) {
 
 	gwUINT8			ccrHolder;
-	
+
 	// Indicate that we received a response for the remote.
 	gRemoteStateTable[inRemoteAddr].remoteState = eRemoteStateRespRcvd;
 
