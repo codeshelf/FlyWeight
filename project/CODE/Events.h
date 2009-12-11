@@ -34,7 +34,10 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
+#include "LED_XBee.h"
+#include "KBI_XBee.h"
 #include "LowVoltage.h"
+#include "GPIO1.h"
 
 void SW1Int_OnInterrupt(void);
 /*

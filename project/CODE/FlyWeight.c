@@ -25,6 +25,7 @@
 
 /* Including used modules for compiling procedure */
 #include "Cpu.h"
+#include "Events.h"
 #include "RTI1.h"
 #include "SWI.h"
 #include "MC13191IRQ.h"

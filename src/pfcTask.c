@@ -33,6 +33,7 @@ void pfcTask(void *pvParameters) {
 		setupCommandIntercept();
 		gSDCardState = eSDCardStateIdle;
 		gSDCardCmdState = eSDCardCmdStateStd;
+		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 
 		for (;;) {
 			vTaskDelay(10);
@@ -46,11 +47,12 @@ void pfcTask(void *pvParameters) {
 
 // --------------------------------------------------------------------------
 /*
- * This routine sets up timer 1 to generate an FCS signal for an commands coming from the
- * SD card host controller on the CMD line.  When we see a negative edge on the CMD line it
- * triggers the FCS clock (and its output pin) until we see 48 clock cycles go by on the CLK pin.
+ * This routine sets up timer 3 to generate a frame sync (FS) signal for an commands coming from the
+ * SD card host controller on the CMD line.  When we see a negative edge on the CMD line (secondary count source)
+ * it asserts timer 3 output (the FS pin) and counts the right number of primary source (BusClock /128) clocks
+ * until the right time to turn off the timer 3 output (FS pin).
  *
- * Primary counter clock is the SD card synchronous CLK line.
+ * Primary counter clock is the bus clock divided by 128.
  * Secondary counter source is the SD card CMD line.
  */
 
@@ -61,51 +63,49 @@ void setupCommandIntercept() {
 	TmrComparatorStatusCtrl_t tmrComparatorStatusCtrl;
 
 	/* Enable hw timer 1 */
-	TmrEnable(SD_FCS_TIMER);
+	TmrEnable(SSI_FRAMESYNC_TIMER);
 	/* Don't stat the timer yet */
-	TmrSetMode(SD_FCS_TIMER, gTmrNoOperation_c);
+	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	/* Register the callback executed when a timer interrupt occur */
-	TmrSetCallbackFunction(SD_FCS_TIMER, gTmrComp1Event_c, commandCallback);
+	TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, commandCallback);
 
 	tmrStatusCtrl.uintValue = 0x0000;
 	tmrStatusCtrl.bitFields.TCFIE = 1;
 	tmrStatusCtrl.bitFields.TOFIE = 1;
 	tmrStatusCtrl.bitFields.OPS = 1;
 	tmrStatusCtrl.bitFields.OEN = 1;
-	TmrSetStatusControl(SD_FCS_TIMER, &tmrStatusCtrl);
+	TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
 	//tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;
 	//tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;
 	//tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;
-	TmrSetCompStatusControl(SD_FCS_TIMER, &tmrComparatorStatusCtrl);
+	TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
 	tmrConfig.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
 	tmrConfig.tmrCoInit = FALSE; /*co-chanel counter/timers can not force a re-initialization of this counter/timer*/
 	tmrConfig.tmrCntDir = FALSE; /*count-up*/
 	tmrConfig.tmrCntLen = TRUE; /*count until compare*/
 	tmrConfig.tmrCntOnce = FALSE; /*count repeatedly*/
-	tmrConfig.tmrSecondaryCntSrc = gTmrSecondaryCnt2Input_c; /*secondary count source not needed*/
-	tmrConfig.tmrPrimaryCntSrc = gTmrPrimaryCnt3Input_c; /*primary count source is IP BUS clock divide by 8 prescaler*/
-	TmrSetConfig(SD_FCS_TIMER, &tmrConfig);
+	tmrConfig.tmrSecondaryCntSrc = SECONDARY_SOURCE;
+	tmrConfig.tmrPrimaryCntSrc = PRIMARY_SOURCE;
+	TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
 
-	/* 48 clock cycles after the CMD pin registers an edge we have an entire command */
-	SetComp1Val(SD_FCS_TIMER, 48);
-	SetCompLoad1Val(SD_FCS_TIMER, 48);
+	/* 8 clock cycles after the CMD pin registers we can deassert the FCS. */
+	SetComp1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
+	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
 
 	/* Config timer to start from 0 after compare event */
-	SetLoadVal(SD_FCS_TIMER, 0);
+	SetLoadVal(SSI_FRAMESYNC_TIMER, 0);
 
 	/* Start the counter at 0. */
-	SetCntrVal(SD_FCS_TIMER, 0);
+	SetCntrVal(SSI_FRAMESYNC_TIMER, 0);
 
 	/* Setup the interrupt handling to catch the TMR0 interrupts. */
 	IntAssignHandler(gTmrInt_c, (IntHandlerFunc_t) TmrIsr);
 	ITC_SetPriority(gTmrInt_c, gItcNormalPriority_c);
 	ITC_EnableInterrupt(gTmrInt_c);
-
-	TmrSetMode(SD_FCS_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 }
 
 /*
@@ -167,8 +167,8 @@ static void setupSSI() {
  */
 static void commandCallback(TmrNumber_t tmrNumber) {
 
-	// Disable the command trigger and FCS timer.
-	TmrSetMode(SD_FCS_TIMER, gTmrNoOperation_c);
+	// Disable the CMS line edge trigger and FS timer.
+	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	// SSI Rx mode off, Tx mode off
 	SSI_SCR_BIT.RE = FALSE;
@@ -230,7 +230,7 @@ static void commandCallback(TmrNumber_t tmrNumber) {
 				cmdSample2.word = 0x00000001;
 				cmdSample2.bytes.byte1 = gSDCardState << 1;
 				cmdSample2.bytes.byte2 = gSDCardCmdState << 5;
-				cmdSample2.bytes.byte3 = (crc7(cmdSample1.word, cmdSample2.word) < 1) + 1;
+				cmdSample2.bytes.byte3 = (crc7(&cmdSample1.bytes.byte0, &cmdSample2.bytes.byte0) < 1) + 1;
 			} else if (responseType == eSDCardRespType3) {
 				// Initial value: start bit = 0, host bit = 0, cmd = 111111, 1/2 of OCR (at all voltages);
 				cmdSample1.word = 0x003f00ff;
@@ -256,8 +256,8 @@ static void commandCallback(TmrNumber_t tmrNumber) {
 	SSI_SCR_BIT.TE = FALSE;
 	SSI_SCR_BIT.RE = TRUE;
 
-	// Reset the command trigger and the FCS timer for the next command.
-	TmrSetMode(SD_FCS_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+	// Reenable the CMD signal edge trigger and the FS timer for the next command.
+	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 }
 
 // --------------------------------------------------------------------------

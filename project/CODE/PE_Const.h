@@ -6,7 +6,7 @@
 **     Beantype  : PE_Const
 **     Version   : Driver 01.00
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 5:40 PM
+**     Date/Time : 11/25/2009, 5:46 PM
 **     Abstract  :
 **         This bean "PE_Const" contains internal definitions
 **         of the constants.
@@ -14,7 +14,7 @@
 **     Contents  :
 **         No public methods
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2007
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -45,7 +45,7 @@
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.02 [04.05]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

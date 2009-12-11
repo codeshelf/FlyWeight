@@ -5,7 +5,7 @@
     
     
     
-  <CurrentConfigs><Project>Board-PFC/Debug</Project><Project>Board-NCB/Debug</Project><Project>Board-SRB/Debug</Project></CurrentConfigs><CurrentProj>Board-PFC</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <CurrentConfigs><Project>Board-NCB/Debug</Project><Project>Board-PFC/Debug</Project><Project>Board-SRB/Debug</Project></CurrentConfigs><CurrentProj>Board-PFC</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
   <Desktop>
     <Static>
       <Build>
@@ -20,13 +20,13 @@
           
           
           
-        <Column0>222</Column0><Column1>2</Column1><Column2>27</Column2><Column3>1242260</Column3></ColumnWidths>
+        <Column0>192</Column0><Column1>2</Column1><Column2>27</Column2><Column3>1242260</Column3></ColumnWidths>
       </Workspace>
     <TerminalIO/><Debug-Log><ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1381</ColumnWidth1></Debug-Log></Static>
     <Windows>
       
       
-    <Wnd0>
+    <Wnd2>
         <Tabs>
           <Tab>
             <Identity>TabID-15731-22314</Identity>
@@ -36,7 +36,7 @@
           </Tab>
         <Tab><Identity>TabID-1276-32319</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-26479-22317</Identity>
@@ -48,20 +48,20 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1></Windows>
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>216</YPos><SelStart>6042</SelStart><SelEnd>6042</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\deviceQuery.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>756</SelStart><SelEnd>756</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>115</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><ActiveTab>2</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\pfcTask.c</Filename><XPos>0</XPos><YPos>213</YPos><SelStart>7826</SelStart><SelEnd>7826</SelEnd></Tab><ActiveTab>0</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00abacc0><key>iaridepm.enu1</key></Toolbar-00abacc0></Sizes></Row0></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>567</Bottom><Right>271</Right><x>-2</x><y>-2</y><xscreen>0</xscreen><yscreen>0</yscreen><sizeHorzCX>0</sizeHorzCX><sizeHorzCY>0</sizeHorzCY><sizeVertCX>189583</sizeVertCX><sizeVertCY>693902</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>209</Bottom><Right>1442</Right><x>-2</x><y>-2</y><xscreen>1444</xscreen><yscreen>211</yscreen><sizeHorzCX>1002778</sizeHorzCX><sizeHorzCY>257317</sizeHorzCY><sizeVertCX>0</sizeVertCX><sizeVertCY>0</sizeVertCY></Rect></Wnd0></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00abb198><key>iaridepm.enu1</key></Toolbar-00abb198></Sizes></Row0></Top><Left><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>659</Bottom><Right>241</Right><x>-2</x><y>-2</y><xscreen>0</xscreen><yscreen>0</yscreen><sizeHorzCX>0</sizeHorzCX><sizeHorzCY>0</sizeHorzCY><sizeVertCX>189844</sizeVertCX><sizeVertCY>700212</sizeVertCY></Rect></Wnd3></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>241</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>243</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>257415</sizeHorzCY><sizeVertCX>0</sizeVertCX><sizeVertCY>0</sizeVertCY></Rect></Wnd2></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

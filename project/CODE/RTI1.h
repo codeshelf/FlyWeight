@@ -4,9 +4,9 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : Init_RTI
-**     Version   : Bean 01.039, Driver 01.13, CPU db: 2.87.124
+**     Version   : Bean 01.045, Driver 01.14, CPU db: 2.87.125
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 11/25/2009, 5:40 PM
+**     Date/Time : 11/25/2009, 5:46 PM
 **     Abstract  :
 **          This file implements the RTI (RTI) module initialization
 **          according to the Peripheral Initialization Bean settings,
@@ -28,7 +28,7 @@
 **     Contents  :
 **         Init - void RTI1_Init(void);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2007
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -80,7 +80,7 @@ __interrupt void dispatchRTI(void);
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.02 [04.05]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

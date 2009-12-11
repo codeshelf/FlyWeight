@@ -18,9 +18,15 @@
 #define PFC_QUEUE_SIZE		2
 
 #define	MAX_DRIFT			500
-#define	SD_FCS_TIMER		gTmr1_c
-#define	SD_CMD_TIMER		gTmr2_c
-#define SD_CLK_TIMER		gTm23_c
+#define	SSI_FRAMESYNC_TIMER	gTmr3_c
+
+#define PRIMARY_SOURCE		gTmrPrimaryClkDiv128_c
+#define SECONDARY_SOURCE	gTmrSecondaryCnt1Input_c
+
+#define SD_CLK_RATE			100000
+#define TMR_CLK_RATE		187500	/* Bus Clk / Prescaler --> 24,000,000 / 128 */
+#define FS_CLOCK_COUNT	15		/* 8 clocks * TMR_CLK_RATE / SD SD_CLK_RATE --> 8 * 187,500 / 100,000 */
+
 #define  gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 
 typedef  enum {
@@ -78,6 +84,6 @@ void pfcTask( void *pvParameters );
 void commandCallback(TmrNumber_t tmrNumber);
 void setupSSI();
 void setupCommandIntercept();
-gwUINT8 crc7(gwUINT8 * inDataPtr, gwUINT8 inBytes);
+gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr);
 
 #endif //PFC_TASK_H

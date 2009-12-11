@@ -1,6 +1,6 @@
 <PE_PROJECT_SETTINGS_DOCUMENTATION>
-  <PE_product_version v="version 3.02 for Freescale HC(S)08/RS08/CFV1"/>
-  <PE_core_version v="Processor Expert Version 0405"/>
+  <PE_product_version v="version 3.03 for Freescale HC(S)08/RS08/CFV1"/>
+  <PE_core_version v="Processor Expert Version 0407"/>
 
   <CPU_Bean name="Cpu" type="MC9S08GT60_44">
     <Enabled v="N"/>
@@ -1556,8 +1556,8 @@ MLMESetMC13192ClockRate(2);
       <TurnTxOff v="don&apos;t generate code"/>
       <TurnRxOn v="don&apos;t generate code"/>
       <TurnRxOff v="don&apos;t generate code"/>
-      <SetIdle v="don&apos;t generate code"/>
       <LoopMode v="don&apos;t generate code"/>
+      <SetIdle v="don&apos;t generate code"/>
       <Standby v="don&apos;t generate code"/>
       <SetDirection v="don&apos;t generate code"/>
       <GetRxIdle v="don&apos;t generate code"/>
