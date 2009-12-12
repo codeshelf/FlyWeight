@@ -13,8 +13,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "gwTypes.h"
 #include "remoteMgmtTask.h"
+#include "Timer.h"
 #include "Ssi_Interface.h"
 
 xTaskHandle 	gPFCTask = NULL;
@@ -25,10 +25,13 @@ ESDCardCmdState gSDCardCmdState;
 
 // --------------------------------------------------------------------------
 
+gwUINT8 sample[]  = { 0xf0f0, 0xf0f0, 0xf0f0, 0xf0f0 };
+
 void pfcTask(void *pvParameters) {
 
 	if (gPFCQueue) {
 
+		gpioInit();
 		setupSSI();
 		setupCommandIntercept();
 		gSDCardState = eSDCardStateIdle;
@@ -36,13 +39,41 @@ void pfcTask(void *pvParameters) {
 		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 
 		for (;;) {
-			vTaskDelay(10);
+			if (SSI_SFCSR_BIT.TFCNT0 < 8) {
+				SSI_SCR_BIT.TE = TRUE;
+				SSI_STX = 0xc535;
+				//SSI_TxData(&sample, 4, gSsiWordSize32bit_c, 1);
+			} else {
+				SSI_SCR_BIT.TE = TRUE;
+			}
+			//vTaskDelay(1);
 		}
 	}
 
 	/* Will only get here if the queue could not be created. */
 	for (;;)
 		;
+}
+
+// --------------------------------------------------------------------------
+
+void gpioInit(void) {
+	register uint32_t tmpReg;
+
+	// Pull-up select: UP type
+	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Pull-up enable
+	//GPIO.PuEnLo  |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Data select sets these ports to read from pads.
+	GPIO.InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// inputs
+	GPIO.DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
+	// outputs
+	GPIO.DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+
+	// Setup the function enable pins.
+	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos) | (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK << GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK << GPIO_SSI_CLK_fnpos));
+	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos) | (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT << GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT << GPIO_SSI_CLK_fnpos));
 }
 
 // --------------------------------------------------------------------------
@@ -62,13 +93,13 @@ void setupCommandIntercept() {
 	TmrStatusCtrl_t tmrStatusCtrl;
 	TmrComparatorStatusCtrl_t tmrComparatorStatusCtrl;
 
-	/* Enable hw timer 1 */
+	// Enable FS timer.
 	TmrEnable(SSI_FRAMESYNC_TIMER);
-	/* Don't stat the timer yet */
+	// Don't run t yet.
 	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
-	/* Register the callback executed when a timer interrupt occur */
-	TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, commandCallback);
+	// Register the callback executed when a timer interrupt occurs.
+	TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, SSI_FRAMESYNC_EVENT, commandCallback);
 
 	tmrStatusCtrl.uintValue = 0x0000;
 	tmrStatusCtrl.bitFields.TCFIE = 1;
@@ -79,8 +110,8 @@ void setupCommandIntercept() {
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
 	//tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;
-	//tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;
-	//tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;
+	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;
+	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;
 	TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
 	tmrConfig.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
@@ -125,38 +156,58 @@ static void setupSSI() {
 	SsiTxRxConfig_t ssiTxRxConfig;
 
 	SSI_Init();
-	SSI_Enable(TRUE);
+	SSI_Enable(FALSE);
 
 	ssiConfig.ssiMode = gSsiNormalMode_c;	// Normal mode
 	ssiConfig.ssiNetworkMode = TRUE; 		// Network mode
 	ssiConfig.ssiInterruptEn = TRUE; 		// Interrupts enabled
 	error = SSI_SetConfig(&ssiConfig);
-	SSI_SCR_BIT.TE = FALSE; 				// Tx off
-	SSI_SCR_BIT.RE = TRUE; 					// Rx on
 
-	ssiClockConfig.bit.ssiPM = 0; 			// There is no internal clocking in this system.
+	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 100000);
 	ssiClockConfig.bit.ssiDC = 2;			// Two words in each frame.  (Frame divide control.)
-	ssiClockConfig.bit.ssiWL = 0x0b; 		// 3 - 8 bits, 7 = 16 bits, b = 24 bites
-	ssiClockConfig.bit.ssiPSR = 0;			// Prescaler bypassed
-	ssiClockConfig.bit.ssiDIV2 = 0;			// Divide clock bypassed
+	ssiClockConfig.bit.ssiWL = 0x0b; 		// 3 - 8 bits, 7 = 16 bits, b = 24 bits
+//	ssiClockConfig.bit.ssiPM = 0; 			// There is no internal clocking in this system.
+//	ssiClockConfig.bit.ssiPSR = 0;			// Prescaler bypassed
+//	ssiClockConfig.bit.ssiDIV2 = 0;			// Divide clock bypassed
 	error = SSI_SetClockConfig(&ssiClockConfig);
 
-	ssiTxRxConfig.bit.ssiBIT0 = 1;			// Tx/Rx w.r.t. bit0 of the TSX/RSX.
-	ssiTxRxConfig.bit.ssiCLKDIR = 0;		// External CLK input.
+	// Setup Tx
 	ssiTxRxConfig.bit.ssiEFS = 0;			// Early frame sync off.
-	ssiTxRxConfig.bit.ssiFDIR = 0;			// Frame sync external.
-	ssiTxRxConfig.bit.ssiFEN = 1;			// Tx FIFO enabled.
-	ssiTxRxConfig.bit.ssiFSI = 0;			// Frame sync not inverted.
 	ssiTxRxConfig.bit.ssiFSL = 0;			// Frame sync is word length.
-	ssiTxRxConfig.bit.ssiRxEXT = 0;			// Receive sign extension turned off.
+	ssiTxRxConfig.bit.ssiFSI = 0;			// Frame sync not inverted.
 	ssiTxRxConfig.bit.ssiSCKP = 1;			// Data clocked on falling CLK edge.
 	ssiTxRxConfig.bit.ssiSHFD = 0;			// Data shift direction MSB-first.
+	ssiTxRxConfig.bit.ssiCLKDIR = 1;		// External CLK input.
+	ssiTxRxConfig.bit.ssiFDIR = 1;			// Frame sync external.
+	ssiTxRxConfig.bit.ssiFEN = 1;			// Tx FIFO enabled.
+	ssiTxRxConfig.bit.ssiBIT0 = 1;			// Tx/Rx w.r.t. bit0 of the TSX/RSX.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeTx_c);
+
+	// Setup Rx.
+	ssiTxRxConfig.bit.ssiCLKDIR = 0;		// Frame sync external.
+	ssiTxRxConfig.bit.ssiRxEXT = 0;			// Receive sign extension turned off.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeRx_c);
 
 	// We only use two time slots in each frame.
-	SSI_STMSK = 0x02;
-	SSI_SRMSK = 0x02;
+	SSI_STMSK = 0x00;
+	SSI_SRMSK = 0x00;
+
+	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) SSI_ISR);
+	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
+	ITC_EnableInterrupt(gSsiInt_c);
+
+	SSI_Enable(TRUE);
+
+	SSI_SCR_BIT.TE = FALSE; 				// Tx off
+	SSI_SCR_BIT.RE = TRUE; 					// Rx on
+
+}
+
+// --------------------------------------------------------------------------
+
+void ssi_interrupt(void) {
+
+	gwUINT32 reafValue = SSI_SRX;
 }
 
 // --------------------------------------------------------------------------

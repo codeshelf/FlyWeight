@@ -74,12 +74,13 @@
 // Hence 1000/1024 = 976.5.
 #define configTICK_RATE_HZ		    	( ( portTickType ) 1000 )
 #define configMAX_PRIORITIES	      	( ( unsigned portBASE_TYPE ) 4 )
-#define configMINIMAL_STACK_SIZE    	( ( unsigned portSHORT ) 0x7f )
 #if defined(MC1321X) || defined(MC13192EVB)
+	#define configMINIMAL_STACK_SIZE    	( ( portSTACK_TYPE ) 0x7f )
 	#define configTOTAL_HEAP_SIZE	    	( ( size_t ) ( 1152 ) )  // was 960
 	#define configMAX_TASK_NAME_LEN	    	( 1 )
 #else
-	#define configTOTAL_HEAP_SIZE			( ( size_t ) 3000 )
+	#define configMINIMAL_STACK_SIZE    	( ( portSTACK_TYPE ) 0x60 )
+	#define configTOTAL_HEAP_SIZE			( ( size_t ) 3200 )
 	#define configMAX_TASK_NAME_LEN	    	( 5 )
 #endif
 

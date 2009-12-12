@@ -87,8 +87,10 @@ void radioReceiveTask(void *pvParameters) {
 
 		gSleepCount = 0;
 
+#ifdef USE_AUDIO
 		setupAudioLoader();
 		setupPWM();
+#endif
 		gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 
 		for (;;) {

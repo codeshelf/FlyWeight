@@ -19,6 +19,7 @@
 
 #define	MAX_DRIFT			500
 #define	SSI_FRAMESYNC_TIMER	gTmr3_c
+#define SSI_FRAMESYNC_EVENT	gTmrComp1Event_c
 
 #define PRIMARY_SOURCE		gTmrPrimaryClkDiv128_c
 #define SECONDARY_SOURCE	gTmrSecondaryCnt1Input_c
@@ -81,9 +82,11 @@ extern xQueueHandle	gPFCQueue;
 // Local functions prototypes.
 
 void pfcTask( void *pvParameters );
-void commandCallback(TmrNumber_t tmrNumber);
+void gpioInit(void);
 void setupSSI();
+void ssi_interrupt(void);
 void setupCommandIntercept();
+void commandCallback(TmrNumber_t tmrNumber);
 gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr);
 
 #endif //PFC_TASK_H

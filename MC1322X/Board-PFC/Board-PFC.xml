@@ -1605,9 +1605,6 @@
     <group>
       <name>FlyWeight</name>
       <file>
-        <name>$PROJ_DIR$\..\..\src\audioARM.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\src\commands.c</name>
       </file>
       <file>

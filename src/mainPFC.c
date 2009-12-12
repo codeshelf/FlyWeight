@@ -87,7 +87,7 @@ void vMain( void ) {
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	//gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
-	//gPFCQueue = xQueueCreate(HOOBEE_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
+	gPFCQueue = xQueueCreate(PFC_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;
