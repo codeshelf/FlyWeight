@@ -39,9 +39,9 @@ void pfcTask(void *pvParameters) {
 		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 
 		for (;;) {
-			if (SSI_SFCSR_BIT.TFCNT0 < 8) {
+			if (SSI_SFCSR_BIT.TFCNT0 <= 4) {
 				SSI_SCR_BIT.TE = TRUE;
-				SSI_STX = 0xc535;
+				SSI_STX = 0x00aaaaff;
 				//SSI_TxData(&sample, 4, gSsiWordSize32bit_c, 1);
 			} else {
 				SSI_SCR_BIT.TE = TRUE;
