@@ -29,6 +29,8 @@ gwUINT8 sample[]  = { 0xf0f0, 0xf0f0, 0xf0f0, 0xf0f0 };
 
 void pfcTask(void *pvParameters) {
 
+	gwUINT8 samples;
+
 	if (gPFCQueue) {
 
 		gpioInit();
@@ -37,16 +39,33 @@ void pfcTask(void *pvParameters) {
 		gSDCardState = eSDCardStateIdle;
 		gSDCardCmdState = eSDCardCmdStateStd;
 		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+		SSI_SCR_BIT.TE = TRUE;
 
 		for (;;) {
-			if (SSI_SFCSR_BIT.TFCNT0 <= 4) {
+			samples = SSI_SFCSR_BIT.TFCNT0;
+//			if (samples == 0) {
+			for (gwUINT8 i; i < 5; i++) {
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
+				SSI_STX = 0x00aaaaaa;
 				SSI_SCR_BIT.TE = TRUE;
-				SSI_STX = 0x00aaaaff;
 				//SSI_TxData(&sample, 4, gSsiWordSize32bit_c, 1);
-			} else {
-				SSI_SCR_BIT.TE = TRUE;
+				samples = SSI_SFCSR_BIT.TFCNT0;
+				while (samples >= 1) {
+					//vTaskDelay(1);
+					samples = SSI_SFCSR_BIT.TFCNT0;
+				}
 			}
-			//vTaskDelay(1);
+			SSI_SCR_BIT.TE = FALSE;
+//			} else {
+//
+//			}
+			vTaskDelay(1000);
 		}
 	}
 
@@ -192,9 +211,9 @@ static void setupSSI() {
 	SSI_STMSK = 0x00;
 	SSI_SRMSK = 0x00;
 
-	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) SSI_ISR);
-	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gSsiInt_c);
+//	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) SSI_ISR);
+//	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
+//	ITC_EnableInterrupt(gSsiInt_c);
 
 	SSI_Enable(TRUE);
 
