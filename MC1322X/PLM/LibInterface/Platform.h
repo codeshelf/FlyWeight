@@ -422,8 +422,8 @@ typedef struct
 // FNSEL0 group
 #define  GPIO_SSI_TX_fnpos    (0*2)
 #define  GPIO_SSI_RX_fnpos    (1*2)
-#define  GPIO_SSI_FSYNC_fnpos (3*2)
-#define  GPIO_SSI_CLK_fnpos   (4*2)
+#define  GPIO_SSI_FSYNC_fnpos (2*2)
+#define  GPIO_SSI_CLK_fnpos   (3*2)
 
 ////////////////////////////////// SPI  ////////////////////////////////////////
 // GPIO settings

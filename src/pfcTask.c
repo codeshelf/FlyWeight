@@ -14,8 +14,6 @@
 #include "task.h"
 #include "queue.h"
 #include "remoteMgmtTask.h"
-#include "Timer.h"
-#include "Ssi_Interface.h"
 
 xTaskHandle 	gPFCTask = NULL;
 xQueueHandle 	gPFCQueue;
@@ -35,37 +33,37 @@ void pfcTask(void *pvParameters) {
 
 		gpioInit();
 		setupSSI();
-		setupCommandIntercept();
+		setupTimers();
 		gSDCardState = eSDCardStateIdle;
 		gSDCardCmdState = eSDCardCmdStateStd;
+
+		// Start the FSYNC simulation timer.
 		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
-		SSI_SCR_BIT.TE = TRUE;
+
+//		SSI_SCR_BIT.TE = TRUE;
 
 		for (;;) {
-			samples = SSI_SFCSR_BIT.TFCNT0;
-//			if (samples == 0) {
-			for (gwUINT8 i; i < 5; i++) {
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_STX = 0x00aaaaaa;
-				SSI_SCR_BIT.TE = TRUE;
-				//SSI_TxData(&sample, 4, gSsiWordSize32bit_c, 1);
-				samples = SSI_SFCSR_BIT.TFCNT0;
-				while (samples >= 1) {
-					//vTaskDelay(1);
-					samples = SSI_SFCSR_BIT.TFCNT0;
-				}
-			}
-			SSI_SCR_BIT.TE = FALSE;
-//			} else {
-//
+//			samples = SSI_SFCSR_BIT.TFCNT0;
+////			if (samples == 0) {
+//			for (gwUINT8 i; i < 5; i++) {
+//				SSI_STX = 0x00aaaaaa;
+//				SSI_STX = 0x00aaaaf0;
+////				SSI_STX = 0x00aaaaaa;
+////				SSI_STX = 0x00aaaaaa;
+////				SSI_STX = 0x00aaaaaa;
+////				SSI_STX = 0x00aaaaaa;
+////				SSI_STX = 0x00aaaaaa;
+////				SSI_STX = 0x00aaaaaa;
+//				SSI_SCR_BIT.TE = TRUE;
+//				//SSI_TxData(&sample, 4, gSsiWordSize32bit_c, 1);
+//				samples = SSI_SFCSR_BIT.TFCNT0;
+//				while (samples >= 1) {
+//					//vTaskDelay(1);
+//					samples = SSI_SFCSR_BIT.TFCNT0;
+//				}
 //			}
-			vTaskDelay(1000);
+//			SSI_SCR_BIT.TE = FALSE;
+			vTaskDelay(10);
 		}
 	}
 
@@ -106,43 +104,50 @@ void gpioInit(void) {
  * Secondary counter source is the SD card CMD line.
  */
 
-void setupCommandIntercept() {
+void setupTimers() {
 
+	TmrErr_t error;
 	TmrConfig_t tmrConfig;
 	TmrStatusCtrl_t tmrStatusCtrl;
 	TmrComparatorStatusCtrl_t tmrComparatorStatusCtrl;
 
 	// Enable FS timer.
-	TmrEnable(SSI_FRAMESYNC_TIMER);
+	error = TmrEnable(SSI_FRAMESYNC_TIMER);
 	// Don't run t yet.
-	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	// Register the callback executed when a timer interrupt occurs.
-	TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, SSI_FRAMESYNC_EVENT, commandCallback);
+//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, SSI_FRAMESYNC_EVENT, timerCallback);
 
 	tmrStatusCtrl.uintValue = 0x0000;
-	tmrStatusCtrl.bitFields.TCFIE = 1;
-	tmrStatusCtrl.bitFields.TOFIE = 1;
-	tmrStatusCtrl.bitFields.OPS = 1;
-	tmrStatusCtrl.bitFields.OEN = 1;
-	TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
+	tmrStatusCtrl.bitFields.TCFIE = TRUE;				// Timer compare IE.
+	tmrStatusCtrl.bitFields.TOFIE = FALSE;				// Timer overflow IE.
+	tmrStatusCtrl.bitFields.IEFIE = TRUE;				// Input edge flag IE.
+	tmrStatusCtrl.bitFields.IPS = 1;					// Input polarity select: 0 = normal, 1 = inverted.
+	tmrStatusCtrl.bitFields.CAPMODE = 0;				// Capture mode.
+	tmrStatusCtrl.bitFields.MSTR = FALSE;				// Master mode enable.
+	tmrStatusCtrl.bitFields.EEOF = FALSE;				// External enable OFLAG.
+	tmrStatusCtrl.bitFields.OPS = 1;					// Output polarity: 0 = normal, 1 = inverted.
+	tmrStatusCtrl.bitFields.OEN = TRUE;					// Output enable.
+	error = TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
-	//tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;
-	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;
-	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;
-	TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
+	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
+	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;	// Timer compare1 IE.
+	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;		// Compare load control 1.
+	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
-	tmrConfig.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-	tmrConfig.tmrCoInit = FALSE; /*co-chanel counter/timers can not force a re-initialization of this counter/timer*/
-	tmrConfig.tmrCntDir = FALSE; /*count-up*/
-	tmrConfig.tmrCntLen = TRUE; /*count until compare*/
-	tmrConfig.tmrCntOnce = FALSE; /*count repeatedly*/
-	tmrConfig.tmrSecondaryCntSrc = SECONDARY_SOURCE;
-	tmrConfig.tmrPrimaryCntSrc = PRIMARY_SOURCE;
-	TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
+	tmrConfig.uintValue = 0x0000;
+	tmrConfig.bitFields.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+	tmrConfig.bitFields.tmrCoInit = 0; 					// Co-init: 0 = another channel cannot init this timer.
+	tmrConfig.bitFields.tmrCntDir = 0;					// Count dir: 0 = up, 1 = down.
+	tmrConfig.bitFields.tmrCntLen = 1;					// Count length: 0 = roll over, 1 = until compare then reinit
+	tmrConfig.bitFields.tmrCntOnce = 0;					// Count once: 0 = repeatedly, 1 = once only.
+	tmrConfig.bitFields.tmrSecondaryCntSrc = SECONDARY_SOURCE;
+	tmrConfig.bitFields.tmrPrimaryCntSrc = PRIMARY_SOURCE;
+	error = TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
 
-	/* 8 clock cycles after the CMD pin registers we can deassert the FCS. */
+	/* 8 clock cycles after the CMD pin registers we can deassert the FSYNC. */
 	SetComp1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
 	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
 
@@ -151,11 +156,6 @@ void setupCommandIntercept() {
 
 	/* Start the counter at 0. */
 	SetCntrVal(SSI_FRAMESYNC_TIMER, 0);
-
-	/* Setup the interrupt handling to catch the TMR0 interrupts. */
-	IntAssignHandler(gTmrInt_c, (IntHandlerFunc_t) TmrIsr);
-	ITC_SetPriority(gTmrInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gTmrInt_c);
 }
 
 /*
@@ -177,71 +177,74 @@ static void setupSSI() {
 	SSI_Init();
 	SSI_Enable(FALSE);
 
+	// Setup the SSI mode.
 	ssiConfig.ssiMode = gSsiNormalMode_c;	// Normal mode
 	ssiConfig.ssiNetworkMode = TRUE; 		// Network mode
 	ssiConfig.ssiInterruptEn = TRUE; 		// Interrupts enabled
 	error = SSI_SetConfig(&ssiConfig);
 
+	// Setup the SSI clock.
 	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 100000);
-	ssiClockConfig.bit.ssiDC = 2;			// Two words in each frame.  (Frame divide control.)
+	ssiClockConfig.bit.ssiDC = 1;			// Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = 0x0b; 		// 3 - 8 bits, 7 = 16 bits, b = 24 bits
-//	ssiClockConfig.bit.ssiPM = 0; 			// There is no internal clocking in this system.
-//	ssiClockConfig.bit.ssiPSR = 0;			// Prescaler bypassed
-//	ssiClockConfig.bit.ssiDIV2 = 0;			// Divide clock bypassed
 	error = SSI_SetClockConfig(&ssiClockConfig);
 
-	// Setup Tx
-	ssiTxRxConfig.bit.ssiEFS = 0;			// Early frame sync off.
-	ssiTxRxConfig.bit.ssiFSL = 0;			// Frame sync is word length.
-	ssiTxRxConfig.bit.ssiFSI = 0;			// Frame sync not inverted.
-	ssiTxRxConfig.bit.ssiSCKP = 1;			// Data clocked on falling CLK edge.
-	ssiTxRxConfig.bit.ssiSHFD = 0;			// Data shift direction MSB-first.
-	ssiTxRxConfig.bit.ssiCLKDIR = 1;		// External CLK input.
-	ssiTxRxConfig.bit.ssiFDIR = 1;			// Frame sync external.
-	ssiTxRxConfig.bit.ssiFEN = 1;			// Tx FIFO enabled.
-	ssiTxRxConfig.bit.ssiBIT0 = 1;			// Tx/Rx w.r.t. bit0 of the TSX/RSX.
+	// Setup Tx.
+	ssiTxRxConfig.bit.ssiEFS = 0;			// Early frame sync: 0 = off, 1 = on.
+	ssiTxRxConfig.bit.ssiFSL = 1;			// Frame sync length: 0 = one word, 1 = one clock.
+	ssiTxRxConfig.bit.ssiFSI = 0;			// Frame sync invert: 0 = active high, 1 = active low.
+	ssiTxRxConfig.bit.ssiSCKP = 0;			// Data clocked: 0 = on rising edge, 1 = falling edge.
+	ssiTxRxConfig.bit.ssiSHFD = 0;			// Data shift direction: 0 = MSB-first, 1 = LSB-first.
+	ssiTxRxConfig.bit.ssiCLKDIR = 0;		// CLK source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFDIR = 0;			// Frame sync source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFEN = 1;			// Tx/Rx FIFO: 0 = disabled, 1 = enabled.
+	ssiTxRxConfig.bit.ssiBIT0 = 1;			// Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeTx_c);
 
 	// Setup Rx.
-	ssiTxRxConfig.bit.ssiCLKDIR = 0;		// Frame sync external.
-	ssiTxRxConfig.bit.ssiRxEXT = 0;			// Receive sign extension turned off.
+	ssiTxRxConfig.bit.ssiEFS = 0;			// Early frame sync: 0 = off, 1 = on.
+	ssiTxRxConfig.bit.ssiFSL = 1;			// Frame sync length: 0 = one word, 1 = one clock.
+	ssiTxRxConfig.bit.ssiFSI = 0;			// Frame sync invert: 0 = active high, 1 = active low.
+	ssiTxRxConfig.bit.ssiSCKP = 0;			// Data clocked: 0 = on rising edge, 1 = falling edge.
+	ssiTxRxConfig.bit.ssiSHFD = 0;			// Data shift direction: 0 = MSB-first, 1 = LSB-first.
+	ssiTxRxConfig.bit.ssiCLKDIR = 0;		// CLK source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFDIR = 0;			// Frame sync source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFEN = 1;			// Tx/Rx FIFO: 0 = disabled, 1 = enabled.
+	ssiTxRxConfig.bit.ssiBIT0 = 1;			// Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
+	ssiTxRxConfig.bit.ssiRxEXT = 0;			// Receive sign extension: 0 = off, 1 = on.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeRx_c);
 
 	// We only use two time slots in each frame.
 	SSI_STMSK = 0x00;
 	SSI_SRMSK = 0x00;
 
-//	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) SSI_ISR);
-//	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
-//	ITC_EnableInterrupt(gSsiInt_c);
+	SSI_SFCSR_BIT.RFWM0 = 2;
 
 	SSI_Enable(TRUE);
 
-	SSI_SCR_BIT.TE = FALSE; 				// Tx off
-	SSI_SCR_BIT.RE = TRUE; 					// Rx on
+	// Setup the SSI interrupts.
+	SSI_SIER_BIT.RIE = TRUE;
+	SSI_SIER_BIT.RFRC_EN = TRUE;
+//	SSI_SIER_BIT.RDR_EN = TRUE;
+//	SSI_SIER_BIT.RFS_EN = TRUE;
+	SSI_SIER_BIT.RFF_EN = TRUE;
+
+	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) ssiInterrupt);
+	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
+	ITC_EnableInterrupt(gSsiInt_c);
+
+	// Enable Rx, and disable Tx.
+	SSI_SCR_BIT.TE = FALSE;
+	SSI_SCR_BIT.RE = TRUE;
 
 }
 
 // --------------------------------------------------------------------------
 
-void ssi_interrupt(void) {
-
-	gwUINT32 reafValue = SSI_SRX;
-}
-
-// --------------------------------------------------------------------------
-/*
- * This routine gets called when there is an interrupt from the timer.  We're only interested in
- * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
- * The entire CMD should now live inside the SSI Rx FIFO.
- */
-static void commandCallback(TmrNumber_t tmrNumber) {
-
-	// Disable the CMS line edge trigger and FS timer.
-	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
+void ssiInterrupt(void) {
 
 	// SSI Rx mode off, Tx mode off
-	SSI_SCR_BIT.RE = FALSE;
+	//SSI_SCR_BIT.RE = FALSE;
 
 	/*
 	 *
@@ -255,20 +258,34 @@ static void commandCallback(TmrNumber_t tmrNumber) {
 	 * sample 2:	XXXXXXXX|AAAAAAAA|AAAAAAAA|CCCCCCCS
 	 * 				--------|arg byte|arg byte|CRC    S
 	 */
-	USsiSampleType cmdSample1;
-	USsiSampleType cmdSample2;
+	USsiSampleType cmdSample[8];
+//	USsiSampleType cmdSample[1];
+	SsiISReg_t intStatuses;
 
-	cmdSample1.word = SSI_SRX;
-	cmdSample2.word = SSI_SRX;
+	intStatuses.word = SSI_SISR_WORD;
 
 	// Make sure it's a host command by looking at the H bit in sample #1.
-	if (cmdSample1.bytes.byte2 & 0x40) {
-		ESDCardCommand cmdNum = cmdSample1.bytes.byte1 & 0x3F;
-		ESDCardCommand responseCmd = cmdNum;
-		ESDCardResponseType responseType = eSDCardRespTypeInvalid;
+	if ((SSI_SISR_BIT.RFRC != 0) || (SSI_SISR_BIT.RFF != 0)) {
 
-		// Generate the response command.
-		switch (cmdNum) {
+		gwUINT8 samples = SSI_SFCSR_BIT.RFCNT0;
+
+		//	cmdSample[0].word = SSI_SRX;
+		//	cmdSample[1].word = SSI_SRX;
+		for (gwUINT8 i = 0; i <= 7; i++) {
+			if (SSI_SFCSR_BIT.RFCNT0) {
+				cmdSample[i].word = SSI_SRX;
+			} else {
+				cmdSample[i].word = 0;
+			}
+		}
+
+		if (cmdSample[0].bytes.byte2 & 0x40) {
+			ESDCardCommand cmdNum = cmdSample[0].bytes.byte1 & 0x3F;
+			ESDCardCommand responseCmd = cmdNum;
+			ESDCardResponseType responseType = eSDCardRespTypeInvalid;
+
+			// Generate the response command.
+			switch (cmdNum) {
 			case eSDCardCmd0:
 				break;
 
@@ -287,47 +304,75 @@ static void commandCallback(TmrNumber_t tmrNumber) {
 				gSDCardCmdState = eSDCardCmdStateApp;
 				responseType = eSDCardRespType1;
 				break;
-		}
-
-		// Create the response command.
-		if (responseCmd != eSDCardCmdInvalid) {
-			if (responseType == eSDCardRespType1) {
-				// Initial value: start bit = 0;
-				cmdSample1.word = 0x00000000;
-				cmdSample1.bytes.byte1 = responseCmd;
-
-				// Initial value: stop bit = 1;
-				cmdSample2.word = 0x00000001;
-				cmdSample2.bytes.byte1 = gSDCardState << 1;
-				cmdSample2.bytes.byte2 = gSDCardCmdState << 5;
-				cmdSample2.bytes.byte3 = (crc7(&cmdSample1.bytes.byte0, &cmdSample2.bytes.byte0) < 1) + 1;
-			} else if (responseType == eSDCardRespType3) {
-				// Initial value: start bit = 0, host bit = 0, cmd = 111111, 1/2 of OCR (at all voltages);
-				cmdSample1.word = 0x003f00ff;
-
-				// Initial value: 1/2 of OCR (at all voltages), crc = 1111111, stop bit = 1;
-				cmdSample2.word = 0x00ff00ff;
 			}
-			// Put the response into the SSI Tx FIFO.
-			SSI_STX = cmdSample1.word;
-			SSI_STX = cmdSample2.word;
 
-			// Turn on the FCS for 48 clock cycles.
+			// Create the response command.
+			if (responseCmd != eSDCardCmdInvalid) {
+				if (responseType == eSDCardRespType1) {
+					// Initial value: start bit = 0;
+					cmdSample[0].word = 0x00000000;
+					cmdSample[0].bytes.byte1 = responseCmd;
 
-			// If the response we're just about to send is not the APP_COMMAND response
-			// then return to "standard" command mode.
-			if (cmdNum != eSDCardCmd55) {
-				gSDCardCmdState = eSDCardCmdStateStd;
+					// Initial value: stop bit = 1;
+					cmdSample[1].word = 0x00000001;
+					cmdSample[1].bytes.byte1 = gSDCardState << 1;
+					cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
+					cmdSample[1].bytes.byte3 = (crc7(&cmdSample[0].bytes.byte0, &cmdSample[1].bytes.byte0) < 1) + 1;
+				} else if (responseType == eSDCardRespType3) {
+					// Initial value: start bit = 0, host bit = 0, cmd = 111111, 1/2 of OCR (at all voltages);
+					cmdSample[0].word = 0x003f00ff;
+
+					// Initial value: 1/2 of OCR (at all voltages), crc = 1111111, stop bit = 1;
+					cmdSample[1].word = 0x00ff00ff;
+				}
+				// Put the response into the SSI Tx FIFO.
+				SSI_STX = cmdSample[0].word;
+				SSI_STX = cmdSample[1].word;
+
+				// Turn on the FCS for 48 clock cycles.
+
+				// If the response we're just about to send is not the APP_COMMAND response
+				// then return to "standard" command mode.
+				if (cmdNum != eSDCardCmd55) {
+					gSDCardCmdState = eSDCardCmdStateStd;
+				}
 			}
 		}
 	}
+	// Reset the interrupt flags.
+	SSI_SISR_BIT.RFRC = FALSE;
+//	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 
-	// SSI Rx mode on, Tx mode off
-	SSI_SCR_BIT.TE = FALSE;
-	SSI_SCR_BIT.RE = TRUE;
+//	// SSI Rx mode on, Tx mode off
+//	SSI_SCR_BIT.TE = TRUE;
+//	while (SSI_SFCSR_BIT.RFCNT0 > 0) {
+//		// Wait.
+//	}
+//	SSI_SCR_BIT.TE = FALSE;
 
-	// Reenable the CMD signal edge trigger and the FS timer for the next command.
-	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+}
+
+// --------------------------------------------------------------------------
+/*
+ * This routine gets called when there is an interrupt from the timer.  We're only interested in
+ * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
+ * The entire CMD should now live inside the SSI Rx FIFO.
+ */
+static void timerCallback(TmrNumber_t tmrNumber) {
+
+	TmrStatusCtrl_t *status0, *status1, *status2, *status3;
+	status0 = (TmrStatusCtrl_t*)&TMR0_REGS_P->StatCtrl;
+	status1 = (TmrStatusCtrl_t*)&TMR1_REGS_P->StatCtrl;
+	status2 = (TmrStatusCtrl_t*)&TMR2_REGS_P->StatCtrl;
+	status3 = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
+
+//	if (TMR3_SCTRL_BIT.IEF) {
+		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
+//		TMR3_SCTRL_BIT.IEF = 0;
+//	} else if (TMR3_SCTRL_BIT.TCF) {
+//		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+//		TMR3_SCTRL_BIT.TCF = 0;
+//	}
 }
 
 // --------------------------------------------------------------------------
