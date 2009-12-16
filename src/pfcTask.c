@@ -182,13 +182,11 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
 
 	if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
-		// We just caught an edge, so switch to PWM mode.
-		// In PWM mode we toggle the signal low until the end of the 2nd count.
-		// (At which point we will interrupt and come back here to switch into secondary edge mode.)
+		// We just caught an edge, so switch to pause mode.
+		// Set the signal low until the end of the pause count.
+		// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
 		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
 		TMR3_SCTRL_BIT.TCFIE = TRUE;
-//		TMR3_CSCTRL_BIT.TCF1EN = TRUE;
-//		TMR3_CSCTRL_BIT.TCF2EN = FALSE;
 
 		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
 		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
@@ -196,18 +194,14 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 		TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
 
 	} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
-//		if (isTCF2) {
-			// We just completed a PWM, so switch to secondary edge tirgger mode.
-			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-			TMR3_SCTRL_BIT.TCFIE = TRUE;
-//			TMR3_CSCTRL_BIT.TCF1EN = TRUE;
-//			TMR3_CSCTRL_BIT.TCF2EN = FALSE;
+		// We just completed a pause, so switch to secondary edge trigger mode.
+		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+		TMR3_SCTRL_BIT.TCFIE = TRUE;
 
-			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
-			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
 
-			TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
-//		}
+		TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
 	}
 	TMR3_SCTRL_BIT.TCF = 0;
 }
@@ -298,9 +292,6 @@ static void setupSSI() {
 
 void ssiInterrupt(void) {
 
-	// SSI Rx mode off, Tx mode off
-	//SSI_SCR_BIT.RE = FALSE;
-
 	/*
 	 *
 	 * Extract the command from the SSI Rx FIFO by reading 2 samples out of the FIFO.
@@ -314,7 +305,6 @@ void ssiInterrupt(void) {
 	 * 				--------|arg byte|arg byte|CRC    S
 	 */
 	USsiSampleType cmdSample[8];
-//	USsiSampleType cmdSample[1];
 	SsiISReg_t intStatuses;
 
 	intStatuses.word = SSI_SISR_WORD;
@@ -334,6 +324,7 @@ void ssiInterrupt(void) {
 			}
 		}
 
+		// Check if the "host" bit is set.
 		if (cmdSample[0].bytes.byte2 & 0x40) {
 			ESDCardCommand cmdNum = cmdSample[0].bytes.byte1 & 0x3F;
 			ESDCardCommand responseCmd = cmdNum;
@@ -341,24 +332,29 @@ void ssiInterrupt(void) {
 
 			// Generate the response command.
 			switch (cmdNum) {
-			case eSDCardCmd0:
-				break;
+				case eSDCardCmd0:
+					break;
 
-			case eSDCardCmd2:
-				break;
+				case eSDCardCmd2:
+					break;
 
-			case eSDCardCmd3:
-				break;
+				case eSDCardCmd3:
+					break;
 
-			case eSDCardCmd41:
-				responseType = eSDCardRespType3;
-				break;
+				case eSDCardCmd41:
+					responseType = eSDCardRespType3;
+					break;
 
-			case eSDCardCmd55:
-				// Indicate that we're in the Application command state.
-				gSDCardCmdState = eSDCardCmdStateApp;
-				responseType = eSDCardRespType1;
-				break;
+				case eSDCardCmd55:
+					// Indicate that we're in the Application command state.
+					gSDCardCmdState = eSDCardCmdStateApp;
+					responseType = eSDCardRespType1;
+					break;
+
+				default:
+					// Invalid command.
+					// We need to resynchronize the SD card bitstream.
+					break;
 			}
 
 			// Create the response command.
@@ -391,16 +387,25 @@ void ssiInterrupt(void) {
 				if (cmdNum != eSDCardCmd55) {
 					gSDCardCmdState = eSDCardCmdStateStd;
 				}
+
+				//	// SSI Rx mode on, Tx mode off
+				//	SSI_SCR_BIT.TE = TRUE;
+				//	while (SSI_SFCSR_BIT.RFCNT0 > 0) {
+				//		// Wait.
+				//	}
+				//	SSI_SCR_BIT.TE = FALSE;
+
+				// Reestablish the edge trigger timer for the next command.
+				TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+				TMR3_SCTRL_BIT.TCFIE = TRUE;
+
+				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+
+				TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
 			}
 		}
 	}
-
-//	// SSI Rx mode on, Tx mode off
-//	SSI_SCR_BIT.TE = TRUE;
-//	while (SSI_SFCSR_BIT.RFCNT0 > 0) {
-//		// Wait.
-//	}
-//	SSI_SCR_BIT.TE = FALSE;
 
 	// Reset the SSI interrupt flags, and timers.
 	SSI_SISR_BIT.RFRC = FALSE;
