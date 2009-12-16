@@ -1,9 +1,9 @@
 [JLinkDriver]
 WatchCond=_ 0
-Watch0=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
-Watch1=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
+Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 [DebugChecksum]
-Checksum=478146193
+Checksum=-1550501060
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -14,6 +14,17 @@ Enabled=_ 0
 [TraceHelper]
 Enabled=0
 ShowSource=1
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[DriverProfiling]
+Enabled=0
+Source=2
+Graph=0
 [Disassemble mode]
 mode=0
 [Breakpoints]
@@ -33,15 +44,5 @@ Bp12=_ "STD_CODE" "0x0000A7F2" 0 0 0 0 "" 0 "" 0
 Bp13=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\mainPFC.c}.115.1@1" 1 0 0 0 "" 0 "" 0
 Bp14=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 148 0 "" 0 ""
 Bp15=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 116 0 "" 0 ""
-Count=16
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[DriverProfiling]
-Enabled=0
-Source=2
-Graph=0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
+Bp16=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\pfcTask.c}.338.19@1" 1 0 0 0 "" 0 "" 0
+Count=17
