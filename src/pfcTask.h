@@ -22,14 +22,14 @@
 
 #define	MAX_DRIFT			500
 #define	SSI_FRAMESYNC_TIMER	gTmr3_c
-#define SSI_FRAMESYNC_EVENT	gTmrComp1Event_c
 
-#define PRIMARY_SOURCE		gTmrPrimaryClkDiv32_c
+#define PRIMARY_SOURCE		gTmrPrimaryClkDiv16_c
 #define SECONDARY_SOURCE	gTmrSecondaryCnt1Input_c
 
 #define SD_CLK_RATE			400000
-#define TMR_CLK_RATE		750000	/* Bus Clk / Prescaler --> 24,000,000 / 32 */
-#define FS_CLOCK_COUNT		3		/* 8 clocks * TMR_CLK_RATE / SD SD_CLK_RATE --> 8 * 375,000 / 400,000 */
+#define TMR_CLK_RATE		1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
+#define FSYNC_CLK_CNT_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_CLK_CNT_LOW	50		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 
 #define  gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 

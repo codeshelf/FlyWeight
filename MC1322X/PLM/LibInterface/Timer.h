@@ -145,9 +145,7 @@ typedef  enum {
 } TmrEvent_t;
   
 /** This data type describes the configuration of the Timer module .*/
-// JBW/GW - 15DEC09: Made this a union to conform with all of the other code.
-typedef union TmrConfig_tag{
-  struct{
+typedef struct TmrConfig_tag{
   TmrOutputMode_t       tmrOutputMode;
   bool_t                tmrCoInit;
   bool_t                tmrCntDir;
@@ -155,9 +153,22 @@ typedef union TmrConfig_tag{
   bool_t                tmrCntOnce;
   TmrSecondaryCntSrc_t  tmrSecondaryCntSrc;
   TmrPrimaryCntSrc_t    tmrPrimaryCntSrc;
+} TmrConfig_t;
+
+// JBW/GW - 15DEC09: Made this a union to conform with all of the other code accessed by register.  (Another f-u by FSL.)
+typedef union TmrConfigReg_tag{
+  struct{
+	uint16_t tmrOutputMode:3;
+	uint16_t tmrCoInit:1;
+	uint16_t tmrCntDir:1;
+	uint16_t tmrCntLen:1;
+	uint16_t tmrCntOnce:1;
+	uint16_t tmrSecondaryCntSrc:2;
+	uint16_t tmrPrimaryCntSrc:4;
+	uint16_t tmrCntMode:3;
   } bitFields;
   uint16_t uintValue;
-} TmrConfig_t;
+} TmrConfigReg_t;
 
 /** This data type describes the status and control of the Timer module.*/
 typedef union TmrStatusCtrl_tag{

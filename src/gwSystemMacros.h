@@ -13,6 +13,7 @@
 	#include "Watchdog.h"
 
 	#define GW_RESET_MCU						__asm ("BGND")
+	//#define	GW_RESET_MCU						__asm DCB 0x8D
 
 	#define GW_ENTER_CRITICAL(saveState)		EnterCriticalArg(saveState)
 	#define GW_EXIT_CRITICAL(restoreState)		ExitCriticalArg(restoreState)
@@ -69,7 +70,7 @@
 	#include "UART_Interface.h"
 	#include "smacPort.h"
 
-	#define GW_RESET_MCU						CRM_SoftReset()
+	#define GW_RESET_MCU						/* CRM_SoftReset() */
 	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
 	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreAll(restoreState)
     #define GW_GET_SYSTEM_STATUS                0

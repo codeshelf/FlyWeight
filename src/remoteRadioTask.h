@@ -21,7 +21,6 @@
 
 #define				kAssocCheckTickCount	3000 //2.5 * portTICK_RATE_MS * 1000;
 #define				kNetCheckTickCount		15000  // 2 * kAssocCheckTickCount
-#define				RESET_MCU				__asm DCB 0x8D
 
 // --------------------------------------------------------------------------
 // Functions prototypes.

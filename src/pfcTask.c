@@ -20,7 +20,6 @@ xQueueHandle 	gPFCQueue;
 ESDCardState	gSDCardState;
 ESDCardCmdState gSDCardCmdState;
 
-
 // --------------------------------------------------------------------------
 
 gwUINT8 sample[]  = { 0xf0f0, 0xf0f0, 0xf0f0, 0xf0f0 };
@@ -117,12 +116,15 @@ void setupTimers() {
 	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	// Register the callback executed when a timer interrupt occurs.
-//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, SSI_FRAMESYNC_EVENT, timerCallback);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, timerCallback);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, timerCallback);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp2Event_c, timerCallback);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrEdgeEvent_c, timerCallback);
 
 	tmrStatusCtrl.uintValue = 0x0000;
 	tmrStatusCtrl.bitFields.TCFIE = TRUE;				// Timer compare IE.
 	tmrStatusCtrl.bitFields.TOFIE = FALSE;				// Timer overflow IE.
-	tmrStatusCtrl.bitFields.IEFIE = TRUE;				// Input edge flag IE.
+	tmrStatusCtrl.bitFields.IEFIE = FALSE;				// Input edge flag IE.
 	tmrStatusCtrl.bitFields.IPS = 1;					// Input polarity select: 0 = normal, 1 = inverted.
 	tmrStatusCtrl.bitFields.CAPMODE = 0;				// Capture mode.
 	tmrStatusCtrl.bitFields.MSTR = FALSE;				// Master mode enable.
@@ -132,32 +134,85 @@ void setupTimers() {
 	error = TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
-	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
-	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;	// Timer compare1 IE.
+//	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
+	tmrComparatorStatusCtrl.bitFields.TCF1EN = FALSE;	// Timer compare1 IE.
+	tmrComparatorStatusCtrl.bitFields.TCF2EN = FALSE;	// Timer compare2 IE.
 	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;		// Compare load control 1.
 	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
-	tmrConfig.uintValue = 0x0000;
-	tmrConfig.bitFields.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-	tmrConfig.bitFields.tmrCoInit = 0; 					// Co-init: 0 = another channel cannot init this timer.
-	tmrConfig.bitFields.tmrCntDir = 0;					// Count dir: 0 = up, 1 = down.
-	tmrConfig.bitFields.tmrCntLen = 1;					// Count length: 0 = roll over, 1 = until compare then reinit
-	tmrConfig.bitFields.tmrCntOnce = 0;					// Count once: 0 = repeatedly, 1 = once only.
-	tmrConfig.bitFields.tmrSecondaryCntSrc = SECONDARY_SOURCE;
-	tmrConfig.bitFields.tmrPrimaryCntSrc = PRIMARY_SOURCE;
+	tmrConfig.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+	tmrConfig.tmrCoInit = 0; 					// Co-init: 0 = another channel cannot init this timer.
+	tmrConfig.tmrCntDir = 0;					// Count dir: 0 = up, 1 = down.
+	tmrConfig.tmrCntLen = 1;					// Count length: 0 = roll over, 1 = until compare then reinit
+	tmrConfig.tmrCntOnce = 0;					// Count once: 0 = repeatedly, 1 = once only.
+	tmrConfig.tmrSecondaryCntSrc = SECONDARY_SOURCE;
+	tmrConfig.tmrPrimaryCntSrc = PRIMARY_SOURCE;
 	error = TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
 
-	/* 8 clock cycles after the CMD pin registers we can deassert the FSYNC. */
-	SetComp1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
-	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FS_CLOCK_COUNT);
+	// After the CMD pin asserts a falling edge we can assert the FSYNC for HIGH SD Card clock cycles, and deassert for LOW cycles.
+	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
 
-	/* Config timer to start from 0 after compare event */
+	// Config timer to start from 0 after compare event.
 	SetLoadVal(SSI_FRAMESYNC_TIMER, 0);
 
-	/* Start the counter at 0. */
+	// Start the counter at 0.
 	SetCntrVal(SSI_FRAMESYNC_TIMER, 0);
+
+//	IntAssignHandler(gTmrInt_c, (IntHandlerFunc_t) TmrIsr);
+//	ITC_SetPriority(gTmrInt_c, gItcNormalPriority_c);
+//	ITC_EnableInterrupt(gTmrInt_c);
 }
 
+// --------------------------------------------------------------------------
+/*
+ * This routine gets called when there is an interrupt from the timer.  We're only interested in
+ * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
+ * The entire CMD should now live inside the SSI Rx FIFO.
+ */
+static void timerCallback(TmrNumber_t tmrNumber) {
+
+	TmrConfigReg_t config;
+	TmrStatusCtrl_t status;
+
+	config.uintValue = TMR3_CTRL_WORD;
+	status.uintValue = TMR3_SCTRL_WORD;
+
+	// Stop the timer, and clear the interrupt flag.
+	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+
+	if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
+		// We just caught an edge, so switch to PWM mode.
+		// In PWM mode we toggle the signal low until the end of the 2nd count.
+		// (At which point we will interrupt and come back here to switch into secondary edge mode.)
+		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
+		TMR3_SCTRL_BIT.TCFIE = TRUE;
+//		TMR3_CSCTRL_BIT.TCF1EN = TRUE;
+//		TMR3_CSCTRL_BIT.TCF2EN = FALSE;
+
+		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
+		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
+
+		TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
+
+	} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
+//		if (isTCF2) {
+			// We just completed a PWM, so switch to secondary edge tirgger mode.
+			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+			TMR3_SCTRL_BIT.TCFIE = TRUE;
+//			TMR3_CSCTRL_BIT.TCF1EN = TRUE;
+//			TMR3_CSCTRL_BIT.TCF2EN = FALSE;
+
+			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+
+			TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+//		}
+	}
+	TMR3_SCTRL_BIT.TCF = 0;
+}
+
+// --------------------------------------------------------------------------
 /*
  * We receive SD Card commands using the SSI network mode, because it allows us to specify a frame
  * that has two time slots of 24-bit words, we can read an entire SD command of 48 bits in one frame.
@@ -339,9 +394,6 @@ void ssiInterrupt(void) {
 			}
 		}
 	}
-	// Reset the interrupt flags.
-	SSI_SISR_BIT.RFRC = FALSE;
-//	TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 
 //	// SSI Rx mode on, Tx mode off
 //	SSI_SCR_BIT.TE = TRUE;
@@ -350,29 +402,9 @@ void ssiInterrupt(void) {
 //	}
 //	SSI_SCR_BIT.TE = FALSE;
 
-}
+	// Reset the SSI interrupt flags, and timers.
+	SSI_SISR_BIT.RFRC = FALSE;
 
-// --------------------------------------------------------------------------
-/*
- * This routine gets called when there is an interrupt from the timer.  We're only interested in
- * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
- * The entire CMD should now live inside the SSI Rx FIFO.
- */
-static void timerCallback(TmrNumber_t tmrNumber) {
-
-	TmrStatusCtrl_t *status0, *status1, *status2, *status3;
-	status0 = (TmrStatusCtrl_t*)&TMR0_REGS_P->StatCtrl;
-	status1 = (TmrStatusCtrl_t*)&TMR1_REGS_P->StatCtrl;
-	status2 = (TmrStatusCtrl_t*)&TMR2_REGS_P->StatCtrl;
-	status3 = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
-
-//	if (TMR3_SCTRL_BIT.IEF) {
-		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
-//		TMR3_SCTRL_BIT.IEF = 0;
-//	} else if (TMR3_SCTRL_BIT.TCF) {
-//		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
-//		TMR3_SCTRL_BIT.TCF = 0;
-//	}
 }
 
 // --------------------------------------------------------------------------

@@ -257,7 +257,7 @@ void radioReceiveTask(void *pvParameters) {
 							}
 					gAssocCheckCount++;
 					if (gAssocCheckCount > 10) {
-					//	RESET_MCU;
+					//	GW_RESET_MCU;
 						}
 					}
 				}

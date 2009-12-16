@@ -306,7 +306,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			}
 			gAssocCheckCount++;
 			if (gAssocCheckCount > 10) {
-				//	RESET_MCU;
+				//	GW_RESET_MCU;
 			}
 		}
 	}
