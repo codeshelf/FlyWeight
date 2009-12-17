@@ -135,8 +135,8 @@ void setupTimers() {
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
 //	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
-	tmrComparatorStatusCtrl.bitFields.TCF1EN = FALSE;	// Timer compare1 IE.
-	tmrComparatorStatusCtrl.bitFields.TCF2EN = FALSE;	// Timer compare2 IE.
+	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE;	// Timer compare1 IE.
+	tmrComparatorStatusCtrl.bitFields.TCF2EN = TRUE;	// Timer compare2 IE.
 	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01;		// Compare load control 1.
 	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
@@ -174,36 +174,49 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 
 	TmrConfigReg_t config;
 	TmrStatusCtrl_t status;
+	TmrComparatorStatusCtrl_t csstatus;
 
 	config.uintValue = TMR3_CTRL_WORD;
 	status.uintValue = TMR3_SCTRL_WORD;
+	csstatus.uintValue = TMR3_CSCTRL_WORD;
 
 	// Stop the timer, and clear the interrupt flag.
 	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+	if (TMR3_SCTRL_BIT.TCF) {
+		if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
+			// We just caught an edge, so switch to pause mode.
+			// Set the signal low until the end of the pause count.
+			// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
+			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
+			TMR3_SCTRL_BIT.TCFIE = TRUE;
 
-	if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
-		// We just caught an edge, so switch to pause mode.
-		// Set the signal low until the end of the pause count.
-		// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
-		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
-		TMR3_SCTRL_BIT.TCFIE = TRUE;
+			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
+			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
 
-		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
-		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
+			TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+			TMR3_SCTRL_BIT.VAL = 1;
+			TMR3_SCTRL_BIT.FORCE = 1;
 
-		TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
+			TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
 
-	} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
-		// We just completed a pause, so switch to secondary edge trigger mode.
-		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-		TMR3_SCTRL_BIT.TCFIE = TRUE;
+		} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
+			if ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) || (csstatus.bitFields.TCF2)) {
+				// We just completed a pause, so switch to secondary edge trigger mode.
+				TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+				TMR3_SCTRL_BIT.TCFIE = TRUE;
 
-		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
-		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
 
-		TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+				TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+				TMR3_SCTRL_BIT.VAL = 1;
+				TMR3_SCTRL_BIT.FORCE = 1;
+
+				TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+			}
+		}
+		TMR3_SCTRL_BIT.TCF = 0;
 	}
-	TMR3_SCTRL_BIT.TCF = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -280,10 +293,13 @@ static void setupSSI() {
 	SSI_SIER_WORD = 0;
 	SSI_SIER_BIT.RIE = TRUE;
 	SSI_SIER_BIT.RFRC_EN = FALSE;
-	SSI_SIER_BIT.RDR_EN = FALSE;
-	SSI_SIER_BIT.RLS_EN = TRUE;
+	SSI_SIER_BIT.RDR_EN = TRUE;
+	SSI_SIER_BIT.RLS_EN = FALSE;
 	SSI_SIER_BIT.RFS_EN = FALSE;
 	SSI_SIER_BIT.RFF_EN = TRUE;
+
+	SSI_SIER_BIT.TIE = TRUE;
+	SSI_SIER_BIT.TDE_EN = TRUE;
 
 	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) ssiInterrupt);
 	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
@@ -297,9 +313,10 @@ static void setupSSI() {
 
 // --------------------------------------------------------------------------
 
-USsiSampleType gSamples[50];
-gwUINT8 gSampleCnt = 0;
+//USsiSampleType gSamples[50];
+//gwUINT8 gSampleCnt = 0;
 gwBoolean gIntfStarted = FALSE;
+gwBoolean gIsTransmitting = FALSE;
 
 void ssiInterrupt(void) {
 
@@ -322,7 +339,28 @@ void ssiInterrupt(void) {
 
 	intStatusesP = ((SsiISReg_t*)&SSI_REGS_P->SISR);
 
-	if ((SSI_SISR_BIT.RFF) || (SSI_SISR_BIT.RDR) || (SSI_SISR_BIT.ROE) || (SSI_SISR_BIT.RFRC) || (SSI_SISR_BIT.RLS)) {
+	if ((gIsTransmitting) && (SSI_SISR_BIT.TFE)) {
+
+		gIsTransmitting = FALSE;
+
+		// Reestablish the edge trigger timer for the next command.
+		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+		TMR3_SCTRL_BIT.TCFIE = TRUE;
+
+		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
+
+		TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+		TMR3_SCTRL_BIT.VAL = 1;
+		TMR3_SCTRL_BIT.FORCE = 1;
+
+		TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+	}
+
+	if ((SSI_SISR_BIT.RFF) || (SSI_SISR_BIT.RDR)) {
+
+		SSI_SCR_BIT.RE = FALSE;
+
 		intStatuses.word = SSI_SISR_WORD;
 
 		// If we haven't started the interface yet, then look for the first proper command sequence.
@@ -330,24 +368,22 @@ void ssiInterrupt(void) {
 		if (!gIntfStarted) {
 			if (cmdSample[0].word == 0x004100FF) {
 				cmdSample[1].word = SSI_SRX;
+				SSI_SIER_BIT.RDR_EN = FALSE;
 				gIntfStarted = TRUE;
 			} else {
+				SSI_SCR_BIT.RE = TRUE;
 				return;
 			}
 		} else {
 			cmdSample[1].word = SSI_SRX;
 		}
 
-		// Disable Rx.
-		SSI_SCR_BIT.RE = FALSE;
-		SSI_SISR_BIT.TFRC = FALSE;
-
-		if (gSampleCnt < 50) {
-			gSamples[gSampleCnt++].word = cmdSample[0].word;
-			gSamples[gSampleCnt++].word = cmdSample[1].word;
-		} else {
-			gSampleCnt = 0;
-		}
+//		if (gSampleCnt < 50) {
+//			gSamples[gSampleCnt++].word = cmdSample[0].word;
+//			gSamples[gSampleCnt++].word = cmdSample[1].word;
+//		} else {
+//			gSampleCnt = 0;
+//		}
 
 
 		//		gwUINT8 samples = 0;//SSI_SFCSR_BIT.RFCNT0;
@@ -394,6 +430,7 @@ void ssiInterrupt(void) {
 			default:
 				// Invalid command.
 				responseType = eSDCardRespTypeInvalid;
+				responseCmd = eSDCardCmdInvalid;
 				// We need to resynchronize the SD card bitstream.
 				break;
 			}
@@ -424,46 +461,37 @@ void ssiInterrupt(void) {
 					gSDCardCmdState = eSDCardCmdStateStd;
 				}
 
-				TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
-				TMR3_CTRL_BIT.tmrCntOnce = FALSE;
-				TMR3_SCTRL_BIT.TCFIE = FALSE;
-				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH * 4);
-				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH * 4);
-				SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
-				SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
-				TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
-
 				// Put the response into the SSI Tx FIFO.
 				SSI_STX = cmdSample[0].word;
 				SSI_STX = cmdSample[1].word;
 				SSI_SCR_BIT.TE = TRUE;
 
-				// Wait until the FIFO is empty.
-//				for (int i = 0; i < 100; i++) {
-					while (SSI_SFCSR_BIT.TFCNT0 > 1) {
-						// Wait.
-						fifCnt = SSI_SFCSR_BIT.TFCNT0;
-					}
-//					SSI_STX = cmdSample[0].word;
-//					SSI_STX = cmdSample[1].word;
-//				}
-				// Set up SSI for Rx.
-				SSI_SCR_BIT.TE = FALSE;
-
-				// Reestablish the edge trigger timer for the next command.
-				TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+				TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
 				TMR3_CTRL_BIT.tmrCntOnce = FALSE;
 				TMR3_SCTRL_BIT.TCFIE = TRUE;
-				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
-				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
-				TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+				TMR3_CSCTRL_BIT.TCF2EN = TRUE;
+
+				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH * 8);
+				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH * 8);
+				SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW * 4);
+				SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW * 4);
+
+//				TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+//				TMR3_SCTRL_BIT.VAL = 1;
+//				TMR3_SCTRL_BIT.FORCE = 1;
+//				TMR3_SCTRL_BIT.VAL = 0;
+//				TMR3_SCTRL_BIT.FORCE = 1;
+
+				TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
+
+				// Set up SSI for Rx.
+				gIsTransmitting = TRUE;
+				SSI_SCR_BIT.TE = FALSE;
+
 			}
 		}
+		SSI_SCR_BIT.RE = TRUE;
 	}
-
-	// Reenable Rx.
-	SSI_SISR_BIT.RFRC = FALSE;
-	SSI_SCR_BIT.RE = TRUE;
 }
 
 // --------------------------------------------------------------------------
