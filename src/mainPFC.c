@@ -63,7 +63,7 @@ void vMain( void ) {
 	LED_Init();
 
 	crmCopCntl_t copCntl;
-	copCntl.bit.copEn = TRUE;
+	copCntl.bit.copEn = FALSE;
 	copCntl.bit.copTimeOut = 127;
 	copCntl.bit.copWP = TRUE;
 	copCntl.bit.copOut = 0;

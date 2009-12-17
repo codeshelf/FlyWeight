@@ -29,7 +29,7 @@
 #define SD_CLK_RATE			400000
 #define TMR_CLK_RATE		1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
 #define FSYNC_CLK_CNT_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
-#define FSYNC_CLK_CNT_LOW	250		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_CLK_CNT_LOW	210		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 
 #define  gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 
@@ -44,6 +44,7 @@ typedef  enum {
 
 typedef  enum {
 	eSDCardRespTypeInvalid = 0,
+	eSDCardRespTypeNone,
 	eSDCardRespType1,
 	eSDCardRespType1b,
 	eSDCardRespType2,
@@ -74,7 +75,7 @@ typedef union {
 		gwUINT8 byte3;
 		gwUINT8 byte2;
 		gwUINT8 byte1;
-		gwUINT8 byte0;
+		gwUINT8 unused;
 	} bytes ;
 } USsiSampleType;
 
