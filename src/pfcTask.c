@@ -227,6 +227,8 @@ static void setupSSI() {
 	SSI_Enable(FALSE);
 
 	// Setup the SSI mode.
+	ssiConfig.ssiGatedRxClockMode = FALSE;
+	ssiConfig.ssiGatedTxClockMode = FALSE;
 	ssiConfig.ssiMode = gSsiNormalMode_c;	// Normal mode
 	ssiConfig.ssiNetworkMode = TRUE; 		// Network mode
 	ssiConfig.ssiInterruptEn = TRUE; 		// Interrupts enabled
@@ -270,7 +272,7 @@ static void setupSSI() {
 	SSI_SRMSK = 0x00;
 
 	SSI_SFCSR_BIT.RFWM0 = 2;
-	SSI_SFCSR_BIT.TFWM0 = 2;
+	SSI_SFCSR_BIT.TFWM0 = 4;
 
 	SSI_Enable(TRUE);
 
@@ -316,6 +318,7 @@ void ssiInterrupt(void) {
 	USsiSampleType cmdSample[2];
 	SsiISReg_t intStatuses;
 	SsiISReg_t *intStatusesP;
+	gwUINT8 fifCnt;
 
 	intStatusesP = ((SsiISReg_t*)&SSI_REGS_P->SISR);
 
@@ -421,11 +424,6 @@ void ssiInterrupt(void) {
 					gSDCardCmdState = eSDCardCmdStateStd;
 				}
 
-				// Put the response into the SSI Tx FIFO.
-				SSI_STX = cmdSample[0].word;
-				SSI_STX = cmdSample[1].word;
-				SSI_SCR_BIT.TE = TRUE;
-
 				TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
 				TMR3_CTRL_BIT.tmrCntOnce = FALSE;
 				TMR3_SCTRL_BIT.TCFIE = FALSE;
@@ -435,11 +433,22 @@ void ssiInterrupt(void) {
 				SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW);
 				TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
 
+				// Put the response into the SSI Tx FIFO.
+				SSI_STX = cmdSample[0].word;
+				SSI_STX = cmdSample[1].word;
+				SSI_SCR_BIT.TE = TRUE;
+
 				// Wait until the FIFO is empty.
-				while (!SSI_SISR_BIT.TDE) {
-					// Wait.
-					gwUINT8 fifCnt = SSI_SFCSR_BIT.TFCNT0;
-				}
+//				for (int i = 0; i < 100; i++) {
+					while (SSI_SFCSR_BIT.TFCNT0 > 1) {
+						// Wait.
+						fifCnt = SSI_SFCSR_BIT.TFCNT0;
+					}
+//					SSI_STX = cmdSample[0].word;
+//					SSI_STX = cmdSample[1].word;
+//				}
+				// Set up SSI for Rx.
+				SSI_SCR_BIT.TE = FALSE;
 
 				// Reestablish the edge trigger timer for the next command.
 				TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
@@ -448,9 +457,6 @@ void ssiInterrupt(void) {
 				SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
 				SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_HIGH);
 				TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
-
-				// Set up SSI for Rx.
-				SSI_SCR_BIT.TE = FALSE;
 			}
 		}
 	}
