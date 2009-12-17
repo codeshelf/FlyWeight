@@ -212,6 +212,8 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 				TMR3_SCTRL_BIT.VAL = 1;
 				TMR3_SCTRL_BIT.FORCE = 1;
 
+				SSI_SCR_BIT.RE = TRUE;
+
 				TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
 			}
 		}
@@ -313,8 +315,8 @@ static void setupSSI() {
 
 // --------------------------------------------------------------------------
 
-//USsiSampleType gSamples[50];
-//gwUINT8 gSampleCnt = 0;
+USsiSampleType gSamples[50];
+gwUINT8 gSampleCnt = 0;
 gwBoolean gIntfStarted = FALSE;
 gwBoolean gIsTransmitting = FALSE;
 
@@ -342,6 +344,7 @@ void ssiInterrupt(void) {
 	if ((gIsTransmitting) && (SSI_SISR_BIT.TFE)) {
 
 		gIsTransmitting = FALSE;
+		SSI_SCR_BIT.RE = TRUE;
 
 		// Reestablish the edge trigger timer for the next command.
 		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
@@ -378,24 +381,13 @@ void ssiInterrupt(void) {
 			cmdSample[1].word = SSI_SRX;
 		}
 
-//		if (gSampleCnt < 50) {
-//			gSamples[gSampleCnt++].word = cmdSample[0].word;
-//			gSamples[gSampleCnt++].word = cmdSample[1].word;
-//		} else {
-//			gSampleCnt = 0;
-//		}
+		if (gSampleCnt < 50) {
+			gSamples[gSampleCnt++].word = cmdSample[0].word;
+			gSamples[gSampleCnt++].word = cmdSample[1].word;
+		} else {
+			gSampleCnt = 0;
+		}
 
-
-		//		gwUINT8 samples = 0;//SSI_SFCSR_BIT.RFCNT0;
-		//		for (gwUINT8 i = 0; i <= 7; i++) {
-		//			if (SSI_SFCSR_BIT.RFCNT0) {
-		//				cmdSample[i].word = SSI_SRX;
-		//				//gSamples[gSampleCnt++].word = SSI_SRX;
-		//				samples++;
-		//			} else {
-		//				cmdSample[i].word = 0;
-		//			}
-		//		}
 
 		// Make sure it's a host command by looking at the S and H bits in sample #1.
 		if (((cmdSample[0].bytes.byte1 & 0x08) == 0) && (cmdSample[0].bytes.byte1 & 0x04)) {
@@ -431,6 +423,14 @@ void ssiInterrupt(void) {
 				// Invalid command.
 				responseType = eSDCardRespTypeInvalid;
 				responseCmd = eSDCardCmdInvalid;
+
+				if (gSampleCnt < 50) {
+					gSamples[gSampleCnt++].word = cmdSample[0].word;
+					gSamples[gSampleCnt++].word = cmdSample[1].word;
+				} else {
+					gSampleCnt = 0;
+				}
+
 				// We need to resynchronize the SD card bitstream.
 				break;
 			}
@@ -476,21 +476,17 @@ void ssiInterrupt(void) {
 				SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW * 4);
 				SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_CLK_CNT_LOW * 4);
 
-//				TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-//				TMR3_SCTRL_BIT.VAL = 1;
-//				TMR3_SCTRL_BIT.FORCE = 1;
-//				TMR3_SCTRL_BIT.VAL = 0;
-//				TMR3_SCTRL_BIT.FORCE = 1;
-
 				TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
 
 				// Set up SSI for Rx.
 				gIsTransmitting = TRUE;
 				SSI_SCR_BIT.TE = FALSE;
-
 			}
 		}
-		SSI_SCR_BIT.RE = TRUE;
+
+		if (!gIsTransmitting) {
+			SSI_SCR_BIT.RE = TRUE;
+		}
 	}
 }
 
