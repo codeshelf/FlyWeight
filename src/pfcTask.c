@@ -337,9 +337,18 @@ void ssiInterrupt(void) {
 	if ((gIsTransmitting) && (SSI_SISR_BIT.TDE)) {
 		gIsTransmitting = FALSE;
 		SSI_SIER_BIT.TDE_EN = FALSE;
-		// Garbage samples read by the SSI when Tx (even tho' it shouldn't).
-		cmdSample[0].word = SSI_SRX;
-		cmdSample[1].word = SSI_SRX;
+
+		// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
+		if (SSI_SISR_BIT.RDR) {
+			cmdSample[0].word = SSI_SRX;
+			cmdSample[0].bytes.unused = 0xaa;
+			gSamples[gSampleCnt++].word = cmdSample[0].word;
+		}
+		if (SSI_SISR_BIT.RDR) {
+			cmdSample[1].word = SSI_SRX;
+			cmdSample[1].bytes.unused = 0xaa;
+			gSamples[gSampleCnt++].word = cmdSample[1].word;
+		}
 
 		restartReadCycle();
 	}
@@ -385,8 +394,8 @@ void ssiInterrupt(void) {
 		}
 
 		if (!gSyncLost) {
-			// Make sure it's a host command by looking at the S and H bits in sample #1.
-			if (((cmdSample[0].bytes.byte1 & 0x08) == 0) && (cmdSample[0].bytes.byte1 & 0x04)) {
+			// Make sure it's a valid host command by verifying that command bits S=0 and H=1.
+			if ((cmdSample[0].bytes.byte1 & 0xC0) == 0x40) {
 				ESDCardCommand cmdNum = cmdSample[0].bytes.byte1 & 0x3F;
 				ESDCardCommand responseCmd = cmdNum;
 				ESDCardResponseType responseType;
@@ -445,10 +454,10 @@ void ssiInterrupt(void) {
 						cmdSample[1].bytes.byte3 = crc7(&cmdSample[0].bytes.byte1, &cmdSample[1].bytes.byte1);
 					} else if (responseType == eSDCardRespType3) {
 						// Initial value: start bit = 0, host bit = 0, cmd = 111111, 1/2 of OCR (at all voltages);
-						cmdSample[0].word = 0x003f00ff;
+						cmdSample[0].word = 0x003f01ff;
 
 						// Initial value: 1/2 of OCR (at all voltages), crc = 1111111, stop bit = 1;
-						cmdSample[1].word = 0x00ff00ff;
+						cmdSample[1].word = 0x00ff000d;
 					}
 
 					// If the response we're just about to send is not the APP_COMMAND response
