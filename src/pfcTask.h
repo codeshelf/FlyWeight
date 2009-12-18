@@ -28,9 +28,10 @@
 
 #define SD_CLK_RATE			400000
 #define TMR_CLK_RATE		1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
-#define FSYNC_CLK_CNT_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
-//210
-#define FSYNC_CLK_CNT_LOW	175		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_TRIGGER_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_TRIGGER_LOW	210		/* (was 210) 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_HIGH	8		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_LOW	210		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 
 #define gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 
@@ -92,6 +93,7 @@ void setupSSI();
 void ssiInterrupt(void);
 void setupTimers();
 void timerCallback(TmrNumber_t tmrNumber);
+void restartReadCycle();
 gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr);
 
 #endif //PFC_TASK_H
