@@ -340,14 +340,14 @@ void ssiInterrupt(void) {
 
 		// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
 		if (SSI_SISR_BIT.RDR) {
-			cmdSample[0].word = SSI_SRX;
-			cmdSample[0].bytes.unused = 0xaa;
-			gSamples[gSampleCnt++].word = cmdSample[0].word;
+			gwUINT32 junkSample1 = SSI_SRX;
+//			cmdSample[0].bytes.unused = 0xaa;
+//			gSamples[gSampleCnt++].word = cmdSample[0].word;
 		}
 		if (SSI_SISR_BIT.RDR) {
-			cmdSample[1].word = SSI_SRX;
-			cmdSample[1].bytes.unused = 0xaa;
-			gSamples[gSampleCnt++].word = cmdSample[1].word;
+			gwUINT32 junkSample2 = SSI_SRX;
+//			cmdSample[1].bytes.unused = 0xaa;
+//			gSamples[gSampleCnt++].word = cmdSample[1].word;
 		}
 
 		restartReadCycle();
@@ -452,12 +452,29 @@ void ssiInterrupt(void) {
 						cmdSample[1].bytes.byte1 = gSDCardState << 1;
 						cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
 						cmdSample[1].bytes.byte3 = crc7(&cmdSample[0].bytes.byte1, &cmdSample[1].bytes.byte1);
-					} else if (responseType == eSDCardRespType3) {
-						// Initial value: start bit = 0, host bit = 0, cmd = 111111, 1/2 of OCR (at all voltages);
-						cmdSample[0].word = 0x003f01ff;
 
-						// Initial value: 1/2 of OCR (at all voltages), crc = 1111111, stop bit = 1;
-						cmdSample[1].word = 0x00ff000d;
+						// Put the response into the SSI Tx FIFO.
+						SSI_STX = cmdSample[0].word;
+						SSI_STX = cmdSample[1].word;
+					} else if (responseType == eSDCardRespType2) {
+						cmdSample[0].word = 0x00000000;
+						cmdSample[0].bytes.byte1 = responseCmd;
+						cmdSample[0].bytes.byte2 = 0x0a;
+						cmdSample[0].bytes.byte3 = 0x47;
+						cmdSample[1].word = 0x575046;
+						cmdSample[2].word = 0x432020;
+						cmdSample[3].word = 0x010000;
+						cmdSample[4].word = 0x000107;
+						cmdSample[5].word = 0xd90c00;
+						cmdSample[5].bytes.byte3 = crc7(&cmdSample[0], 6);
+
+					} else if (responseType == eSDCardRespType3) {
+						// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
+						cmdSample[0].word = 0x0029801e;
+						cmdSample[1].word = 0x000000ff;
+						// Put the response into the SSI Tx FIFO.
+						SSI_STX = cmdSample[0].word;
+						SSI_STX = cmdSample[1].word;
 					}
 
 					// If the response we're just about to send is not the APP_COMMAND response
@@ -466,9 +483,6 @@ void ssiInterrupt(void) {
 						gSDCardCmdState = eSDCardCmdStateStd;
 					}
 
-					// Put the response into the SSI Tx FIFO.
-					SSI_STX = cmdSample[0].word;
-					SSI_STX = cmdSample[1].word;
 					SSI_SCR_BIT.TE = TRUE;
 					SSI_SIER_BIT.TDE_EN = TRUE;
 
