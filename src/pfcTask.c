@@ -326,7 +326,7 @@ void ssiInterrupt(void) {
 	 * sample 2:	XXXXXXXX|AAAAAAAA|AAAAAAAA|CCCCCCCS
 	 * 				--------|arg byte|arg byte|CRC    S
 	 */
-	USsiSampleType cmdSample[2];
+	USsiSampleType cmdSample[6];
 	SsiISReg_t intStatuses;
 	SsiISReg_t *intStatusesP;
 	gwUINT8 fifCnt;
@@ -373,14 +373,14 @@ void ssiInterrupt(void) {
 		}
 
 		// Check that the next two samples have a valid CRC.
-		while ((!gSyncLost) && (cmdSample[1].bytes.byte3 != crc7(&cmdSample[0].bytes.byte1, &cmdSample[1].bytes.byte1))) {
+		while ((!gSyncLost) && (cmdSample[1].bytes.byte3 != crc7(&cmdSample, 2))) {
 			// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
 
 			cmdSample[0].word = cmdSample[1].word;
 			if (SSI_SFCSR_BIT.RFCNT0 > 0) {
 				cmdSample[1].word = SSI_SRX;
 				gSamples[gSampleCnt++].word = cmdSample[1].word;
-				if (cmdSample[1].bytes.byte3 == crc7(&cmdSample[0].bytes.byte1, &cmdSample[1].bytes.byte1)) {
+				if (cmdSample[1].bytes.byte3 == crc7(&cmdSample, 2)) {
 					gSyncLost = FALSE;
 				}
 			} else {
@@ -451,7 +451,7 @@ void ssiInterrupt(void) {
 						cmdSample[1].word = 0x00000001;
 						cmdSample[1].bytes.byte1 = gSDCardState << 1;
 						cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
-						cmdSample[1].bytes.byte3 = crc7(&cmdSample[0].bytes.byte1, &cmdSample[1].bytes.byte1);
+						cmdSample[1].bytes.byte3 = crc7(&cmdSample, 2);
 
 						// Put the response into the SSI Tx FIFO.
 						SSI_STX = cmdSample[0].word;
@@ -466,7 +466,7 @@ void ssiInterrupt(void) {
 						cmdSample[3].word = 0x010000;
 						cmdSample[4].word = 0x000107;
 						cmdSample[5].word = 0xd90c00;
-						cmdSample[5].bytes.byte3 = crc7(&cmdSample[0], 6);
+						cmdSample[5].bytes.byte3 = crc7(&cmdSample, 6);
 
 					} else if (responseType == eSDCardRespType3) {
 						// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
@@ -539,7 +539,7 @@ void restartReadCycle() {
 
 // --------------------------------------------------------------------------
 
-gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr) {
+gwUINT8 crc7Old(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr) {
 	gwUINT8 i, dataByteNum;
 	gwUINT8 crc, data;
 
@@ -558,6 +558,38 @@ gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr) {
 			if ((data & 0x80) ^ (crc & 0x80))
 				crc ^= 0x09;
 			data <<= 1;
+		}
+	}
+	crc = (crc << 1) | 1;
+	return (crc);
+}
+
+// --------------------------------------------------------------------------
+
+gwUINT8 crc7(USsiSampleType *inSamplePtr, gwUINT8 inSamplesToCheck) {
+	gwUINT8 i;
+	gwUINT8 sampleNum;
+	gwUINT8 dataByteNum;
+	gwUINT8 crc;
+	gwUINT8 data;
+
+	crc = 0;
+	// Check each sample.
+	for (sampleNum = 0; sampleNum < inSamplesToCheck; sampleNum++) {
+		// Check each byte of each sample.
+		for (dataByteNum = 0; dataByteNum < 3; dataByteNum++) {
+			// The last byte of the last sample is not part of the CRC.
+			if ((sampleNum < (inSamplesToCheck-1)) || (dataByteNum < 2)) {
+				data = ((gwUINT8 *) (inSamplePtr+sampleNum))[2-dataByteNum];
+
+				// Use this next data byte in the CRC.
+				for (i = 0; i < 8; i++) {
+					crc <<= 1;
+					if ((data & 0x80) ^ (crc & 0x80))
+						crc ^= 0x09;
+					data <<= 1;
+				}
+			}
 		}
 	}
 	crc = (crc << 1) | 1;
