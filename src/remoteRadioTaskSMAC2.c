@@ -310,9 +310,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			}
 		}
 	}
-
-	/* Will only get here if the queue could not be created. */
-	for ( ;; );
 }
 
 // --------------------------------------------------------------------------

@@ -26,17 +26,24 @@
 #define PRIMARY_SOURCE		gTmrPrimaryClkDiv16_c
 #define SECONDARY_SOURCE	gTmrSecondaryCnt1Input_c
 
+#define SSI_24BIT_WORD		0x0b
+#define SSI_20BIT_WORD		0x09
+#define SSI_FRAME_LEN2		0x02
+#define SSI_FRAME_LEN7		0x07
+
 #define SD_CLK_RATE			400000
 #define TMR_CLK_RATE		1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
 #define FSYNC_TRIGGER_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
-#define FSYNC_TRIGGER_LOW	210		/* (was 210) 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
-#define FSYNC_SUSTAIN_HIGH	8		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
-#define FSYNC_SUSTAIN_LOW	210		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_TRIGGER_LOW	1000		/* (was 210) 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_HIGH	4		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_LOW	1000		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNCR2_SUSTAIN_LOW	1000	/* 5X normal sustain low. */
 
 #define gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 
 typedef  enum {
 	eSDCardCmd0 = 0,
+	eSDCardCmd1 = 1,
 	eSDCardCmd2 = 2,
 	eSDCardCmd3 = 3,
 	eSDCardCmd41 = 41,
@@ -89,11 +96,12 @@ extern xQueueHandle	gPFCQueue;
 
 void pfcTask( void *pvParameters );
 void gpioInit(void);
-void setupSSI();
+static void ssiInit(void);
+void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength);
 void ssiInterrupt(void);
 void setupTimers();
 void timerCallback(TmrNumber_t tmrNumber);
 void restartReadCycle();
-gwUINT8 crc7(gwUINT8 *inSample1Ptr, gwUINT8 *inSample2Ptr);
+gwUINT8 crc7(USsiSampleType *inSamplePtr, gwUINT8 inSamplesToCheck);
 
 #endif //PFC_TASK_H

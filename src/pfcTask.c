@@ -24,9 +24,8 @@ ESDCardCmdState gSDCardCmdState;
 
 USsiSampleType gSamples[110];
 gwUINT8 gSampleCnt = 0;
-gwBoolean gIsTransmitting = FALSE;
 gwBoolean gSyncLost = FALSE;
-gwBoolean gLongFrame = FALSE;
+gwBoolean gIsTransmitting = FALSE;
 
 // --------------------------------------------------------------------------
 
@@ -48,15 +47,6 @@ void pfcTask(void *pvParameters) {
 
 		// Start the FSYNC simulation timer.
 		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
-
-		//		USsiSampleType cmdSample[6];
-		//		cmdSample[0].word = 0x00020a47;
-		//		cmdSample[1].word = 0x00575046;
-		//		cmdSample[2].word = 0x00432020;
-		//		cmdSample[3].word = 0x00010000;
-		//		cmdSample[4].word = 0x00000100;
-		//		cmdSample[5].word = 0x009c0000;
-		//		gwUINT8 crc = (gwUINT16) crc7(cmdSample, 6);
 
 		for (;;) {
 			vTaskDelay(10);
@@ -137,7 +127,7 @@ void setupTimers() {
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
 	//	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
 	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE; // Timer compare1 IE.
-	tmrComparatorStatusCtrl.bitFields.TCF2EN = TRUE; // Timer compare2 IE.
+	tmrComparatorStatusCtrl.bitFields.TCF2EN = FALSE; // Timer compare2 IE.
 	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01; // Compare load control 1.
 	tmrComparatorStatusCtrl.bitFields.FILT_EN = FALSE; // Filter enable.
 	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
@@ -184,7 +174,7 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 
 	// Stop the timer, and clear the interrupt flag.
 	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-	if (TMR3_SCTRL_BIT.TCF) {
+	if ((!gIsTransmitting) && (TMR3_SCTRL_BIT.TCF)) {
 		if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
 			// We just caught an edge, so switch to pause mode.
 			// Set the signal low until the end of the pause count.
@@ -204,7 +194,7 @@ static void timerCallback(TmrNumber_t tmrNumber) {
 		} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
 			// We just completed signal-low delay, so restart the read cycle (secondary edge trigger mode).
 			// If we're in PWM mode, then only restart the read cycle on the comp2 compare/transition.
-			if ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) || (csstatus.bitFields.TCF2)) {
+			if ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) /*|| (csstatus.bitFields.TCF2)*/) {
 				restartReadCycle();
 			}
 		}
@@ -300,13 +290,13 @@ static void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength) {
 	SSI_SIER_BIT.RFS_EN = FALSE;
 	SSI_SIER_BIT.RFF_EN = TRUE;
 
-	SSI_SIER_BIT.TIE = TRUE;
-	SSI_SIER_BIT.TDE_EN = TRUE;
+	SSI_SIER_BIT.TIE = FALSE;
+	SSI_SIER_BIT.TDE_EN = FALSE;
 	SSI_SIER_BIT.TFE_EN = FALSE;
 }
-
 // --------------------------------------------------------------------------
-
+gwBoolean lastCmd2 = FALSE;
+gwBoolean lastCmd3 = FALSE;
 void ssiInterrupt(void) {
 
 	/*
@@ -321,89 +311,45 @@ void ssiInterrupt(void) {
 	 * sample 2:	XXXXXXXX|AAAAAAAA|AAAAAAAA|CCCCCCCS
 	 * 				--------|arg byte|arg byte|CRC    S
 	 */
-	USsiSampleType cmdSample[6];
-	SsiISReg_t intStatuses;
+	USsiSampleType cmdSample[10];
 	SsiISReg_t *intStatusesP;
-	gwUINT8 fifCnt;
+	gwUINT8 ccr;
+	gwBoolean longFrame = FALSE;
 
 	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
+	GW_ENTER_CRITICAL(ccr);
 
-	if (gIsTransmitting) {
-		// Deal with the end of the Tx cycle.
-		if (SSI_SISR_BIT.TDE) {
-			gIsTransmitting = FALSE;
-			SSI_SIER_BIT.TDE_EN = FALSE;
+	// Deal with the end of the Rx cycle.
+	if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
 
-			// If the last frame was long, then shorten the next one.
-			// (Only R2 responses are long: 136 bits.)
-			if (gLongFrame) {
-				// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
-				for (gwUINT8 i = 0; i < 5; i++) {
-					if (SSI_SISR_BIT.RDR) {
-						gSamples[gSampleCnt++].word = SSI_SRX;
-						if (gSampleCnt > 100) {
-							gSampleCnt = 0;
-						}
-					}
-				}
-				//setupSSI(SSI_24BIT_WORD, SSI_FRAME_LEN2);
-				SSI_SCR_BIT.SSIEN = FALSE;
-				SSI_STCCR_BIT.WL = SSI_24BIT_WORD;
-				SSI_STCCR_BIT.DC = SSI_FRAME_LEN2;
-				SSI_SCR_BIT.SSIEN = TRUE;
-				gLongFrame = FALSE;
-			} else {
-				// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
-				for (gwUINT8 i = 0; i < 2; i++) {
-					if (SSI_SISR_BIT.RDR) {
-						gwUINT32 junkSample1 = SSI_SRX;
-					}
-				}
-			}
-			restartReadCycle();
-		}
-	} else /* if (!gIsTransmitting)*/ {
-		// Deal with the end of the Rx cycle.
-		if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
+		TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+		SSI_SCR_BIT.RE = FALSE;
 
-			SSI_SCR_BIT.RE = FALSE;
-
-			//		intStatuses.word = SSI_SISR_WORD;
+		while (SSI_SFCSR_BIT.RFCNT0 > 1) {
 
 			// If we previously lost sync, then the first sample is held over, and we just need to read the second.
 			if (gSyncLost) {
 				cmdSample[1].word = SSI_SRX;
-				gSamples[gSampleCnt++].word = cmdSample[1].word;
+//				gSamples[gSampleCnt++].word = cmdSample[1].word;
 				gSyncLost = FALSE;
 			} else {
 				cmdSample[0].word = SSI_SRX;
 				cmdSample[1].word = SSI_SRX;
+			}
+			// Check that the next two samples have a valid CRC.
+			gwBoolean isCmd55 = ((cmdSample[0].word == 0x00770000) && (cmdSample[1].word == 0x0));
+			if ((!isCmd55) && (cmdSample[1].bytes.byte3 != crc7(cmdSample, 2))) {
+				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
+				cmdSample[0].word = cmdSample[1].word;
+				gSyncLost = TRUE;
+				//restartReadCycle();
+			} else {
 				gSamples[gSampleCnt++].word = cmdSample[0].word;
 				gSamples[gSampleCnt++].word = cmdSample[1].word;
-			}
-
-			// Check that the next two samples have a valid CRC.
-			while ((!gSyncLost) && (cmdSample[1].bytes.byte3 != crc7(cmdSample, 2))) {
-				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
-
-				cmdSample[0].word = cmdSample[1].word;
-				if (SSI_SFCSR_BIT.RFCNT0 > 0) {
-					cmdSample[1].word = SSI_SRX;
-					gSamples[gSampleCnt++].word = cmdSample[1].word;
-					if (cmdSample[1].bytes.byte3 == crc7(cmdSample, 2)) {
-						gSyncLost = FALSE;
-					}
-				} else {
-					gSyncLost = TRUE;
-					restartReadCycle();
+				if (gSampleCnt > 100) {
+					gSampleCnt = 0;
 				}
-			}
 
-			if (gSampleCnt > 100) {
-				gSampleCnt = 0;
-			}
-
-			if (!gSyncLost) {
 				// Make sure it's a valid host command by verifying that command bits S=0 and H=1.
 				if ((cmdSample[0].bytes.byte1 & 0xC0) == 0x40) {
 					ESDCardCommand cmdNum = cmdSample[0].bytes.byte1 & 0x3F;
@@ -422,6 +368,7 @@ void ssiInterrupt(void) {
 
 						case eSDCardCmd2:
 							responseType = eSDCardRespType2;
+							lastCmd2 = TRUE;
 							break;
 
 						case eSDCardCmd3:
@@ -455,15 +402,13 @@ void ssiInterrupt(void) {
 					}
 
 					// Create the response command.
-					if (responseCmd != eSDCardCmdInvalid) {
+					if (responseType != eSDCardRespTypeNone) {
 						if (responseType == eSDCardRespType1) {
-							// Initial value: start bit = 0;
 							cmdSample[0].word = 0x00000000;
 							cmdSample[0].bytes.byte1 = responseCmd;
 
-							// Initial value: stop bit = 1;
-							cmdSample[1].word = 0x00000001;
-							cmdSample[1].bytes.byte1 = gSDCardState << 1;
+							cmdSample[1].word = 0x00000000;
+							cmdSample[1].bytes.byte1 = (gSDCardState << 1) + 1;
 							cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
 							cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
 
@@ -471,23 +416,23 @@ void ssiInterrupt(void) {
 							SSI_STX = cmdSample[0].word;
 							SSI_STX = cmdSample[1].word;
 						} else if (responseType == eSDCardRespType2) {
-							cmdSample[0].word = 0x000020a4;
-							cmdSample[1].word = 0x00075750;
-							cmdSample[2].word = 0x00046432;
-							cmdSample[3].word = 0x00002001;
-							cmdSample[4].word = 0x00000000;
-							cmdSample[5].word = 0x00000100;
-							cmdSample[6].word = 0x0009c89f;
-
 							// The CID response (R2) is longer than normal: 136 bits.
 							// Expand the SSI frame to 6 words (of 24 bits each).
 							// This is 8 bits more than we need, but it simplifies dealing with the FIFO.
-							gLongFrame = TRUE;
+							longFrame = TRUE;
 							//setupSSI(SSI_20BIT_WORD, SSI_FRAME_LEN7);
 							SSI_SCR_BIT.SSIEN = FALSE;
 							SSI_STCCR_BIT.WL = SSI_20BIT_WORD;
 							SSI_STCCR_BIT.DC = SSI_FRAME_LEN7;
 							SSI_SCR_BIT.SSIEN = TRUE;
+
+							/* cmdSample[0].word */SSI_STX = 0x0003f0a4;
+							/* cmdSample[1].word */SSI_STX = 0x00075750;
+							/* cmdSample[2].word */SSI_STX = 0x00046432;
+							/* cmdSample[3].word */SSI_STX = 0x00002001;
+							/* cmdSample[4].word */SSI_STX = 0x00000000;
+							/* cmdSample[5].word */SSI_STX = 0x00000100;
+							/* cmdSample[6].word */SSI_STX = 0x0009c89f;
 
 						} else if (responseType == eSDCardRespType3) {
 							// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
@@ -504,17 +449,18 @@ void ssiInterrupt(void) {
 							gSDCardCmdState = eSDCardCmdStateStd;
 						}
 
-						SSI_SCR_BIT.TE = TRUE;
-						SSI_SIER_BIT.TDE_EN = TRUE;
+						gIsTransmitting = TRUE;
 
 						TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
 						TMR3_CTRL_BIT.tmrCntOnce = FALSE;
-						TMR3_SCTRL_BIT.TCFIE = TRUE;
-						TMR3_CSCTRL_BIT.TCF2EN = TRUE;
+						TMR3_SCTRL_BIT.TCFIE = FALSE;
+						TMR3_CSCTRL_BIT.TCF2EN = FALSE;
+						TMR3_SCTRL_BIT.VAL = 1;
+						TMR3_SCTRL_BIT.FORCE = 1;
 
 						SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_HIGH);
 						SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_HIGH);
-						if (responseType == eSDCardRespType2) {
+						if (longFrame) {
 							SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNCR2_SUSTAIN_LOW);
 							SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNCR2_SUSTAIN_LOW);
 						} else {
@@ -522,43 +468,82 @@ void ssiInterrupt(void) {
 							SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_LOW);
 						}
 
-						gIsTransmitting = TRUE;
+						SSI_SCR_BIT.TE = TRUE;
 						TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
-
+						//						TMR3_SCTRL_BIT.VAL = 0;
+						//						TMR3_SCTRL_BIT.FORCE = 0;
 						// Set up SSI for Rx.
-						gwUINT16 maxLoops = 0;
-						while ((maxLoops++ < 250) && (SSI_SFCSR_BIT.TFCNT0 > 1)) {
+						gwUINT32 maxLoops;
+						gwUINT8 items = SSI_SFCSR_BIT.TFCNT0;
+						while ((maxLoops < 5000000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
 							// Wait until a Tx word goes out, or we timeout.
+							maxLoops++;
 						}
-						// The transmitter has started the frame, so we can
-						// request it to stop at the end of this frame.
+
+						TMR3_SCTRL_BIT.VAL = 1;
+						TMR3_SCTRL_BIT.FORCE = 1;
+
+						// Tx is complete.
 						SSI_SCR_BIT.TE = FALSE;
+
+						gwUINT8 items2 = SSI_SFCSR_BIT.TFCNT0;
+						while ((maxLoops < 5000000) && (!SSI_SISR_BIT.TFE)) {
+							// Wait until a Tx word goes out, or we timeout.
+							maxLoops++;
+							items2 = SSI_SFCSR_BIT.TFCNT0;
+						}
+
+						if (longFrame) {
+							// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
+							//						for (gwUINT8 i = 0; i < 5; i++) {
+							//							if (SSI_SISR_BIT.RDR) {
+							//								cmdSample[9].word = SSI_SRX;
+							////								gSamples[gSampleCnt++].word = SSI_SRX;
+							////								if (gSampleCnt > 100) {
+							////									gSampleCnt = 0;
+							////								}
+							//							}
+							//						}
+
+							SSI_SCR_BIT.SSIEN = FALSE;
+							SSI_STCCR_BIT.WL = SSI_24BIT_WORD;
+							SSI_STCCR_BIT.DC = SSI_FRAME_LEN2;
+							SSI_SCR_BIT.SSIEN = TRUE;
+						} else {
+							// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
+							for (gwUINT8 i = 0; i < 2; i++) {
+								if (SSI_SISR_BIT.RDR) {
+									cmdSample[9].word = SSI_SRX;
+								}
+							}
+						}
 					}
 				}
 			}
-			restartReadCycle();
 		}
+		restartReadCycle();
 	}
+	GW_EXIT_CRITICAL(ccr);
 }
 
 // --------------------------------------------------------------------------
 
 void restartReadCycle() {
-	if (!gIsTransmitting) {
-		// Reestablish the edge trigger timer for the next command.
-		TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-		TMR3_SCTRL_BIT.TCFIE = TRUE;
+	gIsTransmitting = FALSE;
+	TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
 
-		SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
-		SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
+	// Reestablish the edge trigger timer for the next command.
+	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+	TMR3_SCTRL_BIT.TCFIE = TRUE;
 
-		TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-		TMR3_SCTRL_BIT.VAL = 1;
-		TMR3_SCTRL_BIT.FORCE = 1;
+	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
+	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
 
-		SSI_SCR_BIT.RE = TRUE;
-		TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
-	}
+	TMR3_SCTRL_BIT.VAL = 1;
+	TMR3_SCTRL_BIT.FORCE = 1;
+
+	SSI_SCR_BIT.RE = TRUE;
+	TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
 }
 
 // --------------------------------------------------------------------------
