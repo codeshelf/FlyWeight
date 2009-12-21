@@ -28,15 +28,15 @@
 
 #define SSI_24BIT_WORD		0x0b
 #define SSI_20BIT_WORD		0x09
-#define SSI_FRAME_LEN2		0x02
-#define SSI_FRAME_LEN7		0x07
+#define SSI_FRAME_LEN2		0x01
+#define SSI_FRAME_LEN7		0x06
 
 #define SD_CLK_RATE			400000
 #define TMR_CLK_RATE		1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
 #define FSYNC_TRIGGER_HIGH	2		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
 #define FSYNC_TRIGGER_LOW	1000		/* (was 210) 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
-#define FSYNC_SUSTAIN_HIGH	4		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
-#define FSYNC_SUSTAIN_LOW	1000		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_HIGH	8		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_SUSTAIN_LOW	2000		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 #define FSYNCR2_SUSTAIN_LOW	1000	/* 5X normal sustain low. */
 
 #define gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
