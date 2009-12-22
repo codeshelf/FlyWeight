@@ -59,6 +59,7 @@ void vMain( void ) {
 	ResetMaca();
 	MLMERadioInit();
 	IntEnableAll();
+	TmrInit();
 
 	LED_Init();
 
