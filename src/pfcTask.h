@@ -21,6 +21,7 @@
 #define PFC_QUEUE_SIZE		2
 
 #define	MAX_DRIFT			500
+#define	SSI_RXTX_TIMER		gTmr1_c
 #define	SSI_FRAMESYNC_TIMER	gTmr3_c
 
 #define PRIMARY_SOURCE		gTmrPrimaryClkDiv16_c
@@ -38,6 +39,7 @@
 #define FSYNC_SUSTAIN_HIGH	8		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
 #define FSYNC_SUSTAIN_LOW	175		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 #define FSYNCR2_SUSTAIN_LOW	1000	/* 5X normal sustain low. */
+#define FSYNC_TRIGGER_SYNC	98
 
 #define gGpioBeepTimer_c	((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)PWM_TIMER))
 
@@ -96,12 +98,14 @@ extern xQueueHandle	gPFCQueue;
 
 void pfcTask( void *pvParameters );
 void gpioInit(void);
-static void ssiInit(void);
-void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength);
-void ssiInterrupt(void);
-void setupTimers();
-void timerCallback(TmrNumber_t tmrNumber);
-void restartReadCycle();
+void setupSSI(void);
+void setupTimers(void);
+void restartReadCycle(void);
 gwUINT8 crc7(USsiSampleType *inSamplePtr, gwUINT8 inSamplesToCheck);
+
+void timerCallback(TmrNumber_t tmrNumber);
+void resync(TmrNumber_t tmrNumber);
+void startFrame(TmrNumber_t tmrNumber);
+void ssiInterrupt(void);
 
 #endif //PFC_TASK_H

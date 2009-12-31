@@ -3,7 +3,7 @@ WatchCond=_ 0
 Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 [DebugChecksum]
-Checksum=1864836727
+Checksum=2016352580
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -14,6 +14,8 @@ Enabled=_ 0
 [TraceHelper]
 Enabled=0
 ShowSource=1
+[BreakpointUsageDialog]
+Placement=_ 422 356 859 634
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -40,11 +42,15 @@ Bp8=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.31.3@1" 0 0 0 0 "" 0 "" 0
 Bp9=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\gatewayMgmtTask.c}.88.7@1" 0 0 0 0 "" 0 "" 0
 Bp10=_ "STD_CODE" "{C:\eclipsework\MC1322x\Application\FlyWeight\mainGateway.c}.97.2@1" 0 0 0 0 "" 0 "" 0
 Bp11=_ "STD_CODE" "0x004043C2" 0 0 0 0 "" 0 "" 0
-Bp12=_ "STD_CODE" "0x0000A7F2" 0 0 0 0 "" 0 "" 0
-Bp13=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\mainPFC.c}.115.1@1" 1 0 0 0 "" 0 "" 0
-Bp14=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 148 0 "" 0 ""
-Bp15=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 116 0 "" 0 ""
-Bp16=_ "EMUL_DATA" "0x00408151" 1 0 0 148 0 "" 0 ""
-Bp17=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\pfcTask.c}.429.7@1" 1 0 0 0 "" 0 "" 0
-Bp18=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\pfcTask.c}.410.7@1" 1 0 0 0 "" 0 "" 0
-Count=19
+Bp12=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 148 0 "" 0 ""
+Bp13=_ "EMUL_DATA" "0x8000706C@4" 0 0 0 116 0 "" 0 ""
+Bp14=_ "EMUL_DATA" "0x00408151" 0 0 0 148 0 "" 0 ""
+Bp15=_ "STD_CODE" "{C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S}.80.1@1" 1 0 0 0 "" 0 "" 0
+Bp16=_ "STD_CODE" "0x00405746" 0 0 0 0 "" 0 "" 0
+Bp17=_ "STD_CODE" "0x0040424C" 0 0 0 0 "" 0 "" 0
+Bp18=_ "STD_CODE" "0x00404248" 0 0 0 0 "" 0 "" 0
+Bp19=_ "STD_CODE" "0x00417FEA" 0 0 0 0 "" 0 "" 0
+Bp20=_ "EMUL_DATA" "0x8000706C@2" 0 0 0 148 0 "" 0 ""
+Bp21=_ "STD_CODE" "0x00000004" 0 0 0 0 "" 0 "" 0
+Bp22=_ "EMUL_DATA" "0x80007060@2" 0 0 0 148 0 "" 0 ""
+Count=23

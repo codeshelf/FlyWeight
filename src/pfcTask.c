@@ -17,26 +17,28 @@
 
 // Globals
 
-xTaskHandle gPFCTask = NULL;
-xQueueHandle gPFCQueue;
-ESDCardState gSDCardState;
-ESDCardCmdState gSDCardCmdState;
+xTaskHandle 		gPFCTask = NULL;
+xQueueHandle 		gPFCQueue;
+ESDCardState 		gSDCardState;
+ESDCardCmdState 	gSDCardCmdState;
 
-USsiSampleType gSamples[110];
-gwUINT8 gSampleCnt = 0;
-gwBoolean gSyncLost = FALSE;
-//gwBoolean gIsTransmitting = FALSE;
+USsiSampleType 		gSamples[110];
+gwUINT8 			gSampleCnt = 0;
+gwBoolean 			gSyncLost = FALSE;
+gwBoolean 			gIsTransmitting = FALSE;
+portTickType		gTimerValStart;
+portTickType		gTimerValStop;
 
 // --------------------------------------------------------------------------
 
 void pfcTask(void *pvParameters) {
 	gwUINT8 samples;
+	TmrErr_t error;
 
 	if (gPFCQueue) {
 
 		gpioInit();
-		ssiInit();
-		setupSSI(SSI_24BIT_WORD, SSI_FRAME_LEN2);
+		setupSSI();
 		setupTimers();
 		gSDCardState = eSDCardStateIdle;
 		gSDCardCmdState = eSDCardCmdStateStd;
@@ -46,7 +48,8 @@ void pfcTask(void *pvParameters) {
 		SSI_SCR_BIT.RE = TRUE;
 
 		// Start the FSYNC simulation timer.
-		TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+		//error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+		resync(SSI_FRAMESYNC_TIMER);
 
 		for (;;) {
 			vTaskDelay(10);
@@ -93,7 +96,6 @@ void gpioInit(void) {
  * Primary counter clock is the bus clock divided by 128.
  * Secondary counter source is the SD card CMD line.
  */
-
 void setupTimers() {
 
 	TmrErr_t error;
@@ -103,17 +105,21 @@ void setupTimers() {
 
 	// Enable FS timer.
 	error = TmrEnable(SSI_FRAMESYNC_TIMER);
-	// Don't run t yet.
+	// Don't run it yet.
 	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	// Register the callback executed when a timer interrupt occurs.
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, timerCallback);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, timerCallback);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp2Event_c, timerCallback);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrEdgeEvent_c, timerCallback);
+//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, timerCallback);
+//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, timerCallback);
+//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp2Event_c, timerCallback);
+//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrEdgeEvent_c, timerCallback);
+	error = TmrSetCallbackFunction(SSI_RXTX_TIMER, gTmrEdgeEvent_c, resync);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrOverEvent_c, startFrame);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, startFrame);
+	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, startFrame);
 
 	tmrStatusCtrl.uintValue = 0x0000;
-	tmrStatusCtrl.bitFields.TCFIE = TRUE; // Timer compare IE.
+	tmrStatusCtrl.bitFields.TCFIE = FALSE; // Timer compare IE.
 	tmrStatusCtrl.bitFields.TOFIE = FALSE; // Timer overflow IE.
 	tmrStatusCtrl.bitFields.IEFIE = FALSE; // Input edge flag IE.
 	tmrStatusCtrl.bitFields.IPS = 1; // Input polarity select: 0 = normal, 1 = inverted.
@@ -125,35 +131,65 @@ void setupTimers() {
 	error = TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
-	//	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
+	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
 	tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE; // Timer compare1 IE.
 	tmrComparatorStatusCtrl.bitFields.TCF2EN = FALSE; // Timer compare2 IE.
 	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01; // Compare load control 1.
 	tmrComparatorStatusCtrl.bitFields.FILT_EN = FALSE; // Filter enable.
 	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
 
-	tmrConfig.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+	tmrConfig.tmrOutputMode = gTmrToggleOF_c;//gTmrSetOnCompClearOnSecInputEdg_c;
 	tmrConfig.tmrCoInit = 0; // Co-init: 0 = another channel cannot init this timer.
 	tmrConfig.tmrCntDir = 0; // Count dir: 0 = up, 1 = down.
 	tmrConfig.tmrCntLen = 1; // Count length: 0 = roll over, 1 = until compare then reinit
-	tmrConfig.tmrCntOnce = 0; // Count once: 0 = repeatedly, 1 = once only.
+	tmrConfig.tmrCntOnce = FALSE; // Count once: 0 = repeatedly, 1 = once only.
 	tmrConfig.tmrSecondaryCntSrc = SECONDARY_SOURCE;
 	tmrConfig.tmrPrimaryCntSrc = PRIMARY_SOURCE;
 	error = TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
 
-	// After the CMD pin asserts a falling edge we can assert the FSYNC for HIGH SD Card clock cycles, and deassert for LOW cycles.
-	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
-	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
+//	// After the CMD pin asserts a falling edge we can assert the FSYNC for HIGH SD Card clock cycles, and deassert for LOW cycles.
+//	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
+//	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
 
 	// Config timer to start from 0 after compare event.
 	SetLoadVal(SSI_FRAMESYNC_TIMER, 0);
 
 	// Start the counter at 0.
 	SetCntrVal(SSI_FRAMESYNC_TIMER, 0);
+}
 
-	//	IntAssignHandler(gTmrInt_c, (IntHandlerFunc_t) TmrIsr);
-	//	ITC_SetPriority(gTmrInt_c, gItcNormalPriority_c);
-	//	ITC_EnableInterrupt(gTmrInt_c);
+// --------------------------------------------------------------------------
+
+static void resync(TmrNumber_t tmrNumber) {
+
+	TmrErr_t error;
+	TmrConfigReg_t *configP;
+	TmrStatusCtrl_t *statusP;
+	TmrComparatorStatusCtrl_t *csstatusP;
+
+	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
+	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
+	csstatusP = (TmrComparatorStatusCtrl_t*)&TMR3_REGS_P->CompStatCtrl;
+
+	// Setup Fsync pin to count 48 clocks until compare1.
+	// If we don't receive an edge on the Rx/Tx pin in that time then we can setup the next frame.
+	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_SYNC);
+	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_SYNC);
+
+	TMR1_SCTRL_BIT.IEFIE = TRUE;
+	TMR3_CSCTRL_BIT.TCF1EN = TRUE;
+
+	error = TmrSetMode(SSI_RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
+	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
+
+	TMR1_SCTRL_BIT.TCF = 0;
+}
+
+// --------------------------------------------------------------------------
+
+static void startFrame(TmrNumber_t tmrNumber) {
+	restartReadCycle();
+	TMR1_SCTRL_BIT.TCF = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -162,55 +198,53 @@ void setupTimers() {
  * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
  * The entire CMD should now live inside the SSI Rx FIFO.
  */
-static void timerCallback(TmrNumber_t tmrNumber) {
-
-	TmrConfigReg_t config;
-	TmrStatusCtrl_t status;
-	TmrComparatorStatusCtrl_t csstatus;
-
-	config.uintValue = TMR3_CTRL_WORD;
-	status.uintValue = TMR3_SCTRL_WORD;
-	csstatus.uintValue = TMR3_CSCTRL_WORD;
-
-	// Stop the timer, and clear the interrupt flag.
-	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-	if (/*(!gIsTransmitting) &&*/ (TMR3_SCTRL_BIT.TCF)) {
-		if (config.bitFields.tmrCntMode == gTmrEdgSecSrcTriggerPriCntTillComp_c) {
-			// We just caught an edge, so switch to pause mode.
-			// Set the signal low until the end of the pause count.
-			// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
-			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
-			//TMR3_SCTRL_BIT.TCFIE = TRUE;
-
-			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
-			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
-
-			TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-			TMR3_SCTRL_BIT.VAL = 1;
-			TMR3_SCTRL_BIT.FORCE = 1;
-
-			TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
-
-		} else if (config.bitFields.tmrCntMode == gTmrCntRiseEdgPriSrc_c) {
-			// We just completed signal-low delay, so restart the read cycle (secondary edge trigger mode).
-			// If we're in PWM mode, then only restart the read cycle on the comp2 compare/transition.
-			if ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) /*|| (csstatus.bitFields.TCF2)*/) {
-				restartReadCycle();
-			}
-		}
-		TMR3_SCTRL_BIT.TCF = 0;
-	}
-}
-
-// --------------------------------------------------------------------------
-
-static void ssiInit(void) {
-	SSI_Init();
-
-	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) ssiInterrupt);
-	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gSsiInt_c);
-}
+//static void timerCallback(TmrNumber_t tmrNumber) {
+//
+//	gwUINT8 ccr;
+//	TmrConfigReg_t *configP;
+//	TmrStatusCtrl_t *statusP;
+//	TmrComparatorStatusCtrl_t *csstatusP;
+//
+//	GW_ENTER_CRITICAL(ccr);
+//
+//	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
+//	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
+//	csstatusP = (TmrComparatorStatusCtrl_t*)&TMR3_REGS_P->CompStatCtrl;
+//
+//	// Stop the timer, and clear the interrupt flag.
+//	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+//	if ((TMR3_SCTRL_BIT.TCF) || (TMR3_CSCTRL_BIT.TCF1)) {
+//		if (gWaitingForEdge) {
+//			// We just caught an edge, so switch to pause mode.
+//			// Set the signal low until the end of the pause count.
+//			// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
+//
+//			gWaitingForEdge = FALSE;
+//			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
+//
+//			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
+//			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
+//
+//			TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+//			TMR3_SCTRL_BIT.VAL = 1;
+//			TMR3_SCTRL_BIT.FORCE = 1;
+//
+//			TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
+//
+//		} else {
+//			gTimerValStart = xTaskGetTickCount();
+//			// We just completed signal-low delay, so restart the read cycle (secondary edge trigger mode).
+//			// If we're in PWM mode, then only restart the read cycle on the comp2 compare/transition.
+//			if (!gIsTransmitting) { // ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) /*|| (csstatus.bitFields.TCF2)*/) {
+//				restartReadCycle();
+//			}
+//		}
+//		TMR3_SCTRL_BIT.TCF = 0;
+//		TMR3_CSCTRL_BIT.TCF1 = 0;
+//	}
+//
+//	GW_EXIT_CRITICAL(ccr);
+//}
 
 // --------------------------------------------------------------------------
 /*
@@ -222,12 +256,18 @@ static void ssiInit(void) {
  * That edge starts a frame.  We then read the next two time slots of 24-bit words (each) for a total of 48 bits.
  */
 
-static void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength) {
+static void setupSSI() {
 
 	SsiErr_t error;
 	SsiConfig_t ssiConfig;
 	SsiClockConfig_t ssiClockConfig;
 	SsiTxRxConfig_t ssiTxRxConfig;
+
+	SSI_Init();
+
+	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) ssiInterrupt);
+	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
+	ITC_EnableInterrupt(gSsiInt_c);
 
 	SSI_Enable(FALSE);
 
@@ -241,8 +281,8 @@ static void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength) {
 
 	// Setup the SSI clock.
 	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 400000);
-	ssiClockConfig.bit.ssiDC = inFrameLength; // Two words in each frame.  (Frame divide control.)
-	ssiClockConfig.bit.ssiWL = inWordLength; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
+	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
+	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
 
 	// Setup Tx.
@@ -284,8 +324,9 @@ static void setupSSI(gwUINT8 inWordLength, gwUINT8 inFrameLength) {
 	// Setup the SSI interrupts.
 	SSI_SIER_WORD = 0;
 	SSI_SIER_BIT.RIE = TRUE;
+	SSI_SIER_BIT.ROE_EN = FALSE;
 	SSI_SIER_BIT.RFRC_EN = FALSE;
-	SSI_SIER_BIT.RDR_EN = FALSE;
+	SSI_SIER_BIT.RDR_EN = TRUE;
 	SSI_SIER_BIT.RLS_EN = FALSE;
 	SSI_SIER_BIT.RFS_EN = FALSE;
 	SSI_SIER_BIT.RFF_EN = TRUE;
@@ -311,18 +352,19 @@ void ssiInterrupt(void) {
 	 * sample 2:	XXXXXXXX|AAAAAAAA|AAAAAAAA|CCCCCCCS
 	 * 				--------|arg byte|arg byte|CRC    S
 	 */
+	TmrErr_t error;
 	USsiSampleType cmdSample[10];
 	SsiISReg_t *intStatusesP;
 	gwUINT8 ccr;
 	gwBoolean longFrame = FALSE;
 
-	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
 	GW_ENTER_CRITICAL(ccr);
+	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
 
 	// Deal with the end of the Rx cycle.
 	if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
 
-		TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+		error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 		SSI_SCR_BIT.RE = FALSE;
 
 		while (SSI_SFCSR_BIT.RFCNT0 > 1) {
@@ -423,7 +465,6 @@ void ssiInterrupt(void) {
 							// Expand the SSI frame to 6 words (of 24 bits each).
 							// This is 8 bits more than we need, but it simplifies dealing with the FIFO.
 							longFrame = TRUE;
-							//setupSSI(SSI_20BIT_WORD, SSI_FRAME_LEN7);
 							SSI_SCR_BIT.SSIEN = FALSE;
 							SSI_STCCR_BIT.WL = SSI_20BIT_WORD;
 							SSI_STCCR_BIT.DC = SSI_FRAME_LEN7;
@@ -452,7 +493,7 @@ void ssiInterrupt(void) {
 							gSDCardCmdState = eSDCardCmdStateStd;
 						}
 
-//						gIsTransmitting = TRUE;
+						gIsTransmitting = TRUE;
 
 						TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
 //						TMR3_CTRL_BIT.tmrCntOnce = FALSE;
@@ -473,8 +514,9 @@ void ssiInterrupt(void) {
 //						gwUINT8 items = SSI_SFCSR_BIT.TFCNT0;
 //						gwUINT8 items2;
 
+						gTimerValStop = xTaskGetTickCount();
 						SSI_SCR_BIT.TE = TRUE;
-						TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
+						error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
 						//						TMR3_SCTRL_BIT.VAL = 0;
 						//						TMR3_SCTRL_BIT.FORCE = 0;
 						// Set up SSI for Rx.
@@ -538,8 +580,10 @@ void ssiInterrupt(void) {
 // --------------------------------------------------------------------------
 
 void restartReadCycle() {
-//	gIsTransmitting = FALSE;
-	TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+	TmrErr_t error;
+
+	gIsTransmitting = FALSE;
+	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
 
 	// Reestablish the edge trigger timer for the next command.
 	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
@@ -552,7 +596,7 @@ void restartReadCycle() {
 	TMR3_SCTRL_BIT.FORCE = 1;
 
 	SSI_SCR_BIT.RE = TRUE;
-	TMR3_CTRL_BIT.tmrCntMode = gTmrEdgSecSrcTriggerPriCntTillComp_c;
+	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 }
 
 // --------------------------------------------------------------------------

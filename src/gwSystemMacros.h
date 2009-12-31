@@ -69,6 +69,7 @@
 	#include "ADC_Interface.h"
 	#include "UART_Interface.h"
 	#include "smacPort.h"
+	#include "portmacro.h"
 
 	#define GW_RESET_MCU						/* CRM_SoftReset() */
 	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
