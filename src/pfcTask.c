@@ -29,6 +29,8 @@ gwBoolean 			gIsTransmitting = FALSE;
 portTickType		gTimerValStart;
 portTickType		gTimerValStop;
 
+extern portTickType xTickCount;
+
 // --------------------------------------------------------------------------
 
 void pfcTask(void *pvParameters) {
@@ -49,7 +51,7 @@ void pfcTask(void *pvParameters) {
 
 		// Start the FSYNC simulation timer.
 		//error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
-		resync(SSI_FRAMESYNC_TIMER);
+		resync(FSYNC_TIMER);
 
 		for (;;) {
 			vTaskDelay(10);
@@ -103,20 +105,19 @@ void setupTimers() {
 	TmrStatusCtrl_t tmrStatusCtrl;
 	TmrComparatorStatusCtrl_t tmrComparatorStatusCtrl;
 
-	// Enable FS timer.
-	error = TmrEnable(SSI_FRAMESYNC_TIMER);
+	// Enable the timers.
+	error = TmrEnable(FSYNC_TIMER);
+	error = TmrEnable(RXTX_TIMER);
+
 	// Don't run it yet.
-	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
 
 	// Register the callback executed when a timer interrupt occurs.
-//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, timerCallback);
-//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, timerCallback);
-//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp2Event_c, timerCallback);
-//	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrEdgeEvent_c, timerCallback);
-	error = TmrSetCallbackFunction(SSI_RXTX_TIMER, gTmrEdgeEvent_c, resync);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrOverEvent_c, startFrame);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrCompEvent_c, startFrame);
-	error = TmrSetCallbackFunction(SSI_FRAMESYNC_TIMER, gTmrComp1Event_c, startFrame);
+//	error = TmrSetCallbackFunction(FCS_TIMER, gTmrEdgeEvent_c, resync);
+//	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrOverEvent_c, startFrame);
+//	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrCompEvent_c, startFrame);
+//	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrComp1Event_c, startFrame);
 
 	tmrStatusCtrl.uintValue = 0x0000;
 	tmrStatusCtrl.bitFields.TCFIE = FALSE; // Timer compare IE.
@@ -128,7 +129,11 @@ void setupTimers() {
 	tmrStatusCtrl.bitFields.EEOF = FALSE; // External enable OFLAG.
 	tmrStatusCtrl.bitFields.OPS = 1; // Output polarity: 0 = normal, 1 = inverted.
 	tmrStatusCtrl.bitFields.OEN = TRUE; // Output enable.
-	error = TmrSetStatusControl(SSI_FRAMESYNC_TIMER, &tmrStatusCtrl);
+	error = TmrSetStatusControl(FSYNC_TIMER, &tmrStatusCtrl);
+
+	tmrStatusCtrl.bitFields.IEFIE = TRUE; // Input edge flag IE.
+	tmrStatusCtrl.bitFields.OEN = FALSE; // Output enable.
+	error = TmrSetStatusControl(RXTX_TIMER, &tmrStatusCtrl);
 
 	tmrComparatorStatusCtrl.uintValue = 0x0000;
 	tmrComparatorStatusCtrl.bitFields.DBG_EN = 0x01;	// Debug enable.
@@ -136,115 +141,162 @@ void setupTimers() {
 	tmrComparatorStatusCtrl.bitFields.TCF2EN = FALSE; // Timer compare2 IE.
 	tmrComparatorStatusCtrl.bitFields.CL1 = 0x01; // Compare load control 1.
 	tmrComparatorStatusCtrl.bitFields.FILT_EN = FALSE; // Filter enable.
-	error = TmrSetCompStatusControl(SSI_FRAMESYNC_TIMER, &tmrComparatorStatusCtrl);
+	error = TmrSetCompStatusControl(FSYNC_TIMER, &tmrComparatorStatusCtrl);
 
-	tmrConfig.tmrOutputMode = gTmrToggleOF_c;//gTmrSetOnCompClearOnSecInputEdg_c;
+	tmrComparatorStatusCtrl.bitFields.TCF1EN = FALSE; // Timer compare1 IE.
+	error = TmrSetCompStatusControl(RXTX_TIMER, &tmrComparatorStatusCtrl);
+
+	tmrConfig.tmrOutputMode = gTmrSetOF_c;//gTmrSetOnCompClearOnSecInputEdg_c;
 	tmrConfig.tmrCoInit = 0; // Co-init: 0 = another channel cannot init this timer.
 	tmrConfig.tmrCntDir = 0; // Count dir: 0 = up, 1 = down.
 	tmrConfig.tmrCntLen = 1; // Count length: 0 = roll over, 1 = until compare then reinit
-	tmrConfig.tmrCntOnce = FALSE; // Count once: 0 = repeatedly, 1 = once only.
-	tmrConfig.tmrSecondaryCntSrc = SECONDARY_SOURCE;
-	tmrConfig.tmrPrimaryCntSrc = PRIMARY_SOURCE;
-	error = TmrSetConfig(SSI_FRAMESYNC_TIMER, &tmrConfig);
+	tmrConfig.tmrCntOnce = TRUE; // Count once: 0 = repeatedly, 1 = once only.
+	tmrConfig.tmrSecondaryCntSrc = FSYNC_SECONDARY_SOURCE;
+	tmrConfig.tmrPrimaryCntSrc = FSYNC_PRIMARY_SOURCE;
+	error = TmrSetConfig(FSYNC_TIMER, &tmrConfig);
 
-//	// After the CMD pin asserts a falling edge we can assert the FSYNC for HIGH SD Card clock cycles, and deassert for LOW cycles.
-//	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
-//	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
+	tmrConfig.tmrSecondaryCntSrc = FSYNC_SECONDARY_SOURCE;
+	tmrConfig.tmrPrimaryCntSrc = FSYNC_PRIMARY_SOURCE;
+	error = TmrSetConfig(RXTX_TIMER, &tmrConfig);
 
 	// Config timer to start from 0 after compare event.
-	SetLoadVal(SSI_FRAMESYNC_TIMER, 0);
+	SetLoadVal(FSYNC_TIMER, 0);
+	SetLoadVal(RXTX_TIMER, 0);
 
 	// Start the counter at 0.
-	SetCntrVal(SSI_FRAMESYNC_TIMER, 0);
+	SetCntrVal(FSYNC_TIMER, 0);
+	SetCntrVal(RXTX_TIMER, 0);
 }
 
 // --------------------------------------------------------------------------
+/*
+ * We are waiting until the Rx/Tx signal is held high at least 48 clock cycles.
+ * The only time we would see Rx/Tx high for that long is between commands.
+ */
 
 static void resync(TmrNumber_t tmrNumber) {
 
+	gwUINT8 ccr;
 	TmrErr_t error;
 	TmrConfigReg_t *configP;
 	TmrStatusCtrl_t *statusP;
 	TmrComparatorStatusCtrl_t *csstatusP;
 
+	GW_ENTER_CRITICAL(ccr);
+
 	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
 	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
 	csstatusP = (TmrComparatorStatusCtrl_t*)&TMR3_REGS_P->CompStatCtrl;
 
-	// Setup Fsync pin to count 48 clocks until compare1.
-	// If we don't receive an edge on the Rx/Tx pin in that time then we can setup the next frame.
-	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_SYNC);
-	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_SYNC);
+	// Disable/reset the SSI port.
+	SSI_Enable(FALSE);
+	SSI_SCR_BIT.RE = FALSE;
+	SSI_SCR_BIT.TE = FALSE;
+	SSI_SIER_BIT.RIE = TRUE;
+	SSI_Enable(TRUE);
 
-	TMR1_SCTRL_BIT.IEFIE = TRUE;
-	TMR3_CSCTRL_BIT.TCF1EN = TRUE;
+	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
 
-	error = TmrSetMode(SSI_RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
-	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
+	error = TmrSetCallbackFunction(FSYNC_TIMER, gTmrEdgeEvent_c, resync);
+	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrComp1Event_c, waitForNextFrame);
 
-	TMR1_SCTRL_BIT.TCF = 0;
-}
+	SetComp1Val(FSYNC_TIMER, RXTX_TRIGGER_RESYNC);
+	SetCompLoad1Val(FSYNC_TIMER, RXTX_TRIGGER_RESYNC);
 
-// --------------------------------------------------------------------------
+	SetComp1Val(RXTX_TIMER, RXTX_TRIGGER_RESYNC);
+	SetCompLoad1Val(RXTX_TIMER, RXTX_TRIGGER_RESYNC);
 
-static void startFrame(TmrNumber_t tmrNumber) {
-	restartReadCycle();
-	TMR1_SCTRL_BIT.TCF = 0;
+	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c;
+	TMR3_SCTRL_BIT.VAL = 1;
+	TMR3_SCTRL_BIT.FORCE = 1;
+	TMR3_SCTRL_BIT.IEFIE = TRUE;
+	TMR3_SCTRL_BIT.IEF = FALSE;
+
+	TMR1_CSCTRL_BIT.TCF1EN = TRUE;
+	TMR1_CSCTRL_BIT.TCF1 = FALSE;
+
+	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
+	error = TmrSetMode(FSYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
+
+	GW_EXIT_CRITICAL(ccr);
+
 }
 
 // --------------------------------------------------------------------------
 /*
- * This routine gets called when there is an interrupt from the timer.  We're only interested in
- * interrupts for timer 1 since that means we reached 48 clocks after the frist SD Card CMD edge.
- * The entire CMD should now live inside the SSI Rx FIFO.
+ * Now we know we are between commands, so prepare for the next command frame to arrive.
  */
-//static void timerCallback(TmrNumber_t tmrNumber) {
-//
-//	gwUINT8 ccr;
-//	TmrConfigReg_t *configP;
-//	TmrStatusCtrl_t *statusP;
-//	TmrComparatorStatusCtrl_t *csstatusP;
-//
-//	GW_ENTER_CRITICAL(ccr);
-//
-//	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
-//	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
-//	csstatusP = (TmrComparatorStatusCtrl_t*)&TMR3_REGS_P->CompStatCtrl;
-//
-//	// Stop the timer, and clear the interrupt flag.
-//	//TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-//	if ((TMR3_SCTRL_BIT.TCF) || (TMR3_CSCTRL_BIT.TCF1)) {
-//		if (gWaitingForEdge) {
-//			// We just caught an edge, so switch to pause mode.
-//			// Set the signal low until the end of the pause count.
-//			// (At which point we will interrupt and come back here to switch back into secondary edge mode.)
-//
-//			gWaitingForEdge = FALSE;
-//			TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOF_c; // (NB: OPS is reversed.)
-//
-//			SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
-//			SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_LOW);
-//
-//			TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-//			TMR3_SCTRL_BIT.VAL = 1;
-//			TMR3_SCTRL_BIT.FORCE = 1;
-//
-//			TMR3_CTRL_BIT.tmrCntMode = gTmrCntRiseEdgPriSrc_c;
-//
-//		} else {
-//			gTimerValStart = xTaskGetTickCount();
-//			// We just completed signal-low delay, so restart the read cycle (secondary edge trigger mode).
-//			// If we're in PWM mode, then only restart the read cycle on the comp2 compare/transition.
-//			if (!gIsTransmitting) { // ((config.bitFields.tmrOutputMode != gTmrToggleOFUsingAlternateReg_c) /*|| (csstatus.bitFields.TCF2)*/) {
-//				restartReadCycle();
-//			}
-//		}
-//		TMR3_SCTRL_BIT.TCF = 0;
-//		TMR3_CSCTRL_BIT.TCF1 = 0;
-//	}
-//
-//	GW_EXIT_CRITICAL(ccr);
-//}
+
+static void waitForNextFrame(TmrNumber_t tmrNumber) {
+
+	gwUINT8 ccr;
+	TmrErr_t error;
+
+	GW_ENTER_CRITICAL(ccr);
+	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
+
+	if (gIsTransmitting) {
+		gIsTransmitting = FALSE;
+	}
+	SSI_SCR_BIT.RE = TRUE;
+
+	error = TmrSetCallbackFunction(FSYNC_TIMER, gTmrComp1Event_c, startFrame);
+	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrComp1Event_c, NULL);
+
+	// Reestablish the edge trigger timer for the next command.
+	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+	TMR3_SCTRL_BIT.VAL = 1;
+	TMR3_SCTRL_BIT.FORCE = 1;
+	TMR3_SCTRL_BIT.IEFIE = FALSE;
+	TMR3_SCTRL_BIT.IEF = FALSE;
+	TMR3_SCTRL_BIT.IEFIE = FALSE;
+	TMR3_CSCTRL_BIT.TCF1 = FALSE;
+	TMR3_CSCTRL_BIT.TCF1EN = TRUE;
+
+	SetComp1Val(FSYNC_TIMER, FSYNC_TRIGGER_HIGH);
+	SetCompLoad1Val(FSYNC_TIMER, FSYNC_TRIGGER_HIGH);
+
+	error = TmrSetMode(FSYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+	//error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
+	GW_EXIT_CRITICAL(ccr);
+}
+
+
+// --------------------------------------------------------------------------
+/*
+ * We've received a command frame, but if we don't process a "read" in that time
+ * then the trigger will fire, causing us to attempt to resync with the command stream.
+ */
+static void startFrame(TmrNumber_t tmrNumber) {
+
+	gwUINT8 ccr;
+	TmrErr_t error;
+
+	GW_ENTER_CRITICAL(ccr);
+
+	gTimerValStart = GetCntrVal(gTmr0_c);//xTickCount;vTaskGetTickCount();
+
+	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
+	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
+
+	error = TmrSetCallbackFunction(FSYNC_TIMER, gTmrComp1Event_c, NULL);
+	error = TmrSetCallbackFunction(RXTX_TIMER, gTmrComp1Event_c, resync);
+
+	TMR3_SCTRL_BIT.VAL = 1;
+	TMR3_SCTRL_BIT.FORCE = 1;
+
+	TMR1_CSCTRL_BIT.TCF1 = FALSE;
+	TMR1_CSCTRL_BIT.TCF1EN = TRUE;
+
+	SetComp1Val(RXTX_TIMER, RXTX_TIMEOUT);
+	SetCompLoad1Val(RXTX_TIMER, RXTX_TIMEOUT);
+
+	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
+
+	GW_EXIT_CRITICAL(ccr);
+}
 
 // --------------------------------------------------------------------------
 /*
@@ -326,7 +378,7 @@ static void setupSSI() {
 	SSI_SIER_BIT.RIE = TRUE;
 	SSI_SIER_BIT.ROE_EN = FALSE;
 	SSI_SIER_BIT.RFRC_EN = FALSE;
-	SSI_SIER_BIT.RDR_EN = TRUE;
+	SSI_SIER_BIT.RDR_EN = FALSE;
 	SSI_SIER_BIT.RLS_EN = FALSE;
 	SSI_SIER_BIT.RFS_EN = FALSE;
 	SSI_SIER_BIT.RFF_EN = TRUE;
@@ -364,33 +416,33 @@ void ssiInterrupt(void) {
 	// Deal with the end of the Rx cycle.
 	if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
 
-		error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
+		error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
+		error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 		SSI_SCR_BIT.RE = FALSE;
 
 		while (SSI_SFCSR_BIT.RFCNT0 > 1) {
 
 			// If we previously lost sync, then the first sample is held over, and we just need to read the second.
-			if (gSyncLost) {
-				cmdSample[1].word = SSI_SRX;
+//			if (gSyncLost) {
+//				cmdSample[1].word = SSI_SRX;
 //				gSamples[gSampleCnt++].word = cmdSample[1].word;
-				gSyncLost = FALSE;
-			} else {
+//				gSyncLost = FALSE;
+//			} else {
 				cmdSample[0].word = SSI_SRX;
 				cmdSample[1].word = SSI_SRX;
-			}
+				gSamples[gSampleCnt++].word = cmdSample[0].word;
+				gSamples[gSampleCnt++].word = cmdSample[1].word;
+				if (gSampleCnt > 100) {
+					gSampleCnt = 0;
+				}
+//			}
 			// Check that the next two samples have a valid CRC.
-//			gwBoolean isCmd55 = ((cmdSample[0].word == 0x00770000) && (cmdSample[1].word == 0x0));
-			if (/*(!isCmd55) && */(cmdSample[1].bytes.byte3 != crc7(cmdSample, 2))) {
+			if (cmdSample[1].bytes.byte3 != crc7(cmdSample, 2)) {
 				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
-				cmdSample[0].word = cmdSample[1].word;
-				gSyncLost = TRUE;
-				//restartReadCycle();
+//				cmdSample[0].word = cmdSample[1].word;
+//				gSyncLost = TRUE;
+				resync(FSYNC_TIMER);
 			} else {
-//				gSamples[gSampleCnt++].word = cmdSample[0].word;
-//				gSamples[gSampleCnt++].word = cmdSample[1].word;
-//				if (gSampleCnt > 100) {
-//					gSampleCnt = 0;
-//				}
 
 				// Make sure it's a valid host command by verifying that command bits S=0 and H=1.
 				if ((cmdSample[0].bytes.byte1 & 0xC0) == 0x40) {
@@ -495,30 +547,33 @@ void ssiInterrupt(void) {
 
 						gIsTransmitting = TRUE;
 
-						TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
-//						TMR3_CTRL_BIT.tmrCntOnce = FALSE;
-//						TMR3_SCTRL_BIT.TCFIE = FALSE;
-//						TMR3_SCTRL_BIT.VAL = 1;
-//						TMR3_SCTRL_BIT.FORCE = 1;
-
-						SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_HIGH);
-						SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_HIGH);
-						if (longFrame) {
-							SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNCR2_SUSTAIN_LOW);
-							SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNCR2_SUSTAIN_LOW);
-						} else {
-							SetComp2Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_LOW);
-							SetCompLoad2Val(SSI_FRAMESYNC_TIMER, FSYNC_SUSTAIN_LOW);
-						}
+//						TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
+////						TMR3_CTRL_BIT.tmrCntOnce = FALSE;
+////						TMR3_SCTRL_BIT.TCFIE = FALSE;
+////						TMR3_SCTRL_BIT.VAL = 1;
+////						TMR3_SCTRL_BIT.FORCE = 1;
+//
+//						SetComp1Val(FCS_TIMER, FSYNC_SUSTAIN_HIGH);
+//						SetCompLoad1Val(FCS_TIMER, FSYNC_SUSTAIN_HIGH);
+//						if (longFrame) {
+//							SetComp2Val(FCS_TIMER, FSYNCR2_SUSTAIN_LOW);
+//							SetCompLoad2Val(FCS_TIMER, FSYNCR2_SUSTAIN_LOW);
+//						} else {
+//							SetComp2Val(FCS_TIMER, FSYNC_SUSTAIN_LOW);
+//							SetCompLoad2Val(FCS_TIMER, FSYNC_SUSTAIN_LOW);
+//						}
 
 //						gwUINT8 items = SSI_SFCSR_BIT.TFCNT0;
 //						gwUINT8 items2;
 
-						gTimerValStop = xTaskGetTickCount();
+						gTimerValStop = GetCntrVal(gTmr0_c);//xTickCount;vTaskGetTickCount();
 						SSI_SCR_BIT.TE = TRUE;
-						error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
-						//						TMR3_SCTRL_BIT.VAL = 0;
-						//						TMR3_SCTRL_BIT.FORCE = 0;
+//						error = TmrSetMode(FCS_TIMER, gTmrCntRiseEdgPriSrc_c);
+
+//						TMR3_SCTRL_BIT.VAL = 0;
+//						TMR3_SCTRL_BIT.FORCE = 0;
+						TMR3_SCTRL_BIT.OPS = 0;
+
 						// Set up SSI for Rx.
 						gwUINT32 maxLoops;
 						while ((maxLoops < 5000000) && (!SSI_SISR_BIT.TFS) /* (SSI_SFCSR_BIT.TFCNT0 == items) */) {
@@ -528,10 +583,11 @@ void ssiInterrupt(void) {
 						}
 
 						// Tx is complete.
-						SSI_SCR_BIT.TE = FALSE;
-						TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
+//						SSI_SCR_BIT.TE = FALSE;
+//						TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
 //						TMR3_SCTRL_BIT.VAL = 1;
 //						TMR3_SCTRL_BIT.FORCE = 1;
+						TMR3_SCTRL_BIT.OPS = 1;
 
 						while ((maxLoops < 5000000) && /* (SSI_SFCSR_BIT.TFCNT0 > 0) */(!SSI_SISR_BIT.TFRC) ) {
 							// Wait until a Tx word goes out, or we timeout.
@@ -572,32 +628,31 @@ void ssiInterrupt(void) {
 				}
 			}
 		}
-		restartReadCycle();
+		waitForNextFrame(FSYNC_TIMER);
 	}
 	GW_EXIT_CRITICAL(ccr);
 }
 
 // --------------------------------------------------------------------------
 
-void restartReadCycle() {
-	TmrErr_t error;
-
-	gIsTransmitting = FALSE;
-	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrNoOperation_c);
-
-	// Reestablish the edge trigger timer for the next command.
-	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
-	TMR3_SCTRL_BIT.TCFIE = TRUE;
-
-	SetComp1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
-	SetCompLoad1Val(SSI_FRAMESYNC_TIMER, FSYNC_TRIGGER_HIGH);
-
-	TMR3_SCTRL_BIT.VAL = 1;
-	TMR3_SCTRL_BIT.FORCE = 1;
-
-	SSI_SCR_BIT.RE = TRUE;
-	error = TmrSetMode(SSI_FRAMESYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
-}
+//void restartReadCycle() {
+//	TmrErr_t error;
+//
+//	gIsTransmitting = FALSE;
+//	error = TmrSetMode(FCS_TIMER, gTmrNoOperation_c);
+//
+//	// Reestablish the edge trigger timer for the next command.
+//	TMR3_CTRL_BIT.tmrOutputMode = gTmrSetOnCompClearOnSecInputEdg_c;
+//
+//	SetComp1Val(FCS_TIMER, FSYNC_TRIGGER_HIGH);
+//	SetCompLoad1Val(FCS_TIMER, FSYNC_TRIGGER_HIGH);
+//
+//	TMR3_SCTRL_BIT.VAL = 1;
+//	TMR3_SCTRL_BIT.FORCE = 1;
+//
+//	SSI_SCR_BIT.RE = TRUE;
+//	error = TmrSetMode(FCS_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
+//}
 
 // --------------------------------------------------------------------------
 
