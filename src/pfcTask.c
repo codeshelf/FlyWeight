@@ -483,22 +483,33 @@ void ssiInterrupt(void) {
 
 						case eSDCardCmd2:
 							responseType = eSDCardRespType2;
+							gSDCardState = eSDCardStateIdent;
 							break;
 
 						case eSDCardCmd3:
 							responseType = eSDCardRespType6;
+							gSDCardState = eSDCardStateStandby;
+							break;
+
+						case eSDCardCmd7:
+							responseType = eSDCardRespType1b;
+							gSDCardState = eSDCardStateStandby;
+							break;
+
+						case eSDCardCmd9:
+							responseType = eSDCardRespType2;
+							gSDCardState = eSDCardStateStandby;
 							break;
 
 						case eSDCardCmd41:
 							responseType = eSDCardRespType3;
-							//responseType = eSDCardRespTypeNone;
+							gSDCardState = eSDCardStateReady;
 							break;
 
 						case eSDCardCmd55:
 							// Indicate that we're in the Application command state.
 							gSDCardCmdState = eSDCardCmdStateApp;
 							responseType = eSDCardRespType1;
-							//responseType = eSDCardRespTypeNone;
 							break;
 
 						default:
@@ -548,13 +559,23 @@ void ssiInterrupt(void) {
 								maxLoops++;
 							}
 
-							/* cmdSample[0].word */SSI_STX = 0x0003f0a4;
-							/* cmdSample[1].word */SSI_STX = 0x00075750;
-							/* cmdSample[2].word */SSI_STX = 0x00046432;
-							/* cmdSample[3].word */SSI_STX = 0x00002001;
-							/* cmdSample[4].word */SSI_STX = 0x00000000;
-							/* cmdSample[5].word */SSI_STX = 0x00000100;
-							/* cmdSample[6].word */SSI_STX = 0x0009c89f;
+							if (cmdNum == eSDCardCmd2) {
+								SSI_STX = 0x0003f0a4;
+								SSI_STX = 0x00075750;
+								SSI_STX = 0x00046432;
+								SSI_STX = 0x00002001;
+								SSI_STX = 0x00000000;
+								SSI_STX = 0x00000100;
+								SSI_STX = 0x0009c89f;
+							} else {
+								SSI_STX = 0x0003f002;
+								SSI_STX = 0x000e1048;
+								SSI_STX = 0x0005b498;
+								SSI_STX = 0x00000036;
+								SSI_STX = 0x000db800;
+								SSI_STX = 0x00000660;
+								SSI_STX = 0x0003473f;
+							}
 
 						} else if (responseType == eSDCardRespType3) {
 							// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
