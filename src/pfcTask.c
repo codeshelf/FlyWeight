@@ -404,7 +404,6 @@ static void setupSSI() {
 
 }
 // --------------------------------------------------------------------------
-gwUINT32 loops = 0x00800000;
 void ssiInterrupt(void) {
 
 	/*
@@ -424,7 +423,8 @@ void ssiInterrupt(void) {
 	SsiISReg_t *intStatusesP;
 	SsiFCSReg_t *fcsValuesP;
 	gwUINT8 ccr;
-	gwBoolean longFrame = FALSE;
+	gwBoolean longFrame;
+	gwUINT32 maxLoops;
 
 	GW_ENTER_CRITICAL(ccr);
 	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
@@ -482,7 +482,7 @@ void ssiInterrupt(void) {
 							break;
 
 						case eSDCardCmd2:
-							responseType = eSDCardRespType3;
+							responseType = eSDCardRespType2;
 							break;
 
 						case eSDCardCmd3:
@@ -518,7 +518,9 @@ void ssiInterrupt(void) {
 					}
 
 					// Create the response command.
-					if (responseType != eSDCardRespTypeNone) {
+					if (responseType == eSDCardRespTypeNone) {
+					} else {
+						longFrame = FALSE;
 						if (responseType == eSDCardRespType1) {
 							cmdSample[0].word = 0x00000000;
 							cmdSample[0].bytes.byte1 = responseCmd;
@@ -529,17 +531,22 @@ void ssiInterrupt(void) {
 							cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
 
 							// Put the response into the SSI Tx FIFO.
-//							SSI_STX = cmdSample[0].word;
-//							SSI_STX = cmdSample[1].word;
+							SSI_STX = cmdSample[0].word;
+							SSI_STX = cmdSample[1].word;
 						} else if (responseType == eSDCardRespType2) {
 							// The CID response (R2) is longer than normal: 136 bits.
 							// Expand the SSI frame to 6 words (of 24 bits each).
 							// This is 8 bits more than we need, but it simplifies dealing with the FIFO.
 							longFrame = TRUE;
-							SSI_SCR_BIT.SSIEN = FALSE;
+							SSI_Enable(FALSE);
 							SSI_STCCR_BIT.WL = SSI_20BIT_WORD;
 							SSI_STCCR_BIT.DC = SSI_FRAME_LEN7;
-							SSI_SCR_BIT.SSIEN = TRUE;
+							SSI_Enable(TRUE);
+
+							maxLoops = 0;
+							while (maxLoops < 100) {
+								maxLoops++;
+							}
 
 							/* cmdSample[0].word */SSI_STX = 0x0003f0a4;
 							/* cmdSample[1].word */SSI_STX = 0x00075750;
@@ -554,8 +561,15 @@ void ssiInterrupt(void) {
 							cmdSample[0].word = 0x003f80ff;
 							cmdSample[1].word = 0x008000ff;
 							// Put the response into the SSI Tx FIFO.
-//							SSI_STX = cmdSample[0].word;
-//							SSI_STX = cmdSample[1].word;
+							SSI_STX = cmdSample[0].word;
+							SSI_STX = cmdSample[1].word;
+						} else if (responseType == eSDCardRespType6) {
+							// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
+							cmdSample[0].word = 0x00030002;
+							cmdSample[1].word = 0x000700d5;
+							// Put the response into the SSI Tx FIFO.
+							SSI_STX = cmdSample[0].word;
+							SSI_STX = cmdSample[1].word;
 						}
 
 						// If the response we're just about to send is not the APP_COMMAND response
@@ -565,66 +579,74 @@ void ssiInterrupt(void) {
 						}
 
 						gIsTransmitting = TRUE;
-						if (loops++ & 1) {
-						SSI_STX = 0x00aaaaaa;//loops++;
-						SSI_STX = 0x00cccccc;//loops++;
-						} else {
-							SSI_STX = 0x00a0aaaa;//loops++;
-							SSI_STX = 0x00cccc0c;//loops++;
-						}
+						// Reset the frame complete flags.
+						SSI_SISR_BIT.RFRC = TRUE;
+						SSI_SISR_BIT.TFRC = TRUE;
+						gwUINT32 items = SSI_SFCSR_BIT.TFCNT0;
 
 						// Start Tx.
 						SSI_SIER_BIT.RIE = FALSE;
 						SSI_SCR_BIT.TE = TRUE;
-						TMR3_SCTRL_BIT.OPS = 0;
 
-						// Wait until something goes out.
-						gwUINT32 items = SSI_SFCSR_BIT.TFCNT0;
-						gwUINT32 maxLoops = 0;
-						while ((maxLoops < 5000000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
-							// Wait until a Tx word goes out, or we timeout.
+						// A slight delay before we assert fysnc.
+						// This allows the MCU to catch up after enabling TE.
+						maxLoops = 0;
+						while (maxLoops < 100) {
 							maxLoops++;
 						}
 
-						// Prepare for completion of Tx.
+						TMR3_SCTRL_BIT.OPS = 0;
+						GPIO.DataSetLo = 0x1000;
+
+						// Wait until something goes out.
 						maxLoops = 0;
-						while ((maxLoops < 5000000) && (SSI_SFCSR_BIT.TFCNT0 > 0)) {
+						while ((maxLoops < 50000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
 							// Wait until a Tx word goes out, or we timeout.
 							maxLoops++;
 						}
 						TMR3_SCTRL_BIT.OPS = 1;
+
+						maxLoops = 0;
+						while (maxLoops < 100) {
+							maxLoops++;
+						}
+
 						SSI_SCR_BIT.TE = FALSE;
-						SSI_SIER_BIT.RIE = TRUE;
+						GPIO.DataResetLo = 0x1000;
 
-						GPIO.DataResetLo = 0x200000;
-
+						// Prepare for completion of Tx.
+						GPIO.DataSetLo = 0x1000;
+						maxLoops = 0;
+						if (longFrame) {
+							while ((maxLoops < 5000000) && (!SSI_SISR_BIT.RFRC)) {
+								// Wait until a Tx word goes out, or we timeout.
+								maxLoops++;
+							}
+						} else {
+							while ((maxLoops < 50000) && (!SSI_SISR_BIT.TFRC)) {
+								// Wait until a Tx word goes out, or we timeout.
+								maxLoops++;
+							}
+						}
+						GPIO.DataResetLo = 0x1000;
 
 						if (longFrame) {
-							// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
-							//						for (gwUINT8 i = 0; i < 5; i++) {
-							//							if (SSI_SISR_BIT.RDR) {
-							//								cmdSample[9].word = SSI_SRX;
-							////								gSamples[gSampleCnt++].word = SSI_SRX;
-							////								if (gSampleCnt > 100) {
-							////									gSampleCnt = 0;
-							////								}
-							//							}
-							//						}
-
-							SSI_SCR_BIT.SSIEN = FALSE;
+							SSI_Enable(FALSE);
 							SSI_STCCR_BIT.WL = SSI_24BIT_WORD;
 							SSI_STCCR_BIT.DC = SSI_FRAME_LEN2;
-							SSI_SCR_BIT.SSIEN = TRUE;
+							SSI_Enable(TRUE);
 						} else {
 						}
 						// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
 						while (SSI_SFCSR_BIT.RFCNT0 > 0) {
 							cmdSample[9].word = SSI_SRX;
 						}
+						SSI_SIER_BIT.RIE = TRUE;
 					}
 				}
 			}
 		}
+		GPIO.DataResetLo = 0x200000;
 		waitForNextFrame(FSYNC_TIMER);
 	}
 	GW_EXIT_CRITICAL(ccr);
