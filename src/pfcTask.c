@@ -14,6 +14,7 @@
 #include "task.h"
 #include "queue.h"
 #include "remoteMgmtTask.h"
+#include "GPIO_Interface.h"
 
 // Globals
 
@@ -26,8 +27,6 @@ USsiSampleType 		gSamples[110];
 gwUINT8 			gSampleCnt = 0;
 gwBoolean 			gSyncLost = FALSE;
 gwBoolean 			gIsTransmitting = FALSE;
-portTickType		gTimerValStart;
-portTickType		gTimerValStop;
 
 extern portTickType xTickCount;
 
@@ -66,7 +65,9 @@ void pfcTask(void *pvParameters) {
 // --------------------------------------------------------------------------
 
 void gpioInit(void) {
+
 	register uint32_t tmpReg;
+	GpioErr_t error;
 
 	// Pull-up select: UP type
 	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
@@ -86,6 +87,12 @@ void gpioInit(void) {
 	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos) | (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
 	        << GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
 	        << GPIO_SSI_CLK_fnpos));
+
+	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin18_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin19_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin20_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin21_c, gGpioDirOut_c);
 }
 
 // --------------------------------------------------------------------------
@@ -183,6 +190,7 @@ static void resync(TmrNumber_t tmrNumber) {
 	TmrComparatorStatusCtrl_t *csstatusP;
 
 	GW_ENTER_CRITICAL(ccr);
+	GPIO.DataSetLo = 0x40000;
 
 	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
 	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
@@ -219,6 +227,7 @@ static void resync(TmrNumber_t tmrNumber) {
 	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
 	error = TmrSetMode(FSYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
 
+	GPIO.DataResetLo = 0x40000;
 	GW_EXIT_CRITICAL(ccr);
 
 }
@@ -234,6 +243,8 @@ static void waitForNextFrame(TmrNumber_t tmrNumber) {
 	TmrErr_t error;
 
 	GW_ENTER_CRITICAL(ccr);
+	GPIO.DataSetLo = 0x80000;
+
 	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
 
@@ -260,6 +271,8 @@ static void waitForNextFrame(TmrNumber_t tmrNumber) {
 
 	error = TmrSetMode(FSYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 	//error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
+
+	GPIO.DataResetLo = 0x80000;
 	GW_EXIT_CRITICAL(ccr);
 }
 
@@ -275,8 +288,7 @@ static void startFrame(TmrNumber_t tmrNumber) {
 	TmrErr_t error;
 
 	GW_ENTER_CRITICAL(ccr);
-
-	gTimerValStart = GetCntrVal(gTmr0_c);//xTickCount;vTaskGetTickCount();
+	GPIO.DataSetLo = 0x100000;
 
 	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
@@ -295,6 +307,7 @@ static void startFrame(TmrNumber_t tmrNumber) {
 
 	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
 
+	GPIO.DataResetLo = 0x100000;
 	GW_EXIT_CRITICAL(ccr);
 }
 
@@ -340,9 +353,9 @@ static void setupSSI() {
 	// Setup Tx.
 	ssiTxRxConfig.ssiTxRxConfigWord = 0;
 	ssiTxRxConfig.bit.ssiEFS = 0; // Early frame sync: 0 = off, 1 = on.
-	ssiTxRxConfig.bit.ssiFSL = 1; // Frame sync length: 0 = one word, 1 = one clock.
+	ssiTxRxConfig.bit.ssiFSL = 0; // Frame sync length: 0 = one word, 1 = one clock.
 	ssiTxRxConfig.bit.ssiFSI = 0; // Frame sync invert: 0 = active high, 1 = active low.
-	ssiTxRxConfig.bit.ssiSCKP = 0; // Data clocked: 0 = on rising edge, 1 = falling edge.
+	ssiTxRxConfig.bit.ssiSCKP = 1; // Data clocked: 0 = on rising edge, 1 = falling edge.
 	ssiTxRxConfig.bit.ssiSHFD = 0; // Data shift direction: 0 = MSB-first, 1 = LSB-first.
 	ssiTxRxConfig.bit.ssiCLKDIR = 0; // CLK source: 0 = external, 1 = internal.
 	ssiTxRxConfig.bit.ssiFDIR = 0; // Frame sync source: 0 = external, 1 = internal.
@@ -364,12 +377,14 @@ static void setupSSI() {
 	ssiTxRxConfig.bit.ssiRxEXT = 0; // Receive sign extension: 0 = off, 1 = on.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeRx_c);
 
-	// We only use two time slots in each frame.
+	// Disable the last word of the frame.
+	// This is because of some stupid error that doesn't allow us to reliably send out the last
+	// word of the frame without causing an overrun.
 	SSI_STMSK = 0x00;
 	SSI_SRMSK = 0x00;
 
 	SSI_SFCSR_BIT.RFWM0 = 2;
-	SSI_SFCSR_BIT.TFWM0 = 0;
+	SSI_SFCSR_BIT.TFWM0 = 8;
 
 	SSI_Enable(TRUE);
 
@@ -386,10 +401,10 @@ static void setupSSI() {
 	SSI_SIER_BIT.TIE = FALSE;
 	SSI_SIER_BIT.TDE_EN = FALSE;
 	SSI_SIER_BIT.TFE_EN = FALSE;
+
 }
 // --------------------------------------------------------------------------
-gwBoolean lastCmd2 = FALSE;
-gwBoolean lastCmd3 = FALSE;
+gwUINT32 loops = 0x00800000;
 void ssiInterrupt(void) {
 
 	/*
@@ -407,11 +422,13 @@ void ssiInterrupt(void) {
 	TmrErr_t error;
 	USsiSampleType cmdSample[10];
 	SsiISReg_t *intStatusesP;
+	SsiFCSReg_t *fcsValuesP;
 	gwUINT8 ccr;
 	gwBoolean longFrame = FALSE;
 
 	GW_ENTER_CRITICAL(ccr);
 	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
+	fcsValuesP =  ((SsiFCSReg_t*) &SSI_REGS_P->SFCSR);
 
 	// Deal with the end of the Rx cycle.
 	if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
@@ -419,6 +436,7 @@ void ssiInterrupt(void) {
 		error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
 		error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 		SSI_SCR_BIT.RE = FALSE;
+		GPIO.DataSetLo = 0x200000;
 
 		while (SSI_SFCSR_BIT.RFCNT0 > 1) {
 
@@ -441,7 +459,9 @@ void ssiInterrupt(void) {
 				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
 //				cmdSample[0].word = cmdSample[1].word;
 //				gSyncLost = TRUE;
+				GPIO.DataSetLo = 0x1000;
 				resync(FSYNC_TIMER);
+				GPIO.DataResetLo = 0x1000;
 			} else {
 
 				// Make sure it's a valid host command by verifying that command bits S=0 and H=1.
@@ -463,7 +483,6 @@ void ssiInterrupt(void) {
 
 						case eSDCardCmd2:
 							responseType = eSDCardRespType3;
-							lastCmd2 = TRUE;
 							break;
 
 						case eSDCardCmd3:
@@ -510,8 +529,8 @@ void ssiInterrupt(void) {
 							cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
 
 							// Put the response into the SSI Tx FIFO.
-							SSI_STX = cmdSample[0].word;
-							SSI_STX = cmdSample[1].word;
+//							SSI_STX = cmdSample[0].word;
+//							SSI_STX = cmdSample[1].word;
 						} else if (responseType == eSDCardRespType2) {
 							// The CID response (R2) is longer than normal: 136 bits.
 							// Expand the SSI frame to 6 words (of 24 bits each).
@@ -535,8 +554,8 @@ void ssiInterrupt(void) {
 							cmdSample[0].word = 0x003f80ff;
 							cmdSample[1].word = 0x008000ff;
 							// Put the response into the SSI Tx FIFO.
-							SSI_STX = cmdSample[0].word;
-							SSI_STX = cmdSample[1].word;
+//							SSI_STX = cmdSample[0].word;
+//							SSI_STX = cmdSample[1].word;
 						}
 
 						// If the response we're just about to send is not the APP_COMMAND response
@@ -546,59 +565,39 @@ void ssiInterrupt(void) {
 						}
 
 						gIsTransmitting = TRUE;
+						if (loops++ & 1) {
+						SSI_STX = 0x00aaaaaa;//loops++;
+						SSI_STX = 0x00cccccc;//loops++;
+						} else {
+							SSI_STX = 0x00a0aaaa;//loops++;
+							SSI_STX = 0x00cccc0c;//loops++;
+						}
 
-//						TMR3_CTRL_BIT.tmrOutputMode = gTmrToggleOFUsingAlternateReg_c;
-////						TMR3_CTRL_BIT.tmrCntOnce = FALSE;
-////						TMR3_SCTRL_BIT.TCFIE = FALSE;
-////						TMR3_SCTRL_BIT.VAL = 1;
-////						TMR3_SCTRL_BIT.FORCE = 1;
-//
-//						SetComp1Val(FCS_TIMER, FSYNC_SUSTAIN_HIGH);
-//						SetCompLoad1Val(FCS_TIMER, FSYNC_SUSTAIN_HIGH);
-//						if (longFrame) {
-//							SetComp2Val(FCS_TIMER, FSYNCR2_SUSTAIN_LOW);
-//							SetCompLoad2Val(FCS_TIMER, FSYNCR2_SUSTAIN_LOW);
-//						} else {
-//							SetComp2Val(FCS_TIMER, FSYNC_SUSTAIN_LOW);
-//							SetCompLoad2Val(FCS_TIMER, FSYNC_SUSTAIN_LOW);
-//						}
-
-//						gwUINT8 items = SSI_SFCSR_BIT.TFCNT0;
-//						gwUINT8 items2;
-
-						gTimerValStop = GetCntrVal(gTmr0_c);//xTickCount;vTaskGetTickCount();
+						// Start Tx.
+						SSI_SIER_BIT.RIE = FALSE;
 						SSI_SCR_BIT.TE = TRUE;
-//						error = TmrSetMode(FCS_TIMER, gTmrCntRiseEdgPriSrc_c);
-
-//						TMR3_SCTRL_BIT.VAL = 0;
-//						TMR3_SCTRL_BIT.FORCE = 0;
 						TMR3_SCTRL_BIT.OPS = 0;
 
-						// Set up SSI for Rx.
-						gwUINT32 maxLoops;
-						while ((maxLoops < 5000000) && (!SSI_SISR_BIT.TFS) /* (SSI_SFCSR_BIT.TFCNT0 == items) */) {
+						// Wait until something goes out.
+						gwUINT32 items = SSI_SFCSR_BIT.TFCNT0;
+						gwUINT32 maxLoops = 0;
+						while ((maxLoops < 5000000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
 							// Wait until a Tx word goes out, or we timeout.
 							maxLoops++;
-//							items2 = SSI_SFCSR_BIT.TFCNT0;
 						}
 
-						// Tx is complete.
-//						SSI_SCR_BIT.TE = FALSE;
-//						TMR3_CTRL_BIT.tmrCntMode = gTmrNoOperation_c;
-//						TMR3_SCTRL_BIT.VAL = 1;
-//						TMR3_SCTRL_BIT.FORCE = 1;
-						TMR3_SCTRL_BIT.OPS = 1;
-
-						while ((maxLoops < 5000000) && /* (SSI_SFCSR_BIT.TFCNT0 > 0) */(!SSI_SISR_BIT.TFRC) ) {
+						// Prepare for completion of Tx.
+						maxLoops = 0;
+						while ((maxLoops < 5000000) && (SSI_SFCSR_BIT.TFCNT0 > 0)) {
 							// Wait until a Tx word goes out, or we timeout.
-							if (SSI_SISR_BIT.TDE) {
-								maxLoops++;
-							} else {
-								maxLoops++;
-							}
-//							items2 = SSI_SFCSR_BIT.TFCNT0;
+							maxLoops++;
 						}
-//						items2 = SSI_SFCSR_BIT.TFCNT0;
+						TMR3_SCTRL_BIT.OPS = 1;
+						SSI_SCR_BIT.TE = FALSE;
+						SSI_SIER_BIT.RIE = TRUE;
+
+						GPIO.DataResetLo = 0x200000;
+
 
 						if (longFrame) {
 							// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
@@ -617,12 +616,10 @@ void ssiInterrupt(void) {
 							SSI_STCCR_BIT.DC = SSI_FRAME_LEN2;
 							SSI_SCR_BIT.SSIEN = TRUE;
 						} else {
-							// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
-							for (gwUINT8 i = 0; i < 2; i++) {
-								if (SSI_SISR_BIT.RDR) {
-									cmdSample[9].word = SSI_SRX;
-								}
-							}
+						}
+						// Clear out the garbage samples read by the SSI during Tx (even tho' it shouldn't).
+						while (SSI_SFCSR_BIT.RFCNT0 > 0) {
+							cmdSample[9].word = SSI_SRX;
 						}
 					}
 				}
