@@ -16,17 +16,45 @@
 #include "remoteMgmtTask.h"
 #include "GPIO_Interface.h"
 
+#define DATA0_ASSERT		GPIO.DataSetLo 		= 0x040000
+#define DATA0_DEASSERT		GPIO.DataResetLo 	= 0x040000
+#define DATA1_ASSERT		GPIO.DataSetLo 		= 0x080000
+#define DATA1_DEASSERT		GPIO.DataResetLo 	= 0x080000
+#define DATA2_ASSERT		GPIO.DataSetLo 		= 0x200000
+#define DATA2_DEASSERT		GPIO.DataResetLo 	= 0x200000
+#define DATA3_ASSERT		GPIO.DataSetLo 		= 0x100000
+#define DATA3_DEASSERT		GPIO.DataResetLo 	= 0x100000
+
+#define CARD_BUSY_ON		DATA0_DEASSERT
+#define CARD_BUSY_OFF		DATA0_ASSERT
+
+#define WAIT_FRAME_ON		GPIO.DataSetLo 		= 0x000010
+#define WAIT_FRAME_OFF		GPIO.DataResetLo 	= 0x000010
+#define WRITE_FRAME_ON		GPIO.DataSetLo 		= 0x000020
+#define WRITE_FRAME_OFF		GPIO.DataResetLo 	= 0x000020
+#define START_FRAME_ON		GPIO.DataSetLo 		= 0x000040
+#define START_FRAME_OFF		GPIO.DataResetLo 	= 0x000040
+#define RESYNC_FRAME_ON		GPIO.DataSetLo 		= 0x000080
+#define RESYNC_FRAME_OFF	GPIO.DataResetLo 	= 0x000080
+
+#define SYNC_ERROR_ON		GPIO.DataSetLo 		= 0x001000
+#define SYNC_ERROR_OFF		GPIO.DataResetLo 	= 0x001000
+#define TX_FRAME_ON			GPIO.DataSetLo 		= 0x001000
+#define TX_FRAME_OFF		GPIO.DataResetLo 	= 0x001000
+
 // Globals
 
 xTaskHandle 		gPFCTask = NULL;
 xQueueHandle 		gPFCQueue;
 ESDCardState 		gSDCardState;
 ESDCardCmdState 	gSDCardCmdState;
+ESDCardDataMode		gSDCardDataMode = eSDCardDataModeNarrow;
 
-USsiSampleType 		gSamples[110];
-gwUINT8 			gSampleCnt = 0;
-gwBoolean 			gSyncLost = FALSE;
+//USsiSampleType 	gSamples[110];
 gwBoolean 			gIsTransmitting = FALSE;
+gwUINT32			gBlockLength = 512;
+gwUINT16			gRCA = 0x0000;
+gwBoolean			gReadyForData = TRUE;
 
 extern portTickType xTickCount;
 
@@ -88,6 +116,10 @@ void gpioInit(void) {
 	        << GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
 	        << GPIO_SSI_CLK_fnpos));
 
+	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
 	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
 	error = Gpio_SetPinDir(gGpioPin18_c, gGpioDirOut_c);
 	error = Gpio_SetPinDir(gGpioPin19_c, gGpioDirOut_c);
@@ -190,7 +222,7 @@ static void resync(TmrNumber_t tmrNumber) {
 	TmrComparatorStatusCtrl_t *csstatusP;
 
 	GW_ENTER_CRITICAL(ccr);
-	GPIO.DataSetLo = 0x40000;
+	RESYNC_FRAME_ON;
 
 	configP = (TmrConfigReg_t*)&TMR3_REGS_P->Ctrl;
 	statusP = (TmrStatusCtrl_t*)&TMR3_REGS_P->StatCtrl;
@@ -227,7 +259,7 @@ static void resync(TmrNumber_t tmrNumber) {
 	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
 	error = TmrSetMode(FSYNC_TIMER, gTmrCntRiseEdgPriSrc_c);
 
-	GPIO.DataResetLo = 0x40000;
+	RESYNC_FRAME_OFF;
 	GW_EXIT_CRITICAL(ccr);
 
 }
@@ -243,7 +275,7 @@ static void waitForNextFrame(TmrNumber_t tmrNumber) {
 	TmrErr_t error;
 
 	GW_ENTER_CRITICAL(ccr);
-	GPIO.DataSetLo = 0x80000;
+	WAIT_FRAME_ON;
 
 	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
@@ -272,7 +304,7 @@ static void waitForNextFrame(TmrNumber_t tmrNumber) {
 	error = TmrSetMode(FSYNC_TIMER, gTmrEdgSecSrcTriggerPriCntTillComp_c);
 	//error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
 
-	GPIO.DataResetLo = 0x80000;
+	WAIT_FRAME_OFF;
 	GW_EXIT_CRITICAL(ccr);
 }
 
@@ -288,7 +320,7 @@ static void startFrame(TmrNumber_t tmrNumber) {
 	TmrErr_t error;
 
 	GW_ENTER_CRITICAL(ccr);
-	GPIO.DataSetLo = 0x100000;
+	START_FRAME_ON;
 
 	error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 	error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
@@ -302,12 +334,13 @@ static void startFrame(TmrNumber_t tmrNumber) {
 	TMR1_CSCTRL_BIT.TCF1 = FALSE;
 	TMR1_CSCTRL_BIT.TCF1EN = TRUE;
 
+	SetCntrVal(RXTX_TIMER, 0);
 	SetComp1Val(RXTX_TIMER, RXTX_TIMEOUT);
 	SetCompLoad1Val(RXTX_TIMER, RXTX_TIMEOUT);
 
 	error = TmrSetMode(RXTX_TIMER, gTmrCntRiseEdgPriSrc_c);
 
-	GPIO.DataResetLo = 0x100000;
+	START_FRAME_OFF;
 	GW_EXIT_CRITICAL(ccr);
 }
 
@@ -402,6 +435,12 @@ static void setupSSI() {
 	SSI_SIER_BIT.TDE_EN = FALSE;
 	SSI_SIER_BIT.TFE_EN = FALSE;
 
+	// Setup the card as not busy, and not sending data.
+	CARD_BUSY_OFF;
+	DATA1_ASSERT;
+	DATA2_ASSERT;
+	DATA3_ASSERT;
+
 }
 // --------------------------------------------------------------------------
 void ssiInterrupt(void) {
@@ -431,37 +470,29 @@ void ssiInterrupt(void) {
 	fcsValuesP =  ((SsiFCSReg_t*) &SSI_REGS_P->SFCSR);
 
 	// Deal with the end of the Rx cycle.
-	if (SSI_SISR_BIT.RFF /*|| (SSI_SISR_BIT.RDR)*/) {
+	WRITE_FRAME_ON;
+	if (SSI_SISR_BIT.RFF) {
 
 		error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
 		error = TmrSetMode(FSYNC_TIMER, gTmrNoOperation_c);
 		SSI_SCR_BIT.RE = FALSE;
-		GPIO.DataSetLo = 0x200000;
 
 		while (SSI_SFCSR_BIT.RFCNT0 > 1) {
 
-			// If we previously lost sync, then the first sample is held over, and we just need to read the second.
-//			if (gSyncLost) {
-//				cmdSample[1].word = SSI_SRX;
-//				gSamples[gSampleCnt++].word = cmdSample[1].word;
-//				gSyncLost = FALSE;
-//			} else {
-				cmdSample[0].word = SSI_SRX;
-				cmdSample[1].word = SSI_SRX;
-				gSamples[gSampleCnt++].word = cmdSample[0].word;
-				gSamples[gSampleCnt++].word = cmdSample[1].word;
-				if (gSampleCnt > 100) {
-					gSampleCnt = 0;
-				}
+			cmdSample[0].word = SSI_SRX;
+			cmdSample[1].word = SSI_SRX;
+//			gSamples[gSampleCnt++].word = cmdSample[0].word;
+//			gSamples[gSampleCnt++].word = cmdSample[1].word;
+//			if (gSampleCnt > 100) {
+//				gSampleCnt = 0;
 //			}
+
 			// Check that the next two samples have a valid CRC.
 			if (cmdSample[1].bytes.byte3 != crc7(cmdSample, 2)) {
 				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
-//				cmdSample[0].word = cmdSample[1].word;
-//				gSyncLost = TRUE;
-				GPIO.DataSetLo = 0x1000;
+				SYNC_ERROR_ON;
 				resync(FSYNC_TIMER);
-				GPIO.DataResetLo = 0x1000;
+				SYNC_ERROR_OFF;
 			} else {
 
 				// Make sure it's a valid host command by verifying that command bits S=0 and H=1.
@@ -489,16 +520,46 @@ void ssiInterrupt(void) {
 						case eSDCardCmd3:
 							responseType = eSDCardRespType6;
 							gSDCardState = eSDCardStateStandby;
+							gRCA = 0x0002;
+							break;
+
+						case eSDCardCmd6:
+							responseType = eSDCardRespType1;
+							// If bits 0 and 1 of the AC are both 1 then the host is asking for wide mode.
+							if ((cmdSample[1].word && 0x300) == 0x300) {
+								gSDCardDataMode = eSDCardDataModeWide;
+							} else {
+								gSDCardDataMode = eSDCardDataModeNarrow;
+							}
 							break;
 
 						case eSDCardCmd7:
 							responseType = eSDCardRespType1b;
-							gSDCardState = eSDCardStateStandby;
+							if (gSDCardState == eSDCardStateTransfer) {
+								gSDCardState = eSDCardStateStandby;
+							} else {
+								gSDCardState = eSDCardStateTransfer;
+							}
 							break;
 
 						case eSDCardCmd9:
 							responseType = eSDCardRespType2;
 							gSDCardState = eSDCardStateStandby;
+							break;
+
+						case eSDCardCmd13:
+							CARD_BUSY_ON;
+							responseType = eSDCardRespType1;
+							maxLoops = 0;
+							while (maxLoops < 100) {
+								maxLoops++;
+							}
+							CARD_BUSY_OFF;
+							break;
+
+						case eSDCardCmd16:
+							responseType = eSDCardRespType1;
+							gBlockLength = (cmdSample[1].word << 3) + (cmdSample[1].word > 1);
 							break;
 
 						case eSDCardCmd41:
@@ -516,81 +577,81 @@ void ssiInterrupt(void) {
 							// Invalid command.
 							responseType = eSDCardRespTypeInvalid;
 							responseCmd = eSDCardCmdInvalid;
-
-							//						if (gSampleCnt < 50) {
-							//							gSamples[gSampleCnt++].word = cmdSample[0].word;
-							//							gSamples[gSampleCnt++].word = cmdSample[1].word;
-							//						} else {
-							//							gSampleCnt = 0;
-							//						}
-
-							// We need to resynchronize the SD card bitstream.
-							break;
 					}
 
 					// Create the response command.
-					if (responseType == eSDCardRespTypeNone) {
+					if ((responseType == eSDCardRespTypeInvalid) || (responseType == eSDCardRespTypeNone)) {
 					} else {
 						longFrame = FALSE;
-						if (responseType == eSDCardRespType1) {
-							cmdSample[0].word = 0x00000000;
-							cmdSample[0].bytes.byte1 = responseCmd;
+						switch (responseType) {
+							case eSDCardRespType1:
+							case eSDCardRespType1b:
+								cmdSample[0].word = 0x00000000;
+								cmdSample[0].bytes.byte1 = responseCmd;
 
-							cmdSample[1].word = 0x00000000;
-							cmdSample[1].bytes.byte1 = (gSDCardState << 1);
-							cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
-							cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
+								// Compute and set the card's statuses for the reply command.
+								cmdSample[1].word = 0x00000000;
+								cmdSample[1].bytes.byte1 = (gSDCardState << 1) + gReadyForData;
+								cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
+								cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
 
-							// Put the response into the SSI Tx FIFO.
-							SSI_STX = cmdSample[0].word;
-							SSI_STX = cmdSample[1].word;
-						} else if (responseType == eSDCardRespType2) {
-							// The CID response (R2) is longer than normal: 136 bits.
-							// Expand the SSI frame to 6 words (of 24 bits each).
-							// This is 8 bits more than we need, but it simplifies dealing with the FIFO.
-							longFrame = TRUE;
-							SSI_Enable(FALSE);
-							SSI_STCCR_BIT.WL = SSI_20BIT_WORD;
-							SSI_STCCR_BIT.DC = SSI_FRAME_LEN7;
-							SSI_Enable(TRUE);
+								// Put the response into the SSI Tx FIFO.
+								SSI_STX = cmdSample[0].word;
+								SSI_STX = cmdSample[1].word;
+								break;
+							case eSDCardRespType2:
+								// The CID response (R2) is longer than normal: 136 bits.
+								// Expand the SSI frame to 6 words (of 24 bits each).
+								// This is 8 bits more than we need, but it simplifies dealing with the FIFO.
+								longFrame = TRUE;
+								SSI_Enable(FALSE);
+								SSI_STCCR_BIT.WL = SSI_20BIT_WORD;
+								SSI_STCCR_BIT.DC = SSI_FRAME_LEN7;
+								SSI_Enable(TRUE);
 
-							maxLoops = 0;
-							while (maxLoops < 100) {
-								maxLoops++;
-							}
+								maxLoops = 0;
+								while (maxLoops < 100) {
+									maxLoops++;
+								}
 
-							if (cmdNum == eSDCardCmd2) {
-								SSI_STX = 0x0003f0a4;
-								SSI_STX = 0x00075750;
-								SSI_STX = 0x00046432;
-								SSI_STX = 0x00002001;
-								SSI_STX = 0x00000000;
-								SSI_STX = 0x00000100;
-								SSI_STX = 0x0009c89f;
-							} else {
-								SSI_STX = 0x0003f002;
-								SSI_STX = 0x000e1048;
-								SSI_STX = 0x0005b498;
-								SSI_STX = 0x00000036;
-								SSI_STX = 0x000db800;
-								SSI_STX = 0x00000660;
-								SSI_STX = 0x0003473f;
-							}
+								if (cmdNum == eSDCardCmd2) {
+									SSI_STX = 0x0003f0a4;
+									SSI_STX = 0x00075750;
+									SSI_STX = 0x00046432;
+									SSI_STX = 0x00002001;
+									SSI_STX = 0x00000000;
+									SSI_STX = 0x00000100;
+									SSI_STX = 0x0009c89f;
+								} else {
+									SSI_STX = 0x0003f002;
+									SSI_STX = 0x000e1048;
+									SSI_STX = 0x0005b498;
+									SSI_STX = 0x00000036;
+									SSI_STX = 0x000db800;
+									SSI_STX = 0x00000660;
+									SSI_STX = 0x0003473f;
+								}
+								break;
+							case eSDCardRespType3:
+								// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
+								cmdSample[0].word = 0x003f80ff;
+								cmdSample[1].word = 0x008000ff;
+								// Put the response into the SSI Tx FIFO.
+								SSI_STX = cmdSample[0].word;
+								SSI_STX = cmdSample[1].word;
+								break;
 
-						} else if (responseType == eSDCardRespType3) {
-							// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
-							cmdSample[0].word = 0x003f80ff;
-							cmdSample[1].word = 0x008000ff;
-							// Put the response into the SSI Tx FIFO.
-							SSI_STX = cmdSample[0].word;
-							SSI_STX = cmdSample[1].word;
-						} else if (responseType == eSDCardRespType6) {
-							// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
-							cmdSample[0].word = 0x00030002;
-							cmdSample[1].word = 0x000700d5;
-							// Put the response into the SSI Tx FIFO.
-							SSI_STX = cmdSample[0].word;
-							SSI_STX = cmdSample[1].word;
+							case eSDCardRespType6:
+								cmdSample[0].word = 0x00030000;
+								cmdSample[1].word = 0x000700d5;
+
+								// Add the RCA to the response.
+								cmdSample[0].word |= gRCA;
+
+								// Put the response into the SSI Tx FIFO.
+								SSI_STX = cmdSample[0].word;
+								SSI_STX = cmdSample[1].word;
+								break;
 						}
 
 						// If the response we're just about to send is not the APP_COMMAND response
@@ -617,11 +678,11 @@ void ssiInterrupt(void) {
 						}
 
 						TMR3_SCTRL_BIT.OPS = 0;
-						GPIO.DataSetLo = 0x1000;
+						TX_FRAME_ON;
 
 						// Wait until something goes out.
 						maxLoops = 0;
-						while ((maxLoops < 50000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
+						while ((maxLoops < 5000) && (SSI_SFCSR_BIT.TFCNT0 == items)) {
 							// Wait until a Tx word goes out, or we timeout.
 							maxLoops++;
 						}
@@ -636,15 +697,15 @@ void ssiInterrupt(void) {
 						GPIO.DataResetLo = 0x1000;
 
 						// Prepare for completion of Tx.
-						GPIO.DataSetLo = 0x1000;
+						TX_FRAME_OFF;
 						maxLoops = 0;
 						if (longFrame) {
-							while ((maxLoops < 5000000) && (!SSI_SISR_BIT.RFRC)) {
+							while ((maxLoops < 5000) && (!SSI_SISR_BIT.RFRC)) {
 								// Wait until a Tx word goes out, or we timeout.
 								maxLoops++;
 							}
 						} else {
-							while ((maxLoops < 50000) && (!SSI_SISR_BIT.TFRC)) {
+							while ((maxLoops < 5000) && (!SSI_SISR_BIT.TFRC)) {
 								// Wait until a Tx word goes out, or we timeout.
 								maxLoops++;
 							}
@@ -667,9 +728,9 @@ void ssiInterrupt(void) {
 				}
 			}
 		}
-		GPIO.DataResetLo = 0x200000;
 		waitForNextFrame(FSYNC_TIMER);
 	}
+	WRITE_FRAME_OFF;
 	GW_EXIT_CRITICAL(ccr);
 }
 

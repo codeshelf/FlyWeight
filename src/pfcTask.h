@@ -50,7 +50,11 @@ typedef  enum {
 	eSDCardCmd1 = 1,
 	eSDCardCmd2 = 2,
 	eSDCardCmd3 = 3,
+	eSDCardCmd6 = 6,
+	eSDCardCmd7 = 7,
 	eSDCardCmd9 = 9,
+	eSDCardCmd13 = 13,
+	eSDCardCmd16 = 16,
 	eSDCardCmd41 = 41,
 	eSDCardCmd55 = 55,
 	eSDCardCmdInvalid = 255
@@ -71,9 +75,9 @@ typedef  enum {
 	eSDCardStateReady,
 	eSDCardStateIdent,
 	eSDCardStateStandby,
-	eSDCardStateTx,
-	eSDCardStateData,
-	eSDCardStateRx,
+	eSDCardStateTransfer,
+	eSDCardStateSendData,
+	eSDCardStateReceiveData,
 	eSDCardStateProgram,
 	eSDCardStateDB
 } ESDCardState;
@@ -82,6 +86,11 @@ typedef enum {
 	eSDCardCmdStateStd = 0,
 	eSDCardCmdStateApp
 } ESDCardCmdState;
+
+typedef enum {
+	eSDCardDataModeNarrow = 0,
+	eSDCardDataModeWide
+} ESDCardDataMode;
 
 typedef union {
 	gwUINT32 word;
