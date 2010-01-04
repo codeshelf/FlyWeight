@@ -133,7 +133,7 @@ void gpioInit(void) {
 	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
 	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
 
-	DATA0_OUTPUT;
+	DATA0_INPUT;
 	DATA1_INPUT;
 	DATA2_INPUT;
 	DATA3_INPUT;
@@ -549,7 +549,7 @@ void ssiInterrupt(void) {
 					case eSDCardCmd6:
 						responseType = eSDCardRespType1;
 						// If bits 0 and 1 of the AC are both 1 then the host is asking for wide mode.
-						if ((cmdSample[1].word && 0x000300) == 0x000300) {
+						if ((cmdSample[1].word && 0x000200) == 0x000200) {
 							gSDCardDataMode = eSDCardDataModeWide;
 						} else {
 							gSDCardDataMode = eSDCardDataModeNarrow;
@@ -573,7 +573,7 @@ void ssiInterrupt(void) {
 					case eSDCardCmd13:
 						responseType = eSDCardRespType1;
 						//responseType = eSDCardRespTypeNone;
-						CARD_BUSY_OFF;
+						//CARD_BUSY_OFF;
 						break;
 
 					case eSDCardCmd16:
@@ -581,7 +581,7 @@ void ssiInterrupt(void) {
 						// Weird, this command comes when the clock stops.
 						// Don't try to respond - just wait for the next command.
 						responseType = eSDCardRespTypeNone;
-						CARD_BUSY_ON;
+						//CARD_BUSY_ON;
 						break;
 
 					case eSDCardCmd41:
@@ -749,29 +749,29 @@ void ssiInterrupt(void) {
 						cmdSample[9].word = SSI_SRX;
 					}
 
-					if (cmdNum == eSDCardCmd13) {
-						DATA0_OUTPUT;
-						DATA1_OUTPUT;
-						DATA2_OUTPUT;
-						DATA3_OUTPUT;
-						for (int i = 0; i < 256; i++) {
-							if (i & 0x01) {
-								DATA0_ASSERT;
-								DATA1_ASSERT;
-								DATA2_ASSERT;
-								DATA3_ASSERT;
-							} else {
-								DATA0_DEASSERT;
-								DATA1_DEASSERT;
-								DATA2_DEASSERT;
-								DATA3_DEASSERT;
-							}
-							maxLoops = 0;
-							while (maxLoops++ < 5) {
-
-							}
-						}
-					}
+//					if (cmdNum == eSDCardCmd13) {
+//						DATA0_OUTPUT;
+//						DATA1_OUTPUT;
+//						DATA2_OUTPUT;
+//						DATA3_OUTPUT;
+//						for (int i = 0; i < 256; i++) {
+//							if (i & 0x01) {
+//								DATA0_ASSERT;
+//								DATA1_ASSERT;
+//								DATA2_ASSERT;
+//								DATA3_ASSERT;
+//							} else {
+//								DATA0_DEASSERT;
+//								DATA1_DEASSERT;
+//								DATA2_DEASSERT;
+//								DATA3_DEASSERT;
+//							}
+//							maxLoops = 0;
+//							while (maxLoops++ < 5) {
+//
+//							}
+//						}
+//					}
 
 					SSI_SIER_BIT.RIE = TRUE;
 				}
