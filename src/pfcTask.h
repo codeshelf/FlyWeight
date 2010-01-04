@@ -50,6 +50,7 @@ typedef  enum {
 	eSDCardCmd1 = 1,
 	eSDCardCmd2 = 2,
 	eSDCardCmd3 = 3,
+	eSDCardCmd5 = 5,
 	eSDCardCmd6 = 6,
 	eSDCardCmd7 = 7,
 	eSDCardCmd9 = 9,
