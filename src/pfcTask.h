@@ -43,7 +43,7 @@
 //#define FSYNC_SUSTAIN_LOW		175		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 //#define FSYNCR2_SUSTAIN_LOW		1000	/* 5X normal sustain low. */
 #define RXTX_TRIGGER_RESYNC		96
-#define RXTX_TIMEOUT			1000
+#define RXTX_TIMEOUT			2000
 
 typedef  enum {
 	eSDCardCmd0 = 0,

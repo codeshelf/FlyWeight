@@ -67,6 +67,8 @@ gwUINT32			gBlockLength = 512;
 gwUINT16			gRCA = 0x0000;
 gwBoolean			gReadyForData = TRUE;
 
+gwBoolean 			gSend13 = FALSE;
+
 extern portTickType xTickCount;
 
 // --------------------------------------------------------------------------
@@ -456,7 +458,6 @@ static void setupSSI() {
 }
 
 // --------------------------------------------------------------------------
-gwBoolean gSend13 = FALSE;
 void ssiInterrupt(void) {
 
 	/*
@@ -606,9 +607,12 @@ void ssiInterrupt(void) {
 				} else {
 					if (cmdNum == eSDCardCmd13) {
 						if (gSend13) {
-							sendCmdResponse(eSDCardCmd16, eSDCardRespType1);
+							sendCmdResponse(eSDCardCmd13, eSDCardRespType1);
+							gSend13 = FALSE;
+						} else {
+							sendCmdResponse(eSDCardCmd5, eSDCardRespType1);
+							gSend13 = TRUE;
 						}
-						gSend13 = TRUE;
 					} else {
 						sendCmdResponse(cmdNum, responseType);
 					}
@@ -662,7 +666,7 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 			SSI_Enable(TRUE);
 
 			maxLoops = 0;
-			while (maxLoops < 100) {
+			while (maxLoops < 80) {
 				maxLoops++;
 			}
 
@@ -677,19 +681,19 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 				SSI_STX = 0x0009c89f;
 			} else {
 				// CSD - See separate document.
-				SSI_STX = 0x0003f002;
-				SSI_STX = 0x000e0248;
-				SSI_STX = 0x0005b498;
+				SSI_STX = 0x0003f003;
+				SSI_STX = 0x00060029;
+				SSI_STX = 0x00017598;
 				SSI_STX = 0x00000676;
-				SSI_STX = 0x000da000;
-				SSI_STX = 0x00000660;
-				SSI_STX = 0x0003435f;
+				SSI_STX = 0x000da400;
+				SSI_STX = 0x00008640;
+				SSI_STX = 0x0000025f;
 			}
 			break;
 		case eSDCardRespType3:
 			// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
-			cmdSample[0].word = 0x003f80ff;
-			cmdSample[1].word = 0x008000ff;
+			cmdSample[0].word = 0x003f8030;
+			cmdSample[1].word = 0x000000ff;
 			// Put the response into the SSI Tx FIFO.
 			SSI_STX = cmdSample[0].word;
 			SSI_STX = cmdSample[1].word;
@@ -731,12 +735,12 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 	// A slight delay before we assert fysnc.
 	// This allows the MCU to catch up after enabling TE.
 	maxLoops = 0;
-	while (maxLoops < 100) {
+	while (maxLoops < 105) {
 		maxLoops++;
 	}
 
 	TMR3_SCTRL_BIT.OPS = 0;
-	TX_FRAME_ON;
+	//TX_FRAME_ON;
 
 	// Wait until something goes out.
 	maxLoops = 0;
@@ -755,15 +759,15 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 	GPIO.DataResetLo = 0x1000;
 
 	// Prepare for completion of Tx.
-	TX_FRAME_OFF;
+	//TX_FRAME_OFF;
 	maxLoops = 0;
 	if (longFrame) {
-		while ((maxLoops < 5000) && (!SSI_SISR_BIT.RFRC)) {
+		while ((maxLoops < 500) && (!SSI_SISR_BIT.RFRC)) {
 			// Wait until a Tx word goes out, or we timeout.
 			maxLoops++;
 		}
 	} else {
-		while ((maxLoops < 5000) && (!SSI_SISR_BIT.TFRC)) {
+		while ((maxLoops < 500) && (!SSI_SISR_BIT.TFRC)) {
 			// Wait until a Tx word goes out, or we timeout.
 			maxLoops++;
 		}
