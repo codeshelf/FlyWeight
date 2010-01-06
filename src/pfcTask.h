@@ -120,5 +120,6 @@ void waitForNextFrame(TmrNumber_t tmrNumber);
 void startFrame(TmrNumber_t tmrNumber);
 
 void ssiInterrupt(void);
+void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType);
 
 #endif //PFC_TASK_H
