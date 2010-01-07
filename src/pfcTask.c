@@ -67,8 +67,6 @@ gwUINT32			gBlockLength = 512;
 gwUINT16			gRCA = 0x0000;
 gwBoolean			gReadyForData = TRUE;
 
-gwBoolean 			gSend13 = FALSE;
-
 extern portTickType xTickCount;
 
 // --------------------------------------------------------------------------
@@ -500,8 +498,8 @@ void ssiInterrupt(void) {
 			// There's a weird case where with some cards the clock turns off then on before a CMD0,
 			// but it doesn't turn on soon enough to catch a proper CMD0.
 			// We see these malformed CMD0s as shifted one bit: 0x20 instead of 0x40.
-			if ((cmdSample[1].bytes.byte3 != crc7(cmdSample, 2))
-					&& (cmdSample[0].bytes.byte1 != 0x20)
+			if (/*(cmdSample[1].bytes.byte3 != crc7(cmdSample, 2))
+					&& */ (cmdSample[0].bytes.byte1 != 0x20)
 					&& ((cmdSample[0].bytes.byte1 & 0x40) != 0x40)) {
 				// We have an invalid CRC.  Give up on cmdSample[0], and go back to get some more data.
 				SYNC_ERROR_ON;
@@ -605,17 +603,9 @@ void ssiInterrupt(void) {
 				// Create and send the command response.
 				if ((responseType == eSDCardRespTypeInvalid) || (responseType == eSDCardRespTypeNone)) {
 				} else {
-					if (cmdNum == eSDCardCmd13) {
-						if (gSend13) {
-							sendCmdResponse(eSDCardCmd13, eSDCardRespType1);
-							gSend13 = FALSE;
-						} else {
-							sendCmdResponse(eSDCardCmd5, eSDCardRespType1);
-							gSend13 = TRUE;
-						}
-					} else {
-						sendCmdResponse(cmdNum, responseType);
-					}
+					WRITE_FRAME_OFF;
+					sendCmdResponse(cmdNum, responseType);
+					WRITE_FRAME_ON;
 					SSI_SIER_BIT.RIE = TRUE;
 				}
 			}
@@ -628,28 +618,28 @@ void ssiInterrupt(void) {
 
 // --------------------------------------------------------------------------
 
-void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType) {
+inline void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType) {
 
 	USsiSampleType cmdSample[10];
 	gwBoolean longFrame;
 	gwUINT32 maxLoops;
 
+	WRITE_FRAME_ON;
 	longFrame = FALSE;
+
+	// Reset the receive IE, and the frame complete flags.
+	SSI_SIER_BIT.RIE = FALSE;
+	SSI_SISR_BIT.RFRC = TRUE;
+	SSI_SISR_BIT.TFRC = TRUE;
+
 	switch (inResponseType) {
 		case eSDCardRespType1:
 		case eSDCardRespType1b:
-			cmdSample[0].word = 0x00000000;
-			cmdSample[0].bytes.byte1 = inCmdNum;
+			cmdSample[0].word = inCmdNum << 16;
 
 			// Compute and set the card's statuses for the reply command.
-			cmdSample[1].word = 0x00000000;
-			cmdSample[1].bytes.byte1 = (gSDCardState << 1) + gReadyForData;
-			cmdSample[1].bytes.byte2 = gSDCardCmdState << 5;
-			cmdSample[1].bytes.byte3 = crc7(cmdSample, 2);
-
-			if (inCmdNum == eSDCardCmd13) {
-				cmdSample[0].bytes.byte3 |= 0x08;
-			}
+			cmdSample[1].word = (gSDCardState << 17) + (gReadyForData << 16) + (gSDCardCmdState << 13);
+			cmdSample[1].word += crc7(cmdSample, 2);
 
 			// Put the response into the SSI Tx FIFO.
 			SSI_STX = cmdSample[0].word;
@@ -666,7 +656,7 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 			SSI_Enable(TRUE);
 
 			maxLoops = 0;
-			while (maxLoops < 80) {
+			while (maxLoops < 150) {
 				maxLoops++;
 			}
 
@@ -682,17 +672,17 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 			} else {
 				// CSD - See separate document.
 				SSI_STX = 0x0003f003;
-				SSI_STX = 0x00060029;
+				SSI_STX = 0x00060221;
 				SSI_STX = 0x00017598;
 				SSI_STX = 0x00000676;
 				SSI_STX = 0x000da400;
 				SSI_STX = 0x00008640;
-				SSI_STX = 0x0000025f;
+				SSI_STX = 0x00000cff;
 			}
 			break;
 		case eSDCardRespType3:
 			// Initial value: start bit = 0, host bit = 0, cmd = 100101, busy bit = 0, 1/2 of OCR (at all voltages);
-			cmdSample[0].word = 0x003f8030;
+			cmdSample[0].word = 0x003f803c;
 			cmdSample[1].word = 0x000000ff;
 			// Put the response into the SSI Tx FIFO.
 			SSI_STX = cmdSample[0].word;
@@ -715,6 +705,10 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 			SSI_STX = cmdSample[1].word;
 			break;
 	}
+	WRITE_FRAME_OFF;
+
+	// Start Tx.
+	SSI_SCR_BIT.TE = TRUE;
 
 	// If the response we're just about to send is not the APP_COMMAND response
 	// then return to "standard" command mode.
@@ -723,24 +717,19 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 	}
 
 	gIsTransmitting = TRUE;
-	// Reset the frame complete flags.
-	SSI_SISR_BIT.RFRC = TRUE;
-	SSI_SISR_BIT.TFRC = TRUE;
 	gwUINT32 items = SSI_SFCSR_BIT.TFCNT0;
-
-	// Start Tx.
-	SSI_SIER_BIT.RIE = FALSE;
-	SSI_SCR_BIT.TE = TRUE;
 
 	// A slight delay before we assert fysnc.
 	// This allows the MCU to catch up after enabling TE.
+	WRITE_FRAME_ON;
 	maxLoops = 0;
-	while (maxLoops < 105) {
+	while (maxLoops < 25) {
 		maxLoops++;
 	}
+	WRITE_FRAME_OFF;
 
 	TMR3_SCTRL_BIT.OPS = 0;
-	//TX_FRAME_ON;
+	WRITE_FRAME_ON;
 
 	// Wait until something goes out.
 	maxLoops = 0;
@@ -759,7 +748,7 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 	GPIO.DataResetLo = 0x1000;
 
 	// Prepare for completion of Tx.
-	//TX_FRAME_OFF;
+	WRITE_FRAME_OFF;
 	maxLoops = 0;
 	if (longFrame) {
 		while ((maxLoops < 500) && (!SSI_SISR_BIT.RFRC)) {
@@ -835,7 +824,7 @@ void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inResponseType
 
 // --------------------------------------------------------------------------
 
-gwUINT8 crc7(USsiSampleType *inSamplePtr, gwUINT8 inSamplesToCheck) {
+inline gwUINT8 crc7(USsiSampleType *inSamplePtr, gwUINT8 inSamplesToCheck) {
 	gwUINT8 i;
 	gwUINT8 sampleNum;
 	gwUINT8 dataByteNum;
