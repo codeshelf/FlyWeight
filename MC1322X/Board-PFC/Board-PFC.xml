@@ -1611,6 +1611,9 @@
         <name>$PROJ_DIR$\..\..\src\commandTypes.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\src\crc.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\src\deviceInfoPFC.c</name>
       </file>
       <file>

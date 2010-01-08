@@ -139,7 +139,7 @@ gwUINT8 crc_calc(const gwUINT8 *data, gwUINT8 len)
 {
 	gwUINT8 crc;
 
-	crc = crc_init();
+	crc = 0;//crc_init();
 
 	if (len == 5) {
 		crc = crc_next4(crc, data[2], data[1], data[0], data[6]);
@@ -159,5 +159,6 @@ gwUINT8 crc_calc(const gwUINT8 *data, gwUINT8 len)
 		}
 	}
 
-	return crc_final(crc);
+//	return crc_final(crc);
+	return crc + 1;
 }

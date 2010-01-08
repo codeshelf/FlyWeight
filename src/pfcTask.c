@@ -15,6 +15,7 @@
 #include "queue.h"
 #include "remoteMgmtTask.h"
 #include "GPIO_Interface.h"
+#include "crc.h"
 
 #define DATA0_INPUT			GPIO.DirResetLo		= 0x040000; GPIO.PuEnLo	= 0x040000; GPIO.PuSelLo = 0x040000;
 #define DATA0_OUTPUT		GPIO.DirSetLo		= 0x040000
@@ -456,6 +457,8 @@ static void setupSSI() {
 }
 
 // --------------------------------------------------------------------------
+gwBoolean gFirstCmd13 = TRUE;
+gwBoolean gFirstCmd16 = TRUE;
 void ssiInterrupt(void) {
 
 	/*
@@ -477,11 +480,14 @@ void ssiInterrupt(void) {
 	gwUINT8 ccr;
 
 	GW_ENTER_CRITICAL(ccr);
-	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
-	fcsValuesP =  ((SsiFCSReg_t*) &SSI_REGS_P->SFCSR);
+	WRITE_FRAME_ON;
+	//CARD_BUSY_ON;
+
+	// Give some pointers for us to looks at values.
+//	intStatusesP = ((SsiISReg_t*) &SSI_REGS_P->SISR);
+//	fcsValuesP =  ((SsiFCSReg_t*) &SSI_REGS_P->SFCSR);
 
 	// Deal with the end of the Rx cycle.
-	WRITE_FRAME_ON;
 	if (SSI_SISR_BIT.RFF) {
 
 		error = TmrSetMode(RXTX_TIMER, gTmrNoOperation_c);
@@ -556,7 +562,7 @@ void ssiInterrupt(void) {
 						break;
 
 					case eSDCardCmd7:
-						responseType = eSDCardRespType1b;
+						responseType = eSDCardRespType1;
 						if (gSDCardState == eSDCardStateTransfer) {
 							gSDCardState = eSDCardStateStandby;
 						} else {
@@ -579,12 +585,18 @@ void ssiInterrupt(void) {
 						gBlockLength = (cmdSample[0].word << 16) + (cmdSample[1].word >> 8);
 						// Weird, this command comes when the clock stops.
 						// Don't try to respond - just wait for the next command.
-						//responseType = eSDCardRespType1;
-						responseType = eSDCardRespTypeNone;
+						if (gFirstCmd16) {
+							responseType = eSDCardRespTypeNone;
+							gFirstCmd16 = FALSE;
+						} else {
+							responseType = eSDCardRespType1;
+						}
 						CARD_BUSY_ON;
 						break;
 
 					case eSDCardCmd41:
+						gFirstCmd13 = TRUE;
+						gFirstCmd16 = TRUE;
 						responseType = eSDCardRespType3;
 						gSDCardState = eSDCardStateReady;
 						break;
@@ -604,7 +616,27 @@ void ssiInterrupt(void) {
 				if ((responseType == eSDCardRespTypeInvalid) || (responseType == eSDCardRespTypeNone)) {
 				} else {
 					WRITE_FRAME_OFF;
-					sendCmdResponse(cmdNum, responseType);
+					if ((cmdNum == eSDCardCmd13) && (gFirstCmd13)) {
+						sendCmdResponse(eSDCardCmd13, responseType);
+						DATA0_OUTPUT;
+						DATA1_OUTPUT;
+						DATA2_OUTPUT;
+						DATA3_OUTPUT;
+						for (int i = 0; i < 500; i++) {
+							if ((i & 0x01) == 0x01) {
+								GPIO.DataSetLo = 0x3c0000;
+							} else {
+								GPIO.DataResetLo = 0x3c0000;
+							}
+						}
+						DATA0_INPUT;
+						DATA1_INPUT;
+						DATA2_INPUT;
+						DATA3_INPUT;
+						sendCmdResponse(cmdNum, responseType);
+					} else {
+						sendCmdResponse(cmdNum, responseType);
+					}
 					WRITE_FRAME_ON;
 					SSI_SIER_BIT.RIE = TRUE;
 				}
@@ -613,6 +645,7 @@ void ssiInterrupt(void) {
 		waitForNextFrame(FSYNC_TIMER);
 	}
 	WRITE_FRAME_OFF;
+	//CARD_BUSY_OFF;
 	GW_EXIT_CRITICAL(ccr);
 }
 
@@ -639,7 +672,15 @@ inline void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inRespo
 
 			// Compute and set the card's statuses for the reply command.
 			cmdSample[1].word = (gSDCardState << 17) + (gReadyForData << 16) + (gSDCardCmdState << 13);
-			cmdSample[1].word += crc7(cmdSample, 2);
+			//crc7(cmdSample, 2);
+			cmdSample[1].word += crc_calc((gwUINT8*) cmdSample, 5);
+
+			if (inCmdNum == eSDCardCmd13) {
+				if (gFirstCmd13) {
+					cmdSample[0].word += 0x01 << 7;
+				}
+				gFirstCmd13 = !gFirstCmd13;
+			}
 
 			// Put the response into the SSI Tx FIFO.
 			SSI_STX = cmdSample[0].word;
@@ -672,12 +713,12 @@ inline void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inRespo
 			} else {
 				// CSD - See separate document.
 				SSI_STX = 0x0003f003;
-				SSI_STX = 0x00060221;
+				SSI_STX = 0x00060241;
 				SSI_STX = 0x00017598;
-				SSI_STX = 0x00000676;
+				SSI_STX = 0x00007534;
 				SSI_STX = 0x000da400;
 				SSI_STX = 0x00008640;
-				SSI_STX = 0x00000cff;
+				SSI_STX = 0x000004df;
 			}
 			break;
 		case eSDCardRespType3:
@@ -723,7 +764,7 @@ inline void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inRespo
 	// This allows the MCU to catch up after enabling TE.
 	WRITE_FRAME_ON;
 	maxLoops = 0;
-	while (maxLoops < 25) {
+	while (maxLoops < 150 /* 6 * 25 */) {
 		maxLoops++;
 	}
 	WRITE_FRAME_OFF;
@@ -751,12 +792,12 @@ inline void sendCmdResponse(ESDCardCommand inCmdNum, ESDCardResponseType inRespo
 	WRITE_FRAME_OFF;
 	maxLoops = 0;
 	if (longFrame) {
-		while ((maxLoops < 500) && (!SSI_SISR_BIT.RFRC)) {
+		while ((maxLoops < 3000 /* 6 * 500 */) && (!SSI_SISR_BIT.RFRC)) {
 			// Wait until a Tx word goes out, or we timeout.
 			maxLoops++;
 		}
 	} else {
-		while ((maxLoops < 500) && (!SSI_SISR_BIT.TFRC)) {
+		while ((maxLoops < 3000 /* 6 * 500 */) && (!SSI_SISR_BIT.TFRC)) {
 			// Wait until a Tx word goes out, or we timeout.
 			maxLoops++;
 		}
