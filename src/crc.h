@@ -17,13 +17,11 @@
 #ifndef CRC_H_
 #define CRC_H_
 
-//#include <stddef.h>
-//#include <stdint.h>
 #include "gwTypes.h"
 
 gwUINT8 crc_calc(const gwUINT8 *data, gwUINT8 len);
 
-extern const gwUINT8 crc_table[256];
+extern const gwUINT8 crc_table[1024];
 
 static inline gwUINT8 crc_init(void)
 {
@@ -33,6 +31,19 @@ static inline gwUINT8 crc_init(void)
 static inline gwUINT8 crc_next(gwUINT8 crc, gwUINT8 data)
 {
 	return crc_table[crc ^ data];
+}
+
+/*
+ * Process 4 bytes in one go
+ */
+static inline gwUINT8 crc_next4(gwUINT8 crc, gwUINT8 d0, gwUINT8 d1, gwUINT8 d2, gwUINT8 d3)
+{
+	crc =
+		crc_table[d3] ^
+		crc_table[d2 + 0x100] ^
+		crc_table[d1 + 0x200] ^
+		crc_table[((crc & 0xff) ^ d0) + 0x300];
+	return crc;
 }
 
 static inline gwUINT8 crc_final(gwUINT8 crc)
