@@ -17,24 +17,25 @@
 #ifndef CRC_H_
 #define CRC_H_
 
-#include <stddef.h>
-#include <stdint.h>
+//#include <stddef.h>
+//#include <stdint.h>
+#include "gwTypes.h"
 
-uint8_t crc_calc(const uint8_t *data, size_t len);
+gwUINT8 crc_calc(const gwUINT8 *data, gwUINT8 len);
 
-extern const uint8_t crc_table[256];
+extern const gwUINT8 crc_table[256];
 
-static inline uint8_t crc_init(void)
+static inline gwUINT8 crc_init(void)
 {
 	return 0;
 }
 
-static inline uint8_t crc_next(uint8_t crc, uint8_t data)
+static inline gwUINT8 crc_next(gwUINT8 crc, gwUINT8 data)
 {
 	return crc_table[crc ^ data];
 }
 
-static inline uint8_t crc_final(uint8_t crc)
+static inline gwUINT8 crc_final(gwUINT8 crc)
 {
 	return (crc >> 1);
 }

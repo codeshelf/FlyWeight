@@ -4,7 +4,7 @@
 
 #include "crc.h"
 
-const uint8_t crc_table[256] = {
+const gwUINT8 crc_table[256] = {
 	0x00, 0x8a, 0x9e, 0x14, 0xb6, 0x3c, 0x28, 0xa2,
 	0xe6, 0x6c, 0x78, 0xf2, 0x50, 0xda, 0xce, 0x44,
 	0x46, 0xcc, 0xd8, 0x52, 0xf0, 0x7a, 0x6e, 0xe4,
@@ -39,12 +39,16 @@ const uint8_t crc_table[256] = {
 	0x10, 0x9a, 0x8e, 0x04, 0xa6, 0x2c, 0x38, 0xb2
 };
 
-uint8_t crc_calc(const uint8_t *data, size_t len)
+gwUINT8 crc_calc(const gwUINT8 *data, gwUINT8 len)
 {
-	uint8_t crc = crc_init();
+	gwUINT8 crc = crc_init();
 
 	if (len) do {
-		crc = crc_next(crc, *data++);
+		if ((len == 8) || (len == 4)) {
+			*data++;
+		} else {
+			crc = crc_next(crc, *data++);
+		}
 	} while (--len);
 
 	return crc_final(crc);
