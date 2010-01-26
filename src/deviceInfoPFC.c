@@ -31,11 +31,11 @@ const BufferStoragePtrType kActorKVPTable[KVP_ENTRIES][2] = {
 const gwUINT8 kActorEndpoints = ENDPOINT_ENTRIES;
 const BufferStoragePtrType kActorEndpointTable[ENDPOINT_ENTRIES][3] = {
 	// Codec type, description, endpoint number
-	{ "data", "Remote FS", "\1" },
+	{ "card", "SDCard", "\1" },
 };
 
 const gwUINT8 kEndpointKVPs = ENDPOINT_KVPS;
 const BufferStoragePtrType kEndpointKVPTable[ENDPOINT_KVPS][3] = {
 	// Endpoint number, key, value
-	{ "\1", "data", "*" },
+	{ "\1", "card", "*" },
 };

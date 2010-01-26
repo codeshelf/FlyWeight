@@ -122,39 +122,31 @@ void radioReceiveTask(void *pvParameters) {
 			// Keep looping until we've processed all of the messages that we've entered into the queue.
 			while (gCurMsg != gNextMsgToUse) {
 				if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
-					readCheckTicks = xTaskGetTickCount();
+//					readCheckTicks = xTaskGetTickCount();
+					int delayCheck = 0;
 					while (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)) {
-
-						//						if (get_current_message() != gMsgHolder[gCurMsg].msg)
-						//							break;
 
 						funcErr = process_radio_msg();
 
-						// If we have not received an RX in 200ms then check for sleep.
-						if ((xTaskGetTickCount() - readCheckTicks) > (configTICK_RATE_HZ / 5)) {
-
-							if (!gShouldSleep) {
-								// We're not sleeping for now until we figure out a better way.
-								//gShouldSleep = TRUE;
-							} else {
-								// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-								sleepThisRemote(50);
-							}
-
-							// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.
-							//							if (gLocalDeviceState == eLocalStateRun) {
-							//								gSleepCount++;
-							//								if ((gSleepCount >= 9) && (gTXRadioBuffer[gTxAssocCheckBufferNum].bufferStatus == eBufferStateFree)) {
-							//									gSleepCount = 0;
-							//									gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-							//									gTxAssocCheckBufferNum = lockTXBuffer();
-							//									createAssocCheckCommand(gTxAssocCheckBufferNum, (RemoteUniqueIDPtrType) GUID);
-							//									if (transmitPacket(gTxAssocCheckBufferNum)){
-							//									};
-							//								}
-							//							}
-							readCheckTicks = xTaskGetTickCount();
+						// Every five checks we should delay one 1ms, so that the OS idle tasks gets called.
+						if (delayCheck++ == 25) {
+							vTaskDelay(1);
+							delayCheck = 0;
 						}
+
+//						// If we have not received an RX in 200ms then check for sleep.
+//						if ((xTaskGetTickCount() - readCheckTicks) > (configTICK_RATE_HZ / 5)) {
+//
+//							if (!gShouldSleep) {
+//								// We're not sleeping for now until we figure out a better way.
+//								//gShouldSleep = TRUE;
+//							} else {
+//								// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
+//								sleepThisRemote(50);
+//							}
+//
+//							readCheckTicks = xTaskGetTickCount();
+//						}
 					}
 					//Led1On();
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {

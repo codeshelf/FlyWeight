@@ -89,6 +89,6 @@ void vApplicationIdleHook( void ) {
 
 	// If we haven't received a packet in by timeout seconds then reset.
 	if (xTaskGetTickCount() > (gLastPacketReceivedTick + kNetCheckTickCount)) {
-		RESET_MCU;	
+		GW_RESET_MCU;
 	}
 }

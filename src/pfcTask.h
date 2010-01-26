@@ -37,13 +37,13 @@
 
 #define SD_CLK_RATE				400000
 #define TMR_CLK_RATE			1500000	/* Bus Clk / Prescaler --> 24,000,000 / 16 */
-#define FSYNC_TRIGGER_HIGH		30 /*3*/		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
+#define FSYNC_TRIGGER_HIGH		3		/* 1 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
 //#define FSYNC_TRIGGER_LOW		1000		/* (was 210) 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 //#define FSYNC_SUSTAIN_HIGH		8		/* 8 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 1 * 1,500,000 / 400,000 */
 //#define FSYNC_SUSTAIN_LOW		175		/* 47 SD card clocks * TMR_CLK_RATE / SD_CLK_RATE --> 47 * 1,500,000 / 400,000 */
 //#define FSYNCR2_SUSTAIN_LOW		1000	/* 5X normal sustain low. */
 #define RXTX_TRIGGER_RESYNC		96
-#define RXTX_TIMEOUT			4000
+#define RXTX_TIMEOUT			2000
 
 typedef  enum {
 	eSDCardCmd0 = 0,

@@ -177,7 +177,7 @@ BufferOffsetType processQueryEndpointDescriptor(BufferStoragePtrType inQueryPtr,
 	curPos += sizeof(endpointNum);
 
 	// Write the endpoint type into the response.
-	memcpy(inResponsePtr + curPos, kActorEndpointTable[endpointNum][EP_DESC_INDEX], ENDPOINT_TYPE_LEN);
+	memcpy(inResponsePtr + curPos, kActorEndpointTable[endpointNum][EP_TYPE_INDEX], ENDPOINT_TYPE_LEN);
 	curPos += ENDPOINT_TYPE_LEN;
 
 	// Write the endpoint desc into the response.

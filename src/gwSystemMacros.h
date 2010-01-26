@@ -71,7 +71,7 @@
 	#include "smacPort.h"
 	#include "portmacro.h"
 
-	#define GW_RESET_MCU						/* CRM_SoftReset() */
+	#define GW_RESET_MCU						CRM_SoftReset()
 	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
 	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreAll(restoreState)
     #define GW_GET_SYSTEM_STATUS                0

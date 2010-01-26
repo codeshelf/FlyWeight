@@ -86,7 +86,7 @@ NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
 // --------------------------------------------------------------------------
 
 gwBoolean getCommandRequiresACK(BufferCntType inRXBufferNum) {
-	return ((gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_NETID] & PACKETMASK_NETID) >> SHIFTBITS_PKT_NETID);
+	return (getAckId != 0);
 }
 
 // --------------------------------------------------------------------------
@@ -498,7 +498,7 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 	if (memcmp(GUID, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOC_UID]), UNIQUE_ID_BYTES) == 0) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR] & CMDMASK_ASSIGN_ADDR) >> SHIFTBITS_CMD_ASGNADDR;
-		gMyNetworkID = getNetworkID(inRXBufferNum);
+		gMyNetworkID = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_NET] & CMDMASK_ASSIGN_NETID) >> SHIFTBITS_CMD_ASGNNETID;
 		gLocalDeviceState = eLocalStateAssociated;
 	}
 
