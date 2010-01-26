@@ -80,7 +80,7 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType		rxBufferNum;
 	gwUINT8				ccrHolder;
 	FuncReturn_t 		funcErr;
-	portTickType		readCheckTicks;
+//	portTickType		readCheckTicks;
 
 	// The radio receive task will return a pointer to a radio data packet.
 	if ( gRadioReceiveQueue ) {
@@ -129,7 +129,20 @@ void radioReceiveTask(void *pvParameters) {
 						funcErr = process_radio_msg();
 
 						// Every five checks we should delay one 1ms, so that the OS idle tasks gets called.
-						if (delayCheck++ == 25) {
+						if (delayCheck++ == 3) {
+							// If we're running then send an AssocCheck every 5 seconds.
+							if (gLocalDeviceState == eLocalStateRun) {
+								if (gLastAssocCheckTickCount < xTaskGetTickCount()) {
+									gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+									createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
+									if (transmitPacket(gTXCurBufferNum)){
+									}
+									gAssocCheckCount++;
+									if (gAssocCheckCount > 10) {
+										//	GW_RESET_MCU;
+									}
+								}
+							}
 							vTaskDelay(1);
 							delayCheck = 0;
 						}
@@ -189,7 +202,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 	NetAddrType			cmdDstAddr;
 	NetworkIDType		networkID;
 	ECmdAssocType		assocSubCmd;
-	portTickType		lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 	AckIDType			ackId;
 	gwUINT8				ccrHolder;
 
@@ -221,7 +233,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
 				} else if (assocSubCmd == eCmdAssocRESP) {
 					// Reset the clock on the assoc check.
-					lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
+					gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 					// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
 					if (gLocalDeviceState != eLocalStateRun) {
 						if (xQueueSend(gRemoteMgmtQueue, &inRxBufferNum, (portTickType) 0)) {
@@ -286,19 +298,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					break;
 
 				}
-			}
-		}
-	}
-	// If we're running then send an AssocCheck every 5 seconds.
-	if (gLocalDeviceState == eLocalStateRun) {
-		if (lastAssocCheckTickCount < xTaskGetTickCount()) {
-			lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-			createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-			if (transmitPacket(gTXCurBufferNum)){
-			}
-			gAssocCheckCount++;
-			if (gAssocCheckCount > 10) {
-				//	GW_RESET_MCU;
 			}
 		}
 	}
