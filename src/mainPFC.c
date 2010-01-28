@@ -17,7 +17,7 @@
 #include "gwSystemMacros.h"
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
-#include "pfcTask.h"
+#include "pfcSPITask.h"
 #include "commands.h"
 #ifdef MC1322X
     #include "MacaInterrupt.h"
@@ -82,13 +82,13 @@ void vMain( void ) {
 	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
 	//xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
 	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
-//	xTaskCreate(pfcTask, (const signed portCHAR * const) "PFC", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gPFCTask );
+	xTaskCreate(pfcTask, (const signed portCHAR * const) "PFC", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gPFCTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	//gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
-//	gPFCQueue = xQueueCreate(PFC_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
+	gPFCQueue = xQueueCreate(PFC_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;

@@ -1623,7 +1623,7 @@
         <name>$PROJ_DIR$\..\..\src\mainPFC.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\src\pfcTask.c</name>
+        <name>$PROJ_DIR$\..\..\src\pfcSPITask.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\radioCommon.c</name>
