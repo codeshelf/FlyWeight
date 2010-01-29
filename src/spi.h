@@ -22,11 +22,16 @@
 #define SD_BLOCK_SIZE			512
 //#define SD_BLOCK_SIZE			(0x00000200)
 #define SD_BLOCK_SHIFT			(9)
-#define SD_WAIT_CYCLES 10
+#define SD_WAIT_CYCLES 			10
 
-typedef enum {
-	eResponseOK = 0, eResponseIdle = 1
-} ER1Response;
+#define CS_INIT					GPIO.DirSetLo		= 0x00000010
+#define CS_ON					GPIO.DataResetLo 	= 0x00000010
+#define CS_OFF					GPIO.DataSetLo 		= 0x00000010
+
+typedef union {
+	gwUINT16 value;
+	gwUINT8 bytes[2];
+} crcType;
 
 typedef union {
 	gwUINT32 word;
@@ -73,19 +78,51 @@ typedef enum {
 	eSDCardStateDB
 } ESDCardState;
 
+typedef enum {
+	eResponseOK = 0,
+	eResponseIdle,
+	eResponseEraseReset,
+	eResponseIllegalCmd,
+	eResponseCRCError,
+	eResponseAddrError,
+	eResponseParamError,
+	eResponseSPIError,
+	eResponseInvalidError,
+	eResponseWriteBlockError
+} ESDCardResponse;
+
+typedef union {
+	gwUINT32 word;
+	struct {
+		gwUINT8 byte3;
+		gwUINT8 byte2;
+		gwUINT8 byte1;
+		gwUINT8 byte0;
+	} bytes ;
+} AddressType;
+
+
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
+void setupSPI(void);
+void spiInterrupt(void);
 void clockDelay(gwUINT8 inFrames);
-gwUINT8 sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse);
-gwUINT8 sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgument, gwUINT8 inExpectedResponse);
-gwUINT8 readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
+
 spiErr_t readByte(gwUINT8* inByte);
-gwUINT8 writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
 spiErr_t writeByte(gwUINT8 inByte);
 
-spiErr_t writePartialBlockBegin(gwUINT32 inBlockNumber);
-spiErr_t writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes);
-spiErr_t writePartialBlockEnd();
+ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwBoolean inControlCS);
+ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgument, gwUINT8 inExpectedResponse, gwBoolean inControlCS);
+
+ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
+ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
+
+ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber);
+ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes);
+ESDCardResponse writePartialBlockEnd();
+
+ESDCardResponse checkResponse(gwUINT8 inExpectedResponse, gwUINT8 inCheckCycles);
+crcType crc16(crcType inOldCRC, gwUINT8 inByte);
 
 #endif // SPI_H

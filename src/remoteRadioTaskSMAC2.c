@@ -293,6 +293,9 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 #endif
 
 				case eControlSubCmdSDCardUpdate:
+					// By processing the SDCard updates in the critical region,
+					// it prevents the gateway from sending another update until this
+					// one completes, because we wont send an ACK until it completes.
 					processSDCardUpdateSubCommand(inRxBufferNum);
 					break;
 

@@ -1,193 +1,353 @@
 /*
-	FlyWeight
-	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
 
-	$Id$
-	$Name$
-*/
+ $Id$
+ $Name$
+ */
 
 #include "spi.h"
+#include "GPIO_Interface.h"
+
+crcType gCRC16;
+
+// --------------------------------------------------------------------------
+/*
+ *
+ */
+
+void setupSPI() {
+
+	spiErr_t error;
+	spiConfig_t spiConfig;
+	gwUINT32 rcvByte = 0;
+	SDArgumentType cmdArg;
+	ESDCardResponse result;
+
+	// Setup the function enable pins for SPI.
+	error = Gpio_SetPinFunction(gGpioPin5_c, gGpioAlternate1Mode_c);
+	error = Gpio_SetPinFunction(gGpioPin6_c, gGpioAlternate1Mode_c);
+	error = Gpio_SetPinFunction(gGpioPin7_c, gGpioAlternate1Mode_c);
+
+	// Pin 4 is SPI CS, and we need to control that manually. (Auto doesn't work.)
+	error = Gpio_SetPinFunction(gGpioPin4_c, gGpioNormalMode_c);
+	CS_INIT;
+	CS_OFF;
+
+	//	IntAssignHandler(gSpiInt_c, (IntHandlerFunc_t) spiInterrupt);
+	//	ITC_SetPriority(gSpiInt_c, gItcNormalPriority_c);
+	//	ITC_EnableInterrupt(gSpiInt_c);
+
+	error = SPI_Open();
+
+	// Setup the SPI mode.
+	spiConfig.ClkCtrl.Word = 0;
+	spiConfig.ClkCtrl.Bits.ClockCount = 8;
+	spiConfig.ClkCtrl.Bits.DataCount = 8;
+	spiConfig.Setup.Word = 0;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv128;
+	spiConfig.Setup.Bits.ClockPhase = ConfigClockPhase2ndEdge;
+	spiConfig.Setup.Bits.ClockPol = ConfigClockPolNegative;
+	spiConfig.Setup.Bits.MisoPhase = ConfigMisoPhaseSameEdge;
+	spiConfig.Setup.Bits.Mode = ConfigModeMaster;
+	spiConfig.Setup.Bits.SdoInactive = ConfigSdoInactiveH;
+	spiConfig.Setup.Bits.SsDelay = ConfigSsDelay1Clk;
+	spiConfig.Setup.Bits.SsSetup = ConfigSsSetupMasterLow;
+	spiConfig.Setup.Bits.S3Wire = ConfigS3WireInactive;
+	error = SPI_SetConfig(&spiConfig);
+
+	// Clock out at least 74 clocks (80 in this case.)
+	CS_ON;
+	clockDelay(10);
+	CS_OFF;
+
+	clockDelay(8);
+
+	// Send CMD0 to send the card into SPI mode.
+	// (CS will be low due to SPI_SS control from the MCU, so the SDCard will go into SPI mode.)
+	cmdArg.word = 0;
+	result = sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseIdle, TRUE);
+	if (result != eResponseOK) {
+		// Sometimes the card doesn't seem to be in the idle state after CMD0 - instead it's ready.
+		// Then sometimes is takes a while to get an idle response.
+		// This is a way to deal with both cases.
+		gwBoolean isStarted = FALSE;
+		do {
+			if (sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseIdle, TRUE) == eResponseOK) {
+				isStarted = TRUE;
+//			} else if (sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseOK, TRUE) == eResponseOK) {
+//				isStarted = TRUE;
+			}
+		} while (!isStarted);
+	}
+
+	cmdArg.word = 0;
+	do {
+		result = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
+		result = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
+	} while (result != eResponseOK);
+
+	cmdArg.word = SD_BLOCK_SIZE;
+	result = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
+
+	// Set the SPI speed to 3MHz.
+	error = SPI_GetConfig(&spiConfig);
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
+	error = SPI_SetConfig(&spiConfig);
+
+}
 
 // --------------------------------------------------------------------------
 
-gwUINT8 sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgument, gwUINT8 inExpectedResponse) {
-	gwUINT8 counter;
+void spiInterrupt(void) {
+	spiStatus_t status;
+
+	status = SPI_GetStatus();
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgument, gwUINT8 inExpectedResponse,
+        gwBoolean inControlCS) {
 	gwUINT8 rcvByte = 0;
-	spiErr_t error;
+	gwUINT16 counter;
+	ESDCardResponse result;
+
+	if (inControlCS) {
+		CS_ON;
+	}
 
 	// Send the command byte.
-	error = writeByte(inSDCommand | 0x40);
+	if (writeByte(inSDCommand | 0x40) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
 
 	// Send the arguments.
 	for (counter = 4; counter > 0; counter--) {
-		error = writeByte(inArgument.bytes[counter - 1]);
+		if (writeByte(inArgument.bytes[counter - 1]) != gSpiErrNoError_c) {
+			result = eResponseSPIError;
+		}
 	}
 
 	// Send the CRC.
-	error = writeByte(0x95);
+	if (writeByte(0x95) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
 
-	// Get the R1 response.
-	counter = SD_WAIT_CYCLES;
-	do {
-		error = readByte(&rcvByte);
-		counter--;
-	} while ((rcvByte != inExpectedResponse) && counter > 0);
+	// Check the response.
+	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
+		CS_OFF;
+		return eResponseInvalidError;
+	}
 
-	if (counter)
-		return (0);
-	else
-		return (1);
+	if (inControlCS) {
+		CS_OFF;
+	}
+
+	return eResponseOK;
 }
 
 // --------------------------------------------------------------------------
 
-gwUINT8 sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse) {
-	gwUINT8 counter;
+ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwBoolean inControlCS) {
 	gwUINT8 rcvByte = 0;
-	spiErr_t error;
+	ESDCardResponse result;
+
+	if (inControlCS) {
+		CS_ON;
+	}
 
 	// Send the command byte.
-	error = writeByte(inSDCommand | 0x40);
+	if (writeByte(inSDCommand | 0x40) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
 
 	// Send the CRC.
-	error = writeByte(0x95);
+	if (writeByte(0x95) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
 
-	// Get the R1 response.
-	counter = SD_WAIT_CYCLES;
-	do {
-		error = readByte(&rcvByte);
-		counter--;
-	} while ((rcvByte != inExpectedResponse) && counter > 0);
+	// Check the response.
+	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
+		CS_OFF;
+		return eResponseInvalidError;
+	}
 
-	if (counter)
-		return (0);
-	else
-		return (1);
+	if (inControlCS) {
+		CS_OFF;
+	}
+
+	return eResponseOK;
 }
 
 // --------------------------------------------------------------------------
 
-gwUINT8 readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
+ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 	gwUINT8 rcvByte = 0;
 	gwUINT16 counter;
-	spiErr_t error;
 	SDArgumentType cmdArg;
+	ESDCardResponse result;
+
+	CS_ON;
 
 	cmdArg.word = inBlockNumber << SD_BLOCK_SHIFT;
-	if (sendCommandWithArg(eSDCardCmd17, cmdArg, eResponseOK)) {
-		// Command IDLE fail
-		return (4);
+	result = sendCommandWithArg(eSDCardCmd17, cmdArg, eResponseOK, FALSE);
+	if (result != eResponseOK) {
+		CS_OFF;
+		return (result);
 	}
 
-	// Wait for a response.
-	while ((rcvByte & 0xff) != 0xfe) {
-		error = readByte(&rcvByte);
+	// Check the response.
+	if (checkResponse(0xfe, 20) != eResponseOK) {
+		CS_OFF;
+		return eResponseInvalidError;
 	}
 
 	// Read the bytes from the block.
 	for (counter = 0; counter < SD_BLOCK_SIZE; counter++) {
-		error = readByte(&rcvByte);
+		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+			CS_OFF;
+			return eResponseSPIError;
+		}
 		*inDataPtr++ = (rcvByte & 0xff);
 	}
 
-	error = readByte(&rcvByte);
-	error = readByte(&rcvByte);
-	error = readByte(&rcvByte);
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
 
-	return (0);
+	CS_OFF;
+
+	return eResponseOK;
 }
 
 // --------------------------------------------------------------------------
 
-gwUINT8 writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
-	gwUINT8 rcvByte = 0;
-	gwUINT16 counter;
-	spiErr_t error;
+ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
+
+	writePartialBlockStart(inBlockNumber);
+	writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
+	writePartialBlockEnd();
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber) {
+
 	SDArgumentType cmdArg;
+	ESDCardResponse result;
 
-	cmdArg.word = inBlockNumber << SD_BLOCK_SHIFT;
-	if (sendCommandWithArg(eSDCardCmd24, cmdArg, eResponseOK)) {
+	CS_ON;
+
+	cmdArg.word = inBlockNumber;
+	result = sendCommandWithArg(eSDCardCmd24, cmdArg, eResponseOK, FALSE);
+	if (result != eResponseOK) {
+		CS_OFF;
+		return result;
 	}
 
-	error = writeByte(0xfe);
-
-	for (counter = 0; counter < SD_BLOCK_SIZE; counter++) {
-		error = writeByte(*inDataPtr++);
+	if (writeByte(0xfe) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
 	}
 
-	error = writeByte(0xff);
-	error = writeByte(0xff);
+	return eResponseOK;
 
-	error = readByte(&rcvByte);
-	if ((rcvByte & 0x0F) != 0x05) {
-		return (3);
-	}
-
-	do {
-		error = readByte(&rcvByte);
-	} while (rcvByte == 0x00);
-
-	return (0);
 }
 
 // --------------------------------------------------------------------------
 
-spiErr_t writePartialBlockBegin(gwUINT32 inBlockNumber) {
-
-	spiErr_t error;
-	SDArgumentType cmdArg;
-
-	cmdArg.word = inBlockNumber << SD_BLOCK_SHIFT;
-	if (sendCommandWithArg(eSDCardCmd24, cmdArg, eResponseOK)) {
-	}
-	error = writeByte(0xfe);
-
-	return error;
-}
-
-// --------------------------------------------------------------------------
-
-spiErr_t writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes) {
-
-	spiErr_t error;
-
-	for (gwUINT8 counter = 0; counter < inBytes; counter++) {
-		error = writeByte(*inDataPtr++);
-	}
-
-	return error;
-}
-
-// --------------------------------------------------------------------------
-
-spiErr_t writePartialBlockEnd() {
-
-	spiErr_t error;
-	gwUINT8 rcvByte = 0;
+ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes) {
 	gwUINT16 counter;
 
-	error = writeByte(0xff);
-	error = writeByte(0xff);
+	for (counter = 0; counter < inBytes; counter++) {
+		if (writeByte(*inDataPtr++) != gSpiErrNoError_c) {
+			CS_OFF;
+			return eResponseSPIError;
+		}
+	}
+
+	return eResponseOK;
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse writePartialBlockEnd() {
+	gwUINT8 rcvByte = 0;
+	gwUINT16 counter;
+	SDArgumentType cmdArg;
+
+	if (writeByte(0xff) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
+	if (writeByte(0xff) != gSpiErrNoError_c) {
+		CS_OFF;
+		return eResponseSPIError;
+	}
 
 	// Get the data write response.
 	counter = SD_WAIT_CYCLES;
 	do {
-		error = readByte(&rcvByte);
+		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+			CS_OFF;
+			return eResponseSPIError;
+		}
 		counter--;
 	} while (((rcvByte & 0x10) == 0x10) && counter > 0);
 
-	// Now we have the result, figure out what it is.
-	if ((rcvByte & 0x0F) != 0x05) {
-		return (3);
+	if ((rcvByte & 0x0f) != 0x05) {
+		CS_OFF;
+		if ((rcvByte & 0x0f) == 0x0b) {
+			return eResponseCRCError;
+		} else {
+			return eResponseWriteBlockError;
+		}
 	}
 
-	// Wait until the write operation is complete.
 	do {
-		error = readByte(&rcvByte);
+		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+			CS_OFF;
+			return eResponseSPIError;
+		}
 	} while (rcvByte == 0x00);
 
-	return error;
+	CS_OFF;
+
+	return eResponseOK;
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse checkResponse(gwUINT8 inExpectedResponse, gwUINT8 inCheckCycles) {
+	gwUINT8 rcvByte = 0;
+	gwUINT16 counter;
+
+	// Get the R1 response, and make sure it matches what we expected.
+	counter = 0;
+	do {
+		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+			CS_OFF;
+			return eResponseSPIError;
+		}
+	} while ((rcvByte != inExpectedResponse) && (counter++ < inCheckCycles));
+
+	if (counter < inCheckCycles)
+		return eResponseOK;
+	else
+		return eResponseInvalidError;
 }
 
 // --------------------------------------------------------------------------
@@ -213,7 +373,6 @@ spiErr_t readByte(gwUINT8* inByte) {
 // --------------------------------------------------------------------------
 
 spiErr_t writeByte(gwUINT8 inByte) {
-
 	// SPI on this chip is weird: the Tx/Rx reg is 32 bits wide.
 	// On Tx we send the 8 MSB bits, and on Rx we get the 8 LSB bits.
 	gwUINT32 writeSample = (inByte << 24);
@@ -224,22 +383,22 @@ spiErr_t writeByte(gwUINT8 inByte) {
 
 void clockDelay(gwUINT8 inFrames) {
 	while (inFrames--) {
-		SPI_WriteSync(0xFF000000);
+		writeByte(0xFF);
 	}
 }
 
 // --------------------------------------------------------------------------
 
-gwUINT16 crc16(gwUINT16 inOldCRC, gwUINT8 inByte) {
-	gwUINT16 crc;
+crcType crc16(crcType inOldCRC, gwUINT8 inByte) {
+	crcType crc;
 	gwUINT16 x;
 
-	x = ((inOldCRC  >> 8) ^ inByte) & 0xff;
+	x = ((inOldCRC.value >> 8) ^ inByte) & 0xff;
 	x ^= x >> 4;
 
-	crc = (inOldCRC << 8) ^ (x << 12) ^ ( x << 5) ^ x;
+	crc.value = (inOldCRC.value << 8) ^ (x << 12) ^ (x << 5) ^ x;
 
-	crc &= 0xffff;
+	crc.value &= 0xffff;
 
 	return crc;
 }

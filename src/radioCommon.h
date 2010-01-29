@@ -37,7 +37,11 @@
 //	#define RX_QUEUE_BALANCE		1
 	#define TX_QUEUE_SIZE			5
 #else
-	#define RX_QUEUE_SIZE			15
+	#ifdef MC1322X
+		#define RX_QUEUE_SIZE			20
+	#else
+		#define RX_QUEUE_SIZE			15
+	#endif
 	#define RX_QUEUE_LOW_WATER		2
 	#define RX_QUEUE_HIGH_WATER		RX_QUEUE_SIZE - 2
 //	#define RX_QUEUE_BALANCE		4

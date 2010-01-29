@@ -23,9 +23,5 @@ extern xQueueHandle gPFCQueue;
 // Local functions prototypes.
 
 void pfcTask(void *pvParameters);
-void gpioInit(void);
-void setupSPI(void);
-
-void spiInterrupt(void);
 
 #endif //PFCSPI_TASK_H
