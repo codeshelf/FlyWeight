@@ -14,6 +14,8 @@
 #include "queue.h"
 #include "string.h"
 #include "gwSystemMacros.h"
+#include "Leds.h"
+#include "spi.h"
 
 #ifdef IS_TOY_NETWORK
 	#include "deviceQuery.h"
@@ -608,6 +610,7 @@ void processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 	RELEASE_RX_BUFFER(inRXBufferNum);
 }
 #endif
+
 // --------------------------------------------------------------------------
 
 void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
@@ -654,6 +657,67 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 		}
 
+	}
+
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
+}
+
+// --------------------------------------------------------------------------
+
+gwUINT32 gCurSDCardAddress = 0;
+gwUINT8 gCurSDCardPartNumber = 0;
+gwBoolean gIsSDCardUpdating = FALSE;
+
+void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
+
+	gwUINT8	ccrHolder;
+	gwUINT32 address;
+	gwUINT8 partNumber;
+	gwUINT8 totalParts;
+	gwUINT8 bytes;
+
+	memcpy(&address, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR]), sizeof(address));
+	partNumber = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PART];
+	totalParts = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PARTS];
+	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN];
+
+	TurnOffLeds();
+	if ((address == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
+		// A resend (because we got the packet, but the gateway didn't get the ACK).
+	} else {
+		if (partNumber == 1) {
+			if (gIsSDCardUpdating) {
+				// Error - we received a 1st part, but were already updating.
+				Led1On();
+			} else {
+				// Start updating the block.
+				gIsSDCardUpdating = TRUE;
+				gCurSDCardPartNumber = partNumber;
+				gCurSDCardAddress = address;
+				writePartialBlockBegin(address);
+				Led4On();
+			}
+		} else {
+			if (!gIsSDCardUpdating) {
+				// Error - we received a part greater than 1, but we were not updating.
+				Led2On();
+			} else if ((gCurSDCardPartNumber + 1) != partNumber) {
+				// Error - we received a part that is not +1 greater than the last.
+				Led3On();
+			} else {
+				gCurSDCardPartNumber = partNumber;
+				if (partNumber == totalParts) {
+					// Last part - stop the updating.
+					gIsSDCardUpdating = FALSE;
+					writePartialBlockEnd();
+					Led4On();
+				} else {
+					// Continuation of the updating.
+					writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN]), bytes);
+					Led4On();
+				}
+			}
+		}
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);

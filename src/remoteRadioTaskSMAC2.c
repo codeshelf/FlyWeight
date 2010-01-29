@@ -286,9 +286,14 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 				case eControlSubCmdHooBee:
 					processHooBeeSubCommand(inRxBufferNum);
 					break;
-#endif
+
 				case eCommandAudio:
 					// Audio commands are handled by an interrupt routine.
+					break;
+#endif
+
+				case eControlSubCmdSDCardUpdate:
+					processSDCardUpdateSubCommand(inRxBufferNum);
 					break;
 
 				default:

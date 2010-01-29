@@ -94,6 +94,13 @@
 #define CMDPOS_BEHAVIOR_CNT		CMDPOS_BEHAVIOR + 0
 #define CMDPOS_BEHAVIOR_SUBCMD	CMDPOS_BEHAVIOR_CNT + 1
 
+// SDCard Update Command
+#define CMDPOS_SDCARD_ADDR		CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_PART		CMDPOS_SDCARD_ADDR + 4
+#define CMDPOS_SDCARD_PARTS		CMDPOS_SDCARD_PART + 1
+#define CMDPOS_SDCARD_LEN		CMDPOS_SDCARD_PARTS + 1
+#define CMDPOS_SDCARD_DATA		CMDPOS_SDCARD_LEN + 1
+
 // Command masks
 #define PACKETMASK_VERSION		0xc0    /* 0b11000000 */
 #define PACKETMASK_RSV_HDR		0x30	/* 0b00110000 */
@@ -250,7 +257,8 @@ typedef enum {
 	eControlSubCmdEndpointAdj = 1,
 	eControlSubCmdMotor = 2,
 	eControlSubCmdButton = 3,
-	eControlSubCmdHooBee = 4
+	eControlSubCmdHooBee = 4,
+	eControlSubCmdSDCardUpdate = 5
 } EControlSubCmdIDType;
 
 typedef enum {
