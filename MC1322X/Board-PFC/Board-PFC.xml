@@ -1638,6 +1638,9 @@
         <name>$PROJ_DIR$\..\..\src\smacPort.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\src\spi.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\src\ulaw.c</name>
       </file>
     </group>

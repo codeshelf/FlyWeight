@@ -1,9 +1,9 @@
 [JLinkDriver]
 WatchCond=_ 0
-Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
-Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+Watch0=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
+Watch1=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
 [DebugChecksum]
-Checksum=1043976675
+Checksum=844497046
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -16,17 +16,6 @@ Enabled=0
 ShowSource=1
 [BreakpointUsageDialog]
 Placement=_ 422 356 859 634
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
-[DriverProfiling]
-Enabled=0
-Source=2
-Graph=0
 [Disassemble mode]
 mode=0
 [Breakpoints]
@@ -54,3 +43,14 @@ Bp20=_ "STD_CODE" "0x00000004" 0 0 0 0 "" 0 "" 0
 Bp21=_ "EMUL_DATA" "0x80007060@2" 0 0 0 148 0 "" 0 ""
 Bp22=_ "STD_CODE" "{C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S}.79.1@1" 1 0 0 0 "" 0 "" 0
 Count=23
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[DriverProfiling]
+Enabled=0
+Source=2
+Graph=0

@@ -689,7 +689,6 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 gwUINT32 gCurSDCardAddress = 0;
 gwUINT8 gCurSDCardPartNumber = 0;
 gwBoolean gIsSDCardUpdating = FALSE;
-BufferCntType gChunkIndex[8];
 
 void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 	gwUINT8 ccrHolder;
@@ -720,7 +719,11 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 				gIsSDCardUpdating = TRUE;
 				gCurSDCardPartNumber = partNumber;
 				gCurSDCardAddress = address.word;
-				gChunkIndex[partNumber] = inRXBufferNum;
+				result = writePartialBlockBegin(address.word);
+				result = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
+				if (result != eResponseOK) {
+					GW_RESET_MCU;
+				}
 				Led4On();
 			}
 		} else {
@@ -734,27 +737,22 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 				gCurSDCardPartNumber = partNumber;
 				if (partNumber == totalParts) {
 					// Last part - stop the updating.
-					GW_ENTER_CRITICAL(ccrHolder);
 					gIsSDCardUpdating = FALSE;
-					result = writePartialBlockBegin(address.word);
+					result = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
 					if (result != eResponseOK) {
 						GW_RESET_MCU;
-					}
-					for (gwUINT8 i = 0; i < 8; i++) {
-						result = writePartialBlock(&(gRXRadioBuffer[gChunkIndex[i]].bufferStorage[CMDPOS_SDCARD_LEN]), bytes);
-						if (result != eResponseOK) {
-							GW_RESET_MCU;
-						}
 					}
 					result = writePartialBlockEnd();
 					if (result != eResponseOK) {
 						GW_RESET_MCU;
 					}
-					GW_EXIT_CRITICAL(ccrHolder);
 					Led4On();
 				} else {
 					// Continuation of the updating.
-					gChunkIndex[partNumber] = inRXBufferNum;
+					result = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
+					if (result != eResponseOK) {
+						GW_RESET_MCU;
+					}
 					Led4On();
 				}
 			}

@@ -296,7 +296,9 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					// By processing the SDCard updates in the critical region,
 					// it prevents the gateway from sending another update until this
 					// one completes, because we wont send an ACK until it completes.
+					GW_ENTER_CRITICAL(ccrHolder);
 					processSDCardUpdateSubCommand(inRxBufferNum);
+					GW_EXIT_CRITICAL(ccrHolder);
 					break;
 
 				default:
