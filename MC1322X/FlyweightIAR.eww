@@ -2,6 +2,9 @@
 
 <workspace>
 	<project>
+		<path>$WS_DIR$\Board-GW0011\Board-GW0011.xml</path>
+	</project>
+	<project>
 		<path>$WS_DIR$\Board-SRB\Board-SRB.xml</path>
 	</project>
 	<project>

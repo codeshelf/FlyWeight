@@ -19,19 +19,20 @@ crcType gCRC16;
 
 void setupSPI() {
 
-	spiErr_t error;
+	spiErr_t spiErr;
+	GpioErr_t gpioErr;
 	spiConfig_t spiConfig;
 	gwUINT32 rcvByte = 0;
 	SDArgumentType cmdArg;
 	ESDCardResponse result;
 
 	// Setup the function enable pins for SPI.
-	error = Gpio_SetPinFunction(gGpioPin5_c, gGpioAlternate1Mode_c);
-	error = Gpio_SetPinFunction(gGpioPin6_c, gGpioAlternate1Mode_c);
-	error = Gpio_SetPinFunction(gGpioPin7_c, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(gGpioPin5_c, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(gGpioPin6_c, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(gGpioPin7_c, gGpioAlternate1Mode_c);
 
 	// Pin 4 is SPI CS, and we need to control that manually. (Auto doesn't work.)
-	error = Gpio_SetPinFunction(gGpioPin4_c, gGpioNormalMode_c);
+	gpioErr = Gpio_SetPinFunction(gGpioPin4_c, gGpioNormalMode_c);
 	CS_INIT;
 	CS_OFF;
 
@@ -39,7 +40,7 @@ void setupSPI() {
 	//	ITC_SetPriority(gSpiInt_c, gItcNormalPriority_c);
 	//	ITC_EnableInterrupt(gSpiInt_c);
 
-	error = SPI_Open();
+	spiErr = SPI_Open();
 
 	// Setup the SPI mode.
 	spiConfig.ClkCtrl.Word = 0;
@@ -55,7 +56,7 @@ void setupSPI() {
 	spiConfig.Setup.Bits.SsDelay = ConfigSsDelay1Clk;
 	spiConfig.Setup.Bits.SsSetup = ConfigSsSetupMasterLow;
 	spiConfig.Setup.Bits.S3Wire = ConfigS3WireInactive;
-	error = SPI_SetConfig(&spiConfig);
+	spiErr = SPI_SetConfig(&spiConfig);
 
 	// Clock out at least 74 clocks (80 in this case.)
 	CS_ON;
@@ -92,9 +93,9 @@ void setupSPI() {
 	result = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
 
 	// Set the SPI speed to 3MHz.
-	error = SPI_GetConfig(&spiConfig);
+	spiErr = SPI_GetConfig(&spiConfig);
 	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
-	error = SPI_SetConfig(&spiConfig);
+	spiErr = SPI_SetConfig(&spiConfig);
 
 }
 

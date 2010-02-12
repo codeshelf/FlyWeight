@@ -18,7 +18,10 @@
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
 #include "pfcSPITask.h"
+#include "spi.h"
 #include "commands.h"
+#include "GPIO_Interface.h"
+
 #ifdef MC1322X
     #include "MacaInterrupt.h"
     #include "TransceiverConfigMngmnt.h"
@@ -28,14 +31,19 @@
 	#include "keyboardTask.h"
 	#include "keyboard.h"
 #endif
+
 // --------------------------------------------------------------------------
 // Globals
 
-portTickType	gLastPacketReceivedTick;
+portTickType		gLastPacketReceivedTick;
+extern gwBoolean 	gSDCardBusConnected;
+extern gwBoolean 	gSDCardPwrConnected;
 
 // --------------------------------------------------------------------------
 
 void vMain( void ) {
+
+	GpioErr_t error;
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
@@ -62,6 +70,16 @@ void vMain( void ) {
 	TmrInit();
 
 	LED_Init();
+
+	// Setup our LED, Bus switch, and VCC switch.
+	error = Gpio_SetPinFunction(gGpioPin22_c, gGpioNormalMode_c);
+	error = Gpio_SetPinFunction(gGpioPin23_c, gGpioNormalMode_c);
+	error = Gpio_SetPinFunction(gGpioPin29_c, gGpioNormalMode_c);
+	error = Gpio_SetPinFunction(gGpioPin36_c, gGpioNormalMode_c);
+	BUS_SW_INIT;
+	BUS_SW_ON;
+	VCC_SW_INIT;
+	VCC_SW_ON;
 
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = FALSE;

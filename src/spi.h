@@ -28,6 +28,14 @@
 #define CS_ON					GPIO.DataResetLo 	= 0x00000010
 #define CS_OFF					GPIO.DataSetLo 		= 0x00000010
 
+#define BUS_SW_INIT				GPIO.DirSetHi		= 0x00000010
+#define BUS_SW_ON				GPIO.DataResetHi 	= 0x00000010; gSDCardBusConnected = TRUE; Led1Off();
+#define BUS_SW_OFF				GPIO.DataSetHi	 	= 0x00000010; gSDCardBusConnected = FALSE; Led1On();
+
+#define VCC_SW_INIT				GPIO.DirSetLo		= 0x20000000
+#define VCC_SW_ON				GPIO.DataSetLo 		= 0x20000000; gSDCardPwrConnected = TRUE;
+#define VCC_SW_OFF				GPIO.DataResetLo 	= 0x20000000; gSDCardPwrConnected = FALSE;
+
 typedef union {
 	gwUINT16 value;
 	gwUINT8 bytes[2];

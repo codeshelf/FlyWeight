@@ -125,6 +125,7 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 
 void processMotorControlSubCommand(BufferCntType inRXBufferNum);
 void processHooBeeSubCommand(BufferCntType inRXBufferNum);
+void processSDCardControlSubCommand(BufferCntType inRXBufferNum);
 void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);

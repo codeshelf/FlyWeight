@@ -94,6 +94,9 @@
 #define CMDPOS_BEHAVIOR_CNT		CMDPOS_BEHAVIOR + 0
 #define CMDPOS_BEHAVIOR_SUBCMD	CMDPOS_BEHAVIOR_CNT + 1
 
+// SDCard Control Command
+#define CMDPOS_SDCARD_ACTION	CMDPOS_CONTROL_DATA
+
 // SDCard Update Command
 #define CMDPOS_SDCARD_ADDR		CMDPOS_CONTROL_DATA
 #define CMDPOS_SDCARD_PART		CMDPOS_SDCARD_ADDR + 4
@@ -258,7 +261,8 @@ typedef enum {
 	eControlSubCmdMotor = 2,
 	eControlSubCmdButton = 3,
 	eControlSubCmdHooBee = 4,
-	eControlSubCmdSDCardUpdate = 5
+	eControlSubCmdSDCardUpdate = 5,
+	eControlSubCmdSDCardControl = 6
 } EControlSubCmdIDType;
 
 typedef enum {
@@ -267,6 +271,14 @@ typedef enum {
 	eRemoteDataSubCmdRateCtrl = 2,
 	eRemoteDataSubCmdCalibrate = 3
 } ERemoteDataSubCmdIDType;
+
+typedef enum {
+	eSDCardActionInvalid = -1,
+	eSDCardActionBusConnect = 1,
+	eSDCardActionBusDisconnect = 2,
+	eSDCardActionVccConnect = 3,
+	eSDCardActionVccDisconnect = 4
+} ESDCardControlActionType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

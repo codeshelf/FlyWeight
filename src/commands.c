@@ -685,7 +685,40 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
+
 // --------------------------------------------------------------------------
+
+gwBoolean gSDCardBusConnected = FALSE;
+gwBoolean gSDCardPwrConnected = FALSE;
+
+void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
+
+	ESDCardControlActionType action;
+
+	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
+
+	switch (action) {
+		case eSDCardActionBusConnect:
+			BUS_SW_ON;
+			break;
+
+		case eSDCardActionBusDisconnect:
+			BUS_SW_OFF;
+			break;
+
+		case eSDCardActionVccConnect:
+			VCC_SW_ON;
+			break;
+
+		case eSDCardActionVccDisconnect:
+			VCC_SW_OFF;
+			break;
+	}
+
+}
+
+// --------------------------------------------------------------------------
+
 gwUINT32 gCurSDCardAddress = 0;
 gwUINT8 gCurSDCardPartNumber = 0;
 gwBoolean gIsSDCardUpdating = FALSE;
@@ -706,7 +739,7 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 	totalParts = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PARTS];
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN];
 
-	TurnOffLeds();
+	Led2Off();
 	if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
 		// A resend (because we got the packet, but the gateway didn't get the ACK).
 	} else {
@@ -724,7 +757,7 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 				if (result != eResponseOK) {
 					GW_RESET_MCU;
 				}
-				Led4On();
+				Led2On();
 			}
 		} else {
 			if (!gIsSDCardUpdating) {
@@ -746,14 +779,14 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 					if (result != eResponseOK) {
 						GW_RESET_MCU;
 					}
-					Led4On();
+					Led2On();
 				} else {
 					// Continuation of the updating.
 					result = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
 					if (result != eResponseOK) {
 						GW_RESET_MCU;
 					}
-					Led4On();
+					Led2On();
 				}
 			}
 		}
