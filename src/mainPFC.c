@@ -37,7 +37,7 @@
 
 portTickType		gLastPacketReceivedTick;
 extern gwBoolean 	gSDCardBusConnected;
-extern gwBoolean 	gSDCardPwrConnected;
+extern gwBoolean 	gSDCardVccConnected;
 
 // --------------------------------------------------------------------------
 

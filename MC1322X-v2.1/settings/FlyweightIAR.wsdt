@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+    
+    
+  <CurrentConfigs><Project>Board-SRB/Debug</Project><Project>Board-PFC/Debug</Project><Project>Board-GW0011/Debug</Project><Project>Board-NCB/Debug</Project></CurrentConfigs><CurrentProj>Board-GW0011</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>212</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
+      <TerminalIO/>
+      <Debug-Log>
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1221</ColumnWidth1></Debug-Log>
+    <Disassembly><MixedMode>1</MixedMode><CodeCovShow>0</CodeCovShow><InstrProfShow>0</InstrProfShow></Disassembly></Static>
+    <Windows>
+      
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-23710-14771</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-19005-14859</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-27857-24296</Identity>
+            <TabName>Debug Log</TabName>
+            <Factory>Debug-Log</Factory>
+            <Session/>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322x-v2.1\Board-GW0011\Utilities\Leds.h</Filename><XPos>0</XPos><YPos>286</YPos><SelStart>13378</SelStart><SelEnd>13378</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename><XPos>0</XPos><YPos>22</YPos><SelStart>1344</SelStart><SelEnd>1344</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322x-v2.1\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>78</YPos><SelStart>2854</SelStart><SelEnd>2854</SelEnd></Tab><ActiveTab>2</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>686</YPos><SelStart>25488</SelStart><SelEnd>25488</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename><XPos>0</XPos><YPos>50</YPos><SelStart>1417</SelStart><SelEnd>1417</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\INC\DLib_Product_string.h</Filename><XPos>0</XPos><YPos>52</YPos><SelStart>1690</SelStart><SelEnd>1690</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00abab30><key>iaridepm.enu1</key></Toolbar-00abab30></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>702</Bottom><Right>286</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>225000</sizeVertCX><sizeVertCY>745763</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>211864</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+

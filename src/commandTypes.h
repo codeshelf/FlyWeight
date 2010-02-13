@@ -274,10 +274,8 @@ typedef enum {
 
 typedef enum {
 	eSDCardActionInvalid = -1,
-	eSDCardActionBusConnect = 1,
-	eSDCardActionBusDisconnect = 2,
-	eSDCardActionVccConnect = 3,
-	eSDCardActionVccDisconnect = 4
+	eSDCardActionSdProtocol = 1,
+	eSDCardActionSpiProtocol = 2,
 } ESDCardControlActionType;
 
 // --------------------------------------------------------------------------

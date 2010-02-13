@@ -689,7 +689,7 @@ void processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 // --------------------------------------------------------------------------
 
 gwBoolean gSDCardBusConnected = FALSE;
-gwBoolean gSDCardPwrConnected = FALSE;
+gwBoolean gSDCardVccConnected = FALSE;
 
 void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
 
@@ -698,20 +698,21 @@ void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
 	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
 
 	switch (action) {
-		case eSDCardActionBusConnect:
+		case eSDCardActionSdProtocol:
+			//  Reconnect the SDCard to the SDCard bus.
 			BUS_SW_ON;
-			break;
 
-		case eSDCardActionBusDisconnect:
-			BUS_SW_OFF;
-			break;
-
-		case eSDCardActionVccConnect:
+			// Power cycle the card so that it can reenter the SDCard mode.
+			// (It will be in the SPI mode, and can only recover via power cycle.)
+			VCC_SW_OFF;
+			vTaskDelay(100);
 			VCC_SW_ON;
 			break;
 
-		case eSDCardActionVccDisconnect:
-			VCC_SW_OFF;
+		case eSDCardActionSpiProtocol:
+			// Disconnect the SDCard from the SDCard bus, and call the SPI init routine.
+			BUS_SW_OFF;
+			setupSPI();
 			break;
 	}
 
@@ -740,7 +741,9 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN];
 
 	Led2Off();
-	if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
+	if ((gSDCardBusConnected) || (!gSDCardVccConnected)) {
+		// The SDCard is still connected to the SDCard bus or it has no power, so we can't send any SPI commands to it.
+	} else if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
 		// A resend (because we got the packet, but the gateway didn't get the ACK).
 	} else {
 		if (partNumber == 1) {
@@ -790,6 +793,7 @@ void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 				}
 			}
 		}
+
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);

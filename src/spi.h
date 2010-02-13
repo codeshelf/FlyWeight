@@ -33,8 +33,8 @@
 #define BUS_SW_OFF				GPIO.DataSetHi	 	= 0x00000010; gSDCardBusConnected = FALSE; Led1On();
 
 #define VCC_SW_INIT				GPIO.DirSetLo		= 0x20000000
-#define VCC_SW_ON				GPIO.DataSetLo 		= 0x20000000; gSDCardPwrConnected = TRUE;
-#define VCC_SW_OFF				GPIO.DataResetLo 	= 0x20000000; gSDCardPwrConnected = FALSE;
+#define VCC_SW_ON				GPIO.DataSetLo 		= 0x20000000; gSDCardVccConnected = TRUE;
+#define VCC_SW_OFF				GPIO.DataResetLo 	= 0x20000000; gSDCardVccConnected = FALSE;
 
 typedef union {
 	gwUINT16 value;
