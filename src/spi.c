@@ -17,7 +17,7 @@ crcType gCRC16;
  *
  */
 
-void setupSPI() {
+void enableSPI() {
 
 	spiErr_t spiErr;
 	GpioErr_t gpioErr;
@@ -27,14 +27,14 @@ void setupSPI() {
 	ESDCardResponse result;
 
 	// Setup the function enable pins for SPI.
-	gpioErr = Gpio_SetPinFunction(gGpioPin5_c, gGpioAlternate1Mode_c);
-	gpioErr = Gpio_SetPinFunction(gGpioPin6_c, gGpioAlternate1Mode_c);
-	gpioErr = Gpio_SetPinFunction(gGpioPin7_c, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_MOSI, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_MISO, gGpioAlternate1Mode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_CLK, gGpioAlternate1Mode_c);
 
-	// Pin 4 is SPI CS, and we need to control that manually. (Auto doesn't work.)
-	gpioErr = Gpio_SetPinFunction(gGpioPin4_c, gGpioNormalMode_c);
-	CS_INIT;
-	CS_OFF;
+	// Setup the SPI CS.  (We need to control that manually - auto doesn't work.)
+	gpioErr = Gpio_SetPinFunction(SPI_CS, gGpioNormalMode_c);
+	gpioErr = Gpio_SetPinDir(SPI_CS, gGpioDirOut_c);
+	SPI_CS_OFF;
 
 	//	IntAssignHandler(gSpiInt_c, (IntHandlerFunc_t) spiInterrupt);
 	//	ITC_SetPriority(gSpiInt_c, gItcNormalPriority_c);
@@ -59,9 +59,9 @@ void setupSPI() {
 	spiErr = SPI_SetConfig(&spiConfig);
 
 	// Clock out at least 74 clocks (80 in this case.)
-	CS_ON;
+	SPI_CS_ON;
 	clockDelay(10);
-	CS_OFF;
+	SPI_CS_OFF;
 
 	clockDelay(8);
 
@@ -100,6 +100,46 @@ void setupSPI() {
 }
 
 // --------------------------------------------------------------------------
+/*
+ *
+ */
+
+void disableSPI() {
+
+	spiErr_t spiErr;
+	GpioErr_t gpioErr;
+
+	spiErr = SPI_Close();
+
+	// Set all of the SPI-related pins to normal mode.
+	gpioErr = Gpio_SetPinFunction(SPI_MOSI, gGpioNormalMode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_MISO, gGpioNormalMode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_CLK, gGpioNormalMode_c);
+	gpioErr = Gpio_SetPinFunction(SPI_CS, gGpioNormalMode_c);
+
+	// Set the IO dir of the SPI pins to input.
+	gpioErr = Gpio_SetPinDir(SPI_MOSI, gGpioDirIn_c);
+	gpioErr = Gpio_SetPinDir(SPI_MISO, gGpioDirIn_c);
+	gpioErr = Gpio_SetPinDir(SPI_CLK, gGpioDirIn_c);
+	gpioErr = Gpio_SetPinDir(SPI_CS, gGpioDirIn_c);
+
+	// Disable pull-ups on the SPI lines.
+	gpioErr = Gpio_EnPinPullup(SPI_MOSI, FALSE);
+	gpioErr = Gpio_EnPinPullup(SPI_MISO, FALSE);
+	gpioErr = Gpio_EnPinPullup(SPI_CLK, FALSE);
+	gpioErr = Gpio_EnPinPullup(SPI_CS, FALSE);
+
+//	gpioErr = Gpio_SelectPinPullup(SPI_MOSI, gGpioPinPullup_c);
+//	gpioErr = Gpio_SelectPinPullup(SPI_MISO, gGpioPinPullup_c);
+//	gpioErr = Gpio_SelectPinPullup(SPI_CLK, gGpioPinPullup_c);
+//	gpioErr = Gpio_SelectPinPullup(SPI_CS, gGpioPinPullup_c);
+
+	// Disable the pull-up on the DAT0 line.
+	gpioErr = Gpio_EnPinPullup(SD_DAT0_PULLUP, FALSE);
+
+}
+
+// --------------------------------------------------------------------------
 
 void spiInterrupt(void) {
 	spiStatus_t status;
@@ -116,7 +156,7 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 	ESDCardResponse result;
 
 	if (inControlCS) {
-		CS_ON;
+		SPI_CS_ON;
 	}
 
 	// Send the command byte.
@@ -138,12 +178,12 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 
 	// Check the response.
 	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
 
 	if (inControlCS) {
-		CS_OFF;
+		SPI_CS_OFF;
 	}
 
 	return eResponseOK;
@@ -156,29 +196,29 @@ ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwB
 	ESDCardResponse result;
 
 	if (inControlCS) {
-		CS_ON;
+		SPI_CS_ON;
 	}
 
 	// Send the command byte.
 	if (writeByte(inSDCommand | 0x40) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 
 	// Send the CRC.
 	if (writeByte(0x95) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 
 	// Check the response.
 	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
 
 	if (inControlCS) {
-		CS_OFF;
+		SPI_CS_OFF;
 	}
 
 	return eResponseOK;
@@ -192,44 +232,44 @@ ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 	SDArgumentType cmdArg;
 	ESDCardResponse result;
 
-	CS_ON;
+	SPI_CS_ON;
 
 	cmdArg.word = inBlockNumber << SD_BLOCK_SHIFT;
 	result = sendCommandWithArg(eSDCardCmd17, cmdArg, eResponseOK, FALSE);
 	if (result != eResponseOK) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return (result);
 	}
 
 	// Check the response.
 	if (checkResponse(0xfe, 20) != eResponseOK) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
 
 	// Read the bytes from the block.
 	for (counter = 0; counter < SD_BLOCK_SIZE; counter++) {
 		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			CS_OFF;
+			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
 		*inDataPtr++ = (rcvByte & 0xff);
 	}
 
 	if (readByte(&rcvByte) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 	if (readByte(&rcvByte) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 	if (readByte(&rcvByte) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 
-	CS_OFF;
+	SPI_CS_OFF;
 
 	return eResponseOK;
 }
@@ -250,17 +290,17 @@ ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber) {
 	SDArgumentType cmdArg;
 	ESDCardResponse result;
 
-	CS_ON;
+	SPI_CS_ON;
 
 	cmdArg.word = inBlockNumber;
 	result = sendCommandWithArg(eSDCardCmd24, cmdArg, eResponseOK, FALSE);
 	if (result != eResponseOK) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return result;
 	}
 
 	if (writeByte(0xfe) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 
@@ -275,7 +315,7 @@ ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes) {
 
 	for (counter = 0; counter < inBytes; counter++) {
 		if (writeByte(*inDataPtr++) != gSpiErrNoError_c) {
-			CS_OFF;
+			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
 	}
@@ -291,11 +331,11 @@ ESDCardResponse writePartialBlockEnd() {
 	SDArgumentType cmdArg;
 
 	if (writeByte(0xff) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 	if (writeByte(0xff) != gSpiErrNoError_c) {
-		CS_OFF;
+		SPI_CS_OFF;
 		return eResponseSPIError;
 	}
 
@@ -303,14 +343,14 @@ ESDCardResponse writePartialBlockEnd() {
 	counter = SD_WAIT_CYCLES;
 	do {
 		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			CS_OFF;
+			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
 		counter--;
 	} while (((rcvByte & 0x10) == 0x10) && counter > 0);
 
 	if ((rcvByte & 0x0f) != 0x05) {
-		CS_OFF;
+		SPI_CS_OFF;
 		if ((rcvByte & 0x0f) == 0x0b) {
 			return eResponseCRCError;
 		} else {
@@ -320,12 +360,12 @@ ESDCardResponse writePartialBlockEnd() {
 
 	do {
 		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			CS_OFF;
+			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
 	} while (rcvByte == 0x00);
 
-	CS_OFF;
+	SPI_CS_OFF;
 
 	return eResponseOK;
 }
@@ -340,7 +380,7 @@ ESDCardResponse checkResponse(gwUINT8 inExpectedResponse, gwUINT8 inCheckCycles)
 	counter = 0;
 	do {
 		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			CS_OFF;
+			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
 	} while ((rcvByte != inExpectedResponse) && (counter++ < inCheckCycles));

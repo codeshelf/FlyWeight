@@ -71,14 +71,29 @@ void vMain( void ) {
 
 	LED_Init();
 
-	// Setup our LED, Bus switch, and VCC switch.
+	// Setup our LEDs.
 	error = Gpio_SetPinFunction(gGpioPin22_c, gGpioNormalMode_c);
 	error = Gpio_SetPinFunction(gGpioPin23_c, gGpioNormalMode_c);
-	error = Gpio_SetPinFunction(gGpioPin29_c, gGpioNormalMode_c);
-	error = Gpio_SetPinFunction(gGpioPin36_c, gGpioNormalMode_c);
-	BUS_SW_INIT;
+
+	// Disable the SPI mode for the pins that the SDCard bus will use.
+	disableSPI();
+
+	// Setup the DAT0 pull-up for SDCard mode.
+	error = Gpio_SetPinFunction(SD_DAT0_PULLUP, gGpioNormalMode_c);
+	error = Gpio_SetPinDir(SD_DAT0_PULLUP, gGpioDirIn_c);
+	error = Gpio_EnPinPullup(SD_DAT0_PULLUP, FALSE);
+
+	// Setup the Bus switch.
+	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
+	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
+	error = Gpio_SetPinDir(BUS_SW_GPIO, gGpioDirOut_c);
+	BUS_SW_OFF;
 	BUS_SW_ON;
-	VCC_SW_INIT;
+
+	// Setup the Vcc switch.
+	error = Gpio_SetPinFunction(VCC_SW_GPIO, gGpioNormalMode_c);
+	error = Gpio_SetPinDir(VCC_SW_GPIO, gGpioDirOut_c);
+	VCC_SW_OFF;
 	VCC_SW_ON;
 
 	crmCopCntl_t copCntl;

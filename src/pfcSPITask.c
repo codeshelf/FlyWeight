@@ -33,15 +33,15 @@ void pfcTask(void *pvParameters) {
 
 	if (gPFCQueue) {
 
-		setupSPI();
+//		enableSPI();
 		gSDCardState = eSDCardStateReady;
 
-		result = readBlock(0, gReadBlock);
-		result = readBlock(1, gReadBlock);
-		result = readBlock(2, gReadBlock);
-		result = readBlock(20, gReadBlock);
-		result = readBlock(21, gReadBlock);
-		result = readBlock(22, gReadBlock);
+//		result = readBlock(0, gReadBlock);
+//		result = readBlock(1, gReadBlock);
+//		result = readBlock(2, gReadBlock);
+//		result = readBlock(20, gReadBlock);
+//		result = readBlock(21, gReadBlock);
+//		result = readBlock(22, gReadBlock);
 
 		for (;;) {
 			vTaskDelay(10);

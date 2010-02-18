@@ -24,17 +24,22 @@
 #define SD_BLOCK_SHIFT			(9)
 #define SD_WAIT_CYCLES 			10
 
-#define CS_INIT					GPIO.DirSetLo		= 0x00000010
-#define CS_ON					GPIO.DataResetLo 	= 0x00000010
-#define CS_OFF					GPIO.DataSetLo 		= 0x00000010
+#define SPI_MOSI				gGpioPin6_c
+#define SPI_MISO				gGpioPin5_c
+#define SPI_CLK					gGpioPin7_c
+#define SPI_CS					gGpioPin4_c
+#define SD_DAT0_PULLUP			gGpioPin3_c
 
-#define BUS_SW_INIT				GPIO.DirSetHi		= 0x00000010
-#define BUS_SW_ON				GPIO.DataResetHi 	= 0x00000010; gSDCardBusConnected = TRUE; Led1Off();
-#define BUS_SW_OFF				GPIO.DataSetHi	 	= 0x00000010; gSDCardBusConnected = FALSE; Led1On();
+#define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
+#define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
-#define VCC_SW_INIT				GPIO.DirSetLo		= 0x20000000
-#define VCC_SW_ON				GPIO.DataSetLo 		= 0x20000000; gSDCardVccConnected = TRUE;
-#define VCC_SW_OFF				GPIO.DataResetLo 	= 0x20000000; gSDCardVccConnected = FALSE;
+#define BUS_SW_GPIO				gGpioPin36_c
+#define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); gSDCardBusConnected = TRUE; Led1Off();
+#define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); gSDCardBusConnected = FALSE; Led1On();
+
+#define VCC_SW_GPIO				gGpioPin29_c
+#define VCC_SW_ON				Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateHigh_c); gSDCardVccConnected = TRUE;
+#define VCC_SW_OFF				Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); gSDCardVccConnected = FALSE;
 
 typedef union {
 	gwUINT16 value;
@@ -113,7 +118,8 @@ typedef union {
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void setupSPI(void);
+void enableSPI(void);
+void disableSPI(void);
 void spiInterrupt(void);
 void clockDelay(gwUINT8 inFrames);
 

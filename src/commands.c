@@ -693,13 +693,14 @@ gwBoolean gSDCardVccConnected = FALSE;
 
 void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
 
+	GpioErr_t error;
 	ESDCardControlActionType action;
 
 	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
-			//  Reconnect the SDCard to the SDCard bus.
+			disableSPI();
 			BUS_SW_ON;
 
 			// Power cycle the card so that it can reenter the SDCard mode.
@@ -710,9 +711,11 @@ void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
 			break;
 
 		case eSDCardActionSpiProtocol:
-			// Disconnect the SDCard from the SDCard bus, and call the SPI init routine.
+			// Disconnect the SDCard from the SDCard bus, set the DAT0 pull-up, and call the SPI init routine.
 			BUS_SW_OFF;
-			setupSPI();
+			error = Gpio_EnPinPullup(SD_DAT0_PULLUP, TRUE);
+			error = Gpio_SelectPinPullup(SD_DAT0_PULLUP, gGpioPinPullup_c);
+			enableSPI();
 			break;
 	}
 
