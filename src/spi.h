@@ -38,8 +38,17 @@
 #define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); gSDCardBusConnected = FALSE; Led1On();
 
 #define VCC_SW_GPIO				gGpioPin29_c
-#define VCC_SW_ON				Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateHigh_c); gSDCardVccConnected = TRUE;
-#define VCC_SW_OFF				Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); gSDCardVccConnected = FALSE;
+
+#define VCC_SW_ON				Gpio_SetPinDir(gGpioPin24_c, gGpioDirIn_c); \
+								Gpio_EnPinPullup(gGpioPin24_c, TRUE); \
+								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateHigh_c); \
+								gSDCardVccConnected = TRUE;
+
+#define VCC_SW_OFF				Gpio_SetPinDir(gGpioPin24_c, gGpioDirOut_c);\
+								Gpio_SetPinData(gGpioPin24_c, gGpioPinStateLow_c); \
+								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); \
+								gSDCardVccConnected = FALSE;
+
 
 typedef union {
 	gwUINT16 value;

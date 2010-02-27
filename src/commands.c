@@ -700,14 +700,20 @@ void processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
-			disableSPI();
-			BUS_SW_ON;
 
 			// Power cycle the card so that it can reenter the SDCard mode.
 			// (It will be in the SPI mode, and can only recover via power cycle.)
 			VCC_SW_OFF;
-			vTaskDelay(100);
+			vTaskDelay(1000);
+
+			disableSPI();
+
+			BUS_SW_ON;
 			VCC_SW_ON;
+
+			Led1Off();
+			Led2Off();
+
 			break;
 
 		case eSDCardActionSpiProtocol:

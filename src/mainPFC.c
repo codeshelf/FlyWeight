@@ -87,13 +87,18 @@ void vMain( void ) {
 	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
 	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
 	error = Gpio_SetPinDir(BUS_SW_GPIO, gGpioDirOut_c);
-	BUS_SW_OFF;
-	BUS_SW_ON;
 
 	// Setup the Vcc switch.
 	error = Gpio_SetPinFunction(VCC_SW_GPIO, gGpioNormalMode_c);
 	error = Gpio_SetPinDir(VCC_SW_GPIO, gGpioDirOut_c);
+	error = Gpio_SetPinFunction(gGpioPin24_c, gGpioNormalMode_c);\
+
+	// Turn the bus and the Vcc off.
+	BUS_SW_OFF;
 	VCC_SW_OFF;
+
+	// Turn the bus and the Vcc on.
+	BUS_SW_ON;
 	VCC_SW_ON;
 
 	crmCopCntl_t copCntl;

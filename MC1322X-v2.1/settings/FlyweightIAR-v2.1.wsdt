@@ -25,7 +25,7 @@
     <Windows>
       
       
-    <Wnd0>
+    <Wnd2>
         <Tabs>
           <Tab>
             <Identity>TabID-2759-18239</Identity>
@@ -37,7 +37,7 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-1190-18269</Identity>
@@ -47,20 +47,20 @@
           </Tab>
         <Tab><Identity>TabID-13851-18658</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1></Windows>
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>52</YPos><SelStart>1818</SelStart><SelEnd>1818</SelEnd></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename><XPos>0</XPos><YPos>63</YPos><SelStart>2360</SelStart><SelEnd>2360</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>283</YPos><SelStart>9917</SelStart><SelEnd>9917</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename><XPos>0</XPos><YPos>58</YPos><SelStart>2377</SelStart><SelEnd>2377</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>695</YPos><SelStart>25804</SelStart><SelEnd>25804</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\pfcSPITask.c</Filename><XPos>0</XPos><YPos>9</YPos><SelStart>652</SelStart><SelEnd>652</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\INC\DLib_Product_string.h</Filename><XPos>0</XPos><YPos>36</YPos><SelStart>1347</SelStart><SelEnd>1347</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>52</YPos><SelStart>1818</SelStart><SelEnd>1818</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename><XPos>0</XPos><YPos>80</YPos><SelStart>2698</SelStart><SelEnd>2698</SelEnd></Tab><ActiveTab>1</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>283</YPos><SelStart>9917</SelStart><SelEnd>9917</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename><XPos>0</XPos><YPos>58</YPos><SelStart>2377</SelStart><SelEnd>2377</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>690</YPos><SelStart>25500</SelStart><SelEnd>25500</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\pfcSPITask.c</Filename><XPos>0</XPos><YPos>9</YPos><SelStart>652</SelStart><SelEnd>652</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\INC\DLib_Product_string.h</Filename><XPos>0</XPos><YPos>36</YPos><SelStart>1347</SelStart><SelEnd>1347</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\port.c</Filename><XPos>0</XPos><YPos>333</YPos><SelStart>12934</SelStart><SelEnd>12934</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00abb1a8><key>iaridepm.enu1</key></Toolbar-00abb1a8></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>702</Bottom><Right>332</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>260938</sizeVertCX><sizeVertCY>745763</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>211864</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00abb118><key>iaridepm.enu1</key></Toolbar-00abb118></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>702</Bottom><Right>332</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>260938</sizeVertCX><sizeVertCY>745763</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>211864</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 
