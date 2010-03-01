@@ -24,6 +24,8 @@
 #define SD_BLOCK_SHIFT			(9)
 #define SD_WAIT_CYCLES 			10
 
+#define VCC_SW_GPIO				gGpioPin29_c
+#define BUS_SW_GPIO				gGpioPin36_c
 #define SPI_MOSI				gGpioPin6_c
 #define SPI_MISO				gGpioPin5_c
 #define SPI_CLK					gGpioPin7_c
@@ -33,11 +35,13 @@
 #define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
 #define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
-#define BUS_SW_GPIO				gGpioPin36_c
-#define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); gSDCardBusConnected = TRUE; Led1Off();
-#define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); gSDCardBusConnected = FALSE; Led1On();
+#define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
+								gSDCardBusConnected = TRUE; \
+								Led1Off();
 
-#define VCC_SW_GPIO				gGpioPin29_c
+#define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
+								gSDCardBusConnected = FALSE; \
+								Led1On();
 
 #define VCC_SW_ON				Gpio_SetPinDir(gGpioPin24_c, gGpioDirIn_c); \
 								Gpio_EnPinPullup(gGpioPin24_c, TRUE); \
@@ -127,8 +131,8 @@ typedef union {
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void enableSPI(void);
-void disableSPI(void);
+gwBoolean enableSPI(void);
+gwBoolean disableSPI(void);
 void spiInterrupt(void);
 void clockDelay(gwUINT8 inFrames);
 

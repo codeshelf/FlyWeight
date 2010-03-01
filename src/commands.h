@@ -71,6 +71,13 @@ typedef enum {
 	eHooBeeBehaviorSolenoidPull = 3
 } EHooBeeBehaviorType;
 
+typedef enum {
+	eAckStateOk = 0,
+	eAckStateNotNeeded,
+	eAckStateFailed
+} EControlCmdAckStateType;
+
+
 typedef gwUINT8 ChannelNumberType;
 
 // --------------------------------------------------------------------------
@@ -123,10 +130,10 @@ void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 
-void processMotorControlSubCommand(BufferCntType inRXBufferNum);
-void processHooBeeSubCommand(BufferCntType inRXBufferNum);
-void processSDCardControlSubCommand(BufferCntType inRXBufferNum);
-void processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processSDCardControlSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);

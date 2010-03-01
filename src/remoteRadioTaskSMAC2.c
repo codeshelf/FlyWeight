@@ -198,12 +198,13 @@ void radioReceiveTask(void *pvParameters) {
 
 void processRxPacket(BufferCntType inRxBufferNum) {
 
-	ECommandGroupIDType	cmdID;
-	NetAddrType			cmdDstAddr;
-	NetworkIDType		networkID;
-	ECmdAssocType		assocSubCmd;
-	AckIDType			ackId;
-	gwUINT8				ccrHolder;
+	ECommandGroupIDType		cmdID;
+	NetAddrType				cmdDstAddr;
+	NetworkIDType			networkID;
+	ECmdAssocType			assocSubCmd;
+	AckIDType				ackId;
+	gwUINT8					ccrHolder;
+	EControlCmdAckStateType	ackState;
 
 	// The last read got a packet, so we're active.
 	gShouldSleep = FALSE;
@@ -267,56 +268,60 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			case eCommandControl:
 				// If the packet requires an ACK then send it now.
 				ackId = getAckId(inRxBufferNum);
-				if (ackId != 0) {
+				ackState = eAckStateNotNeeded;
+
+				// Make sure that there is a valid sub-command in the control command.
+				switch (getControlSubCommand(inRxBufferNum)) {
+					case eControlSubCmdEndpointAdj:
+						break;
+
+#if 0
+					case eControlSubCmdMotor:
+						processMotorControlSubCommand(inRxBufferNum);
+						break;
+
+					case eControlSubCmdHooBee:
+						ackState = processHooBeeSubCommand(inRxBufferNum);
+						break;
+
+					case eCommandAudio:
+						// Audio commands are handled by an interrupt routine.
+						break;
+#endif
+
+					case eControlSubCmdSDCardUpdate:
+						// By processing the SDCard updates in the critical region,
+						// it prevents the gateway from sending another update until this
+						// one completes, because we wont send an ACK until it completes.
+						GW_ENTER_CRITICAL(ccrHolder);
+						ackState = processSDCardUpdateSubCommand(inRxBufferNum);
+						GW_EXIT_CRITICAL(ccrHolder);
+						break;
+
+					case eControlSubCmdSDCardControl:
+						// By processing the SDCard updates in the critical region,
+						// it prevents the gateway from sending another update until this
+						// one completes, because we wont send an ACK until it completes.
+						GW_ENTER_CRITICAL(ccrHolder);
+						ackState = processSDCardActionSubCommand(inRxBufferNum);
+						GW_EXIT_CRITICAL(ccrHolder);
+						break;
+
+					default:
+						// Bogus command.
+						// Immediately free this command buffer since we'll never do anything with it.
+						//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
+						break;
+
+				}
+
+				// Send an ACK if necessary.
+				if ((ackState == eAckStateOk) && (ackId != 0)) {
 					createAckCommand(gTXCurBufferNum, ackId);
 					if (transmitPacket(gTXCurBufferNum)){
 					}
 				}
 
-				// Make sure that there is a valid sub-command in the control command.
-				switch (getControlSubCommand(inRxBufferNum)) {
-				case eControlSubCmdEndpointAdj:
-					break;
-
-#if 0
-				case eControlSubCmdMotor:
-					processMotorControlSubCommand(inRxBufferNum);
-					break;
-
-				case eControlSubCmdHooBee:
-					processHooBeeSubCommand(inRxBufferNum);
-					break;
-
-				case eCommandAudio:
-					// Audio commands are handled by an interrupt routine.
-					break;
-#endif
-
-				case eControlSubCmdSDCardUpdate:
-					// By processing the SDCard updates in the critical region,
-					// it prevents the gateway from sending another update until this
-					// one completes, because we wont send an ACK until it completes.
-					GW_ENTER_CRITICAL(ccrHolder);
-					processSDCardUpdateSubCommand(inRxBufferNum);
-					GW_EXIT_CRITICAL(ccrHolder);
-					break;
-
-				case eControlSubCmdSDCardControl:
-					// By processing the SDCard updates in the critical region,
-					// it prevents the gateway from sending another update until this
-					// one completes, because we wont send an ACK until it completes.
-					GW_ENTER_CRITICAL(ccrHolder);
-					processSDCardActionSubCommand(inRxBufferNum);
-					GW_EXIT_CRITICAL(ccrHolder);
-					break;
-
-				default:
-					// Bogus command.
-					// Immediately free this command buffer since we'll never do anything with it.
-					//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
-					break;
-
-				}
 			}
 		}
 	}

@@ -17,14 +17,21 @@ crcType gCRC16;
  *
  */
 
-void enableSPI() {
+gwBoolean enableSPI() {
 
+	gwBoolean result = TRUE;
+
+	gwUINT8 attempts = 0;
 	spiErr_t spiErr;
 	GpioErr_t gpioErr;
 	spiConfig_t spiConfig;
 	gwUINT32 rcvByte = 0;
 	SDArgumentType cmdArg;
-	ESDCardResponse result;
+	ESDCardResponse spiResult;
+
+	// Enable the DAT0 pullup.
+	gpioErr = Gpio_EnPinPullup(SD_DAT0_PULLUP, TRUE);
+	gpioErr = Gpio_SelectPinPullup(SD_DAT0_PULLUP, gGpioPinPullup_c);
 
 	// Setup the function enable pins for SPI.
 	gpioErr = Gpio_SetPinFunction(SPI_MOSI, gGpioAlternate1Mode_c);
@@ -68,35 +75,48 @@ void enableSPI() {
 	// Send CMD0 to send the card into SPI mode.
 	// (CS will be low due to SPI_SS control from the MCU, so the SDCard will go into SPI mode.)
 	cmdArg.word = 0;
-	result = sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseIdle, TRUE);
-	if (result != eResponseOK) {
+	spiResult = sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseIdle, TRUE);
+	if (spiResult != eResponseOK) {
 		// Sometimes the card doesn't seem to be in the idle state after CMD0 - instead it's ready.
 		// Then sometimes is takes a while to get an idle response.
 		// This is a way to deal with both cases.
 		gwBoolean isStarted = FALSE;
+		attempts = 0;
 		do {
 			if (sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseIdle, TRUE) == eResponseOK) {
 				isStarted = TRUE;
 //			} else if (sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseOK, TRUE) == eResponseOK) {
 //				isStarted = TRUE;
 			}
+			// If we can't get it going in 25 tries, it's never going to happen.
+//			if (attempts++ == 25) {
+//				result = disableSPI();
+//				return FALSE;
+//			}
 		} while (!isStarted);
 	}
 
+	attempts = 0;
 	cmdArg.word = 0;
 	do {
-		result = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
-		result = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
-	} while (result != eResponseOK);
+		spiResult = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
+		spiResult = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
+		// If we can't get it going in 50 tries, it's never going to happen.
+//		if (attempts++ == 250) {
+//			result = disableSPI();
+//			return FALSE;
+//		}
+	} while (spiResult != eResponseOK);
 
 	cmdArg.word = SD_BLOCK_SIZE;
-	result = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
+	spiResult = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
 
 	// Set the SPI speed to 3MHz.
 	spiErr = SPI_GetConfig(&spiConfig);
 	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
 	spiErr = SPI_SetConfig(&spiConfig);
 
+	return result;
 }
 
 // --------------------------------------------------------------------------
@@ -104,7 +124,9 @@ void enableSPI() {
  *
  */
 
-void disableSPI() {
+gwBoolean disableSPI() {
+
+	gwBoolean result = FALSE;
 
 	spiErr_t spiErr;
 	GpioErr_t gpioErr;
@@ -137,6 +159,7 @@ void disableSPI() {
 	// Disable the pull-up on the DAT0 line.
 	gpioErr = Gpio_EnPinPullup(SD_DAT0_PULLUP, FALSE);
 
+	return result;
 }
 
 // --------------------------------------------------------------------------
