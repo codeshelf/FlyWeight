@@ -85,13 +85,13 @@ void vMain( void ) {
 
 	// Setup the Bus switch.
 	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
-	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
+	error = Gpio_SetPinFunction(BUS_CARD_DETECT_GPIO, gGpioNormalMode_c);
 	error = Gpio_SetPinDir(BUS_SW_GPIO, gGpioDirOut_c);
 
 	// Setup the Vcc switch.
 	error = Gpio_SetPinFunction(VCC_SW_GPIO, gGpioNormalMode_c);
 	error = Gpio_SetPinDir(VCC_SW_GPIO, gGpioDirOut_c);
-	error = Gpio_SetPinFunction(gGpioPin24_c, gGpioNormalMode_c);\
+	error = Gpio_SetPinFunction(VCC_HELPER_GPIO, gGpioNormalMode_c);\
 
 	// Turn the bus and the Vcc off.
 	BUS_SW_OFF;

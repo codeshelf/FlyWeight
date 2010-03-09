@@ -25,7 +25,9 @@
 #define SD_WAIT_CYCLES 			10
 
 #define VCC_SW_GPIO				gGpioPin29_c
+#define VCC_HELPER_GPIO			gGpioPin24_c
 #define BUS_SW_GPIO				gGpioPin36_c
+#define BUS_CARD_DETECT_GPIO	gGpioPin14_c
 #define SPI_MOSI				gGpioPin6_c
 #define SPI_MISO				gGpioPin5_c
 #define SPI_CLK					gGpioPin7_c
@@ -35,21 +37,24 @@
 #define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
 #define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
-#define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
+#define BUS_SW_ON				Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirOut_c); \
+								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateLow_c); \
+								Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardBusConnected = TRUE; \
 								Led1Off();
 
-#define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
+#define BUS_SW_OFF				Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirIn_c); \
+								Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardBusConnected = FALSE; \
 								Led1On();
 
-#define VCC_SW_ON				Gpio_SetPinDir(gGpioPin24_c, gGpioDirIn_c); \
-								Gpio_EnPinPullup(gGpioPin24_c, TRUE); \
+#define VCC_SW_ON				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirIn_c); \
+								Gpio_EnPinPullup(VCC_HELPER_GPIO, TRUE); \
 								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardVccConnected = TRUE;
 
-#define VCC_SW_OFF				Gpio_SetPinDir(gGpioPin24_c, gGpioDirOut_c);\
-								Gpio_SetPinData(gGpioPin24_c, gGpioPinStateLow_c); \
+#define VCC_SW_OFF				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirOut_c);\
+								Gpio_SetPinData(VCC_HELPER_GPIO, gGpioPinStateLow_c); \
 								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardVccConnected = FALSE;
 
