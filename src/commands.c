@@ -716,6 +716,7 @@ EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNu
 
 			BUS_SW_ON;
 			VCC_SW_ON;
+			CARD_INSERTED;
 
 			Led1Off();
 			Led2Off();
@@ -724,6 +725,7 @@ EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNu
 
 		case eSDCardActionSpiProtocol:
 			// Disconnect the SDCard from the SDCard bus, set the DAT0 pull-up, and call the SPI init routine.
+			CARD_UNINSERTED;
 			BUS_SW_OFF;
 			if (enableSPI()) {
 				//result = eAckStateFailed;

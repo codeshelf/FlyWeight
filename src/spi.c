@@ -21,11 +21,12 @@ gwBoolean enableSPI() {
 
 	gwBoolean result = TRUE;
 
-	gwUINT8 attempts = 0;
+	gwUINT8 attempts;
+	gwBoolean isHCSCard = FALSE;
 	spiErr_t spiErr;
 	GpioErr_t gpioErr;
 	spiConfig_t spiConfig;
-	gwUINT32 rcvByte = 0;
+	gwUINT8 rcvByte = 0;
 	SDArgumentType cmdArg;
 	ESDCardResponse spiResult;
 
@@ -55,9 +56,9 @@ gwBoolean enableSPI() {
 	spiConfig.ClkCtrl.Bits.DataCount = 8;
 	spiConfig.Setup.Word = 0;
 	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv128;
-	spiConfig.Setup.Bits.ClockPhase = ConfigClockPhase2ndEdge;
-	spiConfig.Setup.Bits.ClockPol = ConfigClockPolNegative;
-	spiConfig.Setup.Bits.MisoPhase = ConfigMisoPhaseSameEdge;
+	spiConfig.Setup.Bits.ClockPol = ConfigClockPolPositive;
+	spiConfig.Setup.Bits.ClockPhase = ConfigClockPhase1stEdge;
+	spiConfig.Setup.Bits.MisoPhase = ConfigMisoPhaseOppositeEdge;
 	spiConfig.Setup.Bits.Mode = ConfigModeMaster;
 	spiConfig.Setup.Bits.SdoInactive = ConfigSdoInactiveH;
 	spiConfig.Setup.Bits.SsDelay = ConfigSsDelay1Clk;
@@ -96,9 +97,29 @@ gwBoolean enableSPI() {
 		} while (!isStarted);
 	}
 
+	// First check if this is a high-capacity card by sending CMD8.
+	cmdArg.word = 0x000001aa;
+	if (sendCommandWithArg(eSDCardCmd8, cmdArg, eResponseIdle, TRUE) == eResponseOK) {
+		// A high capacity card.
+		isHCSCard = TRUE;
+		// Now we need to read the 4 bytes of the response.
+		readByte(&rcvByte);
+		readByte(&rcvByte);
+		readByte(&rcvByte);
+		readByte(&rcvByte);
+	} else {
+		isHCSCard = FALSE;
+	}
+
+	// Now send the ACDM41 idle-startup test command.
 	attempts = 0;
 	cmdArg.word = 0;
+	if (isHCSCard) {
+		// Set the HCS bit of the ACMD41 argument.
+		cmdArg.word = 0x40000000;
+	}
 	do {
+		attempts++;
 		spiResult = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
 		spiResult = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
 		// If we can't get it going in 50 tries, it's never going to happen.
@@ -106,7 +127,7 @@ gwBoolean enableSPI() {
 //			result = disableSPI();
 //			return FALSE;
 //		}
-	} while (spiResult != eResponseOK);
+	} while ((spiResult != eResponseOK) /* && (attempts < 250) */);
 
 	cmdArg.word = SD_BLOCK_SIZE;
 	spiResult = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
@@ -182,6 +203,11 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 		SPI_CS_ON;
 	}
 
+	// There's weirdness with the FSL SPI's clk implementation, so we have to space out the commands.
+	if (writeByte(0xff) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
+
 	// Send the command byte.
 	if (writeByte(inSDCommand | 0x40) != gSpiErrNoError_c) {
 		return eResponseSPIError;
@@ -220,6 +246,11 @@ ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwB
 
 	if (inControlCS) {
 		SPI_CS_ON;
+	}
+
+	// There's weirdness with the FSL SPI's clk implementation, so we have to space out the commands.
+	if (writeByte(0xff) != gSpiErrNoError_c) {
+		return eResponseSPIError;
 	}
 
 	// Send the command byte.

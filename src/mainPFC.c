@@ -94,12 +94,15 @@ void vMain( void ) {
 	error = Gpio_SetPinFunction(VCC_HELPER_GPIO, gGpioNormalMode_c);\
 
 	// Turn the bus and the Vcc off.
-	BUS_SW_OFF;
-	VCC_SW_OFF;
+//	BUS_SW_OFF;
+//	VCC_SW_OFF;
 
 	// Turn the bus and the Vcc on.
+	CARD_UNINSERTED;
 	BUS_SW_ON;
 	VCC_SW_ON;
+	vTaskDelay(500);
+	CARD_INSERTED;
 
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = FALSE;

@@ -37,14 +37,11 @@
 #define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
 #define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
-#define BUS_SW_ON				Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirOut_c); \
-								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateLow_c); \
-								Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
+#define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardBusConnected = TRUE; \
 								Led1Off();
 
-#define BUS_SW_OFF				Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirIn_c); \
-								Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
+#define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardBusConnected = FALSE; \
 								Led1On();
 
@@ -58,6 +55,10 @@
 								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardVccConnected = FALSE;
 
+#define CARD_INSERTED			Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirOut_c); \
+								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateLow_c); \
+
+#define CARD_UNINSERTED			Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirIn_c);
 
 typedef union {
 	gwUINT16 value;
@@ -77,6 +78,7 @@ typedef enum {
 	eSDCardCmd5 = 5,
 	eSDCardCmd6 = 6,
 	eSDCardCmd7 = 7,
+	eSDCardCmd8 = 8,
 	eSDCardCmd9 = 9,
 	eSDCardCmd13 = 13,
 	eSDCardCmd16 = 16,
