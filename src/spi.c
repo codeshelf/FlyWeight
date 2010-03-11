@@ -226,7 +226,7 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 	}
 
 	// Check the response.
-	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
+	if (checkResponse(inExpectedResponse) != eResponseOK) {
 		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
@@ -266,7 +266,7 @@ ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwB
 	}
 
 	// Check the response.
-	if (checkResponse(inExpectedResponse, SD_WAIT_CYCLES) != eResponseOK) {
+	if (checkResponse(inExpectedResponse) != eResponseOK) {
 		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
@@ -296,7 +296,7 @@ ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 	}
 
 	// Check the response.
-	if (checkResponse(0xfe, 20) != eResponseOK) {
+	if (checkResponse(0xfe) != eResponseOK) {
 		SPI_CS_OFF;
 		return eResponseInvalidError;
 	}
@@ -426,20 +426,59 @@ ESDCardResponse writePartialBlockEnd() {
 
 // --------------------------------------------------------------------------
 
-ESDCardResponse checkResponse(gwUINT8 inExpectedResponse, gwUINT8 inCheckCycles) {
-	gwUINT8 rcvByte = 0;
+ESDCardResponse checkResponse(gwUINT8 inExpectedResponse) {
+	gwUINT8 respByte = 0;
+	gwUINT8 extraByte = 0;
 	gwUINT16 counter;
+	gwBoolean resultMatchesExpected = FALSE;
 
 	// Get the R1 response, and make sure it matches what we expected.
 	counter = 0;
 	do {
-		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		if (readByte(&respByte) != gSpiErrNoError_c) {
 			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
-	} while ((rcvByte != inExpectedResponse) && (counter++ < inCheckCycles));
 
-	if (counter < inCheckCycles)
+		// If we've got something other than 0xff then we've seen the result's start bit.
+		// The result may not be byte-aligned, so we may have to dig it out of two byte reads.
+		if (respByte != 0xff) {
+
+			// Read the next byte in case the result is not byte-aligned
+			if (readByte(&extraByte) != gSpiErrNoError_c) {
+				SPI_CS_OFF;
+				return eResponseSPIError;
+			}
+
+			if ((respByte | 0x7f) == 0x7f) {
+				// Don't need to do anything, the result is byte aligned.
+			} else if ((respByte | 0xbf) == 0xbf) {
+				respByte = (respByte << 1) + (extraByte >> 7);
+			} else if ((respByte | 0xdf) == 0xdf) {
+				respByte = (respByte << 2) + (extraByte >> 6);
+			} else if ((respByte | 0xef) == 0xef) {
+				respByte = (respByte << 3) + (extraByte >> 5);
+			} else if ((respByte | 0xf7) == 0xf7) {
+				respByte = (respByte << 4) + (extraByte >> 4);
+			} else if ((respByte | 0xfb) == 0xfb) {
+				respByte = (respByte << 5) + (extraByte >> 3);
+			} else if ((respByte | 0xfd) == 0xfd) {
+				respByte = (respByte << 6) + (extraByte >> 2);
+			} else if ((respByte | 0xfe) == 0xfe) {
+				respByte = (respByte << 7) + (extraByte >> 1);
+			}
+
+			// We saw a start bit, but the result didn't match.
+			if (respByte == inExpectedResponse) {
+				resultMatchesExpected = TRUE;
+			} else {
+				SPI_CS_OFF;
+				return eResponseInvalidError;
+			}
+		}
+	} while ((!resultMatchesExpected) && (counter++ < SD_WAIT_CYCLES));
+
+	if (counter < SD_WAIT_CYCLES)
 		return eResponseOK;
 	else
 		return eResponseInvalidError;

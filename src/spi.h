@@ -156,7 +156,7 @@ ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber);
 ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes);
 ESDCardResponse writePartialBlockEnd();
 
-ESDCardResponse checkResponse(gwUINT8 inExpectedResponse, gwUINT8 inCheckCycles);
+ESDCardResponse checkResponse(gwUINT8 inExpectedResponse);
 crcType crc16(crcType inOldCRC, gwUINT8 inByte);
 
 #endif // SPI_H

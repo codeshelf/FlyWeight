@@ -26,6 +26,7 @@
     #include "MacaInterrupt.h"
     #include "TransceiverConfigMngmnt.h"
 	#include "Leds.h"
+	#include "Delay.h"
 #elif
 	#include "CPU.h"
 	#include "keyboardTask.h"
@@ -101,7 +102,7 @@ void vMain( void ) {
 	CARD_UNINSERTED;
 	BUS_SW_ON;
 	VCC_SW_ON;
-	vTaskDelay(500);
+	DelayMs(500);
 	CARD_INSERTED;
 
 	crmCopCntl_t copCntl;
