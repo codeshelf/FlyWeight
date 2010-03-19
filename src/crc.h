@@ -28,7 +28,7 @@ static inline gwUINT8 crc_init(void)
 	return 0;
 }
 
-static inline gwUINT8 crc_next(gwUINT8 crc, gwUINT8 data)
+/*static inline */ gwUINT8 crc_next(gwUINT8 crc, gwUINT8 data)
 {
 	return crc_table[crc ^ data];
 }

@@ -707,16 +707,20 @@ EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNu
 			// (It will be in the SPI mode, and can only recover via power cycle.)
 			VCC_SW_OFF;
 
+			// Wait long enough for the capacitive charge in the SDCard to disapate.
+			vTaskDelay(2000);
+
+			VCC_SW_ON;
+			CARD_INSERTED;
+
+			// Now reinit the SDCardBus to the idle state.
+			enableSDCardBus();
+
 			if (!disableSPI()) {
 				result = eAckStateFailed;
 			}
 
-			// Wait long enough for the capacitive charge in the SDCard to disapate.
-			vTaskDelay(2000);
-
 			BUS_SW_ON;
-			VCC_SW_ON;
-			CARD_INSERTED;
 
 			Led1Off();
 			Led2Off();
@@ -725,7 +729,7 @@ EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNu
 
 		case eSDCardActionSpiProtocol:
 			// Disconnect the SDCard from the SDCard bus, set the DAT0 pull-up, and call the SPI init routine.
-			CARD_UNINSERTED;
+			//CARD_UNINSERTED;
 			BUS_SW_OFF;
 			if (enableSPI()) {
 				//result = eAckStateFailed;

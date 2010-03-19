@@ -22,7 +22,8 @@
 #define SD_BLOCK_SIZE			512
 //#define SD_BLOCK_SIZE			(0x00000200)
 #define SD_BLOCK_SHIFT			(9)
-#define SD_WAIT_CYCLES 			10
+#define SPI_WAIT_CYCLES 		10
+#define SD_WAIT_CYCLES 			100
 
 #define VCC_SW_GPIO				gGpioPin29_c
 #define VCC_HELPER_GPIO			gGpioPin24_c
@@ -134,6 +135,7 @@ typedef union {
 	} bytes ;
 } AddressType;
 
+typedef gwUINT8 ResponseArrayType;
 
 // --------------------------------------------------------------------------
 // Functions prototypes.
@@ -157,6 +159,11 @@ ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes);
 ESDCardResponse writePartialBlockEnd();
 
 ESDCardResponse checkResponse(gwUINT8 inExpectedResponse);
+
 crcType crc16(crcType inOldCRC, gwUINT8 inByte);
+
+ESDCardResponse sendSDCardBusCommand(gwUINT8 inSDCommand, SDArgumentType inArgument);
+ESDCardResponse getSDCardBusResponse(ResponseArrayType *outResponse, gwUINT8 inByteCount);
+gwBoolean enableSDCardBus(void);
 
 #endif // SPI_H

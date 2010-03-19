@@ -10,8 +10,6 @@
 #include "spi.h"
 #include "GPIO_Interface.h"
 
-crcType gCRC16;
-
 // --------------------------------------------------------------------------
 /*
  *
@@ -197,7 +195,6 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
         gwBoolean inControlCS) {
 	gwUINT8 rcvByte = 0;
 	gwUINT16 counter;
-	ESDCardResponse result;
 
 	if (inControlCS) {
 		SPI_CS_ON;
@@ -216,7 +213,7 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 	// Send the arguments.
 	for (counter = 4; counter > 0; counter--) {
 		if (writeByte(inArgument.bytes[counter - 1]) != gSpiErrNoError_c) {
-			result = eResponseSPIError;
+			return eResponseSPIError;
 		}
 	}
 
@@ -242,7 +239,6 @@ ESDCardResponse sendCommandWithArg(gwUINT8 inSDCommand, SDArgumentType inArgumen
 
 ESDCardResponse sendCommand(gwUINT8 inSDCommand, gwUINT8 inExpectedResponse, gwBoolean inControlCS) {
 	gwUINT8 rcvByte = 0;
-	ESDCardResponse result;
 
 	if (inControlCS) {
 		SPI_CS_ON;
@@ -394,7 +390,7 @@ ESDCardResponse writePartialBlockEnd() {
 	}
 
 	// Get the data write response.
-	counter = SD_WAIT_CYCLES;
+	counter = SPI_WAIT_CYCLES;
 	do {
 		if (readByte(&rcvByte) != gSpiErrNoError_c) {
 			SPI_CS_OFF;
@@ -476,14 +472,13 @@ ESDCardResponse checkResponse(gwUINT8 inExpectedResponse) {
 				return eResponseInvalidError;
 			}
 		}
-	} while ((!resultMatchesExpected) && (counter++ < SD_WAIT_CYCLES));
+	} while ((!resultMatchesExpected) && (counter++ < SPI_WAIT_CYCLES));
 
-	if (counter < SD_WAIT_CYCLES)
+	if (counter < SPI_WAIT_CYCLES)
 		return eResponseOK;
 	else
 		return eResponseInvalidError;
 }
-
 // --------------------------------------------------------------------------
 
 spiErr_t readByte(gwUINT8* inByte) {
@@ -535,4 +530,158 @@ crcType crc16(crcType inOldCRC, gwUINT8 inByte) {
 	crc.value &= 0xffff;
 
 	return crc;
+}
+
+// --------------------------------------------------------------------------
+
+gwBoolean enableSDCardBus(void) {
+
+	spiErr_t spiErr;
+	spiConfig_t spiConfig;
+	//ESDCardResponse result;
+	ResponseArrayType r2[17];
+	ResponseArrayType r3[6];
+	ResponseArrayType r6[6];
+	SDArgumentType cmdArg;
+
+	// SPI 3-wire mode simulates the SDCard Bus 2-way CMD line.
+	spiErr = SPI_GetConfig(&spiConfig);
+	spiConfig.Setup.Bits.SdoInactive = ConfigSdoInactiveZ;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv128;
+	spiConfig.Setup.Bits.S3Wire = ConfigS3WireActive;
+	spiErr = SPI_SetConfig(&spiConfig);
+
+	// 80 clock cycles to get the card ready.
+	clockDelay(10);
+
+	// CMD0 to reset the card.
+	cmdArg.word = 0;
+	sendSDCardBusCommand(eSDCardCmd0, cmdArg);
+
+	// Loop until the card clears the busy bit.
+	gwUINT8 counter = 0;
+//	do {
+		cmdArg.word = 0;
+		sendSDCardBusCommand(eSDCardCmd55, cmdArg);
+		getSDCardBusResponse(r3, 6);
+
+		// Arg is "not busy, 3.3V-3.6V"
+		cmdArg.word = 0x00f00000;
+		sendSDCardBusCommand(eSDCardCmd41, cmdArg);
+		getSDCardBusResponse(r3, 6);
+
+//	} while (counter++ < 50); //((r3[1] & 0x80) == 0x80);
+
+	sendSDCardBusCommand(eSDCardCmd2, cmdArg);
+	getSDCardBusResponse(r2, 17);
+
+	sendSDCardBusCommand(eSDCardCmd3, cmdArg);
+	getSDCardBusResponse(r6, 6);
+
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse sendSDCardBusCommand(gwUINT8 inSDCommand, SDArgumentType inArgument) {
+	gwUINT8 rcvByte = 0;
+	gwUINT8 counter;
+	gwUINT8 crc7;
+
+	// There's weirdness with the FSL SPI's clk implementation, so we have to space out the commands.
+	if (writeByte(0xff) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
+
+	// Send the command byte.
+	if (writeByte(inSDCommand | 0x40) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
+
+	// Send the arguments.
+	for (counter = 4; counter > 0; counter--) {
+		if (writeByte(inArgument.bytes[counter - 1]) != gSpiErrNoError_c) {
+			return eResponseSPIError;
+		}
+	}
+
+	// Send the CRC.
+	crc7 = crc_next(crc7, inSDCommand | 0x40);
+	crc7 = crc_next(crc7, inArgument.bytes[3]);
+	crc7 = crc_next(crc7, inArgument.bytes[2]);
+	crc7 = crc_next(crc7, inArgument.bytes[1]);
+	crc7 = crc_next(crc7, inArgument.bytes[0]);
+	crc7 += 1;
+
+	if (writeByte(crc7) != gSpiErrNoError_c) {
+		return eResponseSPIError;
+	}
+
+	return eResponseOK;
+}
+
+// --------------------------------------------------------------------------
+
+ESDCardResponse getSDCardBusResponse(ResponseArrayType *outResponse, gwUINT8 inByteCount) {
+	gwUINT8 respPos;
+	gwUINT8 curByte;
+	gwUINT8 nextByte;
+	gwUINT8 offset;
+	gwUINT16 counter;
+
+	// Blank out all of the results.
+	for (int i = 0; i < inByteCount; i++) {
+		outResponse[i] = 0xff;
+	}
+
+	// First find the start bit.
+	counter = 0;
+	do {
+
+		if (readByte(&curByte) != gSpiErrNoError_c) {
+			return eResponseSPIError;
+		}
+
+		if (counter++ > SD_WAIT_CYCLES) {
+			return eResponseInvalidError;
+		}
+
+	} while (curByte == 0xff);
+
+	// Compute the offset of the start bit in the first byte we read.
+	if ((curByte | 0x7f) == 0x7f) {
+		offset = 0;
+	} else if ((curByte | 0xbf) == 0xbf) {
+		offset = 1;
+	} else if ((curByte | 0xdf) == 0xdf) {
+		offset = 2;
+	} else if ((curByte | 0xef) == 0xef) {
+		offset = 3;
+	} else if ((curByte | 0xf7) == 0xf7) {
+		offset = 4;
+	} else if ((curByte | 0xfb) == 0xfb) {
+		offset = 5;
+	} else if ((curByte | 0xfd) == 0xfd) {
+		offset = 6;
+	} else if ((curByte | 0xfe) == 0xfe) {
+		offset = 7;
+	}
+
+	// Now that we know the offset of the start bit, read in the entire result.
+	respPos = 0;
+	do {
+
+		// Read the next byte in the response.
+		if (readByte(&nextByte) != gSpiErrNoError_c) {
+			return eResponseSPIError;
+		}
+
+		outResponse[respPos++] = (curByte << offset) + (nextByte >> (8 - offset));
+		curByte = nextByte;
+
+	} while ((counter++ < SPI_WAIT_CYCLES) && (respPos < inByteCount));
+
+	if (counter < SD_WAIT_CYCLES)
+		return eResponseOK;
+	else
+		return eResponseInvalidError;
 }
