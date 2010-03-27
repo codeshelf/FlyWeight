@@ -558,19 +558,23 @@ gwBoolean enableSDCardBus(void) {
 	cmdArg.word = 0;
 	sendSDCardBusCommand(eSDCardCmd0, cmdArg);
 
+	cmdArg.word = 0x000001aa;
+	sendSDCardBusCommand(eSDCardCmd8, cmdArg);
+	getSDCardBusResponse(r3, 6);
+
 	// Loop until the card clears the busy bit.
 	gwUINT8 counter = 0;
-//	do {
+	do {
 		cmdArg.word = 0;
 		sendSDCardBusCommand(eSDCardCmd55, cmdArg);
 		getSDCardBusResponse(r3, 6);
 
-		// Arg is "not busy, 3.3V-3.6V"
-		cmdArg.word = 0x00f00000;
+		// Arg is "not busy, 2.7V-3.6V"
+		cmdArg.word = 0x00ff8000;
 		sendSDCardBusCommand(eSDCardCmd41, cmdArg);
 		getSDCardBusResponse(r3, 6);
 
-//	} while (counter++ < 50); //((r3[1] & 0x80) == 0x80);
+	} while (counter++ < 25); //((r3[1] & 0x80) == 0x80);
 
 	sendSDCardBusCommand(eSDCardCmd2, cmdArg);
 	getSDCardBusResponse(r2, 17);
@@ -578,6 +582,19 @@ gwBoolean enableSDCardBus(void) {
 	sendSDCardBusCommand(eSDCardCmd3, cmdArg);
 	getSDCardBusResponse(r6, 6);
 
+	// Wide bus.
+	cmdArg.word = 0;
+	sendSDCardBusCommand(eSDCardCmd7, cmdArg);
+	getSDCardBusResponse(r3, 6);
+
+	cmdArg.word = 0;
+	sendSDCardBusCommand(eSDCardCmd55, cmdArg);
+	getSDCardBusResponse(r3, 6);
+
+	// 10 = 4-bit bus.
+	cmdArg.word = 0x00000002;
+	sendSDCardBusCommand(eSDCardCmd6, cmdArg);
+	getSDCardBusResponse(r3, 6);
 }
 
 // --------------------------------------------------------------------------
@@ -605,6 +622,7 @@ ESDCardResponse sendSDCardBusCommand(gwUINT8 inSDCommand, SDArgumentType inArgum
 	}
 
 	// Send the CRC.
+	crc7 = 0;
 	crc7 = crc_next(crc7, inSDCommand | 0x40);
 	crc7 = crc_next(crc7, inArgument.bytes[3]);
 	crc7 = crc_next(crc7, inArgument.bytes[2]);

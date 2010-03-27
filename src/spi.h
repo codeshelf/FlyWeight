@@ -23,10 +23,10 @@
 //#define SD_BLOCK_SIZE			(0x00000200)
 #define SD_BLOCK_SHIFT			(9)
 #define SPI_WAIT_CYCLES 		10
-#define SD_WAIT_CYCLES 			100
+#define SD_WAIT_CYCLES 			30
 
 #define VCC_SW_GPIO				gGpioPin29_c
-#define VCC_HELPER_GPIO			gGpioPin24_c
+#define VCC_HELPER_GPIO			gGpioPin25_c
 #define BUS_SW_GPIO				gGpioPin36_c
 #define BUS_CARD_DETECT_GPIO	gGpioPin14_c
 #define SPI_MOSI				gGpioPin6_c
@@ -48,10 +48,14 @@
 
 #define VCC_SW_ON				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirIn_c); \
 								Gpio_EnPinPullup(VCC_HELPER_GPIO, TRUE); \
+								Gpio_SelectPinPullup(VCC_HELPER_GPIO, gGpioPinPullup_c); \
 								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardVccConnected = TRUE;
 
-#define VCC_SW_OFF				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirOut_c);\
+#define VCC_SW_OFF				/* Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirIn_c); */ \
+								/* Gpio_EnPinPullup(VCC_HELPER_GPIO, TRUE); */ \
+								/* Gpio_SelectPinPullup(VCC_HELPER_GPIO, gGpioPinPulldown_c); */ \
+								Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirOut_c); \
 								Gpio_SetPinData(VCC_HELPER_GPIO, gGpioPinStateLow_c); \
 								Gpio_SetPinData(VCC_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardVccConnected = FALSE;
