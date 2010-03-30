@@ -106,15 +106,14 @@ void vMain( void ) {
 	CARD_INSERTED;
 
 	// Special SD-to-SPI-to-SD test.
-//	DelayMs(5000);
-	BUS_SW_OFF;
-	enableSPI();
-	VCC_SW_OFF;
-	DelayMs(50);
-	VCC_SW_ON;
-	enableSDCardBus();
-	disableSPI();
-	BUS_SW_ON;
+//	BUS_SW_OFF;
+//	enableSPI();
+//	VCC_SW_OFF;
+//	DelayMs(50);
+//	VCC_SW_ON;
+//	enableSDCardBus();
+//	disableSPI();
+//	BUS_SW_ON;
 	// End test
 
 	crmCopCntl_t copCntl;
@@ -165,6 +164,6 @@ void vApplicationIdleHook( void ) {
 
 	// If we haven't received a packet in by timeout seconds then reset.
 	if (xTaskGetTickCount() > (gLastPacketReceivedTick + kNetCheckTickCount)) {
-		//GW_RESET_MCU;
+		GW_RESET_MCU;
 	}
 }

@@ -583,11 +583,11 @@ gwBoolean enableSDCardBus(void) {
 	getSDCardBusResponse(r6, 6);
 
 	// Wide bus.
-	cmdArg.word = 0;
+	cmdArg.word = 0xa95c0000;
 	sendSDCardBusCommand(eSDCardCmd7, cmdArg);
 	getSDCardBusResponse(r3, 6);
 
-	cmdArg.word = 0;
+	cmdArg.word = 0xa95c0000;
 	sendSDCardBusCommand(eSDCardCmd55, cmdArg);
 	getSDCardBusResponse(r3, 6);
 
