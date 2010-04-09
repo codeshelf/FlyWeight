@@ -94,26 +94,27 @@ void vMain( void ) {
 	error = Gpio_SetPinDir(VCC_SW_GPIO, gGpioDirOut_c);
 	error = Gpio_SetPinFunction(VCC_HELPER_GPIO, gGpioNormalMode_c);\
 
-	// Turn the bus and the Vcc off.
-	BUS_SW_OFF;
-	VCC_SW_OFF;
-
-	// Turn the bus and the Vcc on.
-	CARD_UNINSERTED;
-	BUS_SW_ON;
-	VCC_SW_ON;
-	DelayMs(20);
+//	// Turn the bus and the Vcc off.
+//	BUS_SW_OFF;
+//	VCC_SW_OFF;
+//
+//	// Turn the bus and the Vcc on.
+//	CARD_UNINSERTED;
+//	BUS_SW_ON;
+//	VCC_SW_ON;
+//	DelayMs(20);
 	CARD_INSERTED;
 
 	// Special SD-to-SPI-to-SD test.
-//	BUS_SW_OFF;
-//	enableSPI();
-//	VCC_SW_OFF;
-//	DelayMs(50);
-//	VCC_SW_ON;
-//	enableSDCardBus();
-//	disableSPI();
-//	BUS_SW_ON;
+	BUS_SW_OFF;
+	VCC_SW_ON;
+	enableSPI();
+	VCC_SW_OFF;
+	DelayMs(50);
+	VCC_SW_ON;
+	enableSDCardBus();
+	disableSPI();
+	BUS_SW_ON;
 	// End test
 
 	crmCopCntl_t copCntl;
