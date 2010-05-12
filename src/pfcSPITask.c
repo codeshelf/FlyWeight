@@ -23,7 +23,7 @@ xQueueHandle gPFCQueue;
 ESDCardState gSDCardState;
 gwUINT8 gReadBlock[SD_BLOCK_SIZE];
 
-extern portTickType xTickCount;
+//extern portTickType xTickCount;
 
 // --------------------------------------------------------------------------
 

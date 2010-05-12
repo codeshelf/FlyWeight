@@ -68,7 +68,7 @@ gwUINT32			gBlockLength = 512;
 gwUINT16			gRCA = 0x0000;
 gwBoolean			gReadyForData = TRUE;
 
-extern portTickType xTickCount;
+//extern portTickType xTickCount;
 
 // --------------------------------------------------------------------------
 

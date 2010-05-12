@@ -248,7 +248,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					// If the associate state is 1 then we're not associated with this controller anymore.
 					// We need to reset the device, so that we can start a whole new session.
 					if (1 == gRXRadioBuffer[inRxBufferNum].bufferStorage[CMDPOS_ASSOCACK_STATE]) {
-						GW_RESET_MCU;
+						GW_RESET_MCU();
 					} else {
 						gUnixTime.byteFields.byte1 = gRXRadioBuffer[inRxBufferNum].bufferStorage[CMDPOS_ASSOCACK_TIME + 3];
 						gUnixTime.byteFields.byte2 = gRXRadioBuffer[inRxBufferNum].bufferStorage[CMDPOS_ASSOCACK_TIME + 2];
