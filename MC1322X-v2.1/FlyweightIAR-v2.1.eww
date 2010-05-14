@@ -4,6 +4,9 @@
   <project>
     <path>$WS_DIR$\Board-GW0011\Board-GW0011.xml</path>
   </project>
+   <project>
+    <path>$WS_DIR$\Board-GW0015\Board-GW0015.xml</path>
+  </project>
   <batchBuild/>
 </workspace>
 
