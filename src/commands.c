@@ -585,6 +585,7 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 #define MOTOR2_BRAKE	0x0c    /* 0b00001100 */
 
 	// Map the endpoint to the motor.
+	gwUINT8 ccrHolder;
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
 	EMotorCommandType motorCommand = getMotorCommand(inRXBufferNum);
 
@@ -630,7 +631,7 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 		break;
 	}
 
-	RELEASE_RX_BUFFER(inRXBufferNum);
+	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
 #endif
 
@@ -691,48 +692,51 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 gwBoolean gSDCardBusConnected = FALSE;
 gwBoolean gSDCardVccConnected = FALSE;
 
-EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNum) {
+EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum) {
 
 	EControlCmdAckStateType result = eAckStateOk;
 
 	GpioErr_t error;
 	ESDCardControlActionType action;
+	ESDCardControlDeviceType deviceType;
 
 	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
+	deviceType = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DEVTYPE];
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
 
-			CARD_UNINSERTED;
+			if (deviceType == eSDCardDeviceType1) {
 
-			// Power cycle the card so that it can reenter the SDCard mode.
-			// (It will be in the SPI mode, and can only recover via power cycle.)
-			VCC_SW_OFF;
+				// Type1 cards have access to the card insert/uninsert IO pin of the SD card.
+				CARD_UNINSERTED;
 
-			// Wait long enough for the capacitive charge in the SDCard to dissipate.
-			vTaskDelay(50);
+				// Power cycle the card so that it can reenter the SDCard mode.
+				// (It will be in the SPI mode, and can only recover via power cycle.)
+				VCC_SW_OFF;
 
-			VCC_SW_ON;
-			CARD_INSERTED;
+				// Wait long enough for the capacitive charge in the SDCard to dissipate.
+				vTaskDelay(50);
 
-//			// Now re-init the SDCardBus to the idle state.
-//			enableSDCardBus();
+				VCC_SW_ON;
+				CARD_INSERTED;
+
+			} else {
+				// Type2 cards do not have access to the insert/uninsert IO pin of the SD card slot.
+
+				// Reset the SD Card, and then re-init the card into standby mode.
+				BUS_SW_OFF;
+				enableSPI();
+				VCC_SW_OFF;
+				DelayMs(50);
+				VCC_SW_ON;
+				enableSDCardBus();
+			}
 
 			if (!disableSPI()) {
 				result = eAckStateFailed;
 			}
-
 			BUS_SW_ON;
-
-			// Reset the SD Card, and then re-init the card into standby mode.
-//			BUS_SW_OFF;
-//			enableSPI();
-//			VCC_SW_OFF;
-//			DelayMs(50);
-//			VCC_SW_ON;
-//			enableSDCardBus();
-//			disableSPI();
-//			BUS_SW_ON;
 
 			Led1Off();
 			Led2Off();
@@ -752,7 +756,42 @@ EControlCmdAckStateType processSDCardActionSubCommand(BufferCntType inRXBufferNu
 			if (enableSPI()) {
 				//result = eAckStateFailed;
 			}
+
+			// Reset the SDCard block updating flags.
+			gCurSDCardPartNumber = 0;
+			gIsSDCardUpdating = FALSE;
+
 			break;
+	}
+
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
+EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum) {
+
+	EControlCmdAckStateType result = eAckStateOk;
+
+	GpioErr_t error;
+	gwUINT8 totalBlocks;
+	gwUINT8 blockNum;
+	gwUINT8 offset;
+	gwUINT16 blockAddr;
+	gwUINT8 crc;
+
+	totalBlocks = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKCNT];
+
+	for (blockNum = 0; blockNum < totalBlocks; ++blockNum) {
+		offset = blockNum * (sizeof(blockAddr) + sizeof(crc));
+
+		// Read the next block number.
+		blockAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset];
+
+		// Read the crc for the block.
+		blockAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
+
+		// Verify that the block's CRC matches the sent value.
 	}
 
 	return result;
@@ -792,7 +831,8 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 		// Just go ahead and make the card ready for the command.
 		// We probably reset on an SDCard command, and making us quietly ready saves time.
 		BUS_SW_OFF;
-		/*result =*/ enableSPI();
+		VCC_SW_ON;
+		enableSPI();
 	}
 
 	if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {

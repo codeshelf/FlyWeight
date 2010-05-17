@@ -303,7 +303,16 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 						// it prevents the gateway from sending another update until this
 						// one completes, because we wont send an ACK until it completes.
 						GW_ENTER_CRITICAL(ccrHolder);
-						ackState = processSDCardActionSubCommand(inRxBufferNum);
+						ackState = processSDCardModeSubCommand(inRxBufferNum);
+						GW_EXIT_CRITICAL(ccrHolder);
+						break;
+
+					case eControlSubCmdSDCardBlockCheck:
+						// By processing the SDCard checks in the critical region,
+						// it prevents the gateway from sending another update until this
+						// one completes, because we wont send an ACK until it completes.
+						GW_ENTER_CRITICAL(ccrHolder);
+						ackState = processSDCardBlockCheckSubCommand(inRxBufferNum);
 						GW_EXIT_CRITICAL(ccrHolder);
 						break;
 

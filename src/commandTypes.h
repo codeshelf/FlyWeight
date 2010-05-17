@@ -96,6 +96,7 @@
 
 // SDCard Control Command
 #define CMDPOS_SDCARD_ACTION	CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_DEVTYPE	CMDPOS_SDCARD_ACTION + 1
 
 // SDCard Update Command
 #define CMDPOS_SDCARD_ADDR		CMDPOS_CONTROL_DATA
@@ -103,6 +104,10 @@
 #define CMDPOS_SDCARD_PARTS		CMDPOS_SDCARD_PART + 1
 #define CMDPOS_SDCARD_LEN		CMDPOS_SDCARD_PARTS + 1
 #define CMDPOS_SDCARD_DATA		CMDPOS_SDCARD_LEN + 1
+
+// SDCard Control Command
+#define CMDPOS_SDCARD_BLKCHKCNT	CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_BLKCHKDAT	CMDPOS_SDCARD_BLKCHKCNT + 1
 
 // Command masks
 #define PACKETMASK_VERSION		0xc0    /* 0b11000000 */
@@ -262,7 +267,8 @@ typedef enum {
 	eControlSubCmdButton = 3,
 	eControlSubCmdHooBee = 4,
 	eControlSubCmdSDCardUpdate = 5,
-	eControlSubCmdSDCardControl = 6
+	eControlSubCmdSDCardControl = 6,
+	eControlSubCmdSDCardBlockCheck = 7
 } EControlSubCmdIDType;
 
 typedef enum {
@@ -277,6 +283,12 @@ typedef enum {
 	eSDCardActionSdProtocol = 1,
 	eSDCardActionSpiProtocol = 2,
 } ESDCardControlActionType;
+
+typedef enum {
+	eSDCardDeviceInvalid = -1,
+	eSDCardDeviceType1 = 1,
+	eSDCardDeviceType2 = 2,
+} ESDCardControlDeviceType;
 
 // --------------------------------------------------------------------------
 // Function prototypes.

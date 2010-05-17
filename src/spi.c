@@ -518,8 +518,56 @@ void clockDelay(gwUINT8 inFrames) {
 
 // --------------------------------------------------------------------------
 
-crcType crc16(crcType inOldCRC, gwUINT8 inByte) {
-	crcType crc;
+crc16Type crcBlock(gwUINT32 inBlockNumber) {
+
+	crc16Type crc = 0;
+
+	SPI_CS_ON;
+
+	cmdArg.word = inBlockNumber << SD_BLOCK_SHIFT;
+	result = sendCommandWithArg(eSDCardCmd17, cmdArg, eResponseOK, FALSE);
+	if (result != eResponseOK) {
+		SPI_CS_OFF;
+		return (result);
+	}
+
+	// Check the response.
+	if (checkResponse(0xfe) != eResponseOK) {
+		SPI_CS_OFF;
+		return eResponseInvalidError;
+	}
+
+	// Read the bytes from the block.
+	for (counter = 0; counter < SD_BLOCK_SIZE; counter++) {
+		if (readByte(&rcvByte) != gSpiErrNoError_c) {
+			SPI_CS_OFF;
+			return eResponseSPIError;
+		}
+		crc = crc16(crc, rcvByte);
+	}
+
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		SPI_CS_OFF;
+		return eResponseSPIError;
+	}
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		SPI_CS_OFF;
+		return eResponseSPIError;
+	}
+	if (readByte(&rcvByte) != gSpiErrNoError_c) {
+		SPI_CS_OFF;
+		return eResponseSPIError;
+	}
+
+	SPI_CS_OFF;
+
+	return crc;
+}
+
+// --------------------------------------------------------------------------
+
+crc16Type crc16(crc16Type inOldCRC, gwUINT8 inByte) {
+	crc16Type crc;
 	gwUINT16 x;
 
 	x = ((inOldCRC.value >> 8) ^ inByte) & 0xff;

@@ -134,6 +134,7 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSDCardControlSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);

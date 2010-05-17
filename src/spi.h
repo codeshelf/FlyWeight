@@ -68,7 +68,7 @@
 typedef union {
 	gwUINT16 value;
 	gwUINT8 bytes[2];
-} crcType;
+} crc16Type;
 
 typedef union {
 	gwUINT32 word;
@@ -164,7 +164,8 @@ ESDCardResponse writePartialBlockEnd();
 
 ESDCardResponse checkResponse(gwUINT8 inExpectedResponse);
 
-crcType crc16(crcType inOldCRC, gwUINT8 inByte);
+crc16Type crc16(crc16Type inOldCRC, gwUINT8 inByte);
+crc16Type crcBlock(gwUINT32 inBlockNumber);
 
 ESDCardResponse sendSDCardBusCommand(gwUINT8 inSDCommand, SDArgumentType inArgument);
 ESDCardResponse getSDCardBusResponse(ResponseArrayType *outResponse, gwUINT8 inByteCount);
