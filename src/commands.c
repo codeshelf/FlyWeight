@@ -778,7 +778,7 @@ EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBuff
 	gwUINT8 blockNum;
 	gwUINT8 offset;
 	gwUINT16 blockAddr;
-	gwUINT8 crc;
+	crc16Type crc;
 
 	totalBlocks = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKCNT];
 
@@ -789,9 +789,12 @@ EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBuff
 		blockAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset];
 
 		// Read the crc for the block.
-		blockAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
+		crc = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
 
-		// Verify that the block's CRC matches the sent value.
+		// If the block's CRC doesn't match the expected value then send a failure response.
+		if (crc != crcBlock(blockAddr)) {
+			result = eAckStateFailed;
+		}
 	}
 
 	return result;
