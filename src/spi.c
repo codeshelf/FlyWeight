@@ -10,6 +10,10 @@
 #include "spi.h"
 #include "GPIO_Interface.h"
 
+extern gwBoolean 	gSDCardBusConnected;
+extern gwBoolean 	gSDCardVccConnected;
+
+
 // --------------------------------------------------------------------------
 /*
  *
@@ -87,11 +91,17 @@ gwBoolean enableSPI() {
 //			} else if (sendCommandWithArg(eSDCardCmd0, cmdArg, eResponseOK, TRUE) == eResponseOK) {
 //				isStarted = TRUE;
 			}
-			// If we can't get it going in 25 tries, it's never going to happen.
-//			if (attempts++ == 25) {
-//				result = disableSPI();
-//				return FALSE;
-//			}
+
+			if (attempts++ == 25) {
+				// If we can't get it going in 25 tries, try power cycling the card.
+				VCC_SW_OFF;
+				// Wait long enough for the capacitive charge in the SDCard to dissipate.
+				vTaskDelay(50);
+				VCC_SW_ON;
+			} else if (attempts == 50) {
+				// If we can't get it in 50 tries then reset the MCU.
+				GW_RESET_MCU();
+			}
 		} while (!isStarted);
 	}
 
@@ -132,7 +142,7 @@ gwBoolean enableSPI() {
 
 	// Set the SPI speed to 3MHz.
 	spiErr = SPI_GetConfig(&spiConfig);
-	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv4;
 	spiErr = SPI_SetConfig(&spiConfig);
 
 	return result;
@@ -518,9 +528,15 @@ void clockDelay(gwUINT8 inFrames) {
 
 // --------------------------------------------------------------------------
 
-crc16Type crcBlock(gwUINT32 inBlockNumber) {
+ESDCardResponse crcBlock(gwUINT32 inBlockNumber) {
 
-	crc16Type crc = 0;
+	crc16Type crc;
+	gwUINT8 rcvByte = 0;
+	gwUINT16 counter;
+	SDArgumentType cmdArg;
+	ESDCardResponse result;
+
+	crc.value = 0;
 
 	SPI_CS_ON;
 
@@ -543,7 +559,7 @@ crc16Type crcBlock(gwUINT32 inBlockNumber) {
 			SPI_CS_OFF;
 			return eResponseSPIError;
 		}
-		crc = crc16(crc, rcvByte);
+		crc.value = crc16(crc, rcvByte).value;
 	}
 
 	if (readByte(&rcvByte) != gSpiErrNoError_c) {
@@ -561,7 +577,7 @@ crc16Type crcBlock(gwUINT32 inBlockNumber) {
 
 	SPI_CS_OFF;
 
-	return crc;
+	return result;
 }
 
 // --------------------------------------------------------------------------

@@ -4,31 +4,34 @@
   <Desktop>
     <Static>
       <Debug-Log>
-        <ColumnWidth0>20</ColumnWidth0>
-        <ColumnWidth1>1221</ColumnWidth1>
-      </Debug-Log>
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1221</ColumnWidth1></Debug-Log>
       <Build>
-        <ColumnWidth0>20</ColumnWidth0>
-        <ColumnWidth1>915</ColumnWidth1>
-        <ColumnWidth2>244</ColumnWidth2>
-        <ColumnWidth3>61</ColumnWidth3>
-      </Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
       <Workspace>
         <ColumnWidths>
-          <Column0>124</Column0>
-          <Column1>27</Column1>
-          <Column2>27</Column2>
-          <Column3>27</Column3>
-        </ColumnWidths>
+          
+          
+          
+          
+        <Column0>144</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Disassembly>
-        <MixedMode>1</MixedMode>
-        <CodeCovShow>0</CodeCovShow>
-        <InstrProfShow>0</InstrProfShow>
-      </Disassembly>
+        
+        
+        
+      <MixedMode>1</MixedMode><CodeCovShow>0</CodeCovShow><InstrProfShow>0</InstrProfShow></Disassembly>
     </Static>
     <Windows>
-      <Wnd0>
+      
+      
+      
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-19579-1566</Identity>
@@ -43,24 +46,20 @@
             <Session/>
           </Tab>
         </Tabs>
-        <SelectedTab>1</SelectedTab>
-      </Wnd0>
-      <Wnd1>
+        
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
         <Tabs>
           <Tab>
             <Identity>TabID-30327-1570</Identity>
             <TabName>Workspace</TabName>
             <Factory>Workspace</Factory>
             <Session>
-              <NodeDict>
-                <ExpandedNode>Board-GW0015</ExpandedNode>
-              </NodeDict>
-            </Session>
+              
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>Board-GW0015</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
-        <SelectedTab>0</SelectedTab>
-      </Wnd1>
-      <Wnd2>
+        
+      <SelectedTab>0</SelectedTab></Wnd1><Wnd2>
         <Tabs>
           <Tab>
             <Identity>TabID-8307-1573</Identity>
@@ -69,181 +68,21 @@
             <Session/>
           </Tab>
         </Tabs>
-        <SelectedTab>0</SelectedTab>
-      </Wnd2>
-    </Windows>
+        
+      <SelectedTab>0</SelectedTab></Wnd2></Windows>
     <Editor>
-      <Pane>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename>
-          <XPos>0</XPos>
-          <YPos>699</YPos>
-          <SelStart>25948</SelStart>
-          <SelEnd>25948</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename>
-          <XPos>0</XPos>
-          <YPos>194</YPos>
-          <SelStart>6410</SelStart>
-          <SelEnd>6410</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\PLM\Source\Common\Sys\Init-IAR.S</Filename>
-          <XPos>0</XPos>
-          <YPos>52</YPos>
-          <SelStart>1818</SelStart>
-          <SelEnd>1818</SelEnd>
-        </Tab>
-        <ActiveTab>2</ActiveTab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\src\crc.c</Filename>
-          <XPos>0</XPos>
-          <YPos>127</YPos>
-          <SelStart>6706</SelStart>
-          <SelEnd>6706</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\port.c</Filename>
-          <XPos>0</XPos>
-          <YPos>336</YPos>
-          <SelStart>13001</SelStart>
-          <SelEnd>13001</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FreeRTOS\Source\tasks.c</Filename>
-          <XPos>0</XPos>
-          <YPos>1616</YPos>
-          <SelStart>50922</SelStart>
-          <SelEnd>50922</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\SMAC\Source\RadioManagement.c</Filename>
-          <XPos>0</XPos>
-          <YPos>386</YPos>
-          <SelStart>13518</SelStart>
-          <SelEnd>13518</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename>
-          <XPos>0</XPos>
-          <YPos>230</YPos>
-          <SelStart>7831</SelStart>
-          <SelEnd>7831</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename>
-          <XPos>0</XPos>
-          <YPos>41</YPos>
-          <SelStart>1438</SelStart>
-          <SelEnd>1438</SelEnd>
-        </Tab>
-      </Pane>
-      <ActivePane>0</ActivePane>
-      <Sizes>
-        <Pane>
-          <X>1000000</X>
-          <Y>1000000</Y>
-        </Pane>
-      </Sizes>
-      <SplitMode>1</SplitMode>
-    </Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>699</YPos><SelStart>25948</SelStart><SelEnd>25948</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename><XPos>0</XPos><YPos>194</YPos><SelStart>6410</SelStart><SelEnd>6410</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>52</YPos><SelStart>1818</SelStart><SelEnd>1818</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\crc.c</Filename><XPos>0</XPos><YPos>127</YPos><SelStart>6706</SelStart><SelEnd>6706</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\port.c</Filename><XPos>0</XPos><YPos>336</YPos><SelStart>13001</SelStart><SelEnd>13001</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\tasks.c</Filename><XPos>0</XPos><YPos>1616</YPos><SelStart>50922</SelStart><SelEnd>50922</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X-v2.1\SMAC\Source\RadioManagement.c</Filename><XPos>0</XPos><YPos>385</YPos><SelStart>13439</SelStart><SelEnd>13439</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>230</YPos><SelStart>7831</SelStart><SelEnd>7831</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename><XPos>0</XPos><YPos>85</YPos><SelStart>2701</SelStart><SelEnd>2701</SelEnd></Tab><ActiveTab>8</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\gatewayRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>62</YPos><SelStart>2407</SelStart><SelEnd>2407</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
-      <Top>
-        <Row0>
-          <Sizes>
-            <Toolbar-00abaa10>
-              <key>iaridepm.enu1</key>
-            </Toolbar-00abaa10>
-          </Sizes>
-        </Row0>
-        <Row1>
-          <Sizes>
-            <Toolbar-04971918>
-              <key>debuggergui.enu1</key>
-            </Toolbar-04971918>
-          </Sizes>
-        </Row1>
-      </Top>
-      <Left>
-        <Row0>
-          <Sizes>
-            <Wnd1>
-              <Rect>
-                <Top>-2</Top>
-                <Left>-2</Left>
-                <Bottom>678</Bottom>
-                <Right>198</Right>
-                <x>-2</x>
-                <y>-2</y>
-                <xscreen>200</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>156250</sizeHorzCX>
-                <sizeHorzCY>211864</sizeHorzCY>
-                <sizeVertCX>156250</sizeVertCX>
-                <sizeVertCY>720339</sizeVertCY>
-              </Rect>
-            </Wnd1>
-          </Sizes>
-        </Row0>
-      </Left>
-      <Right>
-        <Row0>
-          <Sizes>
-            <Wnd2>
-              <Rect>
-                <Top>-2</Top>
-                <Left>-2</Left>
-                <Bottom>678</Bottom>
-                <Right>198</Right>
-                <x>-2</x>
-                <y>-2</y>
-                <xscreen>200</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>156250</sizeHorzCX>
-                <sizeHorzCY>211864</sizeHorzCY>
-                <sizeVertCX>156250</sizeVertCX>
-                <sizeVertCY>720339</sizeVertCY>
-              </Rect>
-            </Wnd2>
-          </Sizes>
-        </Row0>
-      </Right>
-      <Bottom>
-        <Row0>
-          <Sizes>
-            <Wnd0>
-              <Rect>
-                <Top>-2</Top>
-                <Left>-2</Left>
-                <Bottom>198</Bottom>
-                <Right>1282</Right>
-                <x>-2</x>
-                <y>-2</y>
-                <xscreen>1284</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>1003125</sizeHorzCX>
-                <sizeHorzCY>211864</sizeHorzCY>
-                <sizeVertCX>156250</sizeVertCX>
-                <sizeVertCY>211864</sizeVertCY>
-              </Rect>
-            </Wnd0>
-          </Sizes>
-        </Row0>
-      </Bottom>
-      <Float>
-        <Sizes/>
-      </Float>
-    </Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00abaa30><key>iaridepm.enu1</key></Toolbar-00abaa30></Sizes></Row0><Row1><Sizes><Toolbar-025e6770><key>debuggergui.enu1</key></Toolbar-025e6770></Sizes></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>678</Bottom><Right>218</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>171875</sizeVertCX><sizeVertCY>720339</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>678</Bottom><Right>198</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>720339</sizeVertCY></Rect></Wnd2></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>211864</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>211864</sizeVertCY></Rect></Wnd0></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Project>
 

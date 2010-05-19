@@ -54,8 +54,8 @@
 #endif
 
 #if TARGET_BOARD == GW0011
-  #define DEFAULT_COARSE_TRIM   0x14
-  #define DEFAULT_FINE_TRIM     0x0f
+  #define DEFAULT_COARSE_TRIM   4
+  #define DEFAULT_FINE_TRIM     14
 #endif
 
 

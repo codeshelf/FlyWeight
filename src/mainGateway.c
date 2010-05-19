@@ -43,6 +43,7 @@ void vMain( void ) {
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
 
 #else
+	PlatformPortInit();
 	ITC_Init();
 	IntAssignHandler(gMacaInt_c, (IntHandlerFunc_t) MACA_Interrupt);
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c

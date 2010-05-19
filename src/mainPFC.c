@@ -27,6 +27,8 @@
     #include "TransceiverConfigMngmnt.h"
 	#include "Leds.h"
 	#include "Delay.h"
+	#include "PortConfig.h"
+	#include "GPIO_Interface.h"
 #elif
 	#include "CPU.h"
 	#include "keyboardTask.h"
@@ -60,6 +62,11 @@ void vMain( void ) {
 		xbeeInit();
 	#endif
 #else
+	// We don't call this, because we don't want to mess with DPF settings at restart.
+	//PlatformPortInit();
+	// Setup the radio GPIOs.
+	GPIO_REGS_P->FuncSel2 = gFuncSel2Value_c;
+
 	ITC_Init();
 	IntAssignHandler(gMacaInt_c, (IntHandlerFunc_t) MACA_Interrupt);
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c

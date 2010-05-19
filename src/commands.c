@@ -29,6 +29,13 @@ NetworkIDType gMyNetworkID = BROADCAST_NETID;
 extern LedFlashRunType gLedFlashSequenceShouldRun;
 extern LedFlashSeqCntType gLedFlashSeqCount;
 extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
+gwBoolean gSDCardBusConnected = FALSE;
+gwBoolean gSDCardVccConnected = FALSE;
+gwUINT32 gCurSDCardAddress = 0;
+gwUINT8 gCurSDCardPartNumber = 0;
+gwBoolean gIsSDCardUpdating = FALSE;
+
+
 //extern gwUINT16				gFIFO[8];
 
 // --------------------------------------------------------------------------
@@ -689,9 +696,6 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-gwBoolean gSDCardBusConnected = FALSE;
-gwBoolean gSDCardVccConnected = FALSE;
-
 EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum) {
 
 	EControlCmdAckStateType result = eAckStateOk;
@@ -789,22 +793,18 @@ EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBuff
 		blockAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset];
 
 		// Read the crc for the block.
-		crc = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
+		crc.value = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
 
 		// If the block's CRC doesn't match the expected value then send a failure response.
-		if (crc != crcBlock(blockAddr)) {
-			result = eAckStateFailed;
-		}
+//		if (crc.value != crcBlock(blockAddr).value) {
+//			result = eAckStateFailed;
+//		}
 	}
 
 	return result;
 }
 
 // --------------------------------------------------------------------------
-
-gwUINT32 gCurSDCardAddress = 0;
-gwUINT8 gCurSDCardPartNumber = 0;
-gwBoolean gIsSDCardUpdating = FALSE;
 
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 

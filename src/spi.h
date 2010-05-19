@@ -165,7 +165,7 @@ ESDCardResponse writePartialBlockEnd();
 ESDCardResponse checkResponse(gwUINT8 inExpectedResponse);
 
 crc16Type crc16(crc16Type inOldCRC, gwUINT8 inByte);
-crc16Type crcBlock(gwUINT32 inBlockNumber);
+ESDCardResponse crcBlock(gwUINT32 inBlockNumber);
 
 ESDCardResponse sendSDCardBusCommand(gwUINT8 inSDCommand, SDArgumentType inArgument);
 ESDCardResponse getSDCardBusResponse(ResponseArrayType *outResponse, gwUINT8 inByteCount);
