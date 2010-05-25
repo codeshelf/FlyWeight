@@ -35,6 +35,9 @@
 	#include "keyboard.h"
 #endif
 
+#define PA_VREG_CONTROL			gGpioPin42_c
+
+
 // --------------------------------------------------------------------------
 // Globals
 
@@ -45,8 +48,6 @@ extern gwBoolean 	gSDCardVccConnected;
 // --------------------------------------------------------------------------
 
 void vMain( void ) {
-
-	GpioErr_t error;
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
@@ -62,9 +63,12 @@ void vMain( void ) {
 		xbeeInit();
 	#endif
 #else
+
+	GpioErr_t error;
+
 	// We don't call this, because we don't want to mess with DPF settings at restart.
 	//PlatformPortInit();
-	// Setup the radio GPIOs.
+	// Setup the radio GPIOs. (Don't know why SMAC doesn't do this.)
 	GPIO_REGS_P->FuncSel2 = gFuncSel2Value_c;
 
 	ITC_Init();
@@ -74,6 +78,12 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
+	SetDemulatorMode(NCD);
+
+	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
+	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+
 	IntEnableAll();
 	TmrInit();
 

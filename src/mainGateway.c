@@ -23,6 +23,8 @@
 	#include "Leds.h"
 #endif
 
+#define PA_VREG_CONTROL			gGpioPin42_c
+
 // --------------------------------------------------------------------------
 // Globals
 
@@ -43,7 +45,10 @@ void vMain( void ) {
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
 
 #else
+	GpioErr_t error;
+
 	PlatformPortInit();
+
 	ITC_Init();
 	IntAssignHandler(gMacaInt_c, (IntHandlerFunc_t) MACA_Interrupt);
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c
@@ -51,8 +56,13 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
-	IntEnableAll();
+	SetDemulatorMode(NCD);
 
+	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
+	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+
+	IntEnableAll();
 	LED_Init();
 
 	crmCopCntl_t copCntl;

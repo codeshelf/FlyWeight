@@ -28,7 +28,7 @@
   #define gPuEnHiValue_c              0xFFFFFFFF     //MBAR_GPIO + 0x14
   #define gFuncSel0Value_c            0x00000000     //MBAR_GPIO + 0x18
   #define gFuncSel1Value_c            0x00000000     //MBAR_GPIO + 0x1C
-  #define gFuncSel2Value_c            0x05500000     //MBAR_GPIO + 0x20
+  #define gFuncSel2Value_c            0x05400000     //MBAR_GPIO + 0x20
   #define gFuncSel3Value_c            0x00000000     //MBAR_GPIO + 0x24
   #define gInputDataSelLoValue_c      0x00000000     //MBAR_GPIO + 0x28
   #define gInputDataSelHiValue_c      0x00000000     //MBAR_GPIO + 0x2C

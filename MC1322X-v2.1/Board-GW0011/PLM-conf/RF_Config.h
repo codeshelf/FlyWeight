@@ -37,14 +37,14 @@
 #define gPowerLevel_4d5dBm_c   0x12
  
 
-#define gCcaThreshold_c                    57
+#define gCcaThreshold_c                    0x39
 /* BEGIN Dual RF Settings */
 #define gPowerLevelLock_c                TRUE
 #define gEnableComplementaryPAOutput_c   TRUE
 #define gDualPortRFOperation_c           TRUE
 /* END Dual RF Settings */
 
-#define gDefaultPowerLevel_c               gPowerLevel_m30dBm_c
+#define gDefaultPowerLevel_c               gPowerLevel_m17dBm_c
 
 #endif /*_RF_CONFIG_H_*/
 
