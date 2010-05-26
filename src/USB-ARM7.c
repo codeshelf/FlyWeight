@@ -87,7 +87,7 @@ void USB_Init(void) {
 			//UartSetCallbackFunctions(UART_1, &uartCallBack);
 
 			UartSetCTSThreshold(UART_1, 24);
-			UartSetTransmitterThreshold(UART_1, 24);
+			UartSetTransmitterThreshold(UART_1, 8);
 			UartSetReceiverThreshold(UART_1, 24);
 		}
 	}

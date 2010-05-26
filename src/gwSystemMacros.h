@@ -63,6 +63,7 @@
 	    ATD1C = restoreATD1C;
 #else
 	#include "Crm.h"
+	#include "board_config.h"
 	#include "WirelessLinkMngmt.h"
 	#include "RadioManagement.h"
     #include "ITC_Interface.h"
@@ -71,7 +72,12 @@
 	#include "smacPort.h"
 	#include "portmacro.h"
 
-	#define GW_RESET_MCU()						void (*reset)()=(void (*))0; reset(); /*CRM_SoftReset()*/
+	#if TARGET_BOARD == GW0011
+		#define GW_RESET_MCU()						void (*reset)()=(void (*))0; reset();
+	#else
+		#define GW_RESET_MCU()						CRM_SoftReset()
+	#endif
+
 	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
 	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreAll(restoreState)
     #define GW_GET_SYSTEM_STATUS                0

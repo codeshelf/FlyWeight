@@ -71,7 +71,7 @@ void radioReceiveTask(void *pvParameters) {
 				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 2500);
 
 				gNextMsgToUse++;
-				if (gNextMsgToUse > MAX_NUM_MSG)
+				if (gNextMsgToUse >= MAX_NUM_MSG)
 					gNextMsgToUse = 0;
 			}
 			GW_EXIT_CRITICAL(ccrHolder);
@@ -103,7 +103,7 @@ void radioReceiveTask(void *pvParameters) {
 
 				GW_ENTER_CRITICAL(ccrHolder);
 				gCurMsg++;
-				if (gCurMsg > MAX_NUM_MSG)
+				if (gCurMsg >= MAX_NUM_MSG)
 					gCurMsg = 0;
 				GW_EXIT_CRITICAL(ccrHolder);
 			}
@@ -151,7 +151,7 @@ void radioTransmitTask(void *pvParameters) {
 			funcErr = MCPSDataRequest(&(gMsgHolder[gNextMsgToUse].msg));
 
 			gNextMsgToUse++;
-			if (gNextMsgToUse > MAX_NUM_MSG)
+			if (gNextMsgToUse >= MAX_NUM_MSG)
 				gNextMsgToUse = 0;
 			GW_EXIT_CRITICAL(ccrHolder);
 
