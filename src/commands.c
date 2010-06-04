@@ -713,6 +713,11 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum)
 			if (deviceType == eSDCardDeviceType1) {
 
 				// Type1 cards have access to the card insert/uninsert IO pin of the SD card.
+
+				/* Some frames will turn off power to the card after the CARD_UNINSERTED instruction.
+				 * As soon as the power goes off, the JFET will "reconnect" card causing the frame
+				 * to power the card again.  A power-on reset is the result. */
+
 				CARD_UNINSERTED;
 
 				// Power cycle the card so that it can reenter the SDCard mode.
@@ -749,7 +754,13 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum)
 
 		case eSDCardActionSpiProtocol:
 			// Disconnect the SDCard from the SDCard bus, set the DAT0 pull-up, and call the SPI init routine.
-			CARD_UNINSERTED;
+
+			/* Some frames will turn off power to the card after the CARD_UNINSERTED instruction.
+			 * As soon as the power goes off, the JFET will "reconnect" card causing the frame
+			 * to power the card again.  A power-on reset is the result. */
+
+			// For the above reason we can't send the card uninsert.
+			//CARD_UNINSERTED;
 			BUS_SW_OFF;
 
 			VCC_SW_OFF;

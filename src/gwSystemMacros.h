@@ -73,7 +73,8 @@
 	#include "portmacro.h"
 
 	#if TARGET_BOARD == GW0011
-		#define GW_RESET_MCU()						void (*reset)()=(void (*))0; reset();
+		#define GW_RESET_MCU()						CRM_SoftReset()
+//		#define GW_RESET_MCU()						void (*reset)()=(void (*))0; reset();
 	#else
 		#define GW_RESET_MCU()						CRM_SoftReset()
 	#endif

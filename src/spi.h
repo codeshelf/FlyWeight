@@ -61,9 +61,11 @@
 								gSDCardVccConnected = FALSE;
 
 #define CARD_INSERTED			Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirOut_c); \
-								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateLow_c); \
+								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateLow_c);
 
-#define CARD_UNINSERTED			Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirIn_c);
+#define CARD_UNINSERTED			Gpio_SetPinDir(BUS_CARD_DETECT_GPIO, gGpioDirOut_c); \
+								Gpio_SetPinData(BUS_CARD_DETECT_GPIO, gGpioPinStateHigh_c); \
+								vTaskDelay(500);
 
 typedef union {
 	gwUINT16 value;
