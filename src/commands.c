@@ -714,20 +714,22 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum)
 
 				// Type1 cards have access to the card insert/uninsert IO pin of the SD card.
 
+				// Power cycle the card so that it can reenter the SDCard mode.
+				// (It will be in the SPI mode, and can only recover via power cycle.)
+				BUS_SW_OFF;
+				VCC_SW_OFF;
+
 				/* Some frames will turn off power to the card after the CARD_UNINSERTED instruction.
 				 * As soon as the power goes off, the JFET will "reconnect" card causing the frame
 				 * to power the card again.  A power-on reset is the result. */
 
 				CARD_UNINSERTED;
 
-				// Power cycle the card so that it can reenter the SDCard mode.
-				// (It will be in the SPI mode, and can only recover via power cycle.)
-				VCC_SW_OFF;
-
 				// Wait long enough for the capacitive charge in the SDCard to dissipate.
 				vTaskDelay(50);
 
 				VCC_SW_ON;
+				BUS_SW_ON;
 				CARD_INSERTED;
 
 			} else {

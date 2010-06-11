@@ -14,7 +14,7 @@ $Id$
 #ifndef VERSION_H
 #define VERSION_H
 
-#define FIRMWARE_REV			"1.1.0"
+#define FIRMWARE_REV			"1.2.0"
 
 #if defined(GW0009R1)
 	#define BOARD_REV				"GW0009.v1.r01"
@@ -22,6 +22,10 @@ $Id$
 	#define BOARD_REV				"GW0009.v1.r02"
 #elif defined(GW0010R1)
 	#define BOARD_REV				"GW0010.v1.r01"
+#elif defined(GW0011)
+	#define BOARD_REV				"GW0011.v1.r01"
+#elif defined(GW0015)
+	#define BOARD_REV				"GW0015.v1.r01"
 #else
 	#define BOARD_REV				"undefined"
 #endif
