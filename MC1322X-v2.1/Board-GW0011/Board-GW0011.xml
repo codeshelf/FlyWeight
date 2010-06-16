@@ -151,7 +151,7 @@
           <state>MC1322X</state>
           <state>MC1322X_IAR</state>
           <state>IS_TOY_NETWORK</state>
-          <state>GUID="00000202"</state>
+          <state>GUID="00000201"</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

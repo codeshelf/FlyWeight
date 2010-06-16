@@ -20,7 +20,6 @@
 #include "pfcSPITask.h"
 #include "spi.h"
 #include "commands.h"
-#include "GPIO_Interface.h"
 
 #ifdef MC1322X
     #include "MacaInterrupt.h"
@@ -159,7 +158,7 @@ void vMain( void ) {
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	//gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
-	gPFCQueue = xQueueCreate(PFC_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
+	gPFCQueue = xQueueCreate(PFC_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(SDControlCommandStruct));
 
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;

@@ -232,6 +232,17 @@ typedef struct {
 	LedRepeatCntType	repeat;
 } LedFlashStruct;
 
+typedef struct {
+	ESDCardControlDeviceType	deviceType;
+	union {
+		gwUINT16				delayMillis;
+		struct {
+			gwUINT8 byte1;
+			gwUINT8 byte0;
+		} bytes ;
+	} delay ;
+} SDControlCommandStruct;
+
 // --------------------------------------------------------------------------
 // Externs
 

@@ -303,7 +303,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 						// it prevents the gateway from sending another update until this
 						// one completes, because we wont send an ACK until it completes.
 						GW_ENTER_CRITICAL(ccrHolder);
-						ackState = processSDCardModeSubCommand(inRxBufferNum);
+						ackState = processSDCardModeSubCommand(inRxBufferNum, ackId);
 						GW_EXIT_CRITICAL(ccrHolder);
 						break;
 
@@ -354,7 +354,7 @@ void radioTransmitTask(void *pvParameters) {
 
 			gShouldSleep = FALSE;
 
-			while(gTotalPendingMsgs >= 4) {
+			while(gTotalPendingMsgs >= MAX_NUM_MSG) {
 				// There's no message space in the queue, so wait.
 				vTaskDelay(1);
 			}

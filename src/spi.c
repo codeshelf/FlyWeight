@@ -142,7 +142,7 @@ gwBoolean enableSPI() {
 
 	// Set the SPI speed to 3MHz.
 	spiErr = SPI_GetConfig(&spiConfig);
-	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv4;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
 	spiErr = SPI_SetConfig(&spiConfig);
 
 	return result;

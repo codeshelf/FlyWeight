@@ -15,7 +15,7 @@
 #include "queue.h"
 #include "radioCommon.h"
 
-#define PFC_QUEUE_SIZE			2
+#define PFC_QUEUE_SIZE	 2
 
 extern xQueueHandle gPFCQueue;
 

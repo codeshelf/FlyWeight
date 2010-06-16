@@ -696,62 +696,25 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum) {
+extern xQueueHandle gPFCQueue;
+
+EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId) {
 
 	EControlCmdAckStateType result = eAckStateOk;
 
-	GpioErr_t error;
+	SDControlCommandStruct control;
 	ESDCardControlActionType action;
-	ESDCardControlDeviceType deviceType;
 
 	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
-	deviceType = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DEVTYPE];
+	control.deviceType = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DEVTYPE];
+	control.delay.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DELAY];
+	control.delay.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DELAY + 1];
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
 
-			if (deviceType == eSDCardDeviceType1) {
-
-				// Type1 cards have access to the card insert/uninsert IO pin of the SD card.
-
-				// Power cycle the card so that it can reenter the SDCard mode.
-				// (It will be in the SPI mode, and can only recover via power cycle.)
-				BUS_SW_OFF;
-				VCC_SW_OFF;
-
-				/* Some frames will turn off power to the card after the CARD_UNINSERTED instruction.
-				 * As soon as the power goes off, the JFET will "reconnect" card causing the frame
-				 * to power the card again.  A power-on reset is the result. */
-
-				CARD_UNINSERTED;
-
-				// Wait long enough for the capacitive charge in the SDCard to dissipate.
-				vTaskDelay(50);
-
-				VCC_SW_ON;
-				BUS_SW_ON;
-				CARD_INSERTED;
-
-			} else {
-				// Type2 cards do not have access to the insert/uninsert IO pin of the SD card slot.
-
-				// Reset the SD Card, and then re-init the card into standby mode.
-				BUS_SW_OFF;
-				enableSPI();
-				VCC_SW_OFF;
-				DelayMs(50);
-				VCC_SW_ON;
-				enableSDCardBus();
-			}
-
-			if (!disableSPI()) {
-				result = eAckStateFailed;
-			}
-			BUS_SW_ON;
-
-			Led1Off();
-			Led2Off();
-
+			// Switching back to SD card protocol mode is done in a task since it might take a long time.
+			xQueueGenericSend(gPFCQueue, &control, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK);
 			break;
 
 		case eSDCardActionSpiProtocol:
