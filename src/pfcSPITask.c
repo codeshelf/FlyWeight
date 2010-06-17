@@ -80,7 +80,6 @@ void pfcTask(void *pvParameters) {
 					// Type2 cards do not have access to the insert/uninsert IO pin of the SD card slot.
 
 					// Reset the SD Card, and then re-init the card into standby mode.
-					BUS_SW_OFF;
 					enableSPI();
 					VCC_SW_OFF;
 					DelayMs(50);

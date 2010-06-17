@@ -718,23 +718,8 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum,
 			break;
 
 		case eSDCardActionSpiProtocol:
-			// Disconnect the SDCard from the SDCard bus, set the DAT0 pull-up, and call the SPI init routine.
-
-			/* Some frames will turn off power to the card after the CARD_UNINSERTED instruction.
-			 * As soon as the power goes off, the JFET will "reconnect" card causing the frame
-			 * to power the card again.  A power-on reset is the result. */
-
-			// For the above reason we can't send the card uninsert.
-			//CARD_UNINSERTED;
-			BUS_SW_OFF;
-
-			VCC_SW_OFF;
-			// Wait long enough for the capacitive charge in the SDCard to dissipate.
-			vTaskDelay(50);
-			VCC_SW_ON;
-
-			if (enableSPI()) {
-				//result = eAckStateFailed;
+			if (!enableSPI()) {
+				result = eAckStateFailed;
 			}
 
 			// Reset the SDCard block updating flags.

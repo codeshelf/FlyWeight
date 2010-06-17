@@ -9,6 +9,7 @@
 
 #include "spi.h"
 #include "GPIO_Interface.h"
+#include "Leds.h"
 
 extern gwBoolean 	gSDCardBusConnected;
 extern gwBoolean 	gSDCardVccConnected;
@@ -31,6 +32,9 @@ gwBoolean enableSPI() {
 	gwUINT8 rcvByte = 0;
 	SDArgumentType cmdArg;
 	ESDCardResponse spiResult;
+
+	// Disconnect the card from the DPF.
+	BUS_SW_OFF;
 
 	// Enable the DAT0 pullup.
 	gpioErr = Gpio_EnPinPullup(SD_DAT0_PULLUP, TRUE);
@@ -96,7 +100,7 @@ gwBoolean enableSPI() {
 				// If we can't get it going in 25 tries, try power cycling the card.
 				VCC_SW_OFF;
 				// Wait long enough for the capacitive charge in the SDCard to dissipate.
-				vTaskDelay(50);
+				vTaskDelay(500);
 				VCC_SW_ON;
 			} else if (attempts == 50) {
 				// If we can't get it in 50 tries then reset the MCU.
