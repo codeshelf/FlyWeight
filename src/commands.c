@@ -33,7 +33,8 @@ gwBoolean gSDCardBusConnected = FALSE;
 gwBoolean gSDCardVccConnected = FALSE;
 gwUINT32 gCurSDCardAddress = 0;
 gwUINT8 gCurSDCardPartNumber = 0;
-gwBoolean gIsSDCardUpdating = FALSE;
+gwUINT8 gCurSDCardBlock[512];
+gwUINT16 gCurSDCardBlockPos;
 
 
 //extern gwUINT16				gFIFO[8];
@@ -724,7 +725,6 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum,
 
 			// Reset the SDCard block updating flags.
 			gCurSDCardPartNumber = 0;
-			gIsSDCardUpdating = FALSE;
 
 			break;
 	}
@@ -779,6 +779,8 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	GpioErr_t error;
 	ESDCardResponse cardResponse;
 
+	PACKET_LED_ON;
+
 	address.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR];
 	address.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR + 1];
 	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR + 2];
@@ -787,79 +789,35 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	totalParts = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PARTS];
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN];
 
-	Led2Off();
 	if ((gSDCardBusConnected) || (!gSDCardVccConnected)) {
 		// The SDCard is still connected to the SDCard bus or it has no power, so we can't send any SPI commands to it.
-		//GW_RESET_MCU;
-
-		// Just go ahead and make the card ready for the command.
-		// We probably reset on an SDCard command, and making us quietly ready saves time.
-		BUS_SW_OFF;
-		VCC_SW_ON;
-		enableSPI();
-	}
-
-	if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
+		result = eAckStateFailed;
+	} else if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
 		// A resend (because we got the packet, but the gateway didn't get the ACK).
 	} else {
 		if (partNumber == 1) {
-			if (gIsSDCardUpdating) {
-				// Error - we received a 1st part, but were already updating.
-				//GW_RESET_MCU;
-				result = FALSE;
-			} else {
-				// Start updating the block.
-				gIsSDCardUpdating = TRUE;
-				gCurSDCardPartNumber = partNumber;
-				gCurSDCardAddress = address.word;
-				cardResponse = writePartialBlockBegin(address.word);
-				cardResponse = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
-				if (cardResponse != eResponseOK) {
-					//GW_RESET_MCU;
-					result = eAckStateFailed;
-				}
-				Led2On();
-			}
+			// Start updating the block.
+			gCurSDCardPartNumber = partNumber;
+			gCurSDCardAddress = address.word;
+			gCurSDCardBlockPos = 0;
+			memcpy(&(gCurSDCardBlock[gCurSDCardBlockPos]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
+			gCurSDCardBlockPos += bytes;
+		} else if (partNumber != (gCurSDCardPartNumber + 1)) {
+			// Error - we received a part that is not +1 greater than the last.
+			result = eAckStateFailed;
+		} else if (partNumber == (totalParts + 1)) {
+			result = writeBlock(address.word, (gwUINT8*) &gCurSDCardBlock);
 		} else {
-			if (!gIsSDCardUpdating) {
-				// Error - we received a part greater than 1, but we were not updating.
-				//GW_RESET_MCU;
-				result = eAckStateFailed;
-			} else if ((gCurSDCardPartNumber + 1) != partNumber) {
-				// Error - we received a part that is not +1 greater than the last.
-				//GW_RESET_MCU;
-				result = eAckStateFailed;
-			} else {
-				gCurSDCardPartNumber = partNumber;
-				if (partNumber == totalParts) {
-					// Last part - stop the updating.
-					gIsSDCardUpdating = FALSE;
-					cardResponse = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
-					if (cardResponse != eResponseOK) {
-						//GW_RESET_MCU;
-						result = eAckStateFailed;
-					}
-					cardResponse = writePartialBlockEnd();
-					if (cardResponse != eResponseOK) {
-						//GW_RESET_MCU;
-						result = eAckStateFailed;
-					}
-					Led2On();
-				} else {
-					// Continuation of the updating.
-					cardResponse = writePartialBlock(&(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
-					if (cardResponse != eResponseOK) {
-						//GW_RESET_MCU;
-						result = eAckStateFailed;
-					}
-					Led2On();
-				}
-			}
+			// Next update
+			gCurSDCardPartNumber = partNumber;
+			memcpy(&(gCurSDCardBlock[gCurSDCardBlockPos]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
+			gCurSDCardBlockPos += bytes;
 		}
-
 	}
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
+
+	PACKET_LED_OFF;
 
 	return result;
 }

@@ -342,9 +342,17 @@ ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 
 ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 
-	writePartialBlockStart(inBlockNumber);
-	writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
-	writePartialBlockEnd();
+	ESDCardResponse cardResponse;
+
+	cardResponse = writePartialBlockBegin(inBlockNumber);
+	if (cardResponse == eResponseOK) {
+		cardResponse = writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
+		if (cardResponse == eResponseOK) {
+			cardResponse = writePartialBlockEnd();
+		}
+	}
+
+	return cardResponse;
 }
 
 // --------------------------------------------------------------------------
@@ -374,7 +382,7 @@ ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber) {
 
 // --------------------------------------------------------------------------
 
-ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes) {
+ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT16 inBytes) {
 	gwUINT16 counter;
 
 	for (counter = 0; counter < inBytes; counter++) {
@@ -390,48 +398,16 @@ ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes) {
 // --------------------------------------------------------------------------
 
 ESDCardResponse writePartialBlockEnd() {
-	gwUINT8 rcvByte = 0;
-	gwUINT16 counter;
-	SDArgumentType cmdArg;
+	ResponseArrayType r1[1];
 
-	if (writeByte(0xff) != gSpiErrNoError_c) {
-		SPI_CS_OFF;
-		return eResponseSPIError;
-	}
-	if (writeByte(0xff) != gSpiErrNoError_c) {
-		SPI_CS_OFF;
-		return eResponseSPIError;
-	}
-
-	// Get the data write response.
-	counter = SPI_WAIT_CYCLES;
-	do {
-		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			SPI_CS_OFF;
-			return eResponseSPIError;
-		}
-		counter--;
-	} while (((rcvByte & 0x10) == 0x10) && counter > 0);
-
-	if ((rcvByte & 0x0f) != 0x05) {
-		SPI_CS_OFF;
-		if ((rcvByte & 0x0f) == 0x0b) {
-			return eResponseCRCError;
-		} else {
-			return eResponseWriteBlockError;
-		}
-	}
-
-	do {
-		if (readByte(&rcvByte) != gSpiErrNoError_c) {
-			SPI_CS_OFF;
-			return eResponseSPIError;
-		}
-	} while (rcvByte == 0x00);
-
+	getSDCardBusResponse(r1, 1);
 	SPI_CS_OFF;
 
-	return eResponseOK;
+	if (r1[0] == 0x28) {
+		return eResponseOK;
+	} else {
+		return eResponseWriteBlockError;
+	}
 }
 
 // --------------------------------------------------------------------------

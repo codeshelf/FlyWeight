@@ -38,13 +38,18 @@
 #define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
 #define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
+#define CARD_LED_ON				/*Led1On();*/
+#define CARD_LED_OFF			Led1Off();
+#define PACKET_LED_ON			Led2On();
+#define PACKET_LED_OFF			Led2Off();
+
 #define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardBusConnected = TRUE; \
-								Led1Off();
+								CARD_LED_OFF;
 
 #define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardBusConnected = FALSE; \
-								Led1On();
+								CARD_LED_ON;
 
 #define VCC_SW_ON				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirIn_c); \
 								Gpio_EnPinPullup(VCC_HELPER_GPIO, TRUE); \
@@ -161,7 +166,7 @@ ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
 ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr);
 
 ESDCardResponse writePartialBlockBegin(gwUINT32 inBlockNumber);
-ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT8 inBytes);
+ESDCardResponse writePartialBlock(gwUINT8 *inDataPtr, gwUINT16 inBytes);
 ESDCardResponse writePartialBlockEnd();
 
 ESDCardResponse checkResponse(gwUINT8 inExpectedResponse);

@@ -161,22 +161,18 @@ void radioReceiveTask(void *pvParameters) {
 //							readCheckTicks = xTaskGetTickCount();
 //						}
 					}
-					//Led1On();
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
 						gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferSize = gMsgHolder[gCurMsg].msg.u8BufSize;
 						processRxPacket(gMsgHolder[gCurMsg].bufferNum);
 					} else {
 					}
-					//Led1Off();
 
 					RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 
 				} else if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == TX) {
-					//Led2On();
 					while ((funcErr != gSuccess_c) || (TX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg))) {
 						funcErr = process_radio_msg();
 					}
-					//Led2Off();
 					RELEASE_TX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 				}
 

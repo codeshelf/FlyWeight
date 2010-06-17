@@ -63,8 +63,8 @@ void pfcTask(void *pvParameters) {
 					MLMERXDisableRequest(&(gMsgHolder[gCurMsg].msg));
 
 					// Need to start conserving power.
-					Led1Off();
-					Led2Off();
+					CARD_LED_OFF;
+					PACKET_LED_OFF;
 
 					CARD_UNINSERTED;
 
