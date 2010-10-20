@@ -32,10 +32,8 @@ extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 gwBoolean gSDCardBusConnected = FALSE;
 gwBoolean gSDCardVccConnected = FALSE;
 gwUINT32 gCurSDCardAddress = 0;
-gwUINT8 gCurSDCardPartNumber = 0;
+gwUINT8 gCurSDCardUpdateResultBitField = 0;
 gwUINT8 gCurSDCardBlock[512];
-gwUINT16 gCurSDCardBlockPos;
-
 
 //extern gwUINT16				gFIFO[8];
 
@@ -57,8 +55,6 @@ gwUINT8 transmitPacket(BufferCntType inTXBufferNum) {
 	return result;
 
 }
-;
-
 // --------------------------------------------------------------------------
 
 gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
@@ -70,16 +66,12 @@ gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 	return result;
 
 }
-;
-
 // --------------------------------------------------------------------------
 
 AckIDType getAckId(BufferCntType inRXBufferNum) {
 	// We know we need to ACK if the command ID is not zero.
 	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_ACKID]);
 }
-;
-
 // --------------------------------------------------------------------------
 
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
@@ -88,8 +80,6 @@ ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr) {
 	ECommandGroupIDType result = ((inBufferPtr[CMDPOS_CMDID]) & CMDMASK_CMDID) >> 4;
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum) {
@@ -111,8 +101,6 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 	        >> SHIFTBITS_CMD_ENDPOINT);
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
@@ -121,8 +109,6 @@ NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
 	NetAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_SRC_ADDR) >> 4;
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
@@ -131,16 +117,12 @@ NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 	NetAddrType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ADDR] & CMDMASK_DST_ADDR);
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
 	ENetMgmtSubCmdIDType result = (inBufferPtr[CMDPOS_MGMT_SUBCMD]);
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
@@ -151,16 +133,12 @@ ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
 	}
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 	EControlSubCmdIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD]);
 	return result;
 }
-;
-
 // --------------------------------------------------------------------------
 
 void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr,
@@ -169,23 +147,17 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 	// First clear the packet header.
 	memset((void *) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMDID);
 
-	// The first byte of the packet is the header.
-	// The next byte of the packet is the packet length.
-	// The next half byte of the packet is the src address
-	// The next half byte of the packet is the dst address
-	// <--- Now the command starts --->
-	// The first half byte of the command is the command ID.
-	// The next half byte of the command is reserved.
-	// The remaining bytes of the command (and packet) is the command data.
+	// Write the packet header.
+	// (See the comments at the top of commandTypes.h.)
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_VERSION] |= (PACKET_VERSION << SHIFTBITS_PKT_VER);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NETID] |= (inNetworkID << SHIFTBITS_PKT_NETID);
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ADDR] = (inSrcAddr << SHIFTBITS_PKT_SRCADDR) | inDestAddr;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NET_NUM] |= (inNetworkID << SHIFTBITS_PKT_NETID);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SRC_ADDR] = inSrcAddr;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_DST_ADDR] = inDestAddr;
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMDID] = (inCmdID << SHIFTBITS_CMDID);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;
 	//gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 }
-;
 
 // --------------------------------------------------------------------------
 
@@ -213,7 +185,6 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_SYSSTAT + pos;
 }
-;
 
 // --------------------------------------------------------------------------
 
@@ -254,8 +225,6 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCCHK_BATT + 1;
 }
-;
-
 // --------------------------------------------------------------------------
 
 void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId) {
@@ -267,8 +236,6 @@ void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ACK_ID + 1;
 }
-;
-
 // --------------------------------------------------------------------------
 
 void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr) {
@@ -279,8 +246,6 @@ void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + 1;
 }
-;
-
 // --------------------------------------------------------------------------
 
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr) {
@@ -295,8 +260,6 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + inResponseSize + 1;
 }
-;
-
 // --------------------------------------------------------------------------
 
 #ifdef IS_GATEWAY
@@ -346,7 +309,6 @@ void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNum
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_CONTROL_DATA + 2;
 }
-;
 
 // --------------------------------------------------------------------------
 
@@ -356,7 +318,6 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 }
-;
 
 // --------------------------------------------------------------------------
 
@@ -388,8 +349,6 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 
 	gLocalDeviceState = eLocalStateRun;
 }
-;
-
 // --------------------------------------------------------------------------
 
 #ifdef IS_GATEWAY
@@ -436,7 +395,6 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	vTaskResume(gRadioReceiveTask);
 
 }
-;
 #endif
 
 // --------------------------------------------------------------------------
@@ -506,7 +464,6 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 
 	}
 }
-;
 #endif
 
 // --------------------------------------------------------------------------
@@ -515,8 +472,6 @@ void processNetCheckInboundCommand(BufferCntType inRXBufferNum) {
 	// The gateway (dongle) needs to add the link quality to the channel energy field.
 	// This way the gateway can assess channel energy.
 }
-;
-
 // --------------------------------------------------------------------------
 
 void processAssocRespCommand(BufferCntType inRXBufferNum) {
@@ -536,16 +491,12 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
-;
-
 // --------------------------------------------------------------------------
 
 void processAssocAckCommand(BufferCntType inRXBufferNum) {
 	// No can do in FreeRTOS :-(
 	//xTaskSetTickCount(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCACK_TIME)]);
 }
-;
-
 // --------------------------------------------------------------------------
 
 void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
@@ -554,8 +505,6 @@ void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
 	processQuery(inRXBufferNum, CMDPOS_INFO_QUERY, inSrcAddr);
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
-;
-
 // --------------------------------------------------------------------------
 
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr) {
@@ -675,10 +624,10 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 					gLedFlashSeqBuffer[gLedFlashSeqCount].greenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 					gLedFlashSeqBuffer[gLedFlashSeqCount].blueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOnMillis,
-					        (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+							(void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
 					pos += sizeof(LedFlashTimeType);
 					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOffMillis,
-					        (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+							(void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
 					pos += sizeof(LedFlashTimeType);
 					gLedFlashSeqBuffer[gLedFlashSeqCount].repeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
 					gLedFlashSeqCount++;
@@ -706,10 +655,10 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum,
 	SDControlCommandStruct control;
 	ESDCardControlActionType action;
 
-	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ACTION];
-	control.deviceType = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DEVTYPE];
-	control.delay.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DELAY];
-	control.delay.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DELAY + 1];
+	action = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_MODE_ACTION];
+	control.deviceType = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_MODE_DEVTYPE];
+	control.delay.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_MODE_DELAY];
+	control.delay.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_MODE_DELAY + 1];
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
@@ -757,9 +706,9 @@ EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBuff
 		crc.value = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_BLKCHKDAT + offset + sizeof(blockAddr)];
 
 		// If the block's CRC doesn't match the expected value then send a failure response.
-//		if (crc.value != crcBlock(blockAddr).value) {
-//			result = eAckStateFailed;
-//		}
+		//		if (crc.value != crcBlock(blockAddr).value) {
+		//			result = eAckStateFailed;
+		//		}
 	}
 
 	return result;
@@ -769,57 +718,101 @@ EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBuff
 
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum) {
 
-	EControlCmdAckStateType result = eAckStateOk;
-
+	EControlCmdAckStateType result = eAckStateNotNeeded;
 	gwUINT8 ccrHolder;
 	AddressType address;
 	gwUINT8 partNumber;
-	gwUINT8 totalParts;
+	gwUINT16 offset;
 	gwUINT8 bytes;
 	GpioErr_t error;
 	ESDCardResponse cardResponse;
 
 	PACKET_LED_ON;
 
-	address.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR];
-	address.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR + 1];
-	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR + 2];
-	address.bytes.byte3 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_ADDR + 3];
-	partNumber = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PART];
-	totalParts = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_PARTS];
-	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_LEN];
+	address.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR];
+	address.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 1];
+	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 2];
+	address.bytes.byte3 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 3];
+	partNumber = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_PART];
+	offset = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET];
+	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_LEN];
 
-	if ((gSDCardBusConnected) || (!gSDCardVccConnected)) {
-		// The SDCard is still connected to the SDCard bus or it has no power, so we can't send any SPI commands to it.
-		result = eAckStateFailed;
-	} else if ((address.word == gCurSDCardAddress) && (partNumber == gCurSDCardPartNumber)) {
-		// A resend (because we got the packet, but the gateway didn't get the ACK).
-	} else {
-		if (partNumber == 1) {
-			// Start updating the block.
-			gCurSDCardPartNumber = partNumber;
-			gCurSDCardAddress = address.word;
-			gCurSDCardBlockPos = 0;
-			memcpy(&(gCurSDCardBlock[gCurSDCardBlockPos]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
-			gCurSDCardBlockPos += bytes;
-		} else if (partNumber != (gCurSDCardPartNumber + 1)) {
-			// Error - we received a part that is not +1 greater than the last.
-			result = eAckStateFailed;
-		} else if (partNumber == (totalParts + 1)) {
-			result = writeBlock(address.word, (gwUINT8*) &gCurSDCardBlock);
-		} else {
-			// Next update
-			gCurSDCardPartNumber = partNumber;
-			memcpy(&(gCurSDCardBlock[gCurSDCardBlockPos]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_DATA]), bytes);
-			gCurSDCardBlockPos += bytes;
-		}
+	// If the latest update is for a different address block then reset for processing in the new block.
+	if (address.word != gCurSDCardAddress) {
+		gCurSDCardAddress = address.word;
+		gCurSDCardUpdateResultBitField = 0;
 	}
+
+	// Update the sub-block, and set the bitfield result.
+	memcpy(&(gCurSDCardBlock[offset]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_DATA]), bytes);
+	gCurSDCardUpdateResultBitField |= 1 << partNumber;
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 
 	PACKET_LED_OFF;
 
 	return result;
+}
+
+// --------------------------------------------------------------------------
+
+
+EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum) {
+	EControlCmdAckStateType result = eAckStateNotNeeded;
+
+	AddressType address;
+	gwUINT8 totalParts;
+
+	address.bytes.byte0 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMIT_ADDR];
+	address.bytes.byte1 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMIT_ADDR + 1];
+	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMIT_ADDR + 2];
+	address.bytes.byte3 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMIT_ADDR + 3];
+	totalParts = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMIT_PARTS];
+	gwBoolean isCommitOk = true;
+	if (gCurSDCardAddress != address.word) {
+		isCommitOk = false;
+	} else {
+		// Now check to see if we received all of these parts.
+		for (int partNumber = 0; partNumber < totalParts; ++partNumber) {
+			if (!(gCurSDCardUpdateResultBitField & (1 << partNumber))) {
+				isCommitOk = FALSE;
+			}
+		}
+		// If we received all of the parts then commit/write them to the SD card.
+		if (isCommitOk) {
+			if ((gSDCardBusConnected) || (!gSDCardVccConnected)) {
+				// The SDCard is still connected to the SDCard bus or it has no power, so we can't send any SPI commands to it.
+			} else {
+				ESDCardResponse writeResult = writeBlock(address.word, (gwUINT8*) &gCurSDCardBlock);
+				if (writeResult != eResponseOK) {
+					isCommitOk = false;
+				}
+			}
+		}
+	}
+
+	// Now create and send the commit response command.
+	txBufferNum = gTXCurBufferNum;
+	advanceTXBuffer();
+	createSDCardUpdateCommitRespCommand(txBufferNum, gCurSDCardAddress, gCurSDCardUpdateResultBitField, isCommitOk);
+	if (transmitPacket(txBufferNum)) {
+	};
+
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
+void createSDCardUpdateCommitRespCommand(BufferCntType inTXBufferNum, gwUINT32 inAddr, gwUINT8 inResultBitField, boolean inSuccess) {
+
+	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD] = eControlSubCmdSDCardUpdateCommitResp;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMITRESP_ADDR] = inAddr;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMITRESP_PARTS] = inResultBitField;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_SDCARD_COMMITRESP_SUCCESS] = inSuccess;
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_SDCARD_COMMITRESP_SUCCESS + 1;
 }
 
 // --------------------------------------------------------------------------
@@ -836,7 +829,6 @@ void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndp
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_SAMPLE_CNT + 1;
 }
-;
 
 // --------------------------------------------------------------------------
 
@@ -860,4 +852,3 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
 
 }
-;

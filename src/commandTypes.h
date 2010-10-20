@@ -1,11 +1,11 @@
 /*
-	FlyWeight
-	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
 
-	$Id$
-	$Name$
-*/
+ $Id$
+ $Name$
+ */
 
 #ifndef COMMANDSTYPES_H
 #define COMMANDSTYPES_H
@@ -23,10 +23,10 @@
  * The format of a packet on the network is as follows:
  *
  * 2b - Version
- * 3b - Network number
- * 3b - Reserved
- * 4b - Packet source address
- * 4b - Packet dest address
+ * 1b - Reserved
+ * 5b - Network number
+ * 1B - Packet source address
+ * 1B - Packet dest address
  * 4b - Command ID
  * 4b - Command endpoint
  * nB - Command bytes
@@ -39,12 +39,12 @@
 // Packet
 #define PCKPOS_VERSION			0
 #define PCKPOS_HEADER_BITS		0
-#define PCKPOS_NETID			0
-#define PCKPOS_PACKET_NUM		1
-#define PCKPOS_ADDR				2
-#define CMDPOS_CMDID			3
-#define CMDPOS_ENDPOINT			3
-#define CMDPOS_STARTOFCMD		4
+#define PCKPOS_NET_NUM			0
+#define PCKPOS_SRC_ADDR			1
+#define PCKPOS_DST_ADDR 		2
+#define CMDPOS_CMDID			4
+#define CMDPOS_ENDPOINT			4
+#define CMDPOS_STARTOFCMD		5
 
 // Network Mgmt
 #define CMDPOS_MGMT_SUBCMD		CMDPOS_STARTOFCMD
@@ -94,41 +94,53 @@
 #define CMDPOS_BEHAVIOR_CNT		CMDPOS_BEHAVIOR + 0
 #define CMDPOS_BEHAVIOR_SUBCMD	CMDPOS_BEHAVIOR_CNT + 1
 
-// SDCard Control Command
-#define CMDPOS_SDCARD_ACTION	CMDPOS_CONTROL_DATA
-#define CMDPOS_SDCARD_DEVTYPE	CMDPOS_SDCARD_ACTION + 1
-#define CMDPOS_SDCARD_DELAY		CMDPOS_SDCARD_DEVTYPE + 1
+// SDCard Mode Control Command
+#define CMDPOS_SDCARD_MODE_ACTION	CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_MODE_DEVTYPE	CMDPOS_SDCARD_MODE_ACTION + 1
+#define CMDPOS_SDCARD_MODE_DELAY	CMDPOS_SDCARD_MODE_DEVTYPE + 1
 
 // SDCard Update Command
-#define CMDPOS_SDCARD_ADDR		CMDPOS_CONTROL_DATA
-#define CMDPOS_SDCARD_PART		CMDPOS_SDCARD_ADDR + 4
-#define CMDPOS_SDCARD_PARTS		CMDPOS_SDCARD_PART + 1
-#define CMDPOS_SDCARD_LEN		CMDPOS_SDCARD_PARTS + 1
-#define CMDPOS_SDCARD_DATA		CMDPOS_SDCARD_LEN + 1
+#define CMDPOS_SDCARD_UPDATE_ADDR		CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_UPDATE_PART		CMDPOS_SDCARD_UPDATE_ADDR + 4
+#define CMDPOS_SDCARD_UPDATE_OFFSET		CMDPOS_SDCARD_UPDATE_PART + 1
+#define CMDPOS_SDCARD_UPDATE_LEN		CMDPOS_SDCARD_UPDATE_OFFSET + 2
+#define CMDPOS_SDCARD_UPDATE_DATA		CMDPOS_SDCARD_UPDATE_LEN + 1
 
-// SDCard Control Command
+// SDCard Commit Command
+#define CMDPOS_SDCARD_COMMIT_ADDR		CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_COMMIT_PARTS		CMDPOS_SDCARD_COMMIT_ADDR + 4
+
+// SDCard Commit Response Command
+#define CMDPOS_SDCARD_COMMITRESP_ADDR		CMDPOS_CONTROL_DATA
+#define CMDPOS_SDCARD_COMMITRESP_PARTS		CMDPOS_SDCARD_COMMIT_ADDR + 4
+#define CMDPOS_SDCARD_COMMITRESP_SUCCESS	CMDPOS_SDCARD_COMMIT_PARTS + 1
+
+// SDCard Block Command
 #define CMDPOS_SDCARD_BLKCHKCNT	CMDPOS_CONTROL_DATA
 #define CMDPOS_SDCARD_BLKCHKDAT	CMDPOS_SDCARD_BLKCHKCNT + 1
 
 // Command masks
 #define PACKETMASK_VERSION		0xc0    /* 0b11000000 */
-#define PACKETMASK_RSV_HDR		0x30	/* 0b00110000 */
-#define PACKETMASK_NETID		0x0f    /* 0b00001111 */
-#define CMDMASK_SRC_ADDR		0xf0    /* 0b11110000 */
-#define CMDMASK_DST_ADDR		0x0f    /* 0b00001111 */
+#define PACKETMASK_RSV_HDR		0x20	/* 0b00100000 */
+#define PACKETMASK_NETID		0x1f    /* 0b00011111 */
 #define CMDMASK_CMDID			0xf0    /* 0b11110000 */
 #define CMDMASK_ENDPOINT		0x0f    /* 0b00001111 */
-#define CMDMASK_ASSIGN_ADDR		0xf0    /* 0b11110000 */
-#define CMDMASK_ASSIGN_NETID	0x0f    /* 0b00001111 */
 
 #define SHIFTBITS_PKT_VER		6
 #define SHIFTBITS_RSV_HDR		4
 #define SHIFTBITS_PKT_NETID		0
-#define SHIFTBITS_PKT_SRCADDR	4
-#define SHIFTBITS_CMDID			4
-#define SHIFTBITS_CMD_ASGNADDR	4
-#define SHIFTBITS_CMD_ASGNNETID	0
+#define SHIFTBITS_CMD_ID		4
 #define SHIFTBITS_CMD_ENDPOINT	0
+
+#define PACKET_VERSION			0x00
+#define BROADCAST_NETID			0x1f
+
+#define ADDR_CONTROLLER			0x00
+#define ADDR_BROADCAST			0xff
+
+#define MAX_REMOTES				0xfe
+#define INVALID_REMOTE			0xff
+
 // --------------------------------------------------------------------------
 // Typedefs
 
@@ -142,9 +154,7 @@
  * 		-> ControllerStateRun - After initialization.
  */
 typedef enum {
-	eControllerStateUnknown,
-	eControllerStateInit,
-	eControllerStateRun
+	eControllerStateUnknown, eControllerStateInit, eControllerStateRun
 } ControllerStateType;
 
 /*
@@ -256,9 +266,7 @@ typedef enum {
 } ECmdAssocType;
 
 typedef enum {
-	eCmdInfoInvalid = -1,
-	eCmdInfoQuery = 1,
-	eCmdInfoResponse = 2
+	eCmdInfoInvalid = -1, eCmdInfoQuery = 1, eCmdInfoResponse = 2
 } EInfoSubCmdIDType;
 
 typedef enum {
@@ -268,8 +276,11 @@ typedef enum {
 	eControlSubCmdButton = 3,
 	eControlSubCmdHooBee = 4,
 	eControlSubCmdSDCardUpdate = 5,
-	eControlSubCmdSDCardControl = 6,
-	eControlSubCmdSDCardBlockCheck = 7
+	eControlSubCmdSDCardUpdateCommit = 6,
+	eControlSubCmdSDCardUpdateCommitResp = 7,
+	eControlSubCmdSDCardModeControl = 8,
+	eControlSubCmdSDCardBlockCheck = 9,
+	eControlSubCmdSDCardCheck = 10
 } EControlSubCmdIDType;
 
 typedef enum {
@@ -286,9 +297,7 @@ typedef enum {
 } ESDCardControlActionType;
 
 typedef enum {
-	eSDCardDeviceInvalid = -1,
-	eSDCardDeviceType1 = 1,
-	eSDCardDeviceType2 = 2,
+	eSDCardDeviceInvalid = -1, eSDCardDeviceType1 = 1, eSDCardDeviceType2 = 2,
 } ESDCardControlDeviceType;
 
 // --------------------------------------------------------------------------

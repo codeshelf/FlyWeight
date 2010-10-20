@@ -109,12 +109,6 @@
 	#define TPMOF_AUDIO_LOADER		TPM2SC_TOF
 #endif
 
-#define MAX_REMOTES				14
-#define INVALID_REMOTE			MAX_REMOTES + 1
-
-#define ADDR_CONTROLLER			0x00
-#define ADDR_BROADCAST			0x0F
-
 #define SMAC_TICKS_PER_MS		250
 
 #define MAX_LED_SEQUENCES		8

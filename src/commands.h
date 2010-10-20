@@ -23,15 +23,6 @@
 #define DEVICE_GATEWAY			1
 #define DEVICE_REMOTE			2
 
-#define DEVICE_VER_BYTES		1
-
-#define PACKET_HEADER_BYTES		1
-#define PACKET_VERSION			0x01
-#define BROADCAST_NETID			0x0f
-
-#define INVALID_CHANNEL			-1
-#define AUTOMATIC_CHANNEL		127
-
 #define MOTOR1_ENDPOINT		2
 #define MOTOR2_ENDPOINT		3
 

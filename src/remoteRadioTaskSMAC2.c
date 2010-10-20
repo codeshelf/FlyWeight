@@ -262,7 +262,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 				break;
 
 			case eCommandControl:
-				// If the packet requires an ACK then send it now.
+				// Prepare to handle packet ACK.
 				ackId = getAckId(inRxBufferNum);
 				ackState = eAckStateNotNeeded;
 
@@ -294,8 +294,8 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 						GW_EXIT_CRITICAL(ccrHolder);
 						break;
 
-					case eControlSubCmdSDCardControl:
-						// By processing the SDCard updates in the critical region,
+					case eControlSubCmdSDCardModeControl:
+						// By processing the SDCard mode control in the critical region,
 						// it prevents the gateway from sending another update until this
 						// one completes, because we wont send an ACK until it completes.
 						GW_ENTER_CRITICAL(ccrHolder);
@@ -317,7 +317,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 						// Immediately free this command buffer since we'll never do anything with it.
 						//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
 						break;
-
 				}
 
 				// Send an ACK if necessary.
