@@ -17,16 +17,20 @@
  */
 
 message_t gEDMsg;
-uint8_t gEDMsgData[1];
+uint8_t gEDMsgData[4];
 FuncReturn_t	portMLMEEnergyDetect(channel_num_t inChannelNum) {
 
 	FuncReturn_t result;
 
 	MSG_INIT(gEDMsg, &gEDMsgData, NULL);
+	gEDMsg.u8Status.msg_type = ED;
 	result = MLMEEnergyDetect(&gEDMsg, inChannelNum);
 	while (gEDMsg.u8Status.msg_state != MSG_ED_ACTION_COMPLETE_SUCCESS) {
 		process_radio_msg();
 	}
+
+	// The result after we've read it.
+	result = gEDMsg.pu8Buffer->u8Data[0];
 
 	return result;
 }

@@ -125,6 +125,8 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSDCardControlSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId);
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum);
+void createSDCardUpdateCommitRespCommand(BufferCntType inTXBufferNum, gwUINT32 inAddr, gwUINT8 inResultBitField, gwBoolean inSuccess);
 EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);

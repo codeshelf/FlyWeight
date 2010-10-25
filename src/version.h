@@ -14,7 +14,7 @@ $Id$
 #ifndef VERSION_H
 #define VERSION_H
 
-#define FIRMWARE_REV			"1.3.0"
+#define FIRMWARE_REV			"1.4.0"
 
 #if defined(GW0009R1)
 	#define BOARD_REV				"GW0009.v1.r01"
