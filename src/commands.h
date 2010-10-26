@@ -100,7 +100,7 @@ NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 gwUINT8 getLEDVaue(gwUINT8 inLEDNum, BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
-void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId);
+void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, gwUINT32 inAckData);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNumber, gwUINT8 inFunctionType);

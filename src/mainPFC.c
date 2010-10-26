@@ -134,7 +134,7 @@ void vMain( void ) {
 	// End test
 
 	crmCopCntl_t copCntl;
-	copCntl.bit.copEn = FALSE;
+	copCntl.bit.copEn = TRUE;
 	copCntl.bit.copTimeOut = 127;
 	copCntl.bit.copWP = TRUE;
 	copCntl.bit.copOut = 0;

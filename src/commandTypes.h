@@ -23,10 +23,12 @@
  * The format of a packet on the network is as follows:
  *
  * 2b - Version
+ * 1b - Ack requested bit
  * 1b - Reserved
- * 5b - Network number
+ * 4b - Network number
  * 1B - Packet source address
  * 1B - Packet dest address
+ * 1B - Ack Id
  * 4b - Command ID
  * 4b - Command endpoint
  * nB - Command bytes
@@ -38,11 +40,16 @@
 // Command format positioning constants.
 // Packet
 #define PCKPOS_VERSION			0
-#define PCKPOS_PAD_BITS			PCKPOS_VERSION
-#define PCKPOS_NET_NUM			PCKPOS_PAD_BITS
+#define PCKPOS_PCK_TYPE_BIT		PCKPOS_VERSION
+#define PCKPOS_RESERVED			PCKPOS_PCK_TYPE_BIT
+#define PCKPOS_NET_NUM			PCKPOS_RESERVED
 #define PCKPOS_SRC_ADDR			PCKPOS_NET_NUM + 1
 #define PCKPOS_DST_ADDR 		PCKPOS_SRC_ADDR + 1
-#define CMDPOS_CMD_ID			PCKPOS_DST_ADDR + 1
+#define PCKPOS_ACK_ID			PCKPOS_DST_ADDR + 1
+
+#define PCKPOS_ACK_DATA			PCKPOS_ACK_ID + 1
+
+#define CMDPOS_CMD_ID			PCKPOS_ACK_ID + 1
 #define CMDPOS_ENDPOINT			CMDPOS_CMD_ID
 #define CMDPOS_STARTOFCMD		CMDPOS_ENDPOINT + 1
 
@@ -78,8 +85,7 @@
 // Control Command
 #define CMDPOS_CONTROL			CMDPOS_STARTOFCMD
 #define CMDPOS_CONTROL_SUBCMD	CMDPOS_CONTROL + 0
-#define CMDPOS_CONTROL_ACKID	CMDPOS_CONTROL_SUBCMD + 1
-#define CMDPOS_CONTROL_DATA		CMDPOS_CONTROL_ACKID + 1
+#define CMDPOS_CONTROL_DATA		CMDPOS_CONTROL_SUBCMD + 1
 
 // Audio Command
 #define CMDPOS_AUDIO			CMDPOS_STARTOFCMD
@@ -122,12 +128,14 @@
 
 // Command masks
 #define PACKETMASK_VERSION		0xc0    /* 0b11000000 */
-#define PACKETMASK_RSV_HDR		0x20	/* 0b00100000 */
-#define PACKETMASK_NET_NUM		0x1f    /* 0b00011111 */
+#define PACKETMASK_ACK_REQ		0x20	/* 0b00100000 */
+#define PACKETMASK_RSV_HDR		0x10	/* 0b00010000 */
+#define PACKETMASK_NET_NUM		0x0f    /* 0b00001111 */
 #define CMDMASK_CMDID			0xf0    /* 0b11110000 */
 #define CMDMASK_ENDPOINT		0x0f    /* 0b00001111 */
 
 #define SHIFTBITS_PKT_VER		6
+#define SHIFTBITS_PCK_TYPE		5
 #define SHIFTBITS_RSV_HDR		4
 #define SHIFTBITS_PKT_NET_NUM	0
 #define SHIFTBITS_CMD_ID		4
@@ -135,7 +143,7 @@
 
 #define PACKET_VERSION			0x00
 
-#define BROADCAST_NET_NUM		0x1f
+#define BROADCAST_NET_NUM		0x0f
 #define ADDR_CONTROLLER			0x00
 #define ADDR_BROADCAST			0xff
 
@@ -254,8 +262,7 @@ typedef enum {
 	eNetMgmtSubCmdInvalid = -1,
 	eNetMgmtSubCmdNetSetup = 1,
 	eNetMgmtSubCmdNetCheck = 2,
-	eNetMgmtSubCmdNetIntfTest = 3,
-	eNetMgmtSubCmdAck = 4
+	eNetMgmtSubCmdNetIntfTest = 3
 } ENetMgmtSubCmdIDType;
 
 typedef enum {

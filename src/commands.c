@@ -70,7 +70,7 @@ gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 
 AckIDType getAckId(BufferCntType inRXBufferNum) {
 	// We know we need to ACK if the command ID is not zero.
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_ACKID]);
+	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ACK_ID]);
 }
 // --------------------------------------------------------------------------
 
@@ -227,14 +227,13 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 }
 // --------------------------------------------------------------------------
 
-void createAckCommand(BufferCntType inTXBufferNum, AckIDType inAckId) {
+void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, gwUINT32 inAckData) {
 
 	createPacket(inTXBufferNum, eCommandNetMgmt, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
-
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdAck;
-	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_ACKCMD_ID] = inAckId;
-
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_NETM_ACKCMD_ID + 1;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_PCK_TYPE_BIT] |= 1 << SHIFTBITS_PCK_TYPE;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ACK_ID] = inAckId;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ACK_DATA] = inAckData;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = PCKPOS_ACK_DATA + 4;
 }
 // --------------------------------------------------------------------------
 
