@@ -31,7 +31,9 @@ extern LedFlashSeqCntType gLedFlashSeqCount;
 extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
 gwBoolean gSDCardBusConnected = FALSE;
 gwBoolean gSDCardVccConnected = FALSE;
-gwUINT32 gCurSDCardAddress = 0;
+gwBoolean gSDCardInSPIMode = FALSE;
+gwUINT32 gCurSDCardAddr = 0;
+gwBoolean gCurSDCardAddrComitted = FALSE;
 gwUINT8 gCurSDCardUpdateResultBitField = 0;
 gwUINT8 gCurSDCardBlock[512];
 
@@ -648,9 +650,10 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 extern xQueueHandle gPFCQueue;
 
-EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId) {
+EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData) {
 
 	EControlCmdAckStateType result = eAckStateOk;
+	inOutAckData[0] = SD_MODE_OK;
 
 	SDControlCommandStruct control;
 	ESDCardControlActionType action;
@@ -662,14 +665,20 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum,
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
-
-			// Switching back to SD card protocol mode is done in a task since it might take a long time.
-			xQueueGenericSend(gPFCQueue, &control, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK);
+			if (gSDCardInSPIMode) {
+				gSDCardInSPIMode = FALSE;
+				// Switching back to SD card protocol mode is done in a task since it might take a long time.
+				xQueueGenericSend(gPFCQueue, &control, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK);
+			}
 			break;
 
 		case eSDCardActionSpiProtocol:
-			if (!enableSPI()) {
-				result = eAckStateFailed;
+			if (!gSDCardInSPIMode) {
+				if (enableSPI()) {
+					gSDCardInSPIMode = TRUE;
+				} else {
+					inOutAckData[0] = SD_MODE_FAILED;
+				}
 			}
 			break;
 	}
@@ -730,17 +739,19 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 2];
 	address.bytes.byte3 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 3];
 	partBitFieldBit = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_PARTBIT];
-	offset = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET];
+	memcpy(&offset, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET]), sizeof(offset));
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_LEN];
 
 	// If the latest update is for a different address block then reset for processing in the new block.
-	if (address.word != gCurSDCardAddress) {
-		gCurSDCardAddress = address.word;
+	if (address.word != gCurSDCardAddr) {
+		gCurSDCardAddr = address.word;
+		gCurSDCardAddrComitted = FALSE;
 		gCurSDCardUpdateResultBitField = 0;
 	}
 
-	// Update the sub-block, and set the bitfield result.
+	// Copy the contents of the sub-block into the offset position in the buffer block.
 	memcpy(&(gCurSDCardBlock[offset]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_DATA]), bytes);
+	// Set the bitfield result.
 	gCurSDCardUpdateResultBitField |= partBitFieldBit;
 
 	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
@@ -768,22 +779,41 @@ EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBu
 
 	inOutAckData[0] = SD_UPDATE_OK;
 	inOutAckData[1] = gCurSDCardUpdateResultBitField;
-	if (gCurSDCardAddress != address.word) {
+	if (gCurSDCardAddr != address.word) {
 		inOutAckData[0] = SD_UPDATE_BAD_ADDR;
 	} else if (gCurSDCardUpdateResultBitField != updateBitField) {
 		// Now check to see if we received all of these parts.
 		// If not, do nothing.
-	} else if ((gSDCardBusConnected) || (!gSDCardVccConnected)) {
-		// The SDCard is still connected to the SDCard bus or it has no power, so we can't send any SPI commands to it.
-		inOutAckData[0] = SD_UPDATE_BAD_BUSVCC;
-	} else {
-		// If we received all of the parts then commit/write them to the SD card.
-		CARD_LED_ON;
-		ESDCardResponse writeResult = writeBlock(address.word, (gwUINT8*) &gCurSDCardBlock);
-		if (writeResult != eResponseOK) {
-			inOutAckData[0] = SD_UPDATE_BAD_WRITE;
+	} else if (!gCurSDCardAddrComitted) {
+		// If we received all of the parts then try commit/write them to the SD card.
+
+		// If we're not in SPI mode then attemp to go into SPI mode.
+		if (!gSDCardInSPIMode) {
+			if (enableSPI()) {
+				gSDCardInSPIMode = TRUE;
+			} else {
+				inOutAckData[0] = SD_UPDATE_BAD_SPIMODE;
+				// Reset the card.
+				VCC_SW_OFF;
+				vTaskDelay(20);
+				VCC_SW_ON;
+			}
 		}
-		CARD_LED_OFF;
+
+		// If we're in SPI mode then attempt to update the SD card.
+		if (gSDCardInSPIMode) {
+			CARD_LED_ON;
+			ESDCardResponse writeResult = writeBlock(address.word, (gwUINT8*) &gCurSDCardBlock);
+			CARD_LED_OFF;
+			if (writeResult == eResponseOK) {
+				gCurSDCardAddrComitted = TRUE;
+			} else {
+				inOutAckData[0] = SD_UPDATE_BAD_WRITE;
+			}
+		}
+	} else {
+		// Do nothing, we've already written this addr block to the card.
+		// Probably our ACK packet didn't make it back, so we'll send another.
 	}
 
 	return result;

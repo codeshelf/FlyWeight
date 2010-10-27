@@ -307,7 +307,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							// it prevents the gateway from sending another update until this
 							// one completes, because we wont send an ACK until it completes.
 							GW_ENTER_CRITICAL(ccrHolder);
-							ackState = processSDCardModeSubCommand(inRxBufferNum, ackId);
+							ackState = processSDCardModeSubCommand(inRxBufferNum, ackId, ackData);
 							GW_EXIT_CRITICAL(ccrHolder);
 							break;
 

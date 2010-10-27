@@ -123,7 +123,7 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 
 EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processSDCardControlSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId);
+EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData);
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData);
 EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);

@@ -61,7 +61,7 @@ gwBoolean enableSPI() {
 	spiConfig.ClkCtrl.Bits.ClockCount = 8;
 	spiConfig.ClkCtrl.Bits.DataCount = 8;
 	spiConfig.Setup.Word = 0;
-	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv16;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv64;
 	spiConfig.Setup.Bits.ClockPol = ConfigClockPolPositive;
 	spiConfig.Setup.Bits.ClockPhase = ConfigClockPhase1stEdge;
 	spiConfig.Setup.Bits.MisoPhase = ConfigMisoPhaseOppositeEdge;
@@ -134,15 +134,17 @@ gwBoolean enableSPI() {
 		attempts++;
 		spiResult = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
 		spiResult = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
-		// If we can't get it going in 50 tries, it's never going to happen.
-		if (attempts > 50) {
+		// It can take hundreds of ms to init some cards.
+		if (attempts > 5000) {
 			result = disableSPI();
 			return FALSE;
 		}
-	} while ((spiResult != eResponseOK) && (attempts < 50));
+		GW_WATCHDOG_RESET;
+	} while ((spiResult != eResponseOK) /*&& (attempts < 250)*/);
 
-	cmdArg.word = SD_BLOCK_SIZE;
-	spiResult = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
+	// Set the default block size to 512.
+//	cmdArg.word = SD_BLOCK_SIZE;
+//	spiResult = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
 
 	// Set the SPI speed to 6MHz.
 	spiErr = SPI_GetConfig(&spiConfig);

@@ -150,9 +150,12 @@
 #define MAX_REMOTES				0xfe
 #define INVALID_REMOTE			0xff
 
+#define SD_MODE_OK				0x00
+#define SD_MODE_FAILED			0x01
+
 #define SD_UPDATE_OK			0x00
 #define SD_UPDATE_BAD_ADDR		0x01
-#define SD_UPDATE_BAD_BUSVCC	0x02
+#define SD_UPDATE_BAD_SPIMODE	0x02
 #define SD_UPDATE_BAD_WRITE		0x03
 
 // --------------------------------------------------------------------------
