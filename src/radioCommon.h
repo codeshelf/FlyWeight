@@ -28,6 +28,7 @@
 
 #define MAX_PACKET_SIZE			123
 //#define MAX_PACKET_SIZE			30
+#define ACK_DATA_BYTES			8
 
 // The gateway needs fewer buffers.
 #ifdef IS_GATEWAY
@@ -159,6 +160,7 @@ typedef struct {
 
 typedef gwUINT8				NetworkIDType;
 typedef gwUINT8				AckIDType;
+typedef gwUINT8				AckDataType[ACK_DATA_BYTES];
 typedef gwUINT8				NetAddrType;
 typedef gwUINT8				EndpointNumType;
 typedef gwUINT8				KVPNumType;

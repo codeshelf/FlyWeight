@@ -61,7 +61,7 @@ gwBoolean enableSPI() {
 	spiConfig.ClkCtrl.Bits.ClockCount = 8;
 	spiConfig.ClkCtrl.Bits.DataCount = 8;
 	spiConfig.Setup.Word = 0;
-	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv128;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv16;
 	spiConfig.Setup.Bits.ClockPol = ConfigClockPolPositive;
 	spiConfig.Setup.Bits.ClockPhase = ConfigClockPhase1stEdge;
 	spiConfig.Setup.Bits.MisoPhase = ConfigMisoPhaseOppositeEdge;
@@ -135,18 +135,18 @@ gwBoolean enableSPI() {
 		spiResult = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
 		spiResult = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
 		// If we can't get it going in 50 tries, it's never going to happen.
-//		if (attempts++ == 250) {
-//			result = disableSPI();
-//			return FALSE;
-//		}
-	} while ((spiResult != eResponseOK) /* && (attempts < 250) */);
+		if (attempts > 50) {
+			result = disableSPI();
+			return FALSE;
+		}
+	} while ((spiResult != eResponseOK) && (attempts < 50));
 
 	cmdArg.word = SD_BLOCK_SIZE;
 	spiResult = sendCommandWithArg(eSDCardCmd16, cmdArg, eResponseOK, TRUE);
 
-	// Set the SPI speed to 3MHz.
+	// Set the SPI speed to 6MHz.
 	spiErr = SPI_GetConfig(&spiConfig);
-	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv8;
+	spiConfig.Setup.Bits.ClockFreq = ConfigClockFreqDiv4;
 	spiErr = SPI_SetConfig(&spiConfig);
 
 	return result;
@@ -342,15 +342,19 @@ ESDCardResponse readBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 
 ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 
-	ESDCardResponse cardResponse;
+	ESDCardResponse cardResponse = eResponseOK;
 
-	cardResponse = writePartialBlockBegin(inBlockNumber);
-	if (cardResponse == eResponseOK) {
-		cardResponse = writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
-		if (cardResponse == eResponseOK) {
-			cardResponse = writePartialBlockEnd();
-		}
-	}
+//	cardResponse = writePartialBlockBegin(inBlockNumber);
+//	if (cardResponse == eResponseOK) {
+//		cardResponse = writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
+//		if (cardResponse == eResponseOK) {
+//			cardResponse = writePartialBlockEnd();
+//		}
+//	}
+
+	writePartialBlockBegin(inBlockNumber);
+	writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
+	writePartialBlockEnd();
 
 	return cardResponse;
 }

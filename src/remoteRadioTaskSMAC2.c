@@ -194,7 +194,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 	NetAddrType cmdDstAddr;
 	NetworkIDType networkID;
 	ECmdAssocType assocSubCmd;
-	gwUINT32 ackData;
+	AckDataType ackData;
 	AckIDType ackId;
 	gwUINT8 ccrHolder;
 	EControlCmdAckStateType ackState;
@@ -221,6 +221,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			// Prepare to handle packet ACK.
 			ackId = getAckId(inRxBufferNum);
 			ackState = eAckStateNotNeeded;
+			memset(ackData, 0, ACK_DATA_BYTES);
 
 			switch (cmdID) {
 
@@ -289,6 +290,15 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							// one completes, because we wont send an ACK until it completes.
 							GW_ENTER_CRITICAL(ccrHolder);
 							ackState = processSDCardUpdateSubCommand(inRxBufferNum);
+							GW_EXIT_CRITICAL(ccrHolder);
+							break;
+
+						case eControlSubCmdSDCardUpdateCommit:
+							// By processing the SDCard updates in the critical region,
+							// it prevents the gateway from sending another update until this
+							// one completes, because we wont send an ACK until it completes.
+							GW_ENTER_CRITICAL(ccrHolder);
+							ackState = processSDCardUpdateCommitSubCommand(inRxBufferNum, ackData);
 							GW_EXIT_CRITICAL(ccrHolder);
 							break;
 

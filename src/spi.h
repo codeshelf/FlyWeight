@@ -38,18 +38,18 @@
 #define SPI_CS_ON				Gpio_SetPinData(SPI_CS, gGpioPinStateLow_c);
 #define SPI_CS_OFF				Gpio_SetPinData(SPI_CS, gGpioPinStateHigh_c);
 
-#define CARD_LED_ON				/*Led1On();*/
+#define CARD_LED_ON				Led1On();
 #define CARD_LED_OFF			Led1Off();
 #define PACKET_LED_ON			Led2On();
 #define PACKET_LED_OFF			Led2Off();
 
 #define BUS_SW_ON				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateLow_c); \
 								gSDCardBusConnected = TRUE; \
-								CARD_LED_OFF;
+								//CARD_LED_OFF;
 
 #define BUS_SW_OFF				Gpio_SetPinData(BUS_SW_GPIO, gGpioPinStateHigh_c); \
 								gSDCardBusConnected = FALSE; \
-								CARD_LED_ON;
+								//CARD_LED_ON;
 
 #define VCC_SW_ON				Gpio_SetPinDir(VCC_HELPER_GPIO, gGpioDirIn_c); \
 								Gpio_EnPinPullup(VCC_HELPER_GPIO, TRUE); \

@@ -108,14 +108,14 @@
 
 // SDCard Update Command
 #define CMDPOS_SDCARD_UPDATE_ADDR		CMDPOS_CONTROL_DATA
-#define CMDPOS_SDCARD_UPDATE_PART		CMDPOS_SDCARD_UPDATE_ADDR + 4
-#define CMDPOS_SDCARD_UPDATE_OFFSET		CMDPOS_SDCARD_UPDATE_PART + 1
+#define CMDPOS_SDCARD_UPDATE_PARTBIT	CMDPOS_SDCARD_UPDATE_ADDR + 4
+#define CMDPOS_SDCARD_UPDATE_OFFSET		CMDPOS_SDCARD_UPDATE_PARTBIT + 1
 #define CMDPOS_SDCARD_UPDATE_LEN		CMDPOS_SDCARD_UPDATE_OFFSET + 2
 #define CMDPOS_SDCARD_UPDATE_DATA		CMDPOS_SDCARD_UPDATE_LEN + 1
 
 // SDCard Commit Command
 #define CMDPOS_SDCARD_COMMIT_ADDR		CMDPOS_CONTROL_DATA
-#define CMDPOS_SDCARD_COMMIT_PARTS		CMDPOS_SDCARD_COMMIT_ADDR + 4
+#define CMDPOS_SDCARD_COMMIT_BIFIELD	CMDPOS_SDCARD_COMMIT_ADDR + 4
 
 // SDCard Commit Response Command
 #define CMDPOS_SDCARD_COMMITRESP_ADDR		CMDPOS_CONTROL_DATA
@@ -149,6 +149,11 @@
 
 #define MAX_REMOTES				0xfe
 #define INVALID_REMOTE			0xff
+
+#define SD_UPDATE_OK			0x00
+#define SD_UPDATE_BAD_ADDR		0x01
+#define SD_UPDATE_BAD_BUSVCC	0x02
+#define SD_UPDATE_BAD_WRITE		0x03
 
 // --------------------------------------------------------------------------
 // Typedefs
@@ -285,10 +290,9 @@ typedef enum {
 	eControlSubCmdHooBee = 4,
 	eControlSubCmdSDCardUpdate = 5,
 	eControlSubCmdSDCardUpdateCommit = 6,
-	eControlSubCmdSDCardUpdateCommitResp = 7,
-	eControlSubCmdSDCardModeControl = 8,
-	eControlSubCmdSDCardBlockCheck = 9,
-	eControlSubCmdSDCardCheck = 10
+	eControlSubCmdSDCardModeControl = 7,
+	eControlSubCmdSDCardBlockCheck = 8,
+	eControlSubCmdSDCardCheck = 9
 } EControlSubCmdIDType;
 
 typedef enum {

@@ -100,7 +100,7 @@ NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 gwUINT8 getLEDVaue(gwUINT8 inLEDNum, BufferCntType inRXBufferNum);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
-void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, gwUINT32 inAckData);
+void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, AckDataType inAckData);
 void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNumber, gwUINT8 inFunctionType);
@@ -125,8 +125,7 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSDCardControlSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId);
 EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum);
-void createSDCardUpdateCommitRespCommand(BufferCntType inTXBufferNum, gwUINT32 inAddr, gwUINT8 inResultBitField, gwBoolean inSuccess);
+EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData);
 EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
