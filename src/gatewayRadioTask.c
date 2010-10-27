@@ -42,7 +42,6 @@ extern BufferCntType		gRXCurBufferNum;
 extern BufferCntType		gRXUsedBuffers;
 
 extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
-extern BufferCntType		gTXCurBufferNum;
 extern BufferCntType		gTXUsedBuffers;
 
 NetAddrType	    	gMainRemote = INVALID_REMOTE;

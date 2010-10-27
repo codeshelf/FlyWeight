@@ -57,7 +57,6 @@ extern BufferCntType gRXCurBufferNum;
 extern BufferCntType gRXUsedBuffers;
 
 extern RadioBufferStruct gTXRadioBuffer[TX_BUFFER_COUNT];
-extern BufferCntType gTXCurBufferNum;
 extern BufferCntType gTXUsedBuffers;
 gwUINT8 gAssocCheckCount = 0;
 
@@ -129,8 +128,9 @@ void radioReceiveTask(void *pvParameters) {
 							if (gLocalDeviceState == eLocalStateRun) {
 								if (gLastAssocCheckTickCount < xTaskGetTickCount()) {
 									gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-									createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-									if (transmitPacket(gTXCurBufferNum)) {
+									BufferCntType txBufferNum = lockTXBuffer();
+									createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
+									if (transmitPacket(txBufferNum)) {
 									}
 									gAssocCheckCount++;
 									if (gAssocCheckCount > 10) {
@@ -334,8 +334,9 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 			// Send an ACK if necessary.
 			if ((ackState == eAckStateOk) && (ackId != 0)) {
-				createAckPacket(gTXCurBufferNum, ackId, ackData);
-				if (transmitPacket(gTXCurBufferNum)) {
+				BufferCntType txBufferNum = lockTXBuffer();
+				createAckPacket(txBufferNum, ackId, ackData);
+				if (transmitPacket(txBufferNum)) {
 				}
 			}
 

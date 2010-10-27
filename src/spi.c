@@ -344,17 +344,13 @@ ESDCardResponse writeBlock(gwUINT32 inBlockNumber, gwUINT8 *inDataPtr) {
 
 	ESDCardResponse cardResponse = eResponseOK;
 
-//	cardResponse = writePartialBlockBegin(inBlockNumber);
-//	if (cardResponse == eResponseOK) {
-//		cardResponse = writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
-//		if (cardResponse == eResponseOK) {
-//			cardResponse = writePartialBlockEnd();
-//		}
-//	}
-
-	writePartialBlockBegin(inBlockNumber);
-	writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
-	writePartialBlockEnd();
+	cardResponse = writePartialBlockBegin(inBlockNumber);
+	if (cardResponse == eResponseOK) {
+		cardResponse = writePartialBlock(inDataPtr, SD_BLOCK_SIZE);
+		if (cardResponse == eResponseOK) {
+			cardResponse = writePartialBlockEnd();
+		}
+	}
 
 	return cardResponse;
 }

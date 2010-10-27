@@ -56,8 +56,9 @@ void remoteMgmtTask( void *pvParameters ) {
 			MLMESetChannelRequest(channel);
 
 			// Send an associate request on the current channel.
-			createAssocReqCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-			if (transmitPacket(gTXCurBufferNum)) {
+			BufferCntType txBufferNum = lockTXBuffer();
+			createAssocReqCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
+			if (transmitPacket(txBufferNum)) {
 			};
 
 			// Wait up to 200ms for a response.
@@ -102,8 +103,9 @@ void remoteMgmtTask( void *pvParameters ) {
 //			// Periodically send a NetCheck packet to the controller.
 //			vTaskDelay(2500 * portTICK_RATE_MS);
 //			if (gLocalDeviceState == eLocalStateRun) {
-//				createAssocCheckCommand(gTXCurBufferNum, (RemoteUniqueIDPtrType) GUID);
-//				if (transmitPacket(gTXCurBufferNum)){
+//				BufferCntType txBufferNum = lockTXBuffer();
+//				createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
+//				if (transmitPacket(txBufferNum)){
 //				};
 //				gAssocCheckCount++;
 //				if (gAssocCheckCount > 10) {

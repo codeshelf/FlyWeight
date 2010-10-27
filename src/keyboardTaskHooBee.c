@@ -52,11 +52,6 @@ void keyboardTask(void *pvParameters) {
 						GW_WATCHDOG_RESET;
 					}
 
-					// Wait until a TX packet is free.
-					while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-						vTaskDelay(1 * portTICK_RATE_MS);
-					}
-
 					//  Send a button up message.
 					txBufferNum = lockTXBuffer();
 					createButtonControlCommand(txBufferNum, gButtonPressed, BUTTON_RELEASED);

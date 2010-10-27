@@ -89,7 +89,7 @@
 
 // Audio Command
 #define CMDPOS_AUDIO			CMDPOS_STARTOFCMD
-#define CMD_MAX_AUDIO_BYTES		120
+#define CMD_MAX_AUDIO_BYTES		118
 
 // Data Sample Command
 #define CMDPOS_DATA_SUBCMD		CMDPOS_STARTOFCMD

@@ -80,21 +80,21 @@ void serialReceiveTask( void *pvParameters ) {
 
 		if (gTXRadioBuffer[txBufferNum].bufferSize > 0) {
 
-			gwBoolean cmdToGateway = TRUE;
+			gwBoolean sendCmdToRadio = TRUE;
 		  	cmdID = getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage);
 			if (cmdID == eCommandNetMgmt) {
 				subCmdID = getNetMgmtSubCommand(gTXRadioBuffer[txBufferNum].bufferStorage);
 				switch (subCmdID) {
 					case eNetMgmtSubCmdNetCheck:
 						processNetCheckOutboundCommand(txBufferNum);
-						cmdToGateway = TRUE;
+						sendCmdToRadio = TRUE;
 						break;
 						
 					case eNetMgmtSubCmdNetSetup:
 						processNetSetupCommand(txBufferNum);
 						// We don't ever want to broadcast net-setup, so continue.
 						RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
-						cmdToGateway = FALSE;
+						sendCmdToRadio = FALSE;
 						continue;
 						break;
 						
@@ -102,14 +102,14 @@ void serialReceiveTask( void *pvParameters ) {
 						processNetIntfTestCommand(txBufferNum);
 						// We don't ever want to broadcast intf-test, so continue.
 						RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
-						cmdToGateway = FALSE;
+						sendCmdToRadio = FALSE;
 						continue;
 						break;
 				}
 			}
 
 			// Now send the buffer to the transmit queue.
-			if (cmdToGateway) {
+			if (sendCmdToRadio) {
 				if (xQueueSend(gRadioTransmitQueue, &txBufferNum, (portTickType) 0)) {
 				}
 			}

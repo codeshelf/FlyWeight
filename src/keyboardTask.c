@@ -68,14 +68,8 @@ void keyboardTask(void *pvParameters) {
 					// Wait  a few ms for the remote to stop sending audio packets.
 					vTaskDelay(25 * portTICK_RATE_MS);
 
-					// Wait until a TX packet is free.
-					while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
-						vTaskDelay(1 * portTICK_RATE_MS);
-					}
-
 					//  Send a button up message.
-					txBufferNum = gTXCurBufferNum;
-					advanceTXBuffer();
+					txBufferNum = lockTXBuffer();
 					createButtonControlCommand(txBufferNum, gButtonPressed, BUTTON_RELEASED);
 					if (transmitPacket(txBufferNum)) {
 					};
@@ -96,8 +90,7 @@ void keyboardTask(void *pvParameters) {
 					gButtonPressed = buttonNum;
 					
 					// Send an associate request on the current channel.
-					txBufferNum = gTXCurBufferNum;
-					advanceTXBuffer();
+					txBufferNum = lockTXBuffer();
 					createButtonControlCommand(txBufferNum, buttonNum, BUTTON_PRESSED);
 					if (transmitPacket(txBufferNum)) {
 					};

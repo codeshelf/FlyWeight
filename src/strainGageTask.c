@@ -131,9 +131,10 @@ void strainGageTask(void *pvParameters) {
 			sample = collectSample();			
 			
 			// Transmit the measurement.
-			createDataSampleCommand(gTXCurBufferNum, scaleEndpoint);
-			addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample, 'R');
-			if (transmitPacket(gTXCurBufferNum)){
+			BufferCntType txBufferNum = lockTXBuffer();
+			createDataSampleCommand(txBufferNum, scaleEndpoint);
+			addDataSampleToCommand(txBufferNum, xTaskGetTickCount(), sample, 'R');
+			if (transmitPacket(txBufferNum)){
 			};
 			
 			if (/*FALSE*/ gSampleCount >= 10) {
@@ -142,9 +143,10 @@ void strainGageTask(void *pvParameters) {
 				sample = collectSample();
 
 				// Transmit the measurement.
-				createDataSampleCommand(gTXCurBufferNum, tempEndpoint);
-				addDataSampleToCommand(gTXCurBufferNum, xTaskGetTickCount(), sample, 'R');
-				if (transmitPacket(gTXCurBufferNum)){
+				BufferCntType txBufferNum = lockTXBuffer();
+				createDataSampleCommand(txBufferNum, tempEndpoint);
+				addDataSampleToCommand(txBufferNum, xTaskGetTickCount(), sample, 'R');
+				if (transmitPacket(txBufferNum)){
 				};
 
 				// Capture strain: TEMP = off, Gain = 128x.

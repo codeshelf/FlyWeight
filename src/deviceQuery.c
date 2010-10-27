@@ -33,13 +33,15 @@ void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType i
 
 void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, NetAddrType inSrcAddr) {
 
+	gwUINT8 ccrHolder;
 	BufferOffsetType responseSize;
 
 	// Read the query directly from the RX buffer at the start of query position.
 	BufferStoragePtrType queryPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + inStartOfQuery;
 
 	// Write the response directly into the TX buffer at the response position offset.
-	BufferStoragePtrType responsePtr = gTXRadioBuffer[gTXCurBufferNum].bufferStorage + CMDPOS_INFO_RESPONSE;
+	BufferCntType txBufferNum = lockTXBuffer();
+	BufferStoragePtrType responsePtr = gTXRadioBuffer[txBufferNum].bufferStorage + CMDPOS_INFO_RESPONSE;
 
 	gwUINT8 queryKind = queryPtr[QPOS_QUERYKIND];
 
@@ -67,10 +69,12 @@ void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, 
 	};
 
 	if (responseSize > 0) {
-		createResponseCommand(gTXCurBufferNum, responseSize, inSrcAddr);
-		if (transmitPacket(gTXCurBufferNum)){
+		createResponseCommand(txBufferNum, responseSize, inSrcAddr);
+		if (transmitPacket(txBufferNum)){
 		};
 		//gLocalDeviceState = eLocalStateRespSent;
+	} else {
+		RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 	}
 }
 
