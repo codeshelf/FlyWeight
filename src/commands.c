@@ -14,8 +14,10 @@
 #include "queue.h"
 #include "string.h"
 #include "gwSystemMacros.h"
-#include "Leds.h"
-#include "spi.h"
+#ifndef IS_GATEWAY
+	#include "Leds.h"
+	#include "spi.h"
+#endif
 
 #ifdef IS_TOY_NETWORK
 #include "deviceQuery.h"
@@ -158,7 +160,6 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMD_ID] = (inCmdID << SHIFTBITS_CMD_ID);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;
-	//gTXRadioBuffer[inTXBufferNum].bufferStatus = eBufferStateInUse;
 }
 
 // --------------------------------------------------------------------------
@@ -283,7 +284,6 @@ void createOutboundNetSetup() {
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_SRC_ADDR] = ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_DST_ADDR] = ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMD_ID] = (eCommandNetMgmt << SHIFTBITS_CMD_ID);
-	//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdNetSetup;
@@ -347,7 +347,6 @@ void processNetSetupCommand(BufferCntType inTXBufferNum) {
 	//	}
 
 	MLMESetChannelRequest(channel);
-	RELEASE_TX_BUFFER(inTXBufferNum, ccrHolder);
 
 	gLocalDeviceState = eLocalStateRun;
 }
@@ -383,7 +382,6 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_SRC_ADDR] = ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_DST_ADDR] = ADDR_CONTROLLER;
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMD_ID] = (eCommandNetMgmt << SHIFTBITS_CMD_ID);
-	//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
@@ -447,7 +445,6 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_SRC_ADDR] = ADDR_CONTROLLER;
 		gTXRadioBuffer[txBufferNum].bufferStorage[PCKPOS_DST_ADDR] = ADDR_CONTROLLER;
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_CMD_ID] = (eCommandNetMgmt << SHIFTBITS_CMD_ID);
-		//gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateInUse;
 
 		// Set the sub-command.
 		gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdNetCheck;
@@ -648,6 +645,7 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
+#ifndef IS_GATEWAY
 extern xQueueHandle gPFCQueue;
 
 EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData) {
@@ -858,3 +856,4 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
 
 }
+#endif

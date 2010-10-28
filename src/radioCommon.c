@@ -66,8 +66,7 @@ BufferCntType lockRXBuffer() {
 			gRXCurBufferNum = 0;
 		
 		// Account for the number of used buffers.
-		if (gRXUsedBuffers < RX_BUFFER_COUNT)
-			gRXUsedBuffers++;
+		gRXUsedBuffers++;
 		
 	GW_EXIT_CRITICAL(ccrHolder);
 
@@ -99,10 +98,13 @@ BufferCntType lockTXBuffer() {
 			gTXCurBufferNum = 0;
 		
 		// Account for the number of used buffers.
-		if (gTXUsedBuffers < TX_BUFFER_COUNT)
-			gTXUsedBuffers++;
+		gTXUsedBuffers++;
 		
 	GW_EXIT_CRITICAL(ccrHolder);
 
 	return result;
+}
+
+void refreed(BufferCntType inBufferNum) {
+	gTXRadioBuffer[inBufferNum].bufferStatus = eBufferStateFree;
 }

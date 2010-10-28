@@ -25,30 +25,6 @@ $Name$
 xQueueHandle			gGatewayMgmtQueue;
 ControllerStateType		gControllerState;
 
-
-// --------------------------------------------------------------------------
-
-//void gatewayMgmtTask(void *pvParameters) {
-//	BufferCntType	rxBufferNum;
-//
-//	if ( gGatewayMgmtQueue ) {
-//		for ( ;; ) {
-//
-//			// Whenever we need to handle a state change for a  device, we handle it in this management task.
-//
-//			if (xQueueReceive(gGatewayMgmtQueue, &rxBufferNum, portMAX_DELAY) == pdPASS) {
-//
-//				// Just send it over the serial link to the controller.
-//				serialTransmitFrame((byte*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
-//				RELEASE_RX_BUFFER(rxBufferNum);
-//			}
-//		}
-//	}
-//
-//	/* Will only get here if the queue could not be created. */
-//	for ( ;; );
-//}
-
 // --------------------------------------------------------------------------
 
 void serialReceiveTask( void *pvParameters ) {
@@ -65,9 +41,6 @@ void serialReceiveTask( void *pvParameters ) {
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.
 	createOutboundNetSetup();
-	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
-	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
-	
 	
 	for ( ;; ) {
 	
@@ -105,7 +78,9 @@ void serialReceiveTask( void *pvParameters ) {
 			}
 
 			// Now send the buffer to the transmit queue.
-			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, (portTickType) 0)) {
+			if (xQueueSend(gRadioTransmitQueue, &txBufferNum, (portTickType) 0) != pdTRUE) {
+				// We couldn't queue the buffer, so release it.
+				RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 			}
 
 		}

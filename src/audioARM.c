@@ -65,6 +65,7 @@ void audioInit() {
 
 static void audioLoaderCallback(TmrNumber_t tmrNumber) {
 	gwUINT8		ccrHolder;
+	gwUINT8		unlockCcrHolder;
 	gwUINT8		sample8b;
 	gwUINT16	sample16b;
 	gwUINT16	sampleAlt16b;
@@ -113,7 +114,7 @@ static void audioLoaderCallback(TmrNumber_t tmrNumber) {
 				GW_ENTER_CRITICAL(ccrHolder);
 
 				// Indicate that the buffer is clear.
-				gRXRadioBuffer[gCurPWMRadioBufferNum].bufferStatus = eBufferStateFree;
+				RELEASE_RX_BUFFER(gCurPWMRadioBufferNum, unlockCcrHolder);
 
 				// Advance to the next buffer.
 				gCurPWMRadioBufferNum++;

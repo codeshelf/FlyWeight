@@ -33,7 +33,9 @@
 // The gateway needs fewer buffers.
 #ifdef IS_GATEWAY
 	#define RX_QUEUE_SIZE			10
-	#define TX_QUEUE_SIZE			10
+	#define TX_QUEUE_SIZE			8
+	#define RX_QUEUE_LOW_WATER		2
+	#define RX_QUEUE_HIGH_WATER		RX_QUEUE_SIZE - 2
 #else
 	#ifdef MC1322X
 		#define RX_QUEUE_SIZE			20
@@ -113,13 +115,21 @@
 
 #define RELEASE_RX_BUFFER(rxBufferNum, ccrHolder)	\
 	GW_ENTER_CRITICAL(ccrHolder); \
-	gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
+	if (gRXRadioBuffer[rxBufferNum].bufferStatus != eBufferStateFree) { \
+		gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
+	} else { \
+		refreed(rxBufferNum); \
+	} \
 	gRXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
 
 #define RELEASE_TX_BUFFER(txBufferNum, ccrHolder)	\
 	GW_ENTER_CRITICAL(ccrHolder); \
-	gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
+	if (gTXRadioBuffer[txBufferNum].bufferStatus != eBufferStateFree) { \
+		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
+	} else { \
+		refreed(txBufferNum); \
+	} \
 	gTXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
 
@@ -191,7 +201,7 @@ typedef union UnixTimeUnionType {
 		|| (msg.u8Status.msg_state == MSG_RX_PASSED_TO_DEVICE) \
 		|| (msg.u8Status.msg_state == MSG_RX_ACTION_STARTED) \
 		|| (msg.u8Status.msg_state == MSG_RX_SYNC_FOUND) \
-	/*	|| (msg.u8Status.msg_state == MSG_RX_RQST_ABORT) */ \
+		|| (msg.u8Status.msg_state == MSG_RX_RQST_ABORT)  \
 	)
 
 #define TX_MESSAGE_PENDING(msg) ( \
@@ -276,5 +286,6 @@ extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 void advanceRXBuffer(void);
 BufferCntType lockRXBuffer(void);
 BufferCntType lockTXBuffer(void);
+void refreed(BufferCntType inBufferNum);
 
 #endif /* RADIOCOMMON_H */

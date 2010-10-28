@@ -98,7 +98,6 @@ void radioReceiveTask(void *pvParameters) {
 						funcErr = process_radio_msg();
 					}
 					Led2Off();
-					RELEASE_TX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 				}
 
 				GW_ENTER_CRITICAL(ccrHolder);
@@ -137,6 +136,9 @@ void radioTransmitTask(void *pvParameters) {
 			// Disable a pending RX to prepare for TX.
 			if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
 				MLMERXDisableRequest(&(gMsgHolder[gCurMsg].msg));
+//				while (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)) {
+//					funcErr = process_radio_msg();
+//				}
 			}
 
 			// Setup for TX.
@@ -161,6 +163,7 @@ void radioTransmitTask(void *pvParameters) {
 			while ((funcErr != gSuccess_c) || (TX_MESSAGE_PENDING(gMsgHolder[txMsgNum].msg))) {
 				// Don't loop around for another Tx message until we finish with this one.
 			}
+			RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 		} else {
 
 		}
