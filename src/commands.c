@@ -739,7 +739,9 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	address.bytes.byte2 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 2];
 	address.bytes.byte3 = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_ADDR + 3];
 	partBitFieldBit = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_PARTBIT];
-	memcpy(&offset, &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET]), sizeof(offset));
+	// Offset is a two-byte value that arrives MSB-first.
+	offset = ((gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET]) << 8)
+	        + gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET + 1];
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_LEN];
 
 	// If the latest update is for a different address block then reset for processing in the new block.
