@@ -105,6 +105,23 @@ BufferCntType lockTXBuffer() {
 	return result;
 }
 
-void refreed(BufferCntType inBufferNum) {
+// --------------------------------------------------------------------------
+
+void debugReset() {
+	// Any code, so that we have a place to land a breakpoint.
+	CRM_SoftReset();
+}
+
+// --------------------------------------------------------------------------
+
+void debugRefreed(BufferCntType inBufferNum) {
+	// Any code, so that we have a place to land a breakpoint.
 	gTXRadioBuffer[inBufferNum].bufferStatus = eBufferStateFree;
+}
+
+// --------------------------------------------------------------------------
+
+void debugCrmCallback(void) {
+	// Any code, so that we have a place to land a breakpoint.
+	gTXUsedBuffers = 0;
 }

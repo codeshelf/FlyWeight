@@ -118,7 +118,7 @@
 	if (gRXRadioBuffer[rxBufferNum].bufferStatus != eBufferStateFree) { \
 		gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
 	} else { \
-		refreed(rxBufferNum); \
+		debugRefreed(rxBufferNum); \
 	} \
 	gRXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
@@ -128,7 +128,7 @@
 	if (gTXRadioBuffer[txBufferNum].bufferStatus != eBufferStateFree) { \
 		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
 	} else { \
-		refreed(txBufferNum); \
+		debugRefreed(txBufferNum); \
 	} \
 	gTXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
@@ -287,5 +287,8 @@ void advanceRXBuffer(void);
 BufferCntType lockRXBuffer(void);
 BufferCntType lockTXBuffer(void);
 void refreed(BufferCntType inBufferNum);
+void debugReset();
+void debugRefreed(BufferCntType inBufferNum);
+void debugCrmCallback(void);
 
 #endif /* RADIOCOMMON_H */
