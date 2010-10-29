@@ -65,12 +65,7 @@ void vMain( void ) {
 	IntEnableAll();
 	LED_Init();
 
-	crmCopCntl_t copCntl;
-	copCntl.bit.copEn = TRUE;
-	copCntl.bit.copTimeOut = 127;
-	copCntl.bit.copWP = TRUE;
-	copCntl.bit.copOut = 0;
-	CRM_CopCntl(copCntl);
+	setupWatchdog();
 
 #endif
 

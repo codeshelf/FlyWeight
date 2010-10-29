@@ -107,21 +107,45 @@ BufferCntType lockTXBuffer() {
 
 // --------------------------------------------------------------------------
 
-void debugReset() {
-	// Any code, so that we have a place to land a breakpoint.
-	CRM_SoftReset();
+void setupWatchdog() {
+	// Setup the COP to interrupt (so that we can catch them and figure out where they come  from.)
+	crmCopCntl_t copCntl;
+	copCntl.bit.copEn = TRUE;
+	copCntl.bit.copTimeOut = 20;
+	copCntl.bit.copWP = TRUE;
+#ifdef DEBUG
+	copCntl.bit.copOut = 1;		// 1 = CRM interrupt
+#else
+	copCntl.bit.copOut = 0;		// 0 = MCU reset
+#endif
+	CRM_CopCntl(copCntl);
+
+#ifdef DEBUG
+	IntAssignHandler(gCrmInt_c, (IntHandlerFunc_t) CRM_Isr);
+	ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
+	ITC_EnableInterrupt(gCrmInt_c);
+	CRM_RegisterISR(gCrmCOPTimeoutEvent_c, debugCrmCallback);
+#endif
 }
 
 // --------------------------------------------------------------------------
 
-void debugRefreed(BufferCntType inBufferNum) {
-	// Any code, so that we have a place to land a breakpoint.
-	gTXRadioBuffer[inBufferNum].bufferStatus = eBufferStateFree;
+void debugReset() {
+	// Reset the MCU - this is just a place to set a breakpoint to catch it.
+	CRM_SoftReset();
 }
+
 
 // --------------------------------------------------------------------------
 
 void debugCrmCallback(void) {
-	// Any code, so that we have a place to land a breakpoint.
+	// Reset the MCU - this is just a place to set a breakpoint to catch it.
+	//CRM_SoftReset();
 	gTXUsedBuffers = 0;
+}
+// --------------------------------------------------------------------------
+
+void debugRefreed(BufferCntType inBufferNum) {
+	// Any code, so that we have a place to set a breakpoint.
+	gTXRadioBuffer[inBufferNum].bufferStatus = eBufferStateFree;
 }

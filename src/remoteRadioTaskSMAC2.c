@@ -14,31 +14,12 @@
 #include "commands.h"
 #include "remoteMgmtTask.h"
 
-// SMAC includes
-#ifdef MC1321X
-#include "pub_def.h"
-#if defined(XBEE)
-#include "PWM_XBee.h"
-#elif defined(MC13192EVB)
-#include "PWM_EVB.h"
-#else
-#include "PWM_MC1321X.h"
-#endif
-#else
-#endif
 
 void processRxPacket(BufferCntType inRxBufferNum);
 void setupAudioLoader(void);
 void setupPWM(void);
 // --------------------------------------------------------------------------
 // Global variables.
-gwUINT8 gu8RTxMode;
-extern gwBoolean gIsSleeping;
-extern gwBoolean gShouldSleep;
-extern gwUINT8 gSleepCount;
-extern gwUINT8 gButtonPressed;
-extern gwUINT8 gCCRHolder;
-extern portTickType gLastPacketReceivedTick;
 
 xTaskHandle gRadioReceiveTask = NULL;
 xTaskHandle gRadioTransmitTask = NULL;
@@ -50,15 +31,25 @@ xQueueHandle gRadioReceiveQueue = NULL;
 gwTxPacket gTxPacket;
 gwRxPacket gRxPacket;
 
-// Radio input buffer
-// There's a 2-byte ID on the front of every packet.
-extern RadioBufferStruct gRXRadioBuffer[RX_BUFFER_COUNT];
 extern BufferCntType gRXCurBufferNum;
 extern BufferCntType gRXUsedBuffers;
 
-extern RadioBufferStruct gTXRadioBuffer[TX_BUFFER_COUNT];
 extern BufferCntType gTXUsedBuffers;
+
+gwUINT8 gu8RTxMode;
+extern gwBoolean gIsSleeping;
+extern gwBoolean gShouldSleep;
+extern gwUINT8 gSleepCount;
+extern gwUINT8 gButtonPressed;
+extern gwUINT8 gCCRHolder;
+extern portTickType gLastPacketReceivedTick;
+
 gwUINT8 gAssocCheckCount = 0;
+
+// Radio buffers
+// There's a 2-byte ID on the front of every packet.
+extern RadioBufferStruct gRXRadioBuffer[RX_BUFFER_COUNT];
+extern RadioBufferStruct gTXRadioBuffer[TX_BUFFER_COUNT];
 
 EMessageHolderType gMsgHolder[MAX_NUM_MSG];
 gwUINT8 gNextMsgToUse = 0;
@@ -74,7 +65,6 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType rxBufferNum;
 	gwUINT8 ccrHolder;
 	FuncReturn_t funcErr;
-	//	portTickType		readCheckTicks;
 
 	// The radio receive task will return a pointer to a radio data packet.
 	if (gRadioReceiveQueue) {
@@ -116,7 +106,6 @@ void radioReceiveTask(void *pvParameters) {
 			// Keep looping until we've processed all of the messages that we've entered into the queue.
 			while (gCurMsg != gNextMsgToUse) {
 				if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
-					//					readCheckTicks = xTaskGetTickCount();
 					int delayCheck = 0;
 					while (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)) {
 
@@ -141,25 +130,11 @@ void radioReceiveTask(void *pvParameters) {
 							vTaskDelay(1);
 							delayCheck = 0;
 						}
-
-						//						// If we have not received an RX in 200ms then check for sleep.
-						//						if ((xTaskGetTickCount() - readCheckTicks) > (configTICK_RATE_HZ / 5)) {
-						//
-						//							if (!gShouldSleep) {
-						//								// We're not sleeping for now until we figure out a better way.
-						//								//gShouldSleep = TRUE;
-						//							} else {
-						//								// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						//								sleepThisRemote(50);
-						//							}
-						//
-						//							readCheckTicks = xTaskGetTickCount();
-						//						}
 					}
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
+						// Process the packet.
 						gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferSize = gMsgHolder[gCurMsg].msg.u8BufSize;
 						processRxPacket(gMsgHolder[gCurMsg].bufferNum);
-					} else {
 					}
 
 					RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
@@ -371,6 +346,9 @@ void radioTransmitTask(void *pvParameters) {
 			// Disable a pending RX to prepare for TX.
 			if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
 				MLMERXDisableRequest(&(gMsgHolder[gCurMsg].msg));
+//				while (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)) {
+//					funcErr = process_radio_msg();
+//				}
 			}
 
 			// Setup for TX.

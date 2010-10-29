@@ -72,12 +72,18 @@
 	#include "smacPort.h"
 	#include "portmacro.h"
 
-	#if TARGET_BOARD == GW0011
-		#define GW_RESET_MCU()					debugReset();//CRM_SoftReset()
+	#define DEBUG								TRUE
+
+//	#if TARGET_BOARD == GW0011
+		#ifdef DEBUG
+			#define GW_RESET_MCU()				debugReset();//CRM_SoftReset()
+		#else
+			#define GW_RESET_MCU()				CRM_SoftReset()
+		#endif
 //		#define GW_RESET_MCU()					void (*reset)()=(void (*))0; reset();
-	#else
-		#define GW_RESET_MCU()					CRM_SoftReset()
-	#endif
+//	#else
+//		#define GW_RESET_MCU()					CRM_SoftReset()
+//	#endif
 
 	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
 	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreAll(restoreState)

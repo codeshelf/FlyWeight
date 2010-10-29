@@ -117,7 +117,7 @@
 	GW_ENTER_CRITICAL(ccrHolder); \
 	if (gRXRadioBuffer[rxBufferNum].bufferStatus != eBufferStateFree) { \
 		gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
-	} else { \
+	} else if (DEBUG) { \
 		debugRefreed(rxBufferNum); \
 	} \
 	gRXUsedBuffers--; \
@@ -127,7 +127,7 @@
 	GW_ENTER_CRITICAL(ccrHolder); \
 	if (gTXRadioBuffer[txBufferNum].bufferStatus != eBufferStateFree) { \
 		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
-	} else { \
+	} else if (DEBUG) { \
 		debugRefreed(txBufferNum); \
 	} \
 	gTXUsedBuffers--; \
@@ -286,7 +286,7 @@ extern RemoteDescStruct		gRemoteStateTable[MAX_REMOTES];
 void advanceRXBuffer(void);
 BufferCntType lockRXBuffer(void);
 BufferCntType lockTXBuffer(void);
-void refreed(BufferCntType inBufferNum);
+void setupWatchdog(void);
 void debugReset();
 void debugRefreed(BufferCntType inBufferNum);
 void debugCrmCallback(void);

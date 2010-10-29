@@ -133,19 +133,7 @@ void vMain( void ) {
 //	BUS_SW_ON;
 	// End test
 
-	// Setup the COP to interrupt (so that we can catch them and figure out where they come  from.)
-	crmCopCntl_t copCntl;
-	copCntl.bit.copEn = TRUE;
-	copCntl.bit.copTimeOut = 5;
-	copCntl.bit.copWP = TRUE;
-	copCntl.bit.copOut = 1;		// 0 = MCU reset, 1 = CRM interrupt
-	CRM_CopCntl(copCntl);
-
-	IntAssignHandler(gCrmInt_c, (IntHandlerFunc_t) CRM_Isr);
-	ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gCrmInt_c);
-	CRM_RegisterISR(gCrmCOPTimeoutEvent_c, debugCrmCallback);
-
+	setupWatchdog();
 #endif
 
 	gLocalDeviceState = eLocalStateStarted;
