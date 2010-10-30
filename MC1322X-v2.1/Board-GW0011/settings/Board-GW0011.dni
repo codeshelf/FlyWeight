@@ -3,7 +3,7 @@ WatchCond=_ 0
 Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 [DebugChecksum]
-Checksum=-475305322
+Checksum=140554291
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -30,24 +30,7 @@ Graph=0
 [Disassemble mode]
 mode=0
 [Breakpoints]
-Bp0=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.387.15@1" 0 0 0 0 "" 0 "" 0
-Bp1=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.566.11@1" 0 0 0 0 "" 0 "" 0
-Bp2=_ "STD_CODE" "0x004011A0" 0 0 0 0 "" 0 "" 0
-Bp3=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.349.9@1" 0 0 0 0 "" 0 "" 0
-Bp4=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.444.9@1" 0 0 0 0 "" 0 "" 0
-Bp5=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.556.9@1" 0 0 0 0 "" 0 "" 0
-Bp6=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.640.9@1" 0 0 0 0 "" 0 "" 0
-Bp7=_ "STD_CODE" "0x00403C34" 0 0 0 0 "" 0 "" 0
-Bp8=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src}.31.3@1" 0 0 0 0 "" 0 "" 0
-Bp9=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\gatewayMgmtTask.c}.88.7@1" 0 0 0 0 "" 0 "" 0
-Bp10=_ "STD_CODE" "{C:\eclipsework\MC1322x\Application\FlyWeight\mainGateway.c}.97.2@1" 0 0 0 0 "" 0 "" 0
-Bp11=_ "STD_CODE" "0x004043C2" 0 0 0 0 "" 0 "" 0
-Bp12=_ "STD_CODE" "0x00405746" 0 0 0 0 "" 0 "" 0
-Bp13=_ "STD_CODE" "0x0040424C" 0 0 0 0 "" 0 "" 0
-Bp14=_ "STD_CODE" "0x00404248" 0 0 0 0 "" 0 "" 0
-Bp15=_ "STD_CODE" "0x00417FEA" 0 0 0 0 "" 0 "" 0
-Bp16=_ "STD_CODE" "0x00000004" 0 0 0 0 "" 0 "" 0
-Bp17=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\commands.c}.739.1@1" 0 0 0 0 "" 0 "" 0
-Bp18=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\spi.c}.107.5@1" 0 0 0 0 "" 0 "" 0
-Bp19=_ "EMUL_DATA" "0x00409394" 0 0 0 148 0 "" 0 ""
-Count=20
+Bp0=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.135.2@1" 1 0 0 0 "" 0 "" 0
+Bp1=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.144.2@1" 1 0 0 0 "" 0 "" 0
+Bp2=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.150.2@1" 1 0 0 0 "" 0 "" 0
+Count=3

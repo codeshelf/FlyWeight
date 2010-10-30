@@ -113,14 +113,14 @@ void setupWatchdog() {
 	copCntl.bit.copEn = TRUE;
 	copCntl.bit.copTimeOut = 20;
 	copCntl.bit.copWP = TRUE;
-#ifdef DEBUG
+#if (GW_DEBUG)
 	copCntl.bit.copOut = 1;		// 1 = CRM interrupt
 #else
 	copCntl.bit.copOut = 0;		// 0 = MCU reset
 #endif
 	CRM_CopCntl(copCntl);
 
-#ifdef DEBUG
+#if (GW_DEBUG)
 	IntAssignHandler(gCrmInt_c, (IntHandlerFunc_t) CRM_Isr);
 	ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
 	ITC_EnableInterrupt(gCrmInt_c);

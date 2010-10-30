@@ -135,7 +135,7 @@ gwBoolean enableSPI() {
 		spiResult = sendCommand(eSDCardCmd55, eResponseIdle, TRUE);
 		spiResult = sendCommandWithArg(eSDCardCmd41, cmdArg, eResponseOK, TRUE);
 		// It can take hundreds of ms to init some cards.
-		if (attempts > 500) {
+		if (attempts > 750) {
 			result = disableSPI();
 			return FALSE;
 		}

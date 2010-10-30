@@ -12,10 +12,8 @@
 #include "task.h"
 #include "queue.h"
 #include "commands.h"
-#include "remoteMgmtTask.h"
 #include "remoteCommon.h"
 
-void processRxPacket(BufferCntType inRxBufferNum);
 void setupAudioLoader(void);
 void setupPWM(void);
 // --------------------------------------------------------------------------
@@ -42,7 +40,6 @@ extern gwBoolean gShouldSleep;
 extern gwUINT8 gSleepCount;
 extern gwUINT8 gButtonPressed;
 extern gwUINT8 gCCRHolder;
-extern portTickType gLastPacketReceivedTick;
 
 gwUINT8 gAssocCheckCount = 0;
 
@@ -57,7 +54,6 @@ gwUINT8 gCurMsg = 0;
 gwUINT8 gTotalPendingMsgs = 0;
 
 portTickType gLastAssocCheckTickCount;
-UnixTimeType gUnixTime;
 
 // --------------------------------------------------------------------------
 
@@ -111,8 +107,8 @@ void radioReceiveTask(void *pvParameters) {
 
 						funcErr = process_radio_msg();
 
-						// Every five checks we should delay one 1ms, so that the OS idle tasks gets called.
-						if (delayCheck++ == 3) {
+						// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
+						if (delayCheck++ == kDelayCheckCount) {
 							// If we're running then send an AssocCheck every 5 seconds.
 							if (gLocalDeviceState == eLocalStateRun) {
 								if (gLastAssocCheckTickCount < xTaskGetTickCount()) {
@@ -132,12 +128,13 @@ void radioReceiveTask(void *pvParameters) {
 						}
 					}
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
-						// Process the packet.
+						// Process the packet we just received.
 						gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferSize = gMsgHolder[gCurMsg].msg.u8BufSize;
 						processRxPacket(gMsgHolder[gCurMsg].bufferNum);
+					} else {
+						// Probably failed or aborted, release it.
+						RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 					}
-
-					RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 
 				} else if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == TX) {
 					while ((funcErr != gSuccess_c) || (TX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg))) {

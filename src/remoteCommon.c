@@ -7,6 +7,24 @@
    $Name$
 */
 
+#include "remoteCommon.h"
+#include "remoteRadioTask.h"
+#include "commands.h"
+
+// --------------------------------------------------------------------------
+// Global variables.
+
+extern portTickType 			gLastPacketReceivedTick;
+UnixTimeType 					gUnixTime;
+
+extern gwBoolean 				gShouldSleep;
+extern NetAddrType				gMyAddr;
+extern NetworkIDType			gMyNetworkID;
+extern xQueueHandle				gRemoteMgmtQueue;
+extern portTickType 			gLastAssocCheckTickCount;
+extern portTickType 			gLastAssocCheckTickCount;
+extern gwUINT8 					gAssocCheckCount;
+
 
 // --------------------------------------------------------------------------
 
@@ -20,6 +38,9 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 	AckIDType ackId;
 	gwUINT8 ccrHolder;
 	EControlCmdAckStateType ackState;
+	gwBoolean shouldReleasePacket;
+
+	shouldReleasePacket = TRUE;
 
 	// The last read got a packet, so we're active.
 	gShouldSleep = FALSE;
@@ -29,7 +50,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 	// Only process packets sent to the broadcast network ID and our assigned network ID.
 	if ((networkID != BROADCAST_NET_NUM) && (networkID != gMyNetworkID)) {
-		//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
+		// Do nothing
 	} else {
 
 		cmdID = getCommandID(gRXRadioBuffer[inRxBufferNum].bufferStorage);
@@ -37,7 +58,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 		// Only process commands sent to the broadcast address or our assigned address.
 		if ((cmdDstAddr != ADDR_BROADCAST) && (cmdDstAddr != gMyAddr)) {
-			//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
+			// Do nothing.
 		} else {
 
 			// Prepare to handle packet ACK.
@@ -51,13 +72,15 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					// This will only return sub-commands if the command GUID matches out GUID
 					assocSubCmd = getAssocSubCommand(inRxBufferNum);
 					if (assocSubCmd == eCmdAssocInvalid) {
-						//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
+						// Do nothing.
 					} else if (assocSubCmd == eCmdAssocRESP) {
 						// Reset the clock on the assoc check.
 						gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 						// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
 						if (gLocalDeviceState != eLocalStateRun) {
 							if (xQueueSend(gRemoteMgmtQueue, &inRxBufferNum, (portTickType) 0)) {
+								// The management task will handle this packet.
+								shouldReleasePacket = FALSE;
 							}
 						}
 					} else if (assocSubCmd == eCmdAssocACK) {
@@ -76,7 +99,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							gUnixTime.byteFields.byte4 = gRXRadioBuffer[inRxBufferNum].bufferStorage[CMDPOS_ASSOCACK_TIME];
 						}
 					}
-					//RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
 					break;
 
 				case eCommandInfo:
@@ -98,19 +120,19 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							break;
 #endif
 
-#ifdef HOOBEE
+#ifdef IS_HOOBEE
 							case eControlSubCmdHooBee:
 							ackState = processHooBeeSubCommand(inRxBufferNum);
 							break;
 #endif
 
-#ifdef WALKIETALKIE
+#ifdef IS_WALKIETALKIE
 							case eCommandAudio:
 							// Audio commands are handled by an interrupt routine.
 							break;
 #endif
 
-#ifdef PFC
+#ifdef IS_PFC
 						case eControlSubCmdSDCardUpdate:
 							// By processing the SDCard updates in the critical region,
 							// it prevents the gateway from sending another update until this
@@ -168,5 +190,10 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			}
 
 		}
+	}
+
+	// If we need to release the packet then do it.
+	if (shouldReleasePacket) {
+		RELEASE_RX_BUFFER(inRxBufferNum, ccrHolder);
 	}
 }

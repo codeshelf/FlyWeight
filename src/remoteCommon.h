@@ -7,4 +7,16 @@
    $Name$
 */
 
+#ifndef REMOTECOMMON_H
+#define REMOTECOMMON_H
+
+// Project includes
+#include "smacGlue.h"
+#include "commandTypes.h"
+#include "gwTypes.h"
+#include "gwSystemMacros.h"
+#include "radioCommon.h"
+
 void processRxPacket(BufferCntType inRxBufferNum);
+
+#endif // REMOTECOMMON_H

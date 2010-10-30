@@ -151,7 +151,8 @@
           <state>MC1322X</state>
           <state>MC1322X_IAR</state>
           <state>IS_TOY_NETWORK</state>
-          <state>GUID="00000207"</state>
+          <state>IS_PFC</state>
+          <state>GUID="00000205"</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1626,6 +1627,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\radioCommon.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\src\remoteCommon.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\remoteMgmtTask.c</name>

@@ -487,8 +487,6 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 		gMyNetworkID = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_NET];
 		gLocalDeviceState = eLocalStateAssociated;
 	}
-
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
 // --------------------------------------------------------------------------
 
@@ -502,7 +500,6 @@ void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inSrcAddr) {
 	gwUINT8 ccrHolder;
 
 	processQuery(inRXBufferNum, CMDPOS_INFO_QUERY, inSrcAddr);
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
 // --------------------------------------------------------------------------
 
@@ -511,9 +508,6 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 
 	// Indicate that we received a response for the remote.
 	gRemoteStateTable[inRemoteAddr].remoteState = eRemoteStateRespRcvd;
-
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
-
 }
 
 // --------------------------------------------------------------------------
@@ -527,7 +521,7 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-#if 0
+#ifdef IS_MOTORCONTROLLER
 EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum) {
 
 #define MOTOR1_FREE		0xfc    /* 0b11111100 */
@@ -586,13 +580,12 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 		default:
 		break;
 	}
-
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
 #endif
 
 // --------------------------------------------------------------------------
 
+#ifdef IS_HOOBEE
 EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 	gwUINT8 ccrHolder;
 	gwUINT8 pos = CMDPOS_BEHAVIOR_CNT;
@@ -639,13 +632,12 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 		}
 
 	}
-
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
 }
+#endif
 
 // --------------------------------------------------------------------------
 
-#ifndef IS_GATEWAY
+#ifdef IS_PFC
 extern xQueueHandle gPFCQueue;
 
 EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData) {
@@ -754,8 +746,6 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	// Set the bitfield result.
 	gCurSDCardUpdateResultBitField |= partBitFieldBit;
 
-	RELEASE_RX_BUFFER(inRXBufferNum, ccrHolder);
-
 	PACKET_LED_OFF;
 
 	return result;
@@ -818,7 +808,9 @@ EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBu
 
 	return result;
 }
+#endif
 
+#ifdef IS_DATASAMPLER
 // --------------------------------------------------------------------------
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint) {

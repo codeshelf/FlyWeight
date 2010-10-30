@@ -1,5 +1,5 @@
-Processor Expert Version 0405
-ProjectModificationStamp=1180
+Processor Expert Version 0407
+ProjectModificationStamp=1181
 
 [Options]
 EventsDirectory=CODE\
@@ -13,10 +13,11 @@ GenerateISRs=No
 DeleteUnusedEvents=Yes
 OverwriteBeanDrv=0
 ReviewCodeGenChanges=No
+ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=1032
+ProjectCompNumb=1036
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -127,8 +128,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
@@ -147,8 +146,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
@@ -202,8 +199,6 @@ UserReadOnly=No
 Value=interrupts enabled
 [ItemState]
 ItemSymbol=CPU_SharedInternalResourceMapping
-ReadOnly=Yes
-UserReadOnly=Yes
 ListItemCount=1
 List=ListItem
 [ItemState]
@@ -224,8 +219,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IVT_changed
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=1
 Value=No
 [ItemState]
@@ -236,8 +229,6 @@ Value=65484
 Base=3
 [ItemState]
 ItemSymbol=IntVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=50
 Base=3
 [ItemState]
@@ -274,8 +265,6 @@ Value=65534
 Base=3
 [ItemState]
 ItemSymbol=ResetVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 Base=3
 
@@ -301,8 +290,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
@@ -351,8 +338,6 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -853,8 +838,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=ISRnameReset
@@ -867,8 +850,6 @@ Value=_Startup
 [EndOfChilds]
 [ItemState]
 ItemSymbol=IntClockMonitorGrp
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -876,8 +857,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntICG
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vicg
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp2
@@ -906,8 +885,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=IntSWI
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vswi
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp1
@@ -937,8 +914,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=HighSpeed
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -966,8 +941,6 @@ UserReadOnly=No
 Value=20
 [ItemState]
 ItemSymbol=HighFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 [ItemState]
 ItemSymbol=LossClockHigh
@@ -986,8 +959,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueHigh
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=40
 [ItemState]
 ItemSymbol=LossLockHigh
@@ -1070,8 +1041,6 @@ UserReadOnly=No
 Value=4
 [ItemState]
 ItemSymbol=LowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=4
 [ItemState]
 ItemSymbol=LossClockLow
@@ -1090,8 +1059,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueLow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=31.104000000000
 [ItemState]
 ItemSymbol=LossLockLow
@@ -1174,8 +1141,6 @@ UserReadOnly=No
 Value=15.552000000000
 [ItemState]
 ItemSymbol=SlowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=15.552000000000
 [ItemState]
 ItemSymbol=LossClockSlow
@@ -1194,8 +1159,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueSlow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=31.104000000000
 [ItemState]
 ItemSymbol=LossLockSlow
@@ -1624,12 +1587,10 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=SerMonAddr
-ReadOnly=Yes
 Value=64512
 Base=3
 [ItemState]
 ItemSymbol=SerMonSize
-ReadOnly=Yes
 Value=1024
 Base=3
 
@@ -2132,8 +2093,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=OSC1PinSignal
@@ -2152,8 +2111,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=OSC2PinSignal
@@ -2207,8 +2164,6 @@ UserReadOnly=No
 Value=interrupts enabled
 [ItemState]
 ItemSymbol=CPU_SharedInternalResourceMapping
-ReadOnly=Yes
-UserReadOnly=Yes
 ListItemCount=1
 List=ListItem
 [ItemState]
@@ -2229,8 +2184,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IVT_changed
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=1
 Value=No
 [ItemState]
@@ -2241,8 +2194,6 @@ Value=65484
 Base=3
 [ItemState]
 ItemSymbol=IntVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=50
 Base=3
 [ItemState]
@@ -2279,8 +2230,6 @@ Value=65534
 Base=3
 [ItemState]
 ItemSymbol=ResetVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 Base=3
 
@@ -2306,8 +2255,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=BDMPinSignal
@@ -2356,8 +2303,6 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -2876,8 +2821,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=ISRnameReset
@@ -2890,8 +2833,6 @@ Value=_Startup
 [EndOfChilds]
 [ItemState]
 ItemSymbol=IntClockMonitorGrp
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -2899,8 +2840,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntICG
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vicg
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp2
@@ -2929,8 +2868,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=IntSWI
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vswi
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp1
@@ -2960,8 +2897,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=HighSpeed
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=No
 
@@ -2989,8 +2924,6 @@ UserReadOnly=No
 Value=20
 [ItemState]
 ItemSymbol=HighFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 [ItemState]
 ItemSymbol=LossClockHigh
@@ -3009,8 +2942,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueHigh
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=40
 [ItemState]
 ItemSymbol=LossLockHigh
@@ -3093,8 +3024,6 @@ UserReadOnly=No
 Value=4
 [ItemState]
 ItemSymbol=LowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=4
 [ItemState]
 ItemSymbol=LossClockLow
@@ -3113,8 +3042,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueLow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=64
 [ItemState]
 ItemSymbol=LossLockLow
@@ -3197,8 +3124,6 @@ UserReadOnly=No
 Value=15.552000000000
 [ItemState]
 ItemSymbol=SlowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=15.552000000000
 [ItemState]
 ItemSymbol=LossClockSlow
@@ -3217,8 +3142,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueSlow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=31.104000000000
 [ItemState]
 ItemSymbol=LossLockSlow
@@ -3637,12 +3560,10 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=SerMonAddr
-ReadOnly=Yes
 Value=64512
 Base=3
 [ItemState]
 ItemSymbol=SerMonSize
-ReadOnly=Yes
 Value=1024
 Base=3
 
@@ -4151,8 +4072,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTG2_EXTAL
 [ItemState]
 ItemSymbol=OSC1PinSignal
@@ -4171,8 +4090,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTG1_XTAL
 [ItemState]
 ItemSymbol=OSC2PinSignal
@@ -4226,8 +4143,6 @@ UserReadOnly=No
 Value=interrupts enabled
 [ItemState]
 ItemSymbol=CPU_SharedInternalResourceMapping
-ReadOnly=Yes
-UserReadOnly=Yes
 ListItemCount=1
 List=ListItem
 [ItemState]
@@ -4248,8 +4163,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=IVT_changed
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=1
 Value=No
 [ItemState]
@@ -4260,8 +4173,6 @@ Value=65484
 Base=3
 [ItemState]
 ItemSymbol=IntVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=50
 Base=3
 [ItemState]
@@ -4298,8 +4209,6 @@ Value=65534
 Base=3
 [ItemState]
 ItemSymbol=ResetVectorTableSize
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 Base=3
 
@@ -4325,8 +4234,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTG0_BKGD_MS
 [ItemState]
 ItemSymbol=BDMPinSignal
@@ -4375,8 +4282,6 @@ Index=2
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vlvd
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
@@ -4883,8 +4788,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vreset
 [ItemState]
 ItemSymbol=ISRnameReset
@@ -4897,8 +4800,6 @@ Value=_Startup
 [EndOfChilds]
 [ItemState]
 ItemSymbol=IntClockMonitorGrp
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -4906,8 +4807,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntICG
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vicg
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp2
@@ -4936,8 +4835,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntSWI
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vswi
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp1
@@ -4967,8 +4864,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=HighSpeed
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -4996,8 +4891,6 @@ UserReadOnly=No
 Value=20
 [ItemState]
 ItemSymbol=HighFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2
 [ItemState]
 ItemSymbol=LossClockHigh
@@ -5016,8 +4909,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueHigh
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=40
 [ItemState]
 ItemSymbol=LossLockHigh
@@ -5100,8 +4991,6 @@ UserReadOnly=No
 Value=4
 [ItemState]
 ItemSymbol=LowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=4
 [ItemState]
 ItemSymbol=LossClockLow
@@ -5120,8 +5009,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueLow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=16
 [ItemState]
 ItemSymbol=LossLockLow
@@ -5204,8 +5091,6 @@ UserReadOnly=No
 Value=15.552000000000
 [ItemState]
 ItemSymbol=SlowFixedClk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=15.552000000000
 [ItemState]
 ItemSymbol=LossClockSlow
@@ -5224,8 +5109,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=PLLvalueSlow
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=31.104000000000
 [ItemState]
 ItemSymbol=LossLockSlow
@@ -5676,12 +5559,10 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=SerMonAddr
-ReadOnly=Yes
 Value=64512
 Base=3
 [ItemState]
 ItemSymbol=SerMonSize
-ReadOnly=Yes
 Value=1024
 Base=3
 
@@ -6450,7 +6331,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6922,7 +6803,7 @@ Value=No
 [Configuration]
 CompNumb=911
 NodeName=Xbee2 HooBee (GW0009)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6990,7 +6871,7 @@ Count=0
 [BoolList_ProgConfig]
 Count=2
 ItemId0=2
-Value0=No
+Value0=Yes
 ItemId1=1
 Value1=Yes
 List=Property
@@ -8822,7 +8703,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.039
+BeanVersion=01.045
 
 [Properties]
 List=Property
@@ -8853,6 +8734,15 @@ Expanded=Yes
 [Childs]
 List=GrupItem
 [ItemState]
+ItemSymbol=MirrorGrp
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+
+[EndOfChilds]
+[ItemState]
 ItemSymbol=ClockSelect
 ReadOnly=No
 UserReadOnly=No
@@ -8868,8 +8758,6 @@ Index=4
 EnumSymbVal=4
 [ItemState]
 ItemSymbol=Period
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=1.024 ms
 
 [EndOfChilds]
@@ -8892,8 +8780,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Interrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vrti
 
 [EndOfChilds]
@@ -8903,6 +8789,20 @@ ReadOnly=No
 UserReadOnly=No
 Index=0
 Value=Yes
+[ItemState]
+ItemSymbol=IntPriorityFeaturegpr
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=interruptPriority
+ReadOnly=No
+UserReadOnly=No
+Value=
+
+[EndOfChilds]
 [ItemState]
 ItemSymbol=HCS08Family_2
 ReadOnly=No
@@ -8919,8 +8819,6 @@ Value=dispatchRTI
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Symbol
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=RTIfree
 
 [EndOfChilds]
@@ -8949,8 +8847,6 @@ Value=No
 [EndOfChilds]
 [ItemState]
 ItemSymbol=EnableModule
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 
@@ -8960,8 +8856,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -9098,7 +8992,7 @@ GenCodeMode=ALWAYS_WRITE
 IconName=WATCHDOG
 Comment=0
 Template=
-BeanVersion=02.084
+BeanVersion=02.087
 
 [Properties]
 List=Property
@@ -9109,8 +9003,6 @@ UserReadOnly=No
 Value=WatchDog
 [ItemState]
 ItemSymbol=WatchDog
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=COPFree
 [ItemState]
 ItemSymbol=WdogAction
@@ -9127,15 +9019,11 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=WdgInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinOutput
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=Yes
 
@@ -9504,7 +9392,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.060
+BeanVersion=01.070
 
 [Properties]
 List=Property
@@ -9572,8 +9460,6 @@ Value=255
 Base=2
 [ItemState]
 ItemSymbol=Period
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=12.8 us
 
 [EndOfChilds]
@@ -9647,8 +9533,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -9656,8 +9540,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -9706,8 +9588,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm2ch2
 
 [EndOfChilds]
@@ -9718,14 +9598,14 @@ UserReadOnly=No
 Index=1
 Value=No
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp0
+ItemSymbol=Ch_IntPriorityFeaturegpr0
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority0
+ItemSymbol=Ch_IntPriority0
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -9806,8 +9686,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -9815,8 +9693,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -9865,8 +9741,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm2ch3
 
 [EndOfChilds]
@@ -9877,14 +9751,14 @@ UserReadOnly=No
 Index=1
 Value=No
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp1
+ItemSymbol=Ch_IntPriorityFeaturegpr1
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority1
+ItemSymbol=Ch_IntPriority1
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -9922,8 +9796,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=ExtrnClkSrc
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -9968,8 +9840,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=TimInterrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm2ovf
 
 [EndOfChilds]
@@ -9980,7 +9850,7 @@ UserReadOnly=No
 Index=1
 Value=No
 [ItemState]
-ItemSymbol=ColdFireV1Grp
+ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
 UserReadOnly=No
 
@@ -10041,8 +9911,6 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=EnableModule
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 
@@ -10052,8 +9920,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -10065,12 +9931,12 @@ List=Event
 
 [Init_TPM_HCS08:LED_XBee]
 CompNumb=342
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.060
+BeanVersion=01.070
 
 [Properties]
 List=Property
@@ -10138,8 +10004,6 @@ Value=255
 Base=2
 [ItemState]
 ItemSymbol=Period
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=16.384 ms
 
 [EndOfChilds]
@@ -10213,8 +10077,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -10222,8 +10084,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -10272,8 +10132,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm1ch0
 
 [EndOfChilds]
@@ -10284,14 +10142,14 @@ UserReadOnly=No
 Index=0
 Value=Yes
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp0
+ItemSymbol=Ch_IntPriorityFeaturegpr0
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority0
+ItemSymbol=Ch_IntPriority0
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -10372,8 +10230,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -10381,8 +10237,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -10431,8 +10285,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm1ch1
 
 [EndOfChilds]
@@ -10443,14 +10295,14 @@ UserReadOnly=No
 Index=0
 Value=Yes
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp1
+ItemSymbol=Ch_IntPriorityFeaturegpr1
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority1
+ItemSymbol=Ch_IntPriority1
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -10531,8 +10383,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -10540,8 +10390,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -10590,8 +10438,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm1ch2
 
 [EndOfChilds]
@@ -10602,14 +10448,14 @@ UserReadOnly=No
 Index=0
 Value=Yes
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp2
+ItemSymbol=Ch_IntPriorityFeaturegpr2
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority2
+ItemSymbol=Ch_IntPriority2
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -10647,8 +10493,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ExtrnClkSrc
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -10693,8 +10537,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=TimInterrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm1ovf
 
 [EndOfChilds]
@@ -10705,7 +10547,7 @@ UserReadOnly=No
 Index=0
 Value=Yes
 [ItemState]
-ItemSymbol=ColdFireV1Grp
+ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
 UserReadOnly=No
 
@@ -10766,8 +10608,6 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=EnableModule
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 
@@ -10777,8 +10617,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -10795,7 +10633,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.060
+BeanVersion=01.070
 
 [Properties]
 List=Property
@@ -10863,8 +10701,6 @@ Value=255
 Base=2
 [ItemState]
 ItemSymbol=Period
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=12.8 us
 
 [EndOfChilds]
@@ -10938,8 +10774,6 @@ Value=0
 Base=2
 [ItemState]
 ItemSymbol=DutyCycle0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=0 us
 
 [EndOfChilds]
@@ -10947,8 +10781,6 @@ Value=0 us
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Pins0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -10997,8 +10829,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ChInterrupt0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 
 [EndOfChilds]
@@ -11009,14 +10839,14 @@ UserReadOnly=No
 Index=1
 Value=No
 [ItemState]
-ItemSymbol=Ch_ColdFireV1Grp0
+ItemSymbol=Ch_IntPriorityFeaturegpr0
 ReadOnly=No
 UserReadOnly=No
 
 [Childs]
 List=GrupItem
 [ItemState]
-ItemSymbol=ChIntPriority0
+ItemSymbol=Ch_IntPriority0
 ReadOnly=No
 UserReadOnly=No
 Value=
@@ -11054,8 +10884,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=ExtrnClkSrc
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=No
 Expanded=No
 
@@ -11100,8 +10928,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=TimInterrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vtpm1ovf
 
 [EndOfChilds]
@@ -11112,7 +10938,7 @@ UserReadOnly=No
 Index=1
 Value=No
 [ItemState]
-ItemSymbol=ColdFireV1Grp
+ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
 UserReadOnly=No
 
@@ -11173,8 +10999,6 @@ Value=No
 [EndOfChilds]
 [ItemState]
 ItemSymbol=EnableModule
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 
@@ -11184,8 +11008,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -11322,7 +11144,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.116
+BeanVersion=01.131
 
 [Properties]
 List=Property
@@ -11336,6 +11158,20 @@ ItemSymbol=PeriphDevice
 ReadOnly=No
 UserReadOnly=No
 Value=ATD1
+[ItemState]
+ItemSymbol=Internal_usage_HIDDEN
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=IsInitialized
+Index=0
+Value=Yes
+
+[EndOfChilds]
 [ItemState]
 ItemSymbol=SettingsGrp
 ReadOnly=No
@@ -11405,13 +11241,9 @@ Value=No
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Frequency
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2000 kHz
 [ItemState]
 ItemSymbol=ConvTime
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=14.6 us
 
 [EndOfChilds]
@@ -11476,6 +11308,7 @@ List=GrupItem
 ItemSymbol=ADHTS
 ReadOnly=No
 UserReadOnly=No
+TypeSpecNameState=typeHWTriggerSelect
 Index=0
 EnumSymbVal=0
 
@@ -11662,11 +11495,9 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Interrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vatd1
 [ItemState]
-ItemSymbol=ColdFireV1Grp
+ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
 UserReadOnly=No
 
@@ -11757,8 +11588,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -11775,7 +11604,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.116
+BeanVersion=01.131
 
 [Properties]
 List=Property
@@ -11789,6 +11618,20 @@ ItemSymbol=PeriphDevice
 ReadOnly=No
 UserReadOnly=No
 Value=ATD1
+[ItemState]
+ItemSymbol=Internal_usage_HIDDEN
+ReadOnly=No
+UserReadOnly=No
+Expanded=Yes
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=IsInitialized
+Index=0
+Value=Yes
+
+[EndOfChilds]
 [ItemState]
 ItemSymbol=SettingsGrp
 ReadOnly=No
@@ -11858,13 +11701,9 @@ Value=No
 [EndOfChilds]
 [ItemState]
 ItemSymbol=Frequency
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=2000 kHz
 [ItemState]
 ItemSymbol=ConvTime
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=14.6 us
 
 [EndOfChilds]
@@ -11929,6 +11768,7 @@ List=GrupItem
 ItemSymbol=ADHTS
 ReadOnly=No
 UserReadOnly=No
+TypeSpecNameState=typeHWTriggerSelect
 Index=0
 EnumSymbVal=0
 
@@ -12065,11 +11905,9 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Interrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vatd1
 [ItemState]
-ItemSymbol=ColdFireV1Grp
+ItemSymbol=IntPriorityFeaturegpr
 ReadOnly=No
 UserReadOnly=No
 
@@ -12160,8 +11998,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -12173,12 +12009,12 @@ List=Event
 
 [Init_KBI_HCS08:KBI_XBee]
 CompNumb=473
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.020
+BeanVersion=01.022
 
 [Properties]
 List=Property
@@ -12227,8 +12063,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PinHidden0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
@@ -12241,8 +12075,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
@@ -12266,8 +12098,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
@@ -12280,8 +12110,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
@@ -12305,8 +12133,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
@@ -12319,8 +12145,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
@@ -12344,8 +12168,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
@@ -12358,8 +12180,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
@@ -12383,8 +12203,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
@@ -12397,8 +12215,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
@@ -12422,8 +12238,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
@@ -12436,8 +12250,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
@@ -12461,8 +12273,6 @@ EnumSymbVal=1
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=Pingrp6
@@ -12475,8 +12285,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=PinSignal6
@@ -12500,8 +12308,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
@@ -12514,8 +12320,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
@@ -12564,11 +12368,9 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Interrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vkeyboard1
 [ItemState]
-ItemSymbol=CFV1grp
+ItemSymbol=INT_PRIORITY
 ReadOnly=No
 UserReadOnly=No
 
@@ -12649,8 +12451,6 @@ Value=No
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -12667,7 +12467,7 @@ GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.020
+BeanVersion=01.022
 
 [Properties]
 List=Property
@@ -12716,8 +12516,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=PinHidden0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pingrp0
@@ -12730,8 +12528,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=PinSignal0
@@ -12755,8 +12551,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pingrp1
@@ -12769,8 +12563,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=PinSignal1
@@ -12794,8 +12586,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pingrp2
@@ -12808,8 +12598,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=PinSignal2
@@ -12833,8 +12621,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pingrp3
@@ -12847,8 +12633,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=PinSignal3
@@ -12872,8 +12656,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pingrp4
@@ -12886,8 +12668,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=PinSignal4
@@ -12911,8 +12691,6 @@ EnumSymbVal=1
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=Pingrp5
@@ -12925,8 +12703,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=PinSignal5
@@ -12950,8 +12726,6 @@ EnumSymbVal=1
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=Pingrp6
@@ -12964,8 +12738,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=PinSignal6
@@ -12989,8 +12761,6 @@ EnumSymbVal=0
 [EndOfChilds]
 [ItemState]
 ItemSymbol=PinHidden7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=Pingrp7
@@ -13003,8 +12773,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=PinSignal7
@@ -13053,11 +12821,9 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Interrupt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vkeyboard1
 [ItemState]
-ItemSymbol=CFV1grp
+ItemSymbol=INT_PRIORITY
 ReadOnly=No
 UserReadOnly=No
 
@@ -13138,8 +12904,6 @@ Value=No
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No
@@ -13151,12 +12915,12 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
 Template=
-BeanVersion=02.434
+BeanVersion=02.453
 
 [Properties]
 List=Property
@@ -13188,15 +12952,11 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=SpecInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vsci1err
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=InpInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vsci1rx
 [ItemState]
 ItemSymbol=InitPriority
@@ -13220,8 +12980,6 @@ Value=Yes
 [EndOfChilds]
 [ItemState]
 ItemSymbol=OutInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vsci1tx
 [ItemState]
 ItemSymbol=IntTxDPriority
@@ -13252,8 +13010,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=ErrInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Vsci1err
 [ItemState]
 ItemSymbol=IntErrorPriority
@@ -13286,8 +13042,6 @@ UserReadOnly=No
 List=GrupItem
 [ItemState]
 ItemSymbol=IdleInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=IntIdlePriority
@@ -13358,8 +13112,6 @@ UserReadOnly=No
 Value=
 [ItemState]
 ItemSymbol=CtsInt
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=IntCtsPriority
@@ -13434,15 +13186,71 @@ ReadOnly=No
 UserReadOnly=No
 Index=0
 [ItemState]
+ItemSymbol=MCF_CondGrp2
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
 ItemSymbol=SerWidth
 ReadOnly=No
 UserReadOnly=No
 Index=4
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=MCF_CondGrp1
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=SerWidthMCF
+ReadOnly=No
+UserReadOnly=No
+TypeSpecNameState=typeSerWidth_MCF
+Index=3
+EnumSymbVal=8
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=MCF_CondGrp0
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
 [ItemState]
 ItemSymbol=SerStopBit
 ReadOnly=No
 UserReadOnly=No
 Index=0
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=MCF_CondGrp
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=SerStopBitMCF
+ReadOnly=No
+UserReadOnly=No
+TypeSpecNameState=typeStopBitLength_6_7_8bits_MCF
+Index=7
+EnumSymbVal=7
+[ItemState]
+ItemSymbol=ChannelModeMCF
+ReadOnly=No
+UserReadOnly=No
+Index=0
+EnumSymbVal=normal
+
+[EndOfChilds]
 [ItemState]
 ItemSymbol=HCS08_HCS12grp
 ReadOnly=No
@@ -13865,8 +13673,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Clk
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=ClkPinSignal
@@ -14218,15 +14024,6 @@ LastSelection=No
 LastUserSel=no
 UsrMethodName=TurnRxOff
 [ItemState]
-ItemSymbol=SetIdle
-ReadOnly=No
-UserReadOnly=No
-Index=1
-Value=No
-LastSelection=No
-LastUserSel=no
-UsrMethodName=SetIdle
-[ItemState]
 ItemSymbol=LoopMode
 ReadOnly=No
 UserReadOnly=No
@@ -14235,6 +14032,24 @@ Value=No
 LastSelection=No
 LastUserSel=no
 UsrMethodName=LoopMode
+
+[EndOfChilds]
+[ItemState]
+ItemSymbol=CPUCond7
+ReadOnly=No
+UserReadOnly=No
+
+[Childs]
+List=GrupItem
+[ItemState]
+ItemSymbol=SetIdle
+ReadOnly=No
+UserReadOnly=No
+Index=1
+Value=No
+LastSelection=No
+LastUserSel=no
+UsrMethodName=SetIdle
 
 [EndOfChilds]
 [ItemState]
@@ -14988,12 +14803,12 @@ List=Event
 
 [Init_GPIO_HCS08:GPIO1]
 CompNumb=854
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
 Template=
-BeanVersion=01.023
+BeanVersion=01.025
 
 [Properties]
 List=Property
@@ -15046,8 +14861,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Port_ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=PortSlewControl
@@ -15081,90 +14894,56 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=HiddenPin0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=HiddenPin1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=HiddenPin2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=HiddenPin3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=HiddenPin4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=HiddenPin5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA5_KBIP5
 [ItemState]
 ItemSymbol=HiddenPin6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA6_KBI1P6
 [ItemState]
 ItemSymbol=HiddenPin7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA7_KBIP7
 [ItemState]
 ItemSymbol=HiddenPin8
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin9
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin10
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin11
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin12
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin14
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin13
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=HiddenPin15
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 
 [EndOfChilds]
 [ItemState]
 ItemSymbol=GPIOpinsGrp
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=Yes
 Expanded=Yes
 
@@ -15181,8 +14960,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin0
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA0_KBIP0
 [ItemState]
 ItemSymbol=Pin0Signal
@@ -15211,8 +14988,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin0ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin0SlewControl
@@ -15245,8 +15020,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin1
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA1_KBIP1
 [ItemState]
 ItemSymbol=Pin1Signal
@@ -15275,8 +15048,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin1ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin1SlewControl
@@ -15309,8 +15080,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin2
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA2_KBIP2
 [ItemState]
 ItemSymbol=Pin2Signal
@@ -15339,8 +15108,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin2ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin2SlewControl
@@ -15373,8 +15140,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin3
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA3_KBIP3
 [ItemState]
 ItemSymbol=Pin3Signal
@@ -15403,8 +15168,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin3ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin3SlewControl
@@ -15437,8 +15200,6 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin4
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=PTA4_KBIP4
 [ItemState]
 ItemSymbol=Pin4Signal
@@ -15467,8 +15228,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin4ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin4SlewControl
@@ -15501,8 +15260,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin5
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin5Signal
@@ -15531,8 +15288,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin5ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin5SlewControl
@@ -15565,8 +15320,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin6
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin6Signal
@@ -15595,8 +15348,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin6ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin6SlewControl
@@ -15629,8 +15380,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin7
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin7Signal
@@ -15659,8 +15408,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin7ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin7SlewControl
@@ -15700,8 +15447,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin8
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin8Signal
@@ -15730,8 +15475,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin8ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin8SlewControl
@@ -15764,8 +15507,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin9
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin9Signal
@@ -15794,8 +15535,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin9ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin9SlewControl
@@ -15828,8 +15567,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin10
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin10Signal
@@ -15858,8 +15595,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin10ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin10SlewControl
@@ -15892,8 +15627,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin11
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin3Signal0
@@ -15922,8 +15655,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin11ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin11SlewControl
@@ -15956,8 +15687,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin12
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin12Signal
@@ -15986,8 +15715,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin12ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin12SlewControl
@@ -16020,8 +15747,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin13
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin13Signal
@@ -16050,8 +15775,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin13ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin13SlewControl
@@ -16084,8 +15807,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin14
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin6Signal0
@@ -16114,8 +15835,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin14ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin14SlewControl
@@ -16148,8 +15867,6 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=Pin15
-ReadOnly=Yes
-UserReadOnly=Yes
 Value=
 [ItemState]
 ItemSymbol=Pin15Signal
@@ -16178,8 +15895,6 @@ TypeSpecNameState=typePullMode
 Index=0
 [ItemState]
 ItemSymbol=Pin15ODE
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 [ItemState]
 ItemSymbol=Pin15SlewControl
@@ -16235,8 +15950,6 @@ Value=Yes
 List=Method
 [ItemState]
 ItemSymbol=Init
-ReadOnly=Yes
-UserReadOnly=Yes
 Index=0
 Value=Yes
 LastSelection=No

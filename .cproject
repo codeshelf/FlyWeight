@@ -90,6 +90,7 @@
 				<pathentry kind="mac" name="MC1322X" path="" value="1"/>
 				<pathentry kind="mac" name="IS_TOY_NETWORK" path="" value="1"/>
 				<pathentry kind="mac" name="MC1322X_IAR" path="" value="1"/>
+				<pathentry kind="mac" name="IS_PFC" path="" value="1"/>
 				<pathentry kind="src" path=""/>
 				<pathentry kind="out" path=""/>
 				<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>

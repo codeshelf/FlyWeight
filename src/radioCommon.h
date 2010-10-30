@@ -117,7 +117,7 @@
 	GW_ENTER_CRITICAL(ccrHolder); \
 	if (gRXRadioBuffer[rxBufferNum].bufferStatus != eBufferStateFree) { \
 		gRXRadioBuffer[rxBufferNum].bufferStatus = eBufferStateFree; \
-	} else if (DEBUG) { \
+	} else if (GW_DEBUG) { \
 		debugRefreed(rxBufferNum); \
 	} \
 	gRXUsedBuffers--; \
@@ -127,7 +127,7 @@
 	GW_ENTER_CRITICAL(ccrHolder); \
 	if (gTXRadioBuffer[txBufferNum].bufferStatus != eBufferStateFree) { \
 		gTXRadioBuffer[txBufferNum].bufferStatus = eBufferStateFree; \
-	} else if (DEBUG) { \
+	} else if (GW_DEBUG) { \
 		debugRefreed(txBufferNum); \
 	} \
 	gTXUsedBuffers--; \

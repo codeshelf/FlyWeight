@@ -4,10 +4,10 @@
 **     Project   : FlyWeight
 **     Processor : MC13213R2
 **     Beantype  : MC13214
-**     Version   : Bean 01.065, Driver 01.30, CPU db: 2.87.124
+**     Version   : Bean 01.065, Driver 01.31, CPU db: 2.87.125
 **     Datasheet : MC1321xRM Rev. 1.1 10/2006
 **     Compiler  : CodeWarrior HCS08 C Compiler
-**     Date/Time : 12/7/2009, 2:56 PM
+**     Date/Time : 10/28/2010, 2:02 PM
 **     Abstract  :
 **         This bean "MC13214" contains initialization of the
 **         CPU and provides basic methods and events for CPU core
@@ -21,7 +21,7 @@
 **         DisableInt   - void Cpu_DisableInt(void);
 **         Delay100US   - void Cpu_Delay100US(word us100);
 **
-**     (c) Copyright UNIS, spol. s r.o. 1997-2007
+**     (c) Copyright UNIS, spol. s r.o. 1997-2008
 **     UNIS, spol. s r.o.
 **     Jundrovska 33
 **     624 00 Brno
@@ -38,14 +38,13 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "LED_XBee.h"
-#include "KBI_XBee.h"
+#include "USB.h"
 #include "LowVoltage.h"
-#include "GPIO1.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "Events.h"
 #include "Cpu.h"
 
 
@@ -151,7 +150,6 @@ void Cpu_Delay100US(word us100)
   asm {
 loop:
     /* 100 us delay block begin */
-
     psha                               /* (2 c) backup A */
     lda CpuMode                        /* (4 c) get CpuMode */
     cmp #HIGH_SPEED                    /* (2 c) compare it to HIGH_SPEED */
@@ -208,7 +206,6 @@ label3:
     nop                                /* (1 c: 64.3 ns) wait for 1 c */
 label2:                                /* End of delays */
     pula                               /* (2 c) restore A */
-
     /* 100 us delay block end */
     aix #-1                            /* us100 parameter is passed via H:X registers */
     cphx #0
@@ -245,6 +242,7 @@ void Cpu_SetHighSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = HIGH_SPEED;              /* Set actual cpu mode to high speed */
   }
+  USB_SetHigh();                       /* Set all beans in project to the high speed mode */
 }
 /*
 ** ===================================================================
@@ -273,6 +271,7 @@ void Cpu_SetSlowSpeed(void)
     ExitCritical();                    /* Restore the PS register */
     CpuMode = SLOW_SPEED;              /* Set actual cpu mode to slow speed */
   }
+  USB_SetSlow();                       /* Set all beans in project to the slow speed mode */
 }
 
 /*
@@ -378,8 +377,14 @@ void _EntryPoint(void)
 void PE_low_level_init(void)
 {
   /* Common initialization of the CPU registers */
-  /* PTAPE: PTAPE5=1 */
-  setReg8Bits(PTAPE, 0x20);             
+  /* PTED: PTED0=1 */
+  setReg8Bits(PTED, 0x01);              
+  /* PTEDD: PTEDD1=0,PTEDD0=1 */
+  clrSetReg8Bits(PTEDD, 0x02, 0x01);    
+  /* PTAD: PTAD6=1 */
+  setReg8Bits(PTAD, 0x40);              
+  /* PTADD: PTADD6=1 */
+  setReg8Bits(PTADD, 0x40);             
   /* PTASE: PTASE7=0,PTASE6=0,PTASE5=0,PTASE4=0,PTASE3=0,PTASE2=0,PTASE1=0,PTASE0=0 */
   setReg8(PTASE, 0x00);                 
   /* PTBSE: PTBSE7=0,PTBSE6=0,PTBSE5=0,PTBSE4=0,PTBSE3=0,PTBSE2=0,PTBSE1=0,PTBSE0=0 */
@@ -400,12 +405,8 @@ void PE_low_level_init(void)
    */
   /* ###  WatchDog "WatchDog" init code ... */
   SRS = 0x00;
-  /* ### Init_TPM "LED_XBee" init code ... */
-  LED_XBee_Init();
-  /* ### Init_KBI "KBI_XBee" init code ... */
-  KBI_XBee_Init();
-  /* ### Init_GPIO "GPIO1" init code ... */
-  GPIO1_Init();
+  /* ### Asynchro serial "USB" init code ... */
+  USB_Init();
   __EI();                              /* Enable interrupts */
 }
 
@@ -422,7 +423,7 @@ const unsigned char NVOPT_INIT @0x0000FFBF = 0x7E;
 /*
 ** ###################################################################
 **
-**     This file was created by UNIS Processor Expert 3.02 [04.05]
+**     This file was created by UNIS Processor Expert 3.03 [04.07]
 **     for the Freescale HCS08 series of microcontrollers.
 **
 ** ###################################################################

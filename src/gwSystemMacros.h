@@ -72,10 +72,11 @@
 	#include "smacPort.h"
 	#include "portmacro.h"
 
-	#define DEBUG								TRUE
+	// Define this to debug RX/X packet handing, COP/Watchdog and MCU_RESET
+	#define GW_DEBUG							TRUE
 
 //	#if TARGET_BOARD == GW0011
-		#ifdef DEBUG
+		#if (GW_DEBUG)
 			#define GW_RESET_MCU()				debugReset();//CRM_SoftReset()
 		#else
 			#define GW_RESET_MCU()				CRM_SoftReset()
