@@ -140,16 +140,16 @@ void radioTransmitTask(void *pvParameters) {
 
 				while (gTotalPendingMsgs >= MAX_NUM_MSG) {
 					// There's no message space in the queue, so wait.
-					vTaskDelay(1);
+					//vTaskDelay(1);
 				}
 
 				GW_ENTER_CRITICAL(ccrHolder);
 				// Disable a pending RX to prepare for TX.
 				if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
 					MLMERXDisableRequest(&(gMsgHolder[gCurMsg].msg));
-					do {
-						funcErr = process_radio_msg();
-					} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
+//					do {
+//						funcErr = process_radio_msg();
+//					} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
 				}
 
 				// Setup for TX.
@@ -171,7 +171,7 @@ void radioTransmitTask(void *pvParameters) {
 
 				while (TX_MESSAGE_PENDING(gMsgHolder[txMsgNum].msg)) {
 					// Wait until this TX message is done, before we start another.
-					vTaskDelay(1);
+					//vTaskDelay(1);
 				}
 			} else {
 
