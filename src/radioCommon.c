@@ -140,8 +140,8 @@ void debugReset() {
 
 void debugCrmCallback(void) {
 	// Reset the MCU - this is just a place to set a breakpoint to catch it.
-	//CRM_SoftReset();
-	gTXUsedBuffers = 0;
+	CRM_SoftReset();
+	//gTXUsedBuffers = 0;
 }
 // --------------------------------------------------------------------------
 

@@ -109,9 +109,15 @@
 	#define TPMOF_AUDIO_LOADER		TPM2SC_TOF
 #endif
 
-#define SMAC_TICKS_PER_MS		250
+#define SMAC_TICKS_PER_MS			250
 
-#define MAX_LED_SEQUENCES		8
+#define MAX_LED_SEQUENCES			8
+
+#ifdef MC1322X
+	#define 	kDelayCheckCount	10
+#else
+	#define		kDelayCheckCount	3
+#endif
 
 #define RELEASE_RX_BUFFER(rxBufferNum, ccrHolder)	\
 	GW_ENTER_CRITICAL(ccrHolder); \

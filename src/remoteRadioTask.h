@@ -21,11 +21,7 @@
 
 #define		kAssocCheckTickCount	3000 //2.5 * portTICK_RATE_MS * 1000;
 #define		kNetCheckTickCount		60000  // 2 * kAssocCheckTickCount
-#ifdef MC1322X
-#define 	kDelayCheckCount		10
-#else
-#define		kDelayCheckCount		3
-#endif
+
 // --------------------------------------------------------------------------
 // Functions prototypes.
 

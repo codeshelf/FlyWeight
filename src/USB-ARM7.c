@@ -81,6 +81,11 @@ void USB_Init(void) {
 		uartErr = UartSetConfig(UART_1, &uartConfig);
 		if (uartErr == gUartErrNoError_c) {
 
+			// Set the BAUD rate to precisely 1,250,000.
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+			UART1_REGS_P->Ubr = 0xc34fea60;
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+
 			//set pCallback functions
 			uartCallBack.pfUartWriteCallback = UartEventWrite1;
 			uartCallBack.pfUartReadCallback = NULL;//UartEventRead1;
