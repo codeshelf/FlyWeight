@@ -223,6 +223,7 @@ typedef struct {
 } EMessageHolderType;
 
 #endif
+
 typedef gwUINT32			TimestampType;
 typedef gwUINT32			DataSampleType;
 

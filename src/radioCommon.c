@@ -108,6 +108,7 @@ BufferCntType lockTXBuffer() {
 // --------------------------------------------------------------------------
 
 void setupWatchdog() {
+#if defined(MC1322X)
 	// Setup the COP to interrupt (so that we can catch them and figure out where they come  from.)
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = TRUE;
@@ -126,22 +127,29 @@ void setupWatchdog() {
 	ITC_EnableInterrupt(gCrmInt_c);
 	CRM_RegisterISR(gCrmCOPTimeoutEvent_c, debugCrmCallback);
 #endif
+#endif
 }
 
 // --------------------------------------------------------------------------
 
 void debugReset() {
+#if defined(MC1322X)
 	// Reset the MCU - this is just a place to set a breakpoint to catch it.
 	CRM_SoftReset();
+#else
+	__asm ("BGND")
+#endif
 }
 
 
 // --------------------------------------------------------------------------
 
 void debugCrmCallback(void) {
+#if defined(MC1322X)
 	// Reset the MCU - this is just a place to set a breakpoint to catch it.
 	CRM_SoftReset();
 	//gTXUsedBuffers = 0;
+#endif
 }
 // --------------------------------------------------------------------------
 

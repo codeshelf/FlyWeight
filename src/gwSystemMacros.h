@@ -12,8 +12,12 @@
 	#include "simple_mac.h"
 	#include "Watchdog.h"
 
-	#define GW_RESET_MCU						__asm ("BGND")
-	//#define	GW_RESET_MCU						__asm DCB 0x8D
+	#if (GW_DEBUG)
+		#define GW_RESET_MCU()					debugReset();
+	#else
+		#define GW_RESET_MCU()					__asm ("BGND")
+		//#define	GW_RESET_MCU				__asm DCB 0x8D
+	#endif
 
 	#define GW_ENTER_CRITICAL(saveState)		EnterCriticalArg(saveState)
 	#define GW_EXIT_CRITICAL(restoreState)		ExitCriticalArg(restoreState)

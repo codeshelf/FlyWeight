@@ -14,7 +14,7 @@
 #include "queue.h"
 #include "string.h"
 #include "gwSystemMacros.h"
-#ifndef IS_GATEWAY
+#ifdef IS_PFC
 	#include "Leds.h"
 	#include "spi.h"
 #endif

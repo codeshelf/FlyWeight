@@ -10,6 +10,7 @@
 #include "remoteCommon.h"
 #include "remoteRadioTask.h"
 #include "commands.h"
+#include "string.h"
 
 // --------------------------------------------------------------------------
 // Global variables.

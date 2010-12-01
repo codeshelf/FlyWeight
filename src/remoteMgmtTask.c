@@ -30,6 +30,7 @@ extern gwUINT8			gCCRHolder;
 void remoteMgmtTask( void *pvParameters ) {
 	gwUINT8		    	ccrHolder;
 	BufferCntType		rxBufferNum = 0;
+	BufferCntType 		txBufferNum;
 	ChannelNumberType	channel;
 	gwBoolean			associated;
 	gwUINT8				trim = 128;
@@ -56,7 +57,7 @@ void remoteMgmtTask( void *pvParameters ) {
 			MLMESetChannelRequest(channel);
 
 			// Send an associate request on the current channel.
-			BufferCntType txBufferNum = lockTXBuffer();
+			txBufferNum = lockTXBuffer();
 			createAssocReqCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
 			if (transmitPacket(txBufferNum)) {
 			};
