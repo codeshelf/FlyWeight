@@ -227,6 +227,7 @@ typedef struct {
 typedef gwUINT32			TimestampType;
 typedef gwUINT32			DataSampleType;
 
+// Hoobee types (deprecated)
 typedef gwBoolean			LedFlashRunType;
 typedef gwUINT8				LedFlashSeqCntType;
 typedef gwUINT8				LedValueType;
@@ -242,6 +243,7 @@ typedef struct {
 	LedRepeatCntType	repeat;
 } LedFlashStruct;
 
+// PFC types. (deprecated)
 typedef struct {
 	ESDCardControlDeviceType	deviceType;
 	union {
@@ -252,6 +254,25 @@ typedef struct {
 		} bytes ;
 	} delay ;
 } SDControlCommandStruct;
+
+// Aisle Controller types.
+typedef enum {
+	eLedCycleOff,
+	eLedCycleOn
+} LedCycleType;
+
+typedef LedCycleType 	LedCycle;
+typedef gwUINT8 		LedChannelType;
+typedef gwUINT8 		LedPositionType;
+typedef gwUINT8 		LedData;
+
+typedef struct {
+		LedChannelType		channel;
+		LedPositionType 	position;
+		LedData				red;
+		LedData				green;
+		LedData				blue;
+} LedDataStruct;
 
 // --------------------------------------------------------------------------
 // Externs
@@ -265,6 +286,7 @@ extern xTaskHandle			gKeyboardTask;
 extern xTaskHandle			gStrainGageTask;
 extern xTaskHandle			gHooBeeTask;
 extern xTaskHandle			gPFCTask;
+extern xTaskHandle			gAisleControllerTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 5.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
+	<storageModule moduleId="org.eclipse.cdt.core.pathentry">
+		<pathentry kind="src" path="project"/>
+		<pathentry kind="src" path="src"/>
+		<pathentry kind="out" path=""/>
+		<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+		<pathentry kind="prj" path="/SMAC"/>
+		<pathentry base-path="FlyWeight" include="project/CODE" kind="inc" path="" system="true"/>
+		<pathentry base-path="FreeRTOS" include="Source/include" kind="inc" path="" system="true"/>
+		<pathentry base-path="FreeRTOS" include="Demo/common/include" kind="inc" path="" system="true"/>
+		<pathentry base-path="FreeRTOS" include="Source/portable/CodeWarrior/HCS08" kind="inc" path="" system="true"/>
+	</storageModule>
+</cproject>
