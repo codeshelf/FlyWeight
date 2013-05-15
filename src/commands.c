@@ -14,9 +14,14 @@
 #include "queue.h"
 #include "string.h"
 #include "gwSystemMacros.h"
+
 #ifdef IS_PFC
 	#include "Leds.h"
 	#include "spi.h"
+#endif
+
+#ifdef IS_HOOBEE
+
 #endif
 
 #ifdef IS_TOY_NETWORK

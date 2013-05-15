@@ -1,5 +1,5 @@
 Processor Expert Version 0407
-ProjectModificationStamp=1181
+ProjectModificationStamp=1187
 
 [Options]
 EventsDirectory=CODE\
@@ -17,7 +17,7 @@ ReviewCommentChanges=No
 UseExistingModules=Yes
 RenamePeripheries=Yes
 Autodependency=Yes
-ProjectCompNumb=1036
+ProjectCompNumb=1040
 DelUnusedPreviouslyGenFiles=Yes
 GeneratedCodeFrozen=No
 UserInterface=CLASSIC
@@ -2093,7 +2093,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC1Pin
-Value=
+Value=PTG2_EXTAL
 [ItemState]
 ItemSymbol=OSC1PinSignal
 ReadOnly=No
@@ -2111,7 +2111,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=OSC2Pin
-Value=
+Value=PTG1_XTAL
 [ItemState]
 ItemSymbol=OSC2PinSignal
 ReadOnly=No
@@ -2255,7 +2255,7 @@ Expanded=No
 List=GrupItem
 [ItemState]
 ItemSymbol=BDMPin
-Value=
+Value=PTG0_BKGD_MS
 [ItemState]
 ItemSymbol=BDMPinSignal
 ReadOnly=No
@@ -2303,7 +2303,7 @@ Index=0
 List=EnmGrpItm
 [ItemState]
 ItemSymbol=LVDIntName
-Value=
+Value=Vlvd
 [ItemState]
 ItemSymbol=MCU_Reset_Vector_Grp4
 ReadOnly=No
@@ -2821,7 +2821,7 @@ Expanded=Yes
 List=GrupItem
 [ItemState]
 ItemSymbol=IntVreset
-Value=
+Value=Vreset
 [ItemState]
 ItemSymbol=ISRnameReset
 ReadOnly=No
@@ -6331,7 +6331,7 @@ Value=No
 [Configuration]
 CompNumb=593
 NodeName=GW0003 (Gateway)
-CnfgEnabled=Yes
+CnfgEnabled=No
 TargetCPU=592
 ConfigurationComment=0
 
@@ -6803,7 +6803,7 @@ Value=No
 [Configuration]
 CompNumb=911
 NodeName=Xbee2 HooBee (GW0009)
-CnfgEnabled=No
+CnfgEnabled=Yes
 TargetCPU=592
 ConfigurationComment=0
 
@@ -9931,7 +9931,7 @@ List=Event
 
 [Init_TPM_HCS08:LED_XBee]
 CompNumb=342
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12009,7 +12009,7 @@ List=Event
 
 [Init_KBI_HCS08:KBI_XBee]
 CompNumb=473
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0
@@ -12915,7 +12915,7 @@ List=Event
 
 [AsynchroSerial:USB]
 CompNumb=70
-CompEnabled=Yes
+CompEnabled=No
 GenCodeMode=DONT_WRITE
 IconName=PHONE
 Comment=0
@@ -14803,7 +14803,7 @@ List=Event
 
 [Init_GPIO_HCS08:GPIO1]
 CompNumb=854
-CompEnabled=No
+CompEnabled=Yes
 GenCodeMode=CHECK_n_WRITE
 IconName=PERIPHINSP
 Comment=0

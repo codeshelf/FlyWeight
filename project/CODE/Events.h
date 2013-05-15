@@ -34,8 +34,10 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "USB.h"
+#include "LED_XBee.h"
+#include "KBI_XBee.h"
 #include "LowVoltage.h"
+#include "GPIO1.h"
 
 void SW1Int_OnInterrupt(void);
 /*
@@ -94,23 +96,6 @@ void AudioOut_OnEnd(void);
 **         This event is called when the specified number of cycles
 **         has been generated. (Only when the bean is enabled -
 **         Enable and the events are enabled - EnableEvent).
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void USB_OnError(void);
-/*
-** ===================================================================
-**     Event       :  USB_OnError (module Events)
-**
-**     From bean   :  USB [AsynchroSerial]
-**     Description :
-**         This event is called when a channel error (not the error
-**         returned by a given method) occurs. The errors can be
-**         read using <GetError> method.
-**         The event is available only when the <Interrupt
-**         service/event> property is enabled.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

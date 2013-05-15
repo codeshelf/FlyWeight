@@ -30,8 +30,10 @@
 #include "SWI.h"
 #include "MC13191IRQ.h"
 #include "WatchDog.h"
-#include "USB.h"
+#include "LED_XBee.h"
+#include "KBI_XBee.h"
 #include "LowVoltage.h"
+#include "GPIO1.h"
 /* Include shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

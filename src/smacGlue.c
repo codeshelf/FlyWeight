@@ -31,7 +31,7 @@ void MCPSDataIndication(gwRxPacket *inRxPacket) {
 
 		// If we haven't initialized the radio receive queue then cause a debug trap.
 		if (gRadioReceiveQueue == NULL)
-			GW_RESET_MCU;
+			GW_RESET_MCU();
 
 		// Set the buffer receive size to the size of the packet received.
 		gRXRadioBuffer[gRXCurBufferNum].bufferSize = inRxPacket->u8DataLength;
