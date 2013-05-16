@@ -41,7 +41,7 @@ portTickType	gLastPacketReceivedTick;
 
 // --------------------------------------------------------------------------
 
-void Main( void ) {
+void vMain( void ) {
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.

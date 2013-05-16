@@ -5,7 +5,7 @@
     
     
     
-  <CurrentConfigs><Project>Board-NCB/Debug</Project><Project>Board-GW0011/Debug</Project><Project>Board-SRB/Debug</Project><Project>Board-PFC/Debug</Project></CurrentConfigs><CurrentProj>Board-NCB</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
+  <CurrentConfigs><Project>Board-SRB/Debug</Project><Project>Board-GW0011/Debug</Project><Project>Board-AC/Debug</Project><Project>Board-PFC/Debug</Project><Project>Board-NCB/Debug</Project></CurrentConfigs><CurrentProj>Board-AC</CurrentProj><OverviewSelected>1</OverviewSelected></ConfigDictionary>
   <Desktop>
     <Static>
       <Workspace>
@@ -14,14 +14,14 @@
           
           
           
-        <Column0>175</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>380</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Build>
         
         
         
         
-      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>383</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
       <TerminalIO/>
       <Debug-Log>
         
@@ -39,7 +39,7 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-AC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application/FlyWeight</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
@@ -65,14 +65,14 @@
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\Board-GW0011\Utilities\Leds.h</Filename><XPos>0</XPos><YPos>286</YPos><SelStart>13378</SelStart><SelEnd>13378</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\spi.c</Filename><XPos>0</XPos><YPos>22</YPos><SelStart>1344</SelStart><SelEnd>1344</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>78</YPos><SelStart>2854</SelStart><SelEnd>2854</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>686</YPos><SelStart>25488</SelStart><SelEnd>25488</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainPFC.c</Filename><XPos>0</XPos><YPos>50</YPos><SelStart>1961</SelStart><SelEnd>1961</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainGateway.c</Filename><XPos>0</XPos><YPos>38</YPos><SelStart>1463</SelStart><SelEnd>1463</SelEnd></Tab><ActiveTab>5</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainAisleController.c</Filename><XPos>0</XPos><YPos>132</YPos><SelStart>4867</SelStart><SelEnd>4867</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>54</YPos><SelStart>1857</SelStart><SelEnd>1857</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\aisleControllerTask.c</Filename><XPos>0</XPos><YPos>222</YPos><SelStart>10023</SelStart><SelEnd>10023</SelEnd></Tab><ActiveTab>2</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00b0a2c8><key>iaridepm.enu1</key></Toolbar-00b0a2c8></Sizes></Row0></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>714</Bottom><Right>249</Right><x>-2</x><y>-2</y><xscreen>128</xscreen><yscreen>193</yscreen><sizeHorzCX>121212</sizeHorzCX><sizeHorzCY>203372</sizeHorzCY><sizeVertCX>237689</sizeVertCX><sizeVertCY>754478</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>191</Bottom><Right>1058</Right><x>-2</x><y>-2</y><xscreen>1060</xscreen><yscreen>193</yscreen><sizeHorzCX>1003788</sizeHorzCX><sizeHorzCY>203372</sizeHorzCY><sizeVertCX>121212</sizeVertCX><sizeVertCY>203372</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00b0a6e0><key>iaridepm.enu1</key></Toolbar-00b0a6e0></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>788</Bottom><Right>454</Right><x>-2</x><y>-2</y><xscreen>233</xscreen><yscreen>212</yscreen><sizeHorzCX>121354</sizeHorzCX><sizeHorzCY>203455</sizeHorzCY><sizeVertCX>237500</sizeVertCX><sizeVertCY>758157</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>210</Bottom><Right>1922</Right><x>-2</x><y>-2</y><xscreen>1924</xscreen><yscreen>212</yscreen><sizeHorzCX>1002083</sizeHorzCX><sizeHorzCY>203455</sizeHorzCY><sizeVertCX>121354</sizeVertCX><sizeVertCY>203455</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 
