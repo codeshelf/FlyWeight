@@ -41,7 +41,7 @@ portTickType	gLastPacketReceivedTick;
 
 // --------------------------------------------------------------------------
 
-void vMain( void ) {
+void Main( void ) {
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
@@ -72,11 +72,11 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
-	SetDemulatorMode(NCD);
+	//SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
-	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
-	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	//ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	//ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 
 	IntEnableAll();
 	TmrInit();

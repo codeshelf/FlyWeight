@@ -15,6 +15,7 @@
 #include "queue.h"
 #include "remoteMgmtTask.h"
 #include "Ssi_Interface.h"
+#include "GPIO_Interface.h"
 
 #define getMax(a,b)    (((a) > (b)) ? (a) : (b))
 #define getMin(a,b)    (((a) < (b)) ? (a) : (b))
@@ -37,6 +38,38 @@ LedPositionType gTotalLedSolidDataElements;
 LedPositionType gNextSolidLedPosition;
 
 // --------------------------------------------------------------------------
+void gpioInit(void) {
+
+	register uint32_t tmpReg;
+	GpioErr_t error;
+
+	// Pull-up select: UP type
+	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Pull-up enable
+	//GPIO.PuEnLo  |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Data select sets these ports to read from pads.
+	GPIO.InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// inputs
+	GPIO.DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
+	// outputs
+	GPIO.DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+
+	// Setup the function enable pins.
+	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos) | (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK
+	        << GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK
+	        << GPIO_SSI_CLK_fnpos));
+	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos) | (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
+	        << GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
+	        << GPIO_SSI_CLK_fnpos));
+
+	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
+	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+}
+
+// --------------------------------------------------------------------------
 
 static void setupSSI() {
 
@@ -54,7 +87,7 @@ static void setupSSI() {
 	SSI_Enable(FALSE);
 
 	// Setup the SSI mode.
-	ssiConfig.ssiGatedRxClockMode = FALSE;
+	ssiConfig.ssiGatedRxClockMode = TRUE;
 	ssiConfig.ssiGatedTxClockMode = TRUE;
 	ssiConfig.ssiMode = gSsiNormalMode_c; // Normal mode
 	ssiConfig.ssiNetworkMode = FALSE; // Network mode
@@ -62,7 +95,7 @@ static void setupSSI() {
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 400000);
+	ssiClockConfig.ssiClockConfigWord = SSI_DEFAULT_TX_CONFIG; //SSI_SET_BIT_CLOCK_FREQ(24000000, 4000);
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
@@ -72,23 +105,24 @@ static void setupSSI() {
 	ssiTxRxConfig.bit.ssiEFS = 0; // Early frame sync: 0 = off, 1 = on.
 	ssiTxRxConfig.bit.ssiFSL = 0; // Frame sync length: 0 = one word, 1 = one clock.
 	ssiTxRxConfig.bit.ssiFSI = 0; // Frame sync invert: 0 = active high, 1 = active low.
-	ssiTxRxConfig.bit.ssiSCKP = 1; // Data clocked: 0 = on rising edge, 1 = falling edge.
+	ssiTxRxConfig.bit.ssiSCKP = 0; // Data clocked: 0 = on rising edge, 1 = falling edge.
 	ssiTxRxConfig.bit.ssiSHFD = 0; // Data shift direction: 0 = MSB-first, 1 = LSB-first.
-	ssiTxRxConfig.bit.ssiCLKDIR = 0; // CLK source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFDIR = 0; // Frame sync source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiCLKDIR = 1; // CLK source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFDIR = 1; // Frame sync source: 0 = external, 1 = internal.
 	ssiTxRxConfig.bit.ssiFEN = 1; // Tx/Rx FIFO: 0 = disabled, 1 = enabled.
 	ssiTxRxConfig.bit.ssiBIT0 = 1; // Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
+	ssiTxRxConfig.bit.ssiRxEXT = 0; // Receive sign extension: 0 = off, 1 = on.
 	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeTx_c);
 
 	// Setup Rx.
 	ssiTxRxConfig.ssiTxRxConfigWord = 0;
 	ssiTxRxConfig.bit.ssiEFS = 0; // Early frame sync: 0 = off, 1 = on.
-	ssiTxRxConfig.bit.ssiFSL = 1; // Frame sync length: 0 = one word, 1 = one clock.
+	ssiTxRxConfig.bit.ssiFSL = 0; // Frame sync length: 0 = one word, 1 = one clock.
 	ssiTxRxConfig.bit.ssiFSI = 0; // Frame sync invert: 0 = active high, 1 = active low.
 	ssiTxRxConfig.bit.ssiSCKP = 0; // Data clocked: 0 = on rising edge, 1 = falling edge.
 	ssiTxRxConfig.bit.ssiSHFD = 0; // Data shift direction: 0 = MSB-first, 1 = LSB-first.
-	ssiTxRxConfig.bit.ssiCLKDIR = 0; // CLK source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFDIR = 0; // Frame sync source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiCLKDIR = 1; // CLK source: 0 = external, 1 = internal.
+	ssiTxRxConfig.bit.ssiFDIR = 1; // Frame sync source: 0 = external, 1 = internal.
 	ssiTxRxConfig.bit.ssiFEN = 1; // Tx/Rx FIFO: 0 = disabled, 1 = enabled.
 	ssiTxRxConfig.bit.ssiBIT0 = 1; // Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
 	ssiTxRxConfig.bit.ssiRxEXT = 0; // Receive sign extension: 0 = off, 1 = on.
@@ -97,13 +131,11 @@ static void setupSSI() {
 	// Disable the last word of the frame.
 	// This is because of some stupid error that doesn't allow us to reliably send out the last
 	// word of the frame without causing an overrun.
-	SSI_STMSK = 0x00;
-	SSI_SRMSK = 0x00;
+	//SSI_STMSK = 0x00;
+	//SSI_SRMSK = 0x00;
 
-	SSI_SFCSR_BIT .RFWM0 = 8;
+	SSI_SFCSR_BIT .RFWM0 = 4;
 	SSI_SFCSR_BIT .TFWM0 = 5;
-
-	SSI_Enable(TRUE);
 
 	// Setup the SSI interrupts.
 	SSI_SIER_WORD = 0;
@@ -119,6 +151,7 @@ static void setupSSI() {
 	SSI_SIER_BIT .TDE_EN = TRUE;
 	SSI_SIER_BIT .TFE_EN = TRUE;
 
+	SSI_Enable(TRUE);
 }
 
 // --------------------------------------------------------------------------
@@ -204,6 +237,14 @@ void aisleControllerTask(void *pvParameters) {
 	gTotalLedPositions = 32;
 	gTotalLedFlashDataElements = 3;
 	gTotalLedSolidDataElements = 0;
+
+	gpioInit();
+	setupSSI();
+//	setupTimers();
+
+	// Enable Rx, and disable Tx.
+	SSI_SCR_BIT.TE = TRUE;
+	SSI_SCR_BIT.RE = FALSE;
 
 	for (;;) {
 		if (gLedCycle == eLedCycleOff) {
