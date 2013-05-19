@@ -6,282 +6,374 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$TOOLKIT_DIR$\inc\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\SMAC-conf\board_config.h</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\FreeRTOS.h</file>
-      <file>$TOOLKIT_DIR$\inc\string.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Leds.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\HLDrv.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\Init-IAR.lst</file>
-      <file>$PROJ_DIR$\Utilities\Sound.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\port.o</file>
-      <file>$TOOLKIT_DIR$\inc\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\yvals.h</file>
-      <file>$PROJ_DIR$\Utilities\Leds.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\remoteRadioTaskSMAC2.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\MacaInterrupt.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\SecurityMngmnt.o</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\croutine.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\TransceiverConfigMngmnt.o</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\commandTypes.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\smacPort.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Leds.o</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\croutine.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\FreeRTOS.h</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\MemMang\heap_1.c</file>
-      <file>$PROJ_DIR$\..\..\..\src\smacPort.c</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\HLDrv.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\TransceiverPowerMngmnt.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\queue.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\keyboardARM.pbi</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\Timer.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\remoteMgmtTask.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\toyQuery.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\RadioMngmntWrapper.h</file>
-      <file>$PROJ_DIR$\..\..\src\FreeRTOSConfig.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\TransceiverPowerMngmnt.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\WirelessLinkMngmt.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\Sound.lst</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\WirelessLinkMngmt.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</file>
-      <file>$PROJ_DIR$\..\PLM\LibInterface\GPIO_Interface.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\croutine.h</file>
-      <file>$PROJ_DIR$\..\..\..\src\audioARM.c</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\ADC_Interface.h</file>
-      <file>$PROJ_DIR$\Debug\List\portasm.lst</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\Platform.h</file>
-      <file>$TOOLKIT_DIR$\inc\ycheck.h</file>
-      <file>$PROJ_DIR$\Debug\List\port.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\Delay.pbi</file>
-      <file>$PROJ_DIR$\..\..\..\src\remoteRadioTaskSMAC2.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\mainRemote.o</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\maca.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\port.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\rcv_spi_regs.h</file>
-      <file>$PROJ_DIR$\PLM-conf\RF_Config.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\tasks.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\commands.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\Synthesizer_inc.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\Delay.c</file>
-      <file>$PROJ_DIR$\Debug\List\ulaw.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\audioARM.pbi</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\ulaw.c</file>
-      <file>$PROJ_DIR$\Debug\List\maca.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\radioCommon.pbi</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\remoteMgmtTask.o</file>
-      <file>$PROJ_DIR$\Debug\List\radioCommon.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\MemMang\heap_1.c</file>
-      <file>$PROJ_DIR$\Debug\List\TransceiverConfigMngmnt.lst</file>
-      <file>$PROJ_DIR$\Debug\Exe\Board-NCB.srec</file>
-      <file>$PROJ_DIR$\Debug\Obj\PlatformInit.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\HLDrv.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Display.o</file>
-      <file>$PROJ_DIR$\..\PLM\Interface\EmbeddedTypes.h</file>
-      <file>$PROJ_DIR$\Debug\List\Delay.lst</file>
-      <file>$PROJ_DIR$\Debug\List\tasks.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\croutine.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\toyQuery.o</file>
-      <file>$PROJ_DIR$\Debug\List\TransceiverPowerMngmnt.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\heap_1.pbi</file>
-      <file>$PROJ_DIR$\Debug\Exe\Board-NCB.out</file>
-      <file>$PROJ_DIR$\Debug\List\MacaInterrupt.lst</file>
-      <file>$PROJ_DIR$\..\..\..\src\radioCommon.c</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\list.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\SecurityMngmnt.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\tasks.o</file>
-      <file>$PROJ_DIR$\Debug\List\Leds.lst</file>
-      <file>$PROJ_DIR$\PLM-conf\PWR_Config.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\list.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\deviceInfo-RocketPhone.o</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\GlobalDefs.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\smacPort.c</file>
-      <file>$PROJ_DIR$\Debug\List\WirelessLinkMngmt.lst</file>
-      <file>$TOOLKIT_DIR$\lib\rt4t_al.a</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\commands.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\Delay.h</file>
-      <file>$PROJ_DIR$\..\PLM\LibInterface\I2C_Interface.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\heap_1.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\keyboard.pbi</file>
-      <file>$PROJ_DIR$\..\PLM\Interface\PlatformInit.h</file>
-      <file>$TOOLKIT_DIR$\inc\stdlib.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\TransceiverConfigMngmnt.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\gwSystemMacros.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\mainRemote.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\keyboardTask.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\Init-IAR.o</file>
-      <file>$PROJ_DIR$\Utilities\Display.c</file>
-      <file>$PROJ_DIR$\Debug\List\deviceInfo-RocketPhone.lst</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\list.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.c</file>
-      <file>$PROJ_DIR$\..\..\..\src\keyboardARM.c</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\MacaInterrupt.c</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\Ssi_Regs.h</file>
-      <file>$TOOLKIT_DIR$\inc\time.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portmacro.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\mainRemote.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\list.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\SecurityMngmnt.lst</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\audioARM.o</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\rif_inc.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\smacPort.o</file>
-      <file>$PROJ_DIR$\Debug\List\commands.lst</file>
-      <file>$TOOLKIT_DIR$\inc\stddef.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\TransceiverPowerMngmnt.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\task.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ulaw.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\PlatformInit.o</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portmacro.h</file>
-      <file>$TOOLKIT_DIR$\inc\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\PLM-conf\PortConfig.h</file>
-      <file>$PROJ_DIR$\..\..\..\src\remoteMgmtTask.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardARM.c</file>
-      <file>$PROJ_DIR$\Debug\List\heap_1.lst</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\Interrupt.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\ulaw.h</file>
-      <file>$PROJ_DIR$\Debug\List\keyboardARM.lst</file>
-      <file>$PROJ_DIR$\..\PLM\LibInterface\Crm.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\maca.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\portasm.o</file>
-      <file>$PROJ_DIR$\..\PLM\Lib\LLC.a</file>
-      <file>$PROJ_DIR$\Debug\List\toyQuery.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\keyboardARM.o</file>
-      <file>$TOOLKIT_DIR$\inc\DLib_Product_string.h</file>
-      <file>$PROJ_DIR$\Debug\List\Display.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\usb.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Sound.o</file>
-      <file>$PROJ_DIR$\..\PLM\LibInterface\UartLowLevel.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\tasks.c</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\SecurityMngmnt.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\RadioManagement.pbi</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTaskSMAC2.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\commands.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\queue.c</file>
-      <file>$PROJ_DIR$\SMAC-conf\options_config.h</file>
-      <file>$PROJ_DIR$\Debug\List\audioARM.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\Delay.o</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\list.c</file>
-      <file>$TOOLKIT_DIR$\inc\stdio.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboard.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Board-NCB.pbd</file>
-      <file>$PROJ_DIR$\..\Application\FreeRTOSConfig.h</file>
-      <file>$PROJ_DIR$\..\..\..\src\ulaw.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\portable.h</file>
-      <file>$PROJ_DIR$\Debug\List\smacPort.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\remoteRadioTaskSMAC2.pbi</file>
-      <file>$PROJ_DIR$\PLM-conf\UART_Interface.h</file>
-      <file>$PROJ_DIR$\Utilities\Leds.h</file>
-      <file>$PROJ_DIR$\..\..\..\src\toyQuery.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\queue.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Lib\MC1322x.a</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\audioARM.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\portable.h</file>
-      <file>$PROJ_DIR$\Debug\List\Keyboard.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\serial.h</file>
-      <file>$TOOLKIT_DIR$\inc\DLib_Product.h</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\StackMacros.h</file>
-      <file>$PROJ_DIR$\Utilities\Sound.h</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\WirelessLinkMngmt.h</file>
-      <file>$PROJ_DIR$\Debug\List\Board-NCB.map</file>
-      <file>$PROJ_DIR$\Debug\List\HLDrv.lst</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\tasks.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\croutine.c</file>
-      <file>$PROJ_DIR$\Debug\List\RadioManagement.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\TransceiverConfigMngmnt.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\SecurityMngmnt.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\maca.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\queue.lst</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\FreqDepSettings.h</file>
-      <file>$PROJ_DIR$\Debug\List\remoteRadioTaskSMAC2.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\RadioManagement.o</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo-RocketPhone.c</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\queue.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\smacGlue.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\WirelessLinkMngmt.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\Display.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Source\RadioManagement.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\queue.h</file>
-      <file>$PROJ_DIR$\Utilities\Keyboard.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.c</file>
-      <file>$PROJ_DIR$\..\..\..\src\keyboardTask.c</file>
-      <file>$TOOLKIT_DIR$\lib\dl4t_tl_in.a</file>
-      <file>$PROJ_DIR$\Utilities\Display.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.c</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\ISR_Support.h</file>
-      <file>$PROJ_DIR$\..\PLM\Source\Common\Sys\PlatformInit.c</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\StackMacros.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\TransceiverConfigMngmnt.h</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\ITC_Interface.h</file>
-      <file>$PROJ_DIR$\Debug\List\croutine.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\commands.o</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\Rom_Phy.h</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\list.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\smacPort.pbi</file>
-      <file>$PROJ_DIR$\..\SMAC\Interface\RadioManagement.h</file>
-      <file>$PROJ_DIR$\..\PLM\Icf\MC1322x-RAM-ROM.icf</file>
-      <file>$PROJ_DIR$\Utilities\LCD_Font.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Keyboard.o</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\projdefs.h</file>
-      <file>$TOOLKIT_DIR$\inc\DLib_Defaults.h</file>
-      <file>$PROJ_DIR$\Debug\List\keyboardTask.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\maca.o</file>
-      <file>$PROJ_DIR$\Debug\List\remoteMgmtTask.lst</file>
-      <file>$PROJ_DIR$\..\PLM\LibINterface\CRM_Regs.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ulaw.pbi</file>
-      <file>$PROJ_DIR$\..\..\..\src\commands.c</file>
-      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\projdefs.h</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\asm.h</file>
-      <file>$PROJ_DIR$\..\PLM\Source\Common\Sys\Init-IAR.S</file>
-      <file>$PROJ_DIR$\Debug\Obj\croutine.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\Sound.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\mainRemote.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTask.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\HLDrv.o</file>
-      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\MacaInterrupt.h</file>
-      <file>$PROJ_DIR$\Debug\List\PlatformInit.lst</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\gwTypes.h</file>
-      <file>$PROJ_DIR$\Debug\List\list.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\radioCommon.o</file>
-      <file>$TOOLKIT_DIR$\inc\DLib_Config_Normal.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\TransceiverPowerMngmnt.pbi</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\task.h</file>
-      <file>$PROJ_DIR$\..\..\..\src\deviceInfo-RocketPhone.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\deviceInfo-RocketPhone.pbi</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\audioARM.c</file>
-      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\ISR_Support.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\keyboardTask.pbi</file>
-      <file>$PROJ_DIR$\..\..\..\src\mainRemote.c</file>
-      <file>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\MacaInterrupt.pbi</file>
       <file>$PROJ_DIR$\Utilities\Keyboard.h</file>
+      <file>$PROJ_DIR$\..\PLM\LibInterface\UartLowLevel.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\tasks.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\TransceiverConfigMngmnt.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\toyQuery.lst</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\queue.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Leds.pbi</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\task.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\TransceiverPowerMngmnt.h</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\portable.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\WirelessLinkMngmt.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\MacaInterrupt.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\PlatformInit.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\croutine.o</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\SecurityMngmnt.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\audioARM.o</file>
+      <file>$TOOLKIT_DIR$\inc\stdlib.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\queue.c</file>
+      <file>$PROJ_DIR$\Debug\List\keyboardTask.lst</file>
+      <file>$PROJ_DIR$\..\PLM\Source\Common\Sys\PlatformInit.c</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\list.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.h</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\croutine.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\ulaw.c</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Lib\MC1322x.a</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\Delay.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\keyboard.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\commands.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\commands.o</file>
+      <file>$PROJ_DIR$\Debug\List\SecurityMngmnt.lst</file>
+      <file>$PROJ_DIR$\..\PLM\Interface\PlatformInit.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\smacGlue.h</file>
+      <file>$PROJ_DIR$\Utilities\Leds.c</file>
+      <file>$PROJ_DIR$\..\..\..\src\toyQuery.c</file>
+      <file>$PROJ_DIR$\..\..\..\src\ulaw.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\maca.pbi</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\list.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\TransceiverPowerMngmnt.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\Init-IAR.o</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\TransceiverConfigMngmnt.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\WirelessLinkMngmt.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Delay.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\stdio.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.c</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\StackMacros.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\radioCommon.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\src\audioARM.c</file>
+      <file>$PROJ_DIR$\Utilities\Leds.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\Delay.c</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portmacro.h</file>
+      <file>$PROJ_DIR$\..\Application\FreeRTOSConfig.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\list.pbi</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\maca.h</file>
+      <file>$PROJ_DIR$\..\..\..\src\remoteMgmtTask.c</file>
+      <file>$TOOLKIT_DIR$\inc\time.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\TransceiverPowerMngmnt.c</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\asm.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\HLDrv.c</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Product.h</file>
+      <file>$PROJ_DIR$\PLM-conf\PortConfig.h</file>
+      <file>$PROJ_DIR$\SMAC-conf\options_config.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\RadioMngmntWrapper.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\MemMang\heap_1.c</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\commands.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\gwTypes.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\keyboardTask.o</file>
+      <file>$PROJ_DIR$\Debug\List\Display.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\keyboardTask.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\remoteMgmtTask.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\TransceiverConfigMngmnt.lst</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\SecurityMngmnt.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\toyQuery.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\queue.o</file>
+      <file>$PROJ_DIR$\Debug\Exe\Board-NCB.srec</file>
+      <file>$PROJ_DIR$\..\..\..\src\mainRemote.c</file>
+      <file>$PROJ_DIR$\Debug\List\WirelessLinkMngmt.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\Board-NCB.pbd</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\smacPort.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\WirelessLinkMngmt.o</file>
+      <file>$PROJ_DIR$\Debug\List\MacaInterrupt.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\port.pbi</file>
+      <file>$PROJ_DIR$\..\PLM\Interface\EmbeddedTypes.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\FreeRTOS.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\SecurityMngmnt.pbi</file>
+      <file>$PROJ_DIR$\PLM-conf\RF_Config.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\Rom_Phy.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\HLDrv.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\ulaw.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ulaw.o</file>
+      <file>$PROJ_DIR$\Debug\List\croutine.lst</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\Synthesizer_inc.h</file>
+      <file>$PROJ_DIR$\..\..\src\FreeRTOSConfig.h</file>
+      <file>$PROJ_DIR$\Debug\List\Keyboard.lst</file>
+      <file>$TOOLKIT_DIR$\inc\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\yvals.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</file>
+      <file>$PROJ_DIR$\..\SMAC\Source\RadioManagement.c</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\task.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\keyboardARM.pbi</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\WirelessLinkMngmt.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\audioARM.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\smacPort.pbi</file>
+      <file>$PROJ_DIR$\..\PLM\Lib\LLC.a</file>
+      <file>$PROJ_DIR$\..\..\..\src\deviceInfo-RocketPhone.c</file>
+      <file>$PROJ_DIR$\..\..\..\src\keyboardARM.c</file>
+      <file>$TOOLKIT_DIR$\inc\stddef.h</file>
+      <file>$PROJ_DIR$\..\..\..\src\smacPort.c</file>
+      <file>$PROJ_DIR$\Debug\List\PlatformInit.lst</file>
+      <file>$PROJ_DIR$\Debug\List\RadioManagement.lst</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\ghdr\rcv_spi_regs.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\heap_1.o</file>
+      <file>$PROJ_DIR$\Debug\List\remoteMgmtTask.lst</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\RadioManagement.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\RadioManagement.o</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\deviceInfo-RocketPhone.o</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\FreqDepSettings.h</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\tasks.c</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\ISR_Support.h</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\MemMang\heap_1.c</file>
+      <file>$PROJ_DIR$\Utilities\Display.c</file>
+      <file>$PROJ_DIR$\Utilities\Sound.c</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\Interrupt.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\deviceInfo-RocketPhone.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\projdefs.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\remoteRadioTaskSMAC2.o</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\CRM_Regs.h</file>
+      <file>$PROJ_DIR$\Debug\List\ulaw.lst</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTaskSMAC2.c</file>
+      <file>$PROJ_DIR$\Debug\List\Init-IAR.lst</file>
+      <file>$PROJ_DIR$\Debug\List\list.lst</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\list.h</file>
+      <file>$PROJ_DIR$\Debug\List\keyboardARM.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\MacaInterrupt.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\heap_1.lst</file>
+      <file>$PROJ_DIR$\Debug\List\portasm.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\TransceiverPowerMngmnt.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\Timer.h</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\queue.c</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboardARM.c</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\ISR_Support.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\commandTypes.h</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\portasm.o</file>
+      <file>$PROJ_DIR$\..\..\..\src\radioCommon.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\audioARM.pbi</file>
+      <file>$PROJ_DIR$\PLM-conf\UART_Interface.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\remoteRadioTaskSMAC2.pbi</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\Display.pbi</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\gwSystemMacros.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\maca.c</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\Platform.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\mainRemote.c</file>
+      <file>$PROJ_DIR$\Utilities\Sound.h</file>
+      <file>$PROJ_DIR$\..\PLM\LibInterface\Crm.h</file>
+      <file>$PROJ_DIR$\Debug\List\mainRemote.lst</file>
+      <file>$PROJ_DIR$\Debug\List\TransceiverPowerMngmnt.lst</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\ADC_Interface.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\tasks.o</file>
+      <file>$PROJ_DIR$\Debug\Exe\Board-NCB.out</file>
+      <file>$PROJ_DIR$\..\..\..\src\commands.c</file>
+      <file>$PROJ_DIR$\Debug\List\radioCommon.lst</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\smacPort.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\TransceiverConfigMngmnt.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\mainRemote.o</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\croutine.c</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Sound.o</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\StackMacros.h</file>
+      <file>$PROJ_DIR$\PLM-conf\PWR_Config.h</file>
+      <file>$PROJ_DIR$\Debug\List\maca.lst</file>
+      <file>$PROJ_DIR$\Debug\List\Board-NCB.map</file>
+      <file>$PROJ_DIR$\Debug\Obj\Sound.pbi</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.c</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\keyboard.h</file>
+      <file>$PROJ_DIR$\Utilities\Display.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Display.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\Keyboard.o</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\list.o</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\usb.h</file>
+      <file>$TOOLKIT_DIR$\inc\ysizet.h</file>
+      <file>$PROJ_DIR$\SMAC-conf\board_config.h</file>
+      <file>$PROJ_DIR$\Debug\List\HLDrv.lst</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.c</file>
+      <file>$PROJ_DIR$\..\PLM\LibInterface\I2C_Interface.h</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\LibInterface\rif_inc.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\heap_1.pbi</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\croutine.c</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\serial.h</file>
+      <file>$PROJ_DIR$\Debug\List\commands.lst</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\commands.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\toyQuery.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</file>
+      <file>$PROJ_DIR$\Debug\Obj\maca.o</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\ITC_Interface.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl4t_tl_in.a</file>
+      <file>$PROJ_DIR$\Debug\List\queue.lst</file>
+      <file>$PROJ_DIR$\..\PLM\LibInterface\GPIO_Interface.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\croutine.h</file>
+      <file>$PROJ_DIR$\Debug\List\audioARM.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\RadioManagement.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\src\remoteRadioTaskSMAC2.c</file>
+      <file>$TOOLKIT_DIR$\inc\ycheck.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portmacro.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\port.o</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\GlobalDefs.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\queue.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ulaw.pbi</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Source\MacaInterrupt.c</file>
+      <file>$PROJ_DIR$\..\SMAC\Drivers\Interface\MacaInterrupt.h</file>
+      <file>$PROJ_DIR$\..\PLM\Source\Common\Sys\Init-IAR.S</file>
+      <file>$PROJ_DIR$\..\PLM\Icf\MC1322x-RAM-ROM.icf</file>
+      <file>$PROJ_DIR$\Debug\List\remoteRadioTaskSMAC2.lst</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\projdefs.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\tasks.c</file>
+      <file>$PROJ_DIR$\Debug\List\Leds.lst</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\list.c</file>
+      <file>$PROJ_DIR$\Debug\List\port.lst</file>
+      <file>$PROJ_DIR$\..\..\..\src\keyboardTask.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\HLDrv.o</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Product_string.h</file>
+      <file>$PROJ_DIR$\Utilities\Keyboard.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\remoteMgmtTask.o</file>
+      <file>$PROJ_DIR$\..\..\..\FreeRTOS\Source\include\FreeRTOS.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\mainRemote.pbi</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTask.h</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\include\portable.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\smacPort.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\Delay.o</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.h</file>
+      <file>$PROJ_DIR$\Utilities\LCD_Font.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\radioCommon.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\keyboardARM.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\HLDrv.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Leds.o</file>
+      <file>$PROJ_DIR$\..\PLM\LibINterface\Ssi_Regs.h</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo-RocketPhone.c</file>
+      <file>$PROJ_DIR$\Debug\List\Sound.lst</file>
+      <file>$PROJ_DIR$\..\SMAC\Interface\TransceiverConfigMngmnt.h</file>
+      <file>$PROJ_DIR$\Debug\List\smacPort.lst</file>
+      <file>$PROJ_DIR$\Debug\List\deviceInfo-RocketPhone.lst</file>
+      <file>$PROJ_DIR$\Debug\List\tasks.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\SecurityMngmnt.o</file>
+      <file>$TOOLKIT_DIR$\lib\rt4t_al.a</file>
+      <file>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</file>
+      <file>$PROJ_DIR$\..\Application\FlyWeight\audioARM.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\croutine.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\PlatformInit.o</file>
+      <file>$PROJ_DIR$\Debug\List\Delay.lst</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\Utilities\Sound.c</name>
+      <name>$PROJ_DIR$\..\SMAC\Source\WirelessLinkMngmt.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 148</file>
+          <file> 78 81</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 234</file>
+          <file> 42</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 72 28 43 227 114 97 38 179</file>
+          <file> 102 211 84 115 64 55 93 119 244 63 187 112 191 88 87</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 72 28 43 227 114 97 38 179</file>
+          <file> 102 211 84 115 64 55 93 119 244 63 187 112 191 88 87</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SMAC\Source\SecurityMngmnt.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 31 248</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 86</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 73 211 84 63 59</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 73 211 84 63 59</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\queue.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 202 75</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 212</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 96 226 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 204</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 96 226 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 204</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\PLM\Source\Common\Sys\PlatformInit.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 110 253</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 13</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 62 32 84 203 156 129 241 87</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 62 32 84 203 156 129 241 87</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\ulaw.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 130 91</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 213</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 90</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 90</file>
         </tool>
       </inputs>
     </file>
@@ -290,7 +382,79 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 87 19</file>
+          <file> 221 240</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 50 84 203 156 129 241 187 119</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 50 84 203 156 129 241 187 119</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\toyQuery.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 74</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 197</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\ulaw.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 91</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 213</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\list.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 133 184</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 54</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 134</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 134</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SMAC\Source\TransceiverConfigMngmnt.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 72 168</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -300,163 +464,34 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 169 72 38 43 227 114 1 191</file>
+          <file> 156 129 84 241 63 187 119 27 55 191 244 211 115 93</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 169 72 38 43 227 114 1 191</file>
+          <file> 156 129 84 241 63 187 119 27 55 191 244 211 115 93</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\croutine.c</name>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 233</file>
+          <file> 20 68</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 76</file>
+          <file> 70</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 21 125 44 10 223 243 177 131 0 9 230</file>
+          <file> 18 85 108 208 97 140 46 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 179 67 211 115 57 23 33 8 134 145 154 159 102 162 150 1 167 66 194 185</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 21 125 44 10 223 177 131 0 9 230 174 116 43 227 72 114 28 211 136 127 89 39</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\MemMang\heap_1.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 135 99</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 79</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 182 80</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\smacPort.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 123</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 217</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\HLDrv.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 183 237</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 5</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 139 43 227 72 114 70 91</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 139 43 227 72 114 70 91</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\TransceiverPowerMngmnt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 78 25</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 244</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 126 91 72 139 43 227 114 88 122</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 126 91 72 139 43 227 114 88 122</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\WirelessLinkMngmt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 93 197</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 34</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 181 91 72 218 31 140 55 191 210 156 1 51 122 214 52</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 181 91 72 218 31 140 55 191 210 156 1 51 122 214 52</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 141 42</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>AARM</name>
-          <file> 163 249</file>
+          <file> 18 85 108 208 97 140 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 179 67 211 115 57 23 33 8 134 145 154 159 102 162 150 1 167 66 194 185</file>
         </tool>
       </inputs>
     </file>
@@ -465,360 +500,34 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 121</file>
+          <file> 16</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 58</file>
+          <file> 149</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\remoteRadioTaskSMAC2.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 12</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 167</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Drivers\Source\maca.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 60 225</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 189</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 140 72</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 140 72</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\SMAC\Drivers\Source\Delay.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 73 158</file>
+          <file> 254 234</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 46</file>
+          <file> 43</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 72 1 191</file>
+          <file> 84 187 119</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 72 1 191</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\ulaw.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 57 128</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 228</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 137</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 137</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\MemMang\heap_1.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 79</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 21 125 230</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 21 125 230 174 116 43 227 72 114 28 211 136 127 89</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\Board-NCB.out</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 182</file>
-        </tool>
-        <tool>
-          <name>OBJCOPY</name>
-          <file> 68</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 219 158 71 237 107 221 19 13 129 193 14 148 16 25 197 121 213 233 90 99 144 106 216 225 48 8 141 26 242 63 12 123 86 77 128 142 172 94 204</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\radioCommon.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 242</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 141 42</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>AARM</name>
-          <file> 32 207</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\smacPort.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 166 123</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 217</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 18 240 72 91 218 115 44 10 223 243 177 131 0 9 181</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 18 240 72 91 218 115 44 10 223 177 131 0 9 181</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\TransceiverConfigMngmnt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 67 16</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 187</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 43 227 72 114 156 1 191 96 140 122 210 91 218 55</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 43 227 72 114 156 1 191 96 140 122 210 91 218 55</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\mainRemote.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 235 48</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 117</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 2 125 44 10 223 243 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 245 84 200 240 91 218 115 104 139 181 41 168 149 18 236 75 196 17 62 65 95 176 147 161 238 210 55 191 169 38 1 96 205 220 179</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 2 125 44 10 223 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 245 84 200 240 91 218 115 104 139 181 41 168 149 18 236 75 196 17 62 65 95 176 147 161 238 210 55 191 169 38 1 96 205 220 179</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Utilities\Display.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 146 71</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 198</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 72 38 43 227 114 96 205 220</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 72 38 43 227 114 96 205 220</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\list.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 241 216</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 118</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 84</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 84</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 143 77</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 30</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 252 240 72 91 218 115 44 10 223 243 177 131 0 9 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 17 104 139 181 41 168 149 18 95 176 147 3 145 102 98</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 252 240 72 91 218 115 44 10 223 177 131 0 9 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 17 104 139 181 41 168 149 18 95 176 147 3 145 102 98</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\keyboardARM.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 144</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 27</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Drivers\Source\MacaInterrupt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 81 13</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 253</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 72 140 43 227 114 218 91 210 55 191 238</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 72 140 43 227 114 218 91 210 55 191 238</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 45 8</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 50</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 169 38 1 191</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 169 38 1 191</file>
+          <file> 84 187 119</file>
         </tool>
       </inputs>
     </file>
@@ -827,531 +536,80 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 63</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 29</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\keyboardARM.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 138 144</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 27</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 161 240 72 91 218 115 44 10 223 243 177 131 0 9 254 38 43 227 114 139 65 2 125 222 163 165 130 28 211 136 200 245 84 126 88 96</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 161 240 72 91 218 115 44 10 223 177 131 0 9 254 38 43 227 114 139 65 2 125 222 163 165 130 28 211 136 200 245 84 126 88 96</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\tasks.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 86</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 53</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 160 44 10 223 243 177 131 0 9 102 3 145 21 125 230</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 160 44 10 223 177 131 0 9 102 3 145 21 125 230 174 116 43 227 72 114 28 211 136 127 89 209</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTaskSMAC2.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 192 12</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 167</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 236 75 196 2 125 44 10 223 243 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 245 84 240 91 218 115 17 104 139 181 41 168 149 18 95 176 147 62 169 38 1 191 173</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 236 75 196 2 125 44 10 223 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 245 84 240 91 218 115 17 104 139 181 41 168 149 18 95 176 147 62 169 38 1 191 173</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\commands.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 124 213</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 54</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 95 240 72 91 218 115 44 10 223 243 177 131 0 9 17 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 104 139 181 41 168 149 18 176 147 3 145 252</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 95 240 72 91 218 115 44 10 223 177 131 0 9 17 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 104 139 181 41 168 149 18 176 147 3 145 252</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\queue.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 190 26</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 171</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 3 145 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 20</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 3 145 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 20</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\list.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 216</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 118</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 21 125 230</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 21 125 230 174 116 43 227 72 114 28 211 136 89</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Obj\Board-NCB.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 46 198 5 4 253 69 152 85 234 187 244 34 58 54 76 247 79 100 27 250 118 189 117 50 171 61 29 167 217 53 30 228</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ulaw.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 128</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
           <file> 228</file>
         </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\toyQuery.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 77</file>
-        </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 30</file>
+          <file> 71</file>
         </tool>
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</name>
+      <name>$PROJ_DIR$\..\SMAC\Source\TransceiverPowerMngmnt.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 8</file>
+          <file> 161 39</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 50</file>
+          <file> 139</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 21 125 230</file>
+          <file> 9 211 84 159 156 129 241 174 191</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 21 125 230 174 116 43 227 72 114 28 211 136 127 89 169 38 1 191</file>
+          <file> 9 211 84 159 156 129 241 174 191</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\tasks.c</name>
+      <name>$PROJ_DIR$\..\SMAC\Source\HLDrv.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 74 86</file>
+          <file> 188 225</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 53</file>
+          <file> 239</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 160 44 10 223 243 177 131 0 9 102 3 145 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 178</file>
+          <file> 159 156 129 84 241 89 211</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 160 44 10 223 177 131 0 9 102 3 145 2 125 222 163 165 130 43 227 72 114 28 211 136 245 84 178</file>
+          <file> 159 156 129 84 241 89 211</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\FreeRTOS\Source\croutine.c</name>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\MemMang\heap_1.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 212 233</file>
+          <file> 137 113</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 76</file>
+          <file> 192</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 2 125 44 10 223 243 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 245 84 20</file>
+          <file> 17 208 97 140 46 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 2 125 44 10 223 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 245 84 20</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\SecurityMngmnt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 119 14</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 85</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 151 91 72 156 231</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 151 91 72 156 231</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo-RocketPhone.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 109 90</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 247</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 240 72 91 218 115 44 10 223 243 177 131 0 9 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 17 104 139 181 41 168 149 18</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 240 72 91 218 115 44 10 223 177 131 0 9 75 196 2 125 222 163 165 130 43 227 114 28 211 136 200 245 84 17 104 139 181 41 168 149 18</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\queue.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 26</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 171</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 102 44 10 223 243 177 131 0 9 3 145 21 125 230</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 102 44 10 223 177 131 0 9 3 145 21 125 230 174 116 43 227 72 114 28 211 136 127 89 39</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\SMAC\Source\RadioManagement.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 186 193</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 152</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 218 91 72 96 31 140 55 191 210 156 1</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 218 91 72 96 31 140 55 191 210 156 1</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Utilities\Keyboard.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 175 221</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 100</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 254 38 43 227 72 114 139</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 254 38 43 227 72 114 139</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 226 63</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 29</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 62 240 72 91 218 115 44 10 223 243 177 131 0 9 104 139 43 227 114 181 211 41 168 149 18 2 125 222 163 165 130 28 136 200 75 196 245 84 17 38 95 176 147 205 220 160 96</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 62 240 72 91 218 115 44 10 223 177 131 0 9 104 139 43 227 114 181 211 41 168 149 18 2 125 222 163 165 130 28 136 200 75 196 245 84 17 38 95 176 147 205 220 160 96</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\keyboardTask.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 106</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 250</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\keyboardTask.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 224 106</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 250</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 65 2 125 44 10 223 243 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 161 240 91 218 115 75 196 245 84 17 104 139 181 41 168 149 18 95 176 147</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 65 2 125 44 10 223 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 161 240 91 218 115 75 196 245 84 17 104 139 181 41 168 149 18 95 176 147</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\PLM\Source\Common\Sys\PlatformInit.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 239 129</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 69</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 132 101 72 38 43 227 114 52</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 132 101 72 38 43 227 114 52</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 64 242</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 75 196 2 125 44 10 223 243 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 245 84 240 91 218 115 17 104 139 181 41 168 149 18</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 75 196 2 125 44 10 223 177 131 0 9 222 163 165 130 43 227 72 114 28 211 136 200 245 84 240 91 218 115 17 104 139 181 41 168 149 18</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\commands.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 213</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 54</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\PLM\Source\Common\Sys\Init-IAR.S</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 107 6</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\deviceInfo-RocketPhone.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 90</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 247</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Application\FlyWeight\audioARM.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 157 121</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 58</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 173 28 43 227 72 114 2 125 44 10 223 243 177 131 0 9 222 163 165 130 211 136 240 91 218 115 75 196 200 245 84 17 104 139 181 41 168 149 18 95 176 147 137 97 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 173 28 43 227 72 114 2 125 44 10 223 177 131 0 9 222 163 165 130 211 136 240 91 218 115 75 196 200 245 84 17 104 139 181 41 168 149 18 95 176 147 137 97 38</file>
+          <file> 17 208 97 140 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134</file>
         </tool>
       </inputs>
     </file>
@@ -1360,13 +618,755 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 48</file>
+          <file> 169</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 117</file>
+          <file> 230</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\Board-NCB.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 43 153 239 7 136 13 206 86 177 4 139 42 149 29 252 126 192 28 101 70 54 37 230 83 212 48 71 151 104 2 197 213</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\smacPort.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 245 233</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 104</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 167 67 84 211 115 57 208 97 140 46 61 3 146 186 102</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 167 67 84 211 115 57 208 97 140 61 3 146 186 102</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 223 210</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 83</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 50 203 187 119</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 50 203 187 119</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SMAC\Source\RadioManagement.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 111 116</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 206</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 115 211 84 27 64 55 93 119 244 63 187</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 115 211 84 27 64 55 93 119 244 63 187</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\deviceInfo-RocketPhone.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 118</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 126</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\keyboardARM.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 238</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 101</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\smacPort.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 233</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 104</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\tasks.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 163</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44 208 97 140 46 61 3 146 186 17 96 226 229 108 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 44 208 97 140 61 3 146 186 17 96 226 229 108 127 10 52 156 129 84 241 141 200 125 100 22 173</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\MemMang\heap_1.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 113</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 192</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 229 108 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 229 108 127 10 52 156 129 84 241 141 200 125 100 22</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Utilities\Display.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69 181</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 153</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 84 203 156 129 241 27 180 236</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 84 203 156 129 241 27 180 236</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Utilities\Sound.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 243 172</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 177</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 84 141 156 129 241 190 203 158</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 84 141 156 129 241 190 203 158</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\remoteRadioTaskSMAC2.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 218 128</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 151</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 231 23 33 85 108 208 97 140 46 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 8 134 67 211 115 57 145 154 159 102 162 150 1 167 66 194 185 235 50 203 187 119 103</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 231 23 33 85 108 208 97 140 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 8 134 67 211 115 57 145 154 159 102 162 150 1 167 66 194 185 235 50 203 187 119 103</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\queue.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 75</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 212</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 96 226 229 108 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 96 226 229 108 127 10 52 156 129 84 241 141 200 125 100 22 24</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\keyboardARM.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 135 238</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 101</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 179 67 84 211 115 57 208 97 140 46 61 3 146 186 0 203 156 129 241 159 18 85 108 219 53 232 209 141 200 125 6 8 134 9 174 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 179 67 84 211 115 57 208 97 140 61 3 146 186 0 203 156 129 241 159 18 85 108 219 53 232 209 141 200 125 6 8 134 9 174 27</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\radioCommon.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 237</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\remoteMgmtTask.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 114 228</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 71</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 235 67 84 211 115 57 208 97 140 46 61 3 146 186 154 159 156 129 241 102 200 162 150 1 167 85 108 219 53 232 209 141 125 6 23 33 8 134 145 203 66 194 185 180 236 44 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 235 67 84 211 115 57 208 97 140 61 3 146 186 154 159 156 129 241 102 200 162 150 1 167 85 108 219 53 232 209 141 125 6 23 33 8 134 145 203 66 194 185 180 236 44 27</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SMAC\Drivers\Source\maca.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 175 199</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 37</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 55 84</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 55 84</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\mainRemote.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 160 169</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 230</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 85 108 208 97 140 46 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 8 134 6 67 211 115 57 154 159 102 162 150 1 167 231 23 33 145 235 18 66 194 185 179 215 244 93 119 50 203 187 27 180 236 158</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 85 108 208 97 140 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 8 134 6 67 211 115 57 154 159 102 162 150 1 167 231 23 33 145 235 18 66 194 185 179 215 244 93 119 50 203 187 27 180 236 158</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\Board-NCB.out</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 176</file>
+        </tool>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 76</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 217 234 181 225 40 182 240 12 253 116 248 172 168 39 81 16 30 14 118 113 238 68 184 199 169 210 147 75 237 228 128 233 163 74 91 105 26 249 201</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\commands.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 30</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\croutine.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 14</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 252</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 229 108 208 97 140 46 61 3 146 186 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 229 108 208 97 140 61 3 146 186 127 10 52 156 129 84 241 141 200 125 100 22 24</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\toyQuery.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 5 74</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 197</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 117 67 84 211 115 57 208 97 140 46 61 3 146 186 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 145 154 159 102 162 150 1 167 66 194 185 96 226 17 171</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 117 67 84 211 115 57 208 97 140 61 3 146 186 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 145 154 159 102 162 150 1 167 66 194 185 96 226 17 171</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 176 164</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\port.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 83</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 229 108 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 229 108 127 10 52 156 129 84 241 141 200 125 100 22 50 203 187 119</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\radioCommon.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 166 237</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 23 33 85 108 208 97 140 46 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 8 134 67 211 115 57 145 154 159 102 162 150 1 167</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 23 33 85 108 208 97 140 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 6 8 134 67 211 115 57 145 154 159 102 162 150 1 167</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\croutine.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 92 14</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 252</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 85 108 208 97 140 46 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 8 134 204</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 85 108 208 97 140 61 3 146 186 219 53 232 209 156 129 84 241 141 200 125 8 134 204</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\commands.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 195 30</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 66 67 84 211 115 57 208 97 140 46 61 3 146 186 145 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 154 159 102 162 150 1 167 194 185 96 226 117</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 66 67 84 211 115 57 208 97 140 61 3 146 186 145 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 154 159 102 162 150 1 167 194 185 96 226 117</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 147 138</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>AARM</name>
+          <file> 94 121</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\remoteRadioTaskSMAC2.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 128</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 151</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SMAC\Drivers\Source\MacaInterrupt.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 82 12</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 136</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 84 55 156 129 241 115 211 244 93 119 215</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 84 55 156 129 241 115 211 244 93 119 215</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\PLM\Source\Common\Sys\Init-IAR.S</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 40 132</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\tasks.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 247 163</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44 208 97 140 46 61 3 146 186 17 96 226 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 47</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 44 208 97 140 61 3 146 186 17 96 226 85 108 219 53 232 209 156 129 84 241 141 200 125 8 134 47</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\FreeRTOS\Source\list.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 184</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 54</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17 208 97 140 46 61 3 146 186 229 108 127</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 208 97 140 61 3 146 186 229 108 127 10 52 156 129 84 241 141 200 125 22</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\keyboardTask.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 68</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Utilities\Keyboard.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 95 182</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 28</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0 203 156 129 84 241 159</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0 203 156 129 84 241 159</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\deviceInfo-RocketPhone.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 246 118</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 126</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 67 84 211 115 57 208 97 140 46 61 3 146 186 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 145 154 159 102 162 150 1 167</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 67 84 211 115 57 208 97 140 61 3 146 186 23 33 85 108 219 53 232 209 156 129 241 141 200 125 6 8 134 145 154 159 102 162 150 1 167</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 147 138</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>AARM</name>
+          <file> 53 144</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Application\FlyWeight\audioARM.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 205 16</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 149</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 103 141 156 129 84 241 85 108 208 97 140 46 61 3 146 186 219 53 232 209 200 125 67 211 115 57 23 33 6 8 134 145 154 159 102 162 150 1 167 66 194 185 90 190 203</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 103 141 156 129 84 241 85 108 208 97 140 61 3 146 186 219 53 232 209 200 125 67 211 115 57 23 33 6 8 134 145 154 159 102 162 150 1 167 66 194 185 90 190 203</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
   <configuration>

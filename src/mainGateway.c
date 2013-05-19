@@ -23,8 +23,6 @@
 	#include "Leds.h"
 #endif
 
-#define PA_VREG_CONTROL			gGpioPin42_c
-
 // --------------------------------------------------------------------------
 // Globals
 
@@ -56,7 +54,9 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
-	SetDemulatorMode(NCD);
+	
+	// Doesn't exist in v2.0 ROMs.
+	//SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
 	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
@@ -71,6 +71,7 @@ void vMain( void ) {
 
 	gControllerState = eControllerStateInit;
 	GW_RADIO_GAIN_ADJUST(15);
+	GW_SET_RADIO_CHANNEL(CHANNEL11);
 
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );

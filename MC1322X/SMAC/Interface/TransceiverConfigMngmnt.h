@@ -64,6 +64,26 @@ typedef enum Versioned_Entity_tag
 }Versioned_Entity_t;
 
 
+
+// Valid values for ConfigureRFCtlSignals signalType
+typedef enum {
+  gRfSignalANT1_c,
+  gRfSignalANT2_c,
+  gRfSignalTXON_c,
+  gRfSignalRXON_c,
+  gRfSignalMax_c
+}RfSignalType_t;
+
+
+// Valid values for ConfigureRFCtlSignals signalFunction
+typedef enum {
+  gRfSignalFunctionGPIO_c,
+  gRfSignalFunction1_c,
+  gRfSignalFunction2_c,
+  gRfSignalFunctionMax_c
+}RfSignalFunction_t;
+
+
 typedef union jtag_id_reg_tag
 {
   struct
@@ -75,6 +95,14 @@ typedef union jtag_id_reg_tag
   } Bits;
   uint32_t Reg;
 } jtag_id_reg_t;
+
+
+typedef enum BuckTypes_tag
+{
+  BUCK_DISABLE = 0, 
+  BUCK_BYPASS,
+  BUCK_ENABLE
+}BuckTypes_t;
 
 
 #define set_xtal_coarse_tune(x)   (CRM_XTAL_CNTL.cTune = x)
@@ -223,6 +251,36 @@ FuncReturn_t MLMESetPromiscuousMode(bool_t isPromiscousMode);
 *   
 ************************************************************************************/
 bool_t MLMEGetPromiscuousMode(void);
+
+
+/************************************************************************************
+* This function configures the RF control signals.
+*
+* Interface assumptions:
+*
+* Return value:
+*
+* Revison history:
+*   date      Author    Comments
+*   ------    ------    --------
+*   
+************************************************************************************/
+void ConfigureRfCtlSignals(RfSignalType_t, RfSignalFunction_t, bool_t, bool_t);
+
+
+/************************************************************************************
+* This function set the buck regulator state.
+*
+* Interface assumptions: 
+*
+* Return value:
+*
+* Revison history:
+*   date      Author    Comments
+*   ------    ------    --------
+*   
+************************************************************************************/
+void ConfigureBuckRegulator(BuckTypes_t BuckRegState);
 
 
 /**********************************************************************************/

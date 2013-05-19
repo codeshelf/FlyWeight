@@ -13,6 +13,8 @@
 
 #include "../../PLM/LibInterface/Platform.h"
 #include "../../PLM/LibInterface/CRM_Regs.h"
+#include "../../PLM/LibInterface/GPIO_Interface.h"
+#include "RF_Config.h"
 #include "options_config.h"
 #include "board_config.h"
 #include "../Drivers/Interface/Delay.h"
@@ -335,6 +337,79 @@ static void InitializePhy(void)
 
 }
 
+
+/************************************************************************************
+* ConfigureRfCtlSignals()
+*
+* This function ...
+*
+************************************************************************************/
+void ConfigureRfCtlSignals(RfSignalType_t signalType, RfSignalFunction_t function, bool_t gpioOutput, bool_t gpioOutputHigh )
+{
+ /* Validate the input paramters */
+ if( (signalType >= gRfSignalMax_c) || (function >= gRfSignalFunctionMax_c) )
+ {
+  /* SignalType or function out of range */ 
+  return;
+ }
+ 
+ if( (signalType < gRfSignalTXON_c) && (function > gRfSignalFunction1_c) )
+ {
+  /* Function2 requested for ANT_1 or ANT_2 */
+  return;
+ }
+ 
+ if(function > 0)
+ {
+  /* Function 1 or 2 was requested for the RF pin. Apply the change at the GPIO function level for the requested signal */
+  Gpio_SetPinFunction((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), (GpioFunctionMode_t)function); 
+ }
+ else
+ {
+  /* GPIO mode requested for the RF pin. Apply the function, direction and level for the requested signal */
+  Gpio_SetPinFunction((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), gGpioNormalMode_c); 
+  if(gpioOutput == TRUE)
+  {  
+   Gpio_SetPinDir((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), gGpioDirOut_c);
+   Gpio_SetPinReadSource((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), gGpioPinReadReg_c);
+   Gpio_SetPinData((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), (GpioPinState_t)gpioOutputHigh); 
+  }
+  else
+  {
+   Gpio_SetPinDir((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), gGpioDirIn_c);
+   Gpio_SetPinReadSource((GpioPin_t)((GpioPin_t)gGpioPin42_c+(GpioPin_t)signalType), gGpioPinReadPad_c);
+  }  
+ }
+ 
+}
+
+
+/************************************************************************************
+* ConfigureBuckRegulator
+*
+* This function enables or bypass the buck regulator 
+*
+************************************************************************************/
+void ConfigureBuckRegulator(BuckTypes_t BuckRegState)
+{
+ 
+  if(BUCK_DISABLE == BuckRegState)
+  {
+    CRM_REGS_P->SysCntl &= 0xFFFFFFFE;
+    CRM_REGS_P->VregCntl = 0x00000F78;
+  }
+  if(BUCK_ENABLE == BuckRegState)
+  {
+    CRM_REGS_P->SysCntl |= BIT0;  //Enables buck regutation as power supply
+    CRM_REGS_P->VregCntl = 0x00000F7B;
+  }
+  
+  if(BUCK_BYPASS == BuckRegState)
+  {
+    CRM_REGS_P->SysCntl &= 0xFFFFFFFE;
+    CRM_REGS_P->VregCntl = 0x00000F7C;
+  }
+}
 
 
 /************************************************************************************
