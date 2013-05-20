@@ -270,7 +270,7 @@
         <debug>1</debug>
         <option>
           <name>JLinkSpeed</name>
-          <state>100</state>
+          <state>2000</state>
         </option>
         <option>
           <name>CCJLinkDoLogfile</name>
@@ -282,7 +282,7 @@
         </option>
         <option>
           <name>CCJLinkHWResetDelay</name>
-          <state>200</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCDriverInfo</name>
