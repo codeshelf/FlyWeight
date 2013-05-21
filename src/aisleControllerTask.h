@@ -34,6 +34,7 @@
 
 #define SSI_24BIT_WORD			0x0b
 #define SSI_20BIT_WORD			0x09
+#define SSI_8BIT_WORD			0x03
 #define SSI_FRAME_LEN2			0x01
 #define SSI_FRAME_LEN7			0x06
 

@@ -87,15 +87,18 @@ static void setupSSI() {
 	SSI_Enable(FALSE);
 
 	// Setup the SSI mode.
-	ssiConfig.ssiGatedRxClockMode = TRUE;
+	ssiConfig.ssiGatedRxClockMode = FALSE;
 	ssiConfig.ssiGatedTxClockMode = TRUE;
 	ssiConfig.ssiMode = gSsiNormalMode_c; // Normal mode
 	ssiConfig.ssiNetworkMode = FALSE; // Network mode
-	ssiConfig.ssiInterruptEn = TRUE; // Interrupts enabled
+	ssiConfig.ssiInterruptEn = FALSE; // Interrupts enabled
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_DEFAULT_TX_CONFIG; //SSI_SET_BIT_CLOCK_FREQ(24000000, 4000);
+	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 6000000);
+//	ssiClockConfig.bit.ssiDIV2 = 0x1;
+//	ssiClockConfig.bit.ssiPSR = 0x01;
+//	ssiClockConfig.bit.ssiPM = 0x0a;
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
@@ -137,6 +140,9 @@ static void setupSSI() {
 	SSI_SFCSR_BIT .RFWM0 = 4;
 	SSI_SFCSR_BIT .TFWM0 = 5;
 
+	SSI_SCR_BIT.TFR_CLK_DIS = 0;
+	SSI_STCCR_BIT.DC = 0;
+
 	// Setup the SSI interrupts.
 	SSI_SIER_WORD = 0;
 	SSI_SIER_BIT .RIE = FALSE;
@@ -148,8 +154,8 @@ static void setupSSI() {
 	SSI_SIER_BIT .RFF_EN = FALSE;
 
 	SSI_SIER_BIT .TIE = FALSE;
-	SSI_SIER_BIT .TDE_EN = TRUE;
-	SSI_SIER_BIT .TFE_EN = TRUE;
+	SSI_SIER_BIT .TDE_EN = FALSE;
+	SSI_SIER_BIT .TFE_EN = FALSE;
 
 	SSI_Enable(TRUE);
 }
@@ -164,6 +170,9 @@ void ssiInterrupt(void) {
 			// Write more words into the FIFO - that will cause the FIFO low watermark ISR to execute.
 			while (SSI_SFCSR_BIT.TFCNT0 < 8) {
 				if (gNextSolidLedPosition < gTotalLedPositions) {
+					while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+						// TXT FIFO is full - busy wait since there's no interrupts.
+					}
 					SSI_STX = getNextSolidData();
 				}
 			}
@@ -171,6 +180,9 @@ void ssiInterrupt(void) {
 			// Write more words into the FIFO - that will cause the FIFO low watermark ISR to execute.
 			while (SSI_SFCSR_BIT.TFCNT0 < 8) {
 				if (gNextFlashLedPosition < gTotalLedPositions) {
+					while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+						// TXT FIFO is full - busy wait since there's no interrupts.
+					}
 					SSI_STX = getNextFlashData();
 				}
 			}
@@ -218,6 +230,8 @@ void aisleControllerTask(void *pvParameters) {
 	 *
 	 */
 
+	gwUINT8 ccrHolder;
+
 	// Create some fake test data.
 	LedDataStruct ledData;
 	ledData.position = 5;
@@ -234,7 +248,7 @@ void aisleControllerTask(void *pvParameters) {
 	gLedFlashData[2] = ledData;
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 32;
+	gTotalLedPositions = 48;
 	gTotalLedFlashDataElements = 3;
 	gTotalLedSolidDataElements = 0;
 
@@ -249,18 +263,32 @@ void aisleControllerTask(void *pvParameters) {
 	for (;;) {
 		if (gLedCycle == eLedCycleOff) {
 			// Write 8 words into the FIFO - that will cause the FIFO low watermark ISR to execute.
-			for (int byte = 0; byte < 7; ++byte) {
+			GW_ENTER_CRITICAL(ccrHolder);
+			for (int byte = 0; byte < gTotalLedPositions; ++byte) {
+				while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+					// TXT FIFO is full - busy wait since there's no interrupts.
+				}
 				SSI_STX = getNextSolidData();
 			}
+			gCurLedSolidDataElement = 0;
+			gNextSolidLedPosition = 0;
+			GW_EXIT_CRITICAL(ccrHolder);
 
 			// A small chunk of the time will be used to service the ISR to complete the data transmission.
 			vTaskDelay(LED_OFF_TIME);
 			gLedCycle = eLedCycleOn;
 		} else {
 			// Write 8 words into the FIFO - that will cause the FIFO low watermark ISR to execute.
-			for (int byte = 0; byte < 7; ++byte) {
+			GW_ENTER_CRITICAL(ccrHolder);
+			for (int byte = 0; byte < gTotalLedPositions; ++byte) {
+				while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+					// TXT FIFO is full - busy wait since there's no interrupts.
+				}
 				SSI_STX = getNextFlashData();
 			}
+			gCurLedFlashDataElement = 0;
+			gNextFlashLedPosition = 0;
+			GW_EXIT_CRITICAL(ccrHolder);
 
 			// A small chunk of the time will be used to service the ISR to complete the data transmission.
 			vTaskDelay(LED_ON_TIME);

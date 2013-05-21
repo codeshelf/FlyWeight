@@ -399,6 +399,23 @@ typedef struct
 #define  GPIO_UART2_CTS_fnpos (20*2-32)
 #define  GPIO_UART2_RTS_fnpos (21*2-32)
 
+// JBW/GW - 11DEC09: Add GPIO Setting for the SSI port
+////////////////////////////////// SSI  ////////////////////////////////////////
+// SSI settings
+// 1 bit masks
+// 'Lo' group
+#define  GPIO_SSI_TX_bit      BIT0
+#define  GPIO_SSI_RX_bit      BIT1
+#define  GPIO_SSI_FSYNC_bit   BIT2
+#define  GPIO_SSI_CLK_bit     BIT3
+
+// 2 bit groups positions
+// FNSEL0 group
+#define  GPIO_SSI_TX_fnpos    (0*2)
+#define  GPIO_SSI_RX_fnpos    (1*2)
+#define  GPIO_SSI_FSYNC_fnpos (2*2)
+#define  GPIO_SSI_CLK_fnpos   (3*2)
+
 ////////////////////////////////// SPI  ////////////////////////////////////////
 // GPIO settings
 // 1 bit masks
