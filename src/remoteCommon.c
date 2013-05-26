@@ -1,6 +1,6 @@
 /*
    FlyWeight
-   © Copyright 2005, 2006 Jeffrey B. Williams
+   ï¿½ Copyright 2005, 2006 Jeffrey B. Williams
    All rights reserved
 
    $Id$
@@ -114,6 +114,19 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 					switch (getControlSubCommand(inRxBufferNum)) {
 						case eControlSubCmdEndpointAdj:
 							break;
+
+#ifdef IS_CODESHELF
+						case eControlSubCmdScan:
+							break;
+
+						case eControlSubCmdMessage:
+							break;
+
+						case eControlSubCmdLight:
+							ackState = processLedSubCommand(inRxBufferNum, ackId, ackData);
+							break;
+
+#endif
 
 #ifdef MOTOR_CONTROLLER
 							case eControlSubCmdMotor:

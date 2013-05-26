@@ -1,6 +1,6 @@
 /*
  FlyWeight
- © Copyright 2005, 2006 Jeffrey B. Williams
+ ï¿½ Copyright 2005, 2006 Jeffrey B. Williams
  All rights reserved
 
  $Id$
@@ -16,8 +16,8 @@
 #include "gwSystemMacros.h"
 
 #ifdef IS_PFC
-	#include "Leds.h"
-	#include "spi.h"
+#include "Leds.h"
+#include "spi.h"
 #endif
 
 #ifdef IS_HOOBEE
@@ -30,19 +30,19 @@
 #include "terminalQuery.h"
 #endif
 
-RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
-NetAddrType gMyAddr = INVALID_REMOTE;
-NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
-extern LedFlashRunType gLedFlashSequenceShouldRun;
-extern LedFlashSeqCntType gLedFlashSeqCount;
-extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
-gwBoolean gSDCardBusConnected = FALSE;
-gwBoolean gSDCardVccConnected = FALSE;
-gwBoolean gSDCardInSPIMode = FALSE;
-gwUINT32 gCurSDCardAddr = 0;
-gwBoolean gCurSDCardAddrComitted = FALSE;
-gwUINT8 gCurSDCardUpdateResultBitField = 0;
-gwUINT8 gCurSDCardBlock[512];
+//RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
+//NetAddrType gMyAddr = INVALID_REMOTE;
+//NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
+//extern LedFlashRunType gLedFlashSequenceShouldRun;
+//extern LedFlashSeqCntType gLedFlashSeqCount;
+//extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
+//gwBoolean gSDCardBusConnected = FALSE;
+//gwBoolean gSDCardVccConnected = FALSE;
+//gwBoolean gSDCardInSPIMode = FALSE;
+//gwUINT32 gCurSDCardAddr = 0;
+//gwBoolean gCurSDCardAddrComitted = FALSE;
+//gwUINT8 gCurSDCardUpdateResultBitField = 0;
+//gwUINT8 gCurSDCardBlock[512];
 
 //extern gwUINT16				gFIFO[8];
 
@@ -50,7 +50,7 @@ gwUINT8 gCurSDCardBlock[512];
 // Local function prototypes
 
 void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr,
-        NetAddrType inDestAddr);
+		NetAddrType inDestAddr);
 
 // --------------------------------------------------------------------------
 
@@ -107,7 +107,7 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 
 	// The command number is in the third half-byte of the packet.
 	EndpointNumType result = ((gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ENDPOINT] & CMDMASK_ENDPOINT)
-	        >> SHIFTBITS_CMD_ENDPOINT);
+			>> SHIFTBITS_CMD_ENDPOINT);
 	return result;
 }
 // --------------------------------------------------------------------------
@@ -151,10 +151,10 @@ EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 // --------------------------------------------------------------------------
 
 void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr,
-        NetAddrType inDestAddr) {
+		NetAddrType inDestAddr) {
 
 	// First clear the packet header.
-	memset((void *) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMD_ID);
+	memset((void * ) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMD_ID);
 
 	// Write the packet header.
 	// (See the comments at the top of commandTypes.h.)
@@ -218,8 +218,7 @@ void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType 
 #if !defined(XBEE_PINOUT)
 	// Save the ATD state and prepare to take a battery measurement.
 	GW_PREP_ATD(saveATD1C, saveATD1SC);
-	GW_MEASURE_BATTERY(batteryLevel);
-	GW_RESTORE_ATD(saveATD1C, saveATD1SC);
+	GW_MEASURE_BATTERY(batteryLevel);GW_RESTORE_ATD(saveATD1C, saveATD1SC);
 
 	// Nominalize to a 0-100 scale.
 	if (batteryLevel < 0) {
@@ -390,8 +389,8 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
-	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM]
-	        = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM];
+	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM] =
+			gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM];
 
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_NETM_TSTCMD_NUM + 1;
 
@@ -544,7 +543,7 @@ EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNu
 	EndpointNumType endpoint = getEndpointNumber(inRXBufferNum);
 	EMotorCommandType motorCommand = getMotorCommand(inRXBufferNum);
 
-	PTBDD = 0xff; //0b11111111;
+	PTBDD = 0xff;//0b11111111;
 	switch (endpoint) {
 		case MOTOR1_ENDPOINT:
 		PTBD &= MOTOR1_FREE;
@@ -616,23 +615,23 @@ EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum) {
 		switch (behaviorType) {
 
 			case eHooBeeBehaviorLedFlash:
-				if (gLedFlashSeqCount < MAX_LED_SEQUENCES) {
-					gLedFlashSeqBuffer[gLedFlashSeqCount].redValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-					gLedFlashSeqBuffer[gLedFlashSeqCount].greenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-					gLedFlashSeqBuffer[gLedFlashSeqCount].blueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOnMillis,
-					        (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
-					pos += sizeof(LedFlashTimeType);
-					memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOffMillis,
-					        (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
-					pos += sizeof(LedFlashTimeType);
-					gLedFlashSeqBuffer[gLedFlashSeqCount].repeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
-					gLedFlashSeqCount++;
-				}
-				break;
+			if (gLedFlashSeqCount < MAX_LED_SEQUENCES) {
+				gLedFlashSeqBuffer[gLedFlashSeqCount].redValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				gLedFlashSeqBuffer[gLedFlashSeqCount].greenValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				gLedFlashSeqBuffer[gLedFlashSeqCount].blueValue = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOnMillis,
+						(void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+				pos += sizeof(LedFlashTimeType);
+				memcpy(&gLedFlashSeqBuffer[gLedFlashSeqCount].timeOffMillis,
+						(void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[pos]), sizeof(LedFlashTimeType));
+				pos += sizeof(LedFlashTimeType);
+				gLedFlashSeqBuffer[gLedFlashSeqCount].repeat = gRXRadioBuffer[inRXBufferNum].bufferStorage[pos++];
+				gLedFlashSeqCount++;
+			}
+			break;
 
 			default:
-				break;
+			break;
 
 		}
 
@@ -660,22 +659,22 @@ EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum,
 
 	switch (action) {
 		case eSDCardActionSdProtocol:
-			if (gSDCardInSPIMode) {
-				gSDCardInSPIMode = FALSE;
-				// Switching back to SD card protocol mode is done in a task since it might take a long time.
-				xQueueGenericSend(gPFCQueue, &control, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK);
-			}
-			break;
+		if (gSDCardInSPIMode) {
+			gSDCardInSPIMode = FALSE;
+			// Switching back to SD card protocol mode is done in a task since it might take a long time.
+			xQueueGenericSend(gPFCQueue, &control, (portTickType) 0, (portBASE_TYPE) queueSEND_TO_BACK);
+		}
+		break;
 
 		case eSDCardActionSpiProtocol:
-			if (!gSDCardInSPIMode) {
-				if (enableSPI()) {
-					gSDCardInSPIMode = TRUE;
-				} else {
-					inOutAckData[0] = SD_MODE_FAILED;
-				}
+		if (!gSDCardInSPIMode) {
+			if (enableSPI()) {
+				gSDCardInSPIMode = TRUE;
+			} else {
+				inOutAckData[0] = SD_MODE_FAILED;
 			}
-			break;
+		}
+		break;
 	}
 
 	return result;
@@ -736,7 +735,7 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 	partBitFieldBit = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_PARTBIT];
 	// Offset is a two-byte value that arrives MSB-first.
 	offset = ((gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET]) << 8)
-	        + gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET + 1];
+	+ gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_OFFSET + 1];
 	bytes = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_LEN];
 
 	// If the latest update is for a different address block then reset for processing in the new block.
@@ -757,7 +756,6 @@ EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNu
 }
 
 // --------------------------------------------------------------------------
-
 
 EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData) {
 	EControlCmdAckStateType result = eAckStateOk;
@@ -853,4 +851,63 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 	gTXRadioBuffer[inTXBufferNum].bufferSize = pos;
 
 }
+#endif
+
+// --------------------------------------------------------------------------
+
+#ifdef IS_CODESHELF
+
+extern LedPositionType gTotalLedPositions;
+
+extern LedDataStruct gLedFlashData[MAX_LED_FLASH_POSITIONS];
+extern LedPositionType gCurLedFlashDataElement;
+extern LedPositionType gTotalLedFlashDataElements;
+extern LedPositionType gNextFlashLedPosition;
+
+extern LedDataStruct gLedSolidData[MAX_LED_SOLID_POSITIONS];
+extern LedPositionType gCurLedSolidDataElement;
+extern LedPositionType gTotalLedSolidDataElements;
+extern LedPositionType gNextSolidLedPosition;
+
+EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
+
+	EControlCmdAckStateType result = eAckStateOk;
+	gwUINT8 ccrHolder;
+	AddressType address;
+	gwUINT8 channel;
+	gwUINT8 effect;
+	gwUINT8 sampleCount;
+	gwUINT8 sampleNum;
+
+	channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
+	effect = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_EFFECT];
+	sampleCount = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLE_COUNT];
+
+	for (sampleNum = 0; sampleNum < sampleCount; ++sampleNum) {
+		switch (effect) {
+			case eLedEffectSolid:
+				break;
+
+			case eLedEffectSolid:
+				break;
+
+			case eLedEffectError:
+				break;
+
+			case eLedEffectMotel:
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	// Copy the contents of the sub-block into the offset position in the buffer block.
+	memcpy(&(gCurSDCardBlock[offset]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_DATA]), bytes);
+
+	return result;
+}
+
+// --------------------------------------------------------------------------
+
 #endif
