@@ -873,22 +873,43 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 
 	EControlCmdAckStateType result = eAckStateOk;
 	gwUINT8 ccrHolder;
-	AddressType address;
-	gwUINT8 channel;
 	gwUINT8 effect;
 	gwUINT8 sampleCount;
 	gwUINT8 sampleNum;
+	LedDataStruct ledData;
 
-	channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
 	effect = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_EFFECT];
 	sampleCount = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLE_COUNT];
 
 	for (sampleNum = 0; sampleNum < sampleCount; ++sampleNum) {
+
+		ledData.channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
+		ledData.position = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES];
+		ledData.red = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 1];
+		ledData.green = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 2];
+		ledData.blue = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 3];
+
 		switch (effect) {
 			case eLedEffectSolid:
+				if (ledData.position == -1) {
+					gTotalLedSolidDataElements = 0;
+					gCurLedSolidDataElement = 0;
+					gNextSolidLedPosition = 0;
+				} else {
+					gTotalLedSolidDataElements += 1;
+					gLedSolidData[gTotalLedSolidDataElements] = ledData;
+				}
 				break;
 
-			case eLedEffectSolid:
+			case eLedEffectFlash:
+				if (ledData.position == -1) {
+					gTotalLedFlashDataElements = 0;
+					gCurLedFlashDataElement = 0;
+					gNextFlashLedPosition = 0;
+				} else {
+					gTotalLedFlashDataElements += 1;
+					gLedFlashData[gTotalLedFlashDataElements] = ledData;
+				}
 				break;
 
 			case eLedEffectError:

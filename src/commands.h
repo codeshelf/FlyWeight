@@ -1,6 +1,6 @@
 /*
  FlyWeight
- © Copyright 2005, 2006 Jeffrey B. Williams
+ ï¿½ Copyright 2005, 2006 Jeffrey B. Williams
  All rights reserved
  
  $Id$
@@ -23,8 +23,10 @@
 #define DEVICE_GATEWAY			1
 #define DEVICE_REMOTE			2
 
-#define MOTOR1_ENDPOINT		2
-#define MOTOR2_ENDPOINT		3
+//#define MOTOR1_ENDPOINT		2
+//#define MOTOR2_ENDPOINT		3
+
+#define LED_SAMPLE_BYTES		4
 
 #if defined(GW0009R1)
 	#define LEDRedON	PTBD_PTBD1 = 1;
