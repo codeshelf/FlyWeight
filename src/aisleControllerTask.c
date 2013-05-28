@@ -308,7 +308,7 @@ gwUINT32 getNextSolidData() {
 	result.word = 0;
 
 	// Check if there are any more solid LED values to display.
-	if (gCurLedSolidDataElement <= gTotalLedSolidDataElements) {
+	if (gCurLedSolidDataElement < gTotalLedSolidDataElements) {
 		// Check if the current LED data value matches the position and channel we want to light.
 		if ((gLedSolidData[gCurLedSolidDataElement].position == gNextSolidLedPosition)
 				&& (gLedSolidData[gCurLedSolidDataElement].channel == 1)) {
@@ -329,7 +329,7 @@ gwUINT32 getNextFlashData() {
 	result.word = 0;
 
 	// Check if there are any more flash LED values to display.
-	if (gCurLedFlashDataElement <= gTotalLedFlashDataElements) {
+	if (gCurLedFlashDataElement < gTotalLedFlashDataElements) {
 
 		if (gLedFlashData[gCurLedFlashDataElement].position < gNextFlashLedPosition) {
 			// The next flash data element position is lower than the current LED then we've reached the end of a sequence.
