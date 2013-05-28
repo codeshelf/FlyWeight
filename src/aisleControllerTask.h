@@ -56,9 +56,9 @@ typedef union {
 		gwUINT8 byte3;
 		gwUINT8 byte2;
 		gwUINT8 byte1;
-		gwUINT8 unused;
+		gwUINT8 byte0;
 	} bytes;
-} USsiSampleType;
+} ULedSampleType;
 
 // --------------------------------------------------------------------------
 // Local functions prototypes.

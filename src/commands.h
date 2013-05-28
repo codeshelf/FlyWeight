@@ -26,7 +26,7 @@
 //#define MOTOR1_ENDPOINT		2
 //#define MOTOR2_ENDPOINT		3
 
-#define LED_SAMPLE_BYTES		4
+#define LED_SAMPLE_BYTES		5
 
 #if defined(GW0009R1)
 	#define LEDRedON	PTBD_PTBD1 = 1;

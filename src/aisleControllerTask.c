@@ -234,17 +234,17 @@ void aisleControllerTask(void *pvParameters) {
 
 	// Create some fake test data.
 	LedDataStruct ledData;
-	ledData.position = 5;
+	ledData.position = 0;
 	ledData.channel = 1;
-	ledData.red = 0;
-	ledData.green = 0;
-	ledData.blue = 0xff;
+	ledData.red = 0x2f;
+	ledData.green = 0x0;
+	ledData.blue = 0x0;
 	gLedFlashData[0] = ledData;
 
-	ledData.position = 6;
+	ledData.position = 1;
 	gLedFlashData[1] = ledData;
 
-	ledData.position = 7;
+	ledData.position = 2;
 	gLedFlashData[2] = ledData;
 
 	gLedCycle = eLedCycleOff;
@@ -304,11 +304,11 @@ void aisleControllerTask(void *pvParameters) {
 // --------------------------------------------------------------------------
 gwUINT32 getNextSolidData() {
 	// The default is to return zero for a blank LED.
-	USsiSampleType result;
+	ULedSampleType result;
 	result.word = 0;
 
 	// Check if there are any more solid LED values to display.
-	if (gCurLedSolidDataElement < gTotalLedSolidDataElements) {
+	if (gCurLedSolidDataElement <= gTotalLedSolidDataElements) {
 		// Check if the current LED data value matches the position and channel we want to light.
 		if ((gLedSolidData[gCurLedSolidDataElement].position == gNextSolidLedPosition)
 				&& (gLedSolidData[gCurLedSolidDataElement].channel == 1)) {
@@ -325,11 +325,11 @@ gwUINT32 getNextSolidData() {
 // --------------------------------------------------------------------------
 gwUINT32 getNextFlashData() {
 	// The default is to return zero for a blank LED.
-	USsiSampleType result;
+	ULedSampleType result;
 	result.word = 0;
 
 	// Check if there are any more flash LED values to display.
-	if (gCurLedFlashDataElement < gTotalLedFlashDataElements) {
+	if (gCurLedFlashDataElement <= gTotalLedFlashDataElements) {
 
 		if (gLedFlashData[gCurLedFlashDataElement].position < gNextFlashLedPosition) {
 			// The next flash data element position is lower than the current LED then we've reached the end of a sequence.

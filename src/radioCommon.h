@@ -263,7 +263,7 @@ typedef enum {
 
 typedef LedCycleType 	LedCycle;
 typedef gwUINT8 		LedChannelType;
-typedef gwUINT8 		LedPositionType;
+typedef gwUINT16 		LedPositionType;
 typedef gwUINT8 		LedData;
 
 typedef struct {

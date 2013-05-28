@@ -11,12 +11,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "deviceInfo.h"
-
-#ifdef IS_TOY_NETWORK
-	#include "deviceQuery.h"
-#else
-	#include "terminalQuery.h"
-#endif
+#include "deviceQuery.h"
 
 
 // --------------------------------------------------------------------------

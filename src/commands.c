@@ -24,15 +24,12 @@
 
 #endif
 
-#ifdef IS_TOY_NETWORK
 #include "deviceQuery.h"
-#else
-#include "terminalQuery.h"
-#endif
 
-//RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
-//NetAddrType gMyAddr = INVALID_REMOTE;
-//NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
+RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
+NetAddrType gMyAddr = INVALID_REMOTE;
+NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
+
 //extern LedFlashRunType gLedFlashSequenceShouldRun;
 //extern LedFlashSeqCntType gLedFlashSeqCount;
 //extern LedFlashStruct gLedFlashSeqBuffer[MAX_LED_SEQUENCES];
@@ -305,6 +302,7 @@ void createOutboundNetSetup() {
 
 // --------------------------------------------------------------------------
 
+#ifdef IS_HOOBEE
 void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNumber, gwUINT8 inFunctionType) {
 
 	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
@@ -324,6 +322,7 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 }
+#endif
 
 // --------------------------------------------------------------------------
 
@@ -859,12 +858,12 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 
 extern LedPositionType gTotalLedPositions;
 
-extern LedDataStruct gLedFlashData[MAX_LED_FLASH_POSITIONS];
+extern LedDataStruct gLedFlashData[];
 extern LedPositionType gCurLedFlashDataElement;
 extern LedPositionType gTotalLedFlashDataElements;
 extern LedPositionType gNextFlashLedPosition;
 
-extern LedDataStruct gLedSolidData[MAX_LED_SOLID_POSITIONS];
+extern LedDataStruct gLedSolidData[];
 extern LedPositionType gCurLedSolidDataElement;
 extern LedPositionType gTotalLedSolidDataElements;
 extern LedPositionType gNextSolidLedPosition;
@@ -884,31 +883,33 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 	for (sampleNum = 0; sampleNum < sampleCount; ++sampleNum) {
 
 		ledData.channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
-		ledData.position = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES];
-		ledData.red = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 1];
-		ledData.green = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 2];
-		ledData.blue = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES * LED_SAMPLE_BYTES + 3];
+		//memcpy(&ledData.position, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 0)]), sizeof(ledData.position));
+		ledData.position = (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 0)] << 8;
+		ledData.position += (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 1)];
+		ledData.red = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 2)];
+		ledData.green = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 3)];
+		ledData.blue = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 4)];
 
 		switch (effect) {
 			case eLedEffectSolid:
-				if (ledData.position == -1) {
+				if (ledData.position == ((gwUINT16) -1)) {
 					gTotalLedSolidDataElements = 0;
 					gCurLedSolidDataElement = 0;
 					gNextSolidLedPosition = 0;
 				} else {
-					gTotalLedSolidDataElements += 1;
 					gLedSolidData[gTotalLedSolidDataElements] = ledData;
+					gTotalLedSolidDataElements += 1;
 				}
 				break;
 
 			case eLedEffectFlash:
-				if (ledData.position == -1) {
+				if (ledData.position == ((gwUINT16) -1)) {
 					gTotalLedFlashDataElements = 0;
 					gCurLedFlashDataElement = 0;
 					gNextFlashLedPosition = 0;
 				} else {
-					gTotalLedFlashDataElements += 1;
 					gLedFlashData[gTotalLedFlashDataElements] = ledData;
+					gTotalLedFlashDataElements += 1;
 				}
 				break;
 
@@ -922,10 +923,6 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 				break;
 		}
 	}
-
-	// Copy the contents of the sub-block into the offset position in the buffer block.
-	memcpy(&(gCurSDCardBlock[offset]), &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_SDCARD_UPDATE_DATA]), bytes);
-
 	return result;
 }
 

@@ -112,8 +112,8 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 					// Make sure that there is a valid sub-command in the control command.
 					switch (getControlSubCommand(inRxBufferNum)) {
-						case eControlSubCmdEndpointAdj:
-							break;
+//						case eControlSubCmdEndpointAdj:
+//							break;
 
 #ifdef IS_CODESHELF
 						case eControlSubCmdScan:
