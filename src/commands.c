@@ -20,11 +20,8 @@
 #include "spi.h"
 #endif
 
-#ifdef IS_HOOBEE
-
-#endif
-
 #include "deviceQuery.h"
+#include "UartLowLevel.h"
 
 RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
 NetAddrType gMyAddr = INVALID_REMOTE;
@@ -107,6 +104,7 @@ EndpointNumType getEndpointNumber(BufferCntType inRXBufferNum) {
 			>> SHIFTBITS_CMD_ENDPOINT);
 	return result;
 }
+
 // --------------------------------------------------------------------------
 
 NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
@@ -115,6 +113,7 @@ NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum) {
 	NetAddrType result = gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_SRC_ADDR];
 	return result;
 }
+
 // --------------------------------------------------------------------------
 
 NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
@@ -123,12 +122,14 @@ NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum) {
 	NetAddrType result = gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_DST_ADDR];
 	return result;
 }
+
 // --------------------------------------------------------------------------
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr) {
 	ENetMgmtSubCmdIDType result = (inBufferPtr[CMDPOS_NETM_SUBCMD]);
 	return result;
 }
+
 // --------------------------------------------------------------------------
 
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
@@ -139,12 +140,30 @@ ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum) {
 	}
 	return result;
 }
+
 // --------------------------------------------------------------------------
 
 EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 	EControlSubCmdIDType result = (gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD]);
 	return result;
 }
+
+// --------------------------------------------------------------------------
+
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringLen) {
+	inDestPtr[0] = (gwUINT8) inStringLen;
+	memcpy(inDestPtr + 1, inStringPtr, (gwUINT8) inStringLen);
+}
+
+// --------------------------------------------------------------------------
+
+gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr) {
+	gwUINT8 stringLen = (gwUINT8) inSrcPtr[0];
+	memcpy(inDestStringPtr, inSrcPtr + 1, (gwUINT8) stringLen);
+	inDestStringPtr[stringLen] = (gwUINT8) NULL;
+	return stringLen;
+}
+
 // --------------------------------------------------------------------------
 
 void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, NetworkIDType inNetworkID, NetAddrType inSrcAddr,
@@ -855,6 +874,29 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 // --------------------------------------------------------------------------
 
 #ifdef IS_CODESHELF
+
+EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
+	EControlCmdAckStateType result = eAckStateOk;
+	gwUINT8 stringLen;
+	BufferStorageType message1Str[MAX_MESSAGE_STRING_BYTES];
+	BufferStorageType message2Str[MAX_MESSAGE_STRING_BYTES];
+
+	BufferStoragePtrType bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE;
+	stringLen = readAsPString(message1Str, bufferPtr);
+
+	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + stringLen + 1;
+	stringLen = readAsPString(message2Str, bufferPtr);
+
+	UartWriteData(UART_2, LINE1_POS1, strlen(LINE1_POS1));
+	UartWriteData(UART_2, message1Str, strlen(message1Str));
+
+	UartWriteData(UART_2, LINE2_POS1, strlen(LINE2_POS1));
+	UartWriteData(UART_2, message2Str, strlen(message2Str));
+
+	return result;
+}
+
+// --------------------------------------------------------------------------
 
 extern LedPositionType gTotalLedPositions;
 

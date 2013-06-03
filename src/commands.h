@@ -19,14 +19,26 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
-#define DEVICE_CONTROLLER		0
-#define DEVICE_GATEWAY			1
-#define DEVICE_REMOTE			2
+#define DEVICE_CONTROLLER			0
+#define DEVICE_GATEWAY				1
+#define DEVICE_REMOTE				2
 
-//#define MOTOR1_ENDPOINT		2
-//#define MOTOR2_ENDPOINT		3
+//#define MOTOR1_ENDPOINT			2
+//#define MOTOR2_ENDPOINT			3
 
-#define LED_SAMPLE_BYTES		5
+#define LED_SAMPLE_BYTES			5
+// Include space for a null terminator.
+#define MAX_MESSAGE_STRING_BYTES	16 + 1
+
+#define LINE1_POS1 					"\x01\xFE\x80"
+#define LINE2_POS1 					"\x01\xFE\xC0"
+#define BACKLIGHT_LOW				"\x7C\x8C"
+#define BACKLIGHT_40PERCENT			"\x7C\x8C"
+#define BACKLIGHT_50PERCENT			"\x7C\x8E"
+#define BACKLIGHT_73PERCENT			"\x7C\x96"
+#define BACKLIGHT_100PERCENT		"\x7C\x9D"
+
+#define BACKLIGHT_PERCENT			BACKLIGHT_100PERCENT
 
 #if defined(GW0009R1)
 	#define LEDRedON	PTBD_PTBD1 = 1;
@@ -100,6 +112,8 @@ NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 gwUINT8 getLEDVaue(gwUINT8 inLEDNum, BufferCntType inRXBufferNum);
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringLen);
+gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, AckDataType inAckData);
@@ -123,12 +137,15 @@ void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 
-EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData);
-EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData);
-EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
+//EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum);
+//EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
+//EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData);
+//EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
+//EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData);
+//EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
+
+EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);

@@ -16,6 +16,7 @@
 #include "remoteMgmtTask.h"
 #include "Ssi_Interface.h"
 #include "GPIO_Interface.h"
+#include "UartLowLevel.h"
 
 #define getMax(a,b)    (((a) > (b)) ? (a) : (b))
 #define getMin(a,b)    (((a) < (b)) ? (a) : (b))
@@ -43,35 +44,101 @@ void gpioInit(void) {
 	register uint32_t tmpReg;
 	GpioErr_t error;
 
+	// SSI
 	// Pull-up select: UP type
 	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
 	// Pull-up enable
 	//GPIO.PuEnLo  |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
 	// Data select sets these ports to read from pads.
-	GPIO.InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	GPIO .InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
 	// inputs
-	GPIO.DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
+	GPIO .DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
 	// outputs
-	GPIO.DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	GPIO .DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
 
 	// Setup the function enable pins.
-	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos) | (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK
-	        << GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK
-	        << GPIO_SSI_CLK_fnpos));
-	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos) | (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
-	        << GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
-	        << GPIO_SSI_CLK_fnpos));
+	tmpReg = GPIO .FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos)| (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK
+			<< GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK
+			<< GPIO_SSI_CLK_fnpos));
 
-	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
-	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
-	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
-	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
-	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+	GPIO .FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos)| (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
+			<< GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
+			<< GPIO_SSI_CLK_fnpos));
+
+	// SPI bus GPIOs
+//	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
+//	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
+//	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
+//	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
+
+	// I2C
+//	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+
+	// UART2
+	GPIO .PuSelLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up select: UP type
+	GPIO .PuEnLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up enable
+	GPIO .InputDataSelLo &= ~(GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // read from pads
+	GPIO .DirResetLo = (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // inputs
+	GPIO .DirSetLo = (GPIO_UART2_CTS_bit | GPIO_UART2_TX_bit);  // outputs
+
+	tmpReg = GPIO .FuncSel1 & ~((FN_MASK << GPIO_UART2_CTS_fnpos)| (FN_MASK << GPIO_UART2_RTS_fnpos)
+	| (FN_MASK << GPIO_UART2_RX_fnpos) | (FN_MASK << GPIO_UART2_TX_fnpos));
+	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
+	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
+
 }
 
 // --------------------------------------------------------------------------
 
-static void setupSSI() {
+void UartReadCallback(UartReadCallbackArgs_t* args) {
+
+}
+
+// --------------------------------------------------------------------------
+
+void UartWriteCallback(UartWriteCallbackArgs_t* args) {
+	args->UartNumberBytesSent = args->UartNumberBytesSent * 1;
+}
+
+// --------------------------------------------------------------------------
+
+static void setupUart() {
+	UartConfig_t uartconfig;
+	UartCallbackFunctions_t uartcb;
+	UartErr_t error;
+
+	// Where did ths function go?  It's in the API docs...
+	//Uart_Init();
+
+	//mount the interrupts corresponding to UART driver
+	IntAssignHandler(gUart2Int_c, (IntHandlerFunc_t) UartIsr2);
+	ITC_SetPriority(gUart2Int_c, gItcNormalPriority_c);
+	//enable the interrupts corresponding to UART driver
+	ITC_EnableInterrupt(gUart2Int_c);
+
+	UartOpen(UART_2, 24000);
+
+	uartconfig.UartBaudrate = 9600;
+	uartconfig.UartParity = gUartParityNone_c;
+	uartconfig.UartStopBits = gUartStopBits1_c;
+	uartconfig.UartFlowControlEnabled = FALSE;
+	UartSetConfig(UART_2, &uartconfig);
+
+	uartcb.pfUartReadCallback = UartReadCallback;
+	uartcb.pfUartWriteCallback = UartWriteCallback;
+	UartSetCallbackFunctions(UART_2, &uartcb);
+
+	UartSetCTSThreshold(UART_2, 24);
+	UartSetTransmitterThreshold(UART_2, 8);
+	UartSetReceiverThreshold(UART_2, 24);
+
+	// Set the backlight to 40%
+	error = UartWriteData(UART_2, BACKLIGHT_PERCENT, strlen(BACKLIGHT_PERCENT));
+}
+
+// --------------------------------------------------------------------------
+
+static void setupSsi() {
 
 	SsiErr_t error;
 	SsiConfig_t ssiConfig;
@@ -140,8 +207,8 @@ static void setupSSI() {
 	SSI_SFCSR_BIT .RFWM0 = 4;
 	SSI_SFCSR_BIT .TFWM0 = 5;
 
-	SSI_SCR_BIT.TFR_CLK_DIS = 0;
-	SSI_STCCR_BIT.DC = 0;
+	SSI_SCR_BIT .TFR_CLK_DIS = 0;
+	SSI_STCCR_BIT .DC = 0;
 
 	// Setup the SSI interrupts.
 	SSI_SIER_WORD = 0;
@@ -168,9 +235,9 @@ void ssiInterrupt(void) {
 	if (SSI_SISR_BIT .TFE) {
 		if (gLedCycle == eLedCycleOff) {
 			// Write more words into the FIFO - that will cause the FIFO low watermark ISR to execute.
-			while (SSI_SFCSR_BIT.TFCNT0 < 8) {
+			while (SSI_SFCSR_BIT .TFCNT0 < 8) {
 				if (gNextSolidLedPosition < gTotalLedPositions) {
-					while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+					while (SSI_SFCSR_BIT .TFCNT0 > 7) {
 						// TXT FIFO is full - busy wait since there's no interrupts.
 					}
 					SSI_STX = getNextSolidData();
@@ -178,9 +245,9 @@ void ssiInterrupt(void) {
 			}
 		} else {
 			// Write more words into the FIFO - that will cause the FIFO low watermark ISR to execute.
-			while (SSI_SFCSR_BIT.TFCNT0 < 8) {
+			while (SSI_SFCSR_BIT .TFCNT0 < 8) {
 				if (gNextFlashLedPosition < gTotalLedPositions) {
-					while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+					while (SSI_SFCSR_BIT .TFCNT0 > 7) {
 						// TXT FIFO is full - busy wait since there's no interrupts.
 					}
 					SSI_STX = getNextFlashData();
@@ -253,19 +320,20 @@ void aisleControllerTask(void *pvParameters) {
 	gTotalLedSolidDataElements = 0;
 
 	gpioInit();
-	setupSSI();
+	setupSsi();
+	setupUart();
 //	setupTimers();
 
 	// Enable Rx, and disable Tx.
-	SSI_SCR_BIT.TE = TRUE;
-	SSI_SCR_BIT.RE = FALSE;
+	SSI_SCR_BIT .TE = TRUE;
+	SSI_SCR_BIT .RE = FALSE;
 
 	for (;;) {
 		if (gLedCycle == eLedCycleOff) {
 			// Write 8 words into the FIFO - that will cause the FIFO low watermark ISR to execute.
 			GW_ENTER_CRITICAL(ccrHolder);
 			for (int byte = 0; byte < gTotalLedPositions; ++byte) {
-				while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+				while (SSI_SFCSR_BIT .TFCNT0 > 7) {
 					// TXT FIFO is full - busy wait since there's no interrupts.
 				}
 				SSI_STX = getNextSolidData();
@@ -281,7 +349,7 @@ void aisleControllerTask(void *pvParameters) {
 			// Write 8 words into the FIFO - that will cause the FIFO low watermark ISR to execute.
 			GW_ENTER_CRITICAL(ccrHolder);
 			for (int byte = 0; byte < gTotalLedPositions; ++byte) {
-				while(SSI_SFCSR_BIT.TFCNT0 > 7) {
+				while (SSI_SFCSR_BIT .TFCNT0 > 7) {
 					// TXT FIFO is full - busy wait since there's no interrupts.
 				}
 				SSI_STX = getNextFlashData();

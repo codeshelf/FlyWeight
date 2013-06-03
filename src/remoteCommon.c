@@ -120,10 +120,11 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							break;
 
 						case eControlSubCmdMessage:
+							ackState = processMessageSubCommand(inRxBufferNum);
 							break;
 
 						case eControlSubCmdLight:
-							ackState = processLedSubCommand(inRxBufferNum, ackId, ackData);
+							ackState = processLedSubCommand(inRxBufferNum);
 							break;
 
 #endif

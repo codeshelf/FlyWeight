@@ -13,17 +13,6 @@
 #include "deviceInfo.h"
 #include "deviceQuery.h"
 
-
-// --------------------------------------------------------------------------
-// Local function prototypes
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringSize);
-
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringSize) {
-	// Though the string might be longer than 255, we only take 255.
-	inDestPtr[0] = (gwUINT8) inStringSize;
-	memcpy(inDestPtr + 1, inStringPtr, (gwUINT8) inStringSize);
-}
-
 // --------------------------------------------------------------------------
 
 void processQuery(BufferCntType inRXBufferNum, BufferOffsetType inStartOfQuery, NetAddrType inSrcAddr) {

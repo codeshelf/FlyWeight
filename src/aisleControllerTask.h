@@ -63,6 +63,8 @@ typedef union {
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
+void setupUart();
+void setupSsi();
 void aisleControllerTask(void *pvParameters);
 void ssiInterrupt(void);
 gwUINT32 getNextSolidData(void);
