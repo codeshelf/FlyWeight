@@ -18,8 +18,10 @@
 #include "remoteRadioTask.h"
 #include "remoteMgmtTask.h"
 #include "aisleControllerTask.h"
+#include "scannerReadTask.h"
 #include "spi.h"
 #include "commands.h"
+#include "PortConfig.h"
 
 #ifdef MC1322X
     #include "MacaInterrupt.h"
@@ -119,12 +121,13 @@ void vMain( void ) {
 	//xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
 	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
 	xTaskCreate(aisleControllerTask, (const signed portCHAR * const) "LED", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gAisleControllerTask );
+	xTaskCreate(scannerReadTask, (const signed portCHAR * const) "Scan", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gScannerReadTask );
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	//gKeyboardQueue = xQueueCreate(KEYBOARD_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
 	gRemoteMgmtQueue = xQueueCreate(GATEWAY_MGMT_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(gwUINT8));
-	gAisleControllerQueue = xQueueCreate(AISLE_CONTROLLER_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(SDControlCommandStruct));
+	//gAisleControllerQueue = xQueueCreate(AISLE_CONTROLLER_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(SDControlCommandStruct));
 
 	// Set the state to running
 	gLocalDeviceState = eLocalStateStarted;

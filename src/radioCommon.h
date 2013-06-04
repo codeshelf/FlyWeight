@@ -139,6 +139,8 @@
 	gTXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
 
+#define MAX_SCAN_STRING_BYTES		64
+
 // --------------------------------------------------------------------------
 // Typedefs
 
@@ -179,6 +181,7 @@ typedef gwUINT8				EndpointNumType;
 typedef gwUINT8				KVPNumType;
 typedef gwUINT8				RemoteUniqueIDType[UNIQUE_ID_BYTES + 1];
 typedef RemoteUniqueIDType	*RemoteUniqueIDPtrType;
+
 typedef struct {
 	ERemoteStatusType		remoteState;
 	RemoteUniqueIDType		remoteUniqueID;
@@ -228,32 +231,32 @@ typedef gwUINT32			TimestampType;
 typedef gwUINT32			DataSampleType;
 
 // Hoobee types (deprecated)
-typedef gwBoolean			LedFlashRunType;
-typedef gwUINT8				LedFlashSeqCntType;
-typedef gwUINT8				LedValueType;
-typedef gwUINT16			LedFlashTimeType;
-typedef gwUINT8				LedRepeatCntType;
+//typedef gwBoolean			LedFlashRunType;
+//typedef gwUINT8				LedFlashSeqCntType;
+//typedef gwUINT8				LedValueType;
+//typedef gwUINT16			LedFlashTimeType;
+//typedef gwUINT8				LedRepeatCntType;
 
-typedef struct {
-	LedValueType		redValue;
-	LedValueType		greenValue;
-	LedValueType		blueValue;
-	LedFlashTimeType	timeOnMillis;
-	LedFlashTimeType	timeOffMillis;
-	LedRepeatCntType	repeat;
-} LedFlashStruct;
+//typedef struct {
+//	LedValueType		redValue;
+//	LedValueType		greenValue;
+//	LedValueType		blueValue;
+//	LedFlashTimeType	timeOnMillis;
+//	LedFlashTimeType	timeOffMillis;
+//	LedRepeatCntType	repeat;
+//} LedFlashStruct;
 
 // PFC types. (deprecated)
-typedef struct {
-	ESDCardControlDeviceType	deviceType;
-	union {
-		gwUINT16				delayMillis;
-		struct {
-			gwUINT8 byte1;
-			gwUINT8 byte0;
-		} bytes ;
-	} delay ;
-} SDControlCommandStruct;
+//typedef struct {
+//	ESDCardControlDeviceType	deviceType;
+//	union {
+//		gwUINT16				delayMillis;
+//		struct {
+//			gwUINT8 byte1;
+//			gwUINT8 byte0;
+//		} bytes ;
+//	} delay ;
+//} SDControlCommandStruct;
 
 // Aisle Controller types.
 typedef enum {
@@ -261,10 +264,10 @@ typedef enum {
 	eLedCycleOn
 } LedCycleType;
 
-typedef LedCycleType 	LedCycle;
-typedef gwUINT8 		LedChannelType;
-typedef gwUINT16 		LedPositionType;
-typedef gwUINT8 		LedData;
+typedef LedCycleType 		LedCycle;
+typedef gwUINT8 			LedChannelType;
+typedef gwUINT16 			LedPositionType;
+typedef gwUINT8 			LedData;
 
 typedef struct {
 		LedChannelType		channel;
@@ -274,6 +277,11 @@ typedef struct {
 		LedData				blue;
 } LedDataStruct;
 
+typedef gwUINT8				ScanCharType;
+typedef ScanCharType		ScanStringType[MAX_SCAN_STRING_BYTES];
+typedef ScanStringType*		ScanStringPtrType;
+typedef gwUINT8				ScanStringLenType;
+
 // --------------------------------------------------------------------------
 // Externs
 
@@ -282,11 +290,12 @@ extern xTaskHandle			gRadioTransmitTask;
 extern xTaskHandle			gSerialReceiveTask;
 extern xTaskHandle			gGatewayManagementTask;
 extern xTaskHandle			gRemoteManagementTask;
-extern xTaskHandle			gKeyboardTask;
-extern xTaskHandle			gStrainGageTask;
-extern xTaskHandle			gHooBeeTask;
-extern xTaskHandle			gPFCTask;
+//extern xTaskHandle			gKeyboardTask;
+//extern xTaskHandle			gStrainGageTask;
+//extern xTaskHandle			gHooBeeTask;
+//extern xTaskHandle			gPFCTask;
 extern xTaskHandle			gAisleControllerTask;
+extern xTaskHandle			gScannerReadTask;
 
 /* The queue used to send data from the radio to the radio receive task. */
 extern xQueueHandle 		gRadioTransmitQueue;

@@ -121,8 +121,9 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 void createAssocCheckCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType inUniqueID);
 void createButtonControlCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNumber, gwUINT8 inFunctionType);
 void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr);
-void createAudioCommand(BufferCntType inTXBufferNum);
+//void createAudioCommand(BufferCntType inTXBufferNum);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr);
+void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStringPtr, ScanStringLenType inScanStringLen);
 #ifdef IS_GATEWAY
 void createOutboundNetSetup(void);
 #endif

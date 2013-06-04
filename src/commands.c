@@ -268,6 +268,7 @@ void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr) {
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + 1;
 }
+
 // --------------------------------------------------------------------------
 
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr) {
@@ -282,6 +283,7 @@ void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inRespo
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_INFO_SUBCMD + inResponseSize + 1;
 }
+
 // --------------------------------------------------------------------------
 
 #ifdef IS_GATEWAY
@@ -342,6 +344,18 @@ void createAudioCommand(BufferCntType inTXBufferNum) {
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + 1;
 }
 #endif
+
+// --------------------------------------------------------------------------
+
+void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStringPtr, ScanStringLenType inScanStringLen) {
+
+	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD] = eControlSubCmdScan;
+
+	writeAsPString(gTXRadioBuffer[inTXBufferNum].bufferStorage + CMDPOS_CONTROL_DATA, (BufferStoragePtrType) inScanStringPtr, inScanStringLen);
+
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + inScanStringLen;
+}
 
 // --------------------------------------------------------------------------
 

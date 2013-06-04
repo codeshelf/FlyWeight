@@ -12,17 +12,18 @@
 #include "commands.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
+//#include "queue.h"
 #include "remoteMgmtTask.h"
 #include "Ssi_Interface.h"
 #include "GPIO_Interface.h"
 #include "UartLowLevel.h"
+#include "string.h"
 
 #define getMax(a,b)    (((a) > (b)) ? (a) : (b))
 #define getMin(a,b)    (((a) < (b)) ? (a) : (b))
 
 xTaskHandle gAisleControllerTask = NULL;
-xQueueHandle gAisleControllerQueue;
+//xQueueHandle gAisleControllerQueue;
 
 LedCycle gLedCycle = eLedCycleOff;
 
@@ -42,8 +43,7 @@ LedPositionType gNextSolidLedPosition;
 void gpioInit(void) {
 
 	register uint32_t tmpReg;
-	GpioErr_t error;
-
+	
 	// SSI
 	// Pull-up select: UP type
 	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
@@ -91,7 +91,9 @@ void gpioInit(void) {
 // --------------------------------------------------------------------------
 
 void UartReadCallback(UartReadCallbackArgs_t* args) {
-
+//	gu8SCIDataFlag = TRUE;
+//	gu16SCINumOfBytes = args->UartNumberBytesReceived;
+//	gu8SCIStatus = args->UartStatus;
 }
 
 // --------------------------------------------------------------------------
@@ -103,10 +105,11 @@ void UartWriteCallback(UartWriteCallbackArgs_t* args) {
 // --------------------------------------------------------------------------
 
 static void setupUart() {
+
+	UartErr_t error;
 	UartConfig_t uartconfig;
 	UartCallbackFunctions_t uartcb;
-	UartErr_t error;
-
+	
 	// Where did ths function go?  It's in the API docs...
 	//Uart_Init();
 
@@ -363,10 +366,6 @@ void aisleControllerTask(void *pvParameters) {
 			gLedCycle = eLedCycleOff;
 		}
 	}
-
-	/* Will only get here if the queue could not be created. */
-	for (;;)
-		;
 }
 
 // --------------------------------------------------------------------------

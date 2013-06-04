@@ -94,25 +94,13 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
-//	gwUINT8 result;
-//	USB_TError usbError;
 
 	// Loop reading bytes until we put together a whole packet.
 	// Make sure not to copy them into the packet if we run out of room.
 
-	// If there's no character waiting then delay until we get one.
-//	if (USB_GetCharsInRxBuf() == 0)
-//		vTaskDelay(1);
-
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
 	while (bytesReceived < inMaxPacketSize) {
 
-//		result = USB_RecvChar(&nextByte);
-//		if (result == ERR_RXEMPTY) {
-//			//vTaskDelay(1);
-//		} else if (result != ERR_OK) {
-//			USB_GetError(&usbError);
-//		} else {
 		readOneChar(&nextByte);
 
 		{
@@ -142,6 +130,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 							nextByte = ESC;
 							break;
 					}
+					break;
 
 				// Here we fall into the default handler and let it store the character for us.
 				default:
