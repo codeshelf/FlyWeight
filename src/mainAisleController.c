@@ -77,8 +77,8 @@ void vMain( void ) {
 	//SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
-	//ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
-	//ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 
 	IntEnableAll();
 	TmrInit();
@@ -86,8 +86,8 @@ void vMain( void ) {
 //	LED_Init();
 
 	// Setup our LEDs.
-	error = Gpio_SetPinFunction(gGpioPin22_c, gGpioNormalMode_c);
-	error = Gpio_SetPinFunction(gGpioPin23_c, gGpioNormalMode_c);
+//	error = Gpio_SetPinFunction(gGpioPin22_c, gGpioNormalMode_c);
+//	error = Gpio_SetPinFunction(gGpioPin23_c, gGpioNormalMode_c);
 
 	// Disable the SPI mode for the pins that the SDCard bus will use.
 //	disableSPI();

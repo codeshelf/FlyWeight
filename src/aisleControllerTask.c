@@ -99,7 +99,7 @@ void UartReadCallback(UartReadCallbackArgs_t* args) {
 // --------------------------------------------------------------------------
 
 void UartWriteCallback(UartWriteCallbackArgs_t* args) {
-	args->UartNumberBytesSent = args->UartNumberBytesSent * 1;
+//	args->UartNumberBytesSent = args->UartNumberBytesSent * 1;
 }
 
 // --------------------------------------------------------------------------
@@ -127,13 +127,13 @@ static void setupUart() {
 	uartconfig.UartFlowControlEnabled = FALSE;
 	UartSetConfig(UART_2, &uartconfig);
 
-	uartcb.pfUartReadCallback = UartReadCallback;
+//	uartcb.pfUartReadCallback = UartReadCallback;
 	uartcb.pfUartWriteCallback = UartWriteCallback;
 	UartSetCallbackFunctions(UART_2, &uartcb);
 
-	UartSetCTSThreshold(UART_2, 24);
-	UartSetTransmitterThreshold(UART_2, 8);
-	UartSetReceiverThreshold(UART_2, 24);
+	//UartSetCTSThreshold(UART_2, 24);
+	//UartSetTransmitterThreshold(UART_2, 8);
+	//UartSetReceiverThreshold(UART_2, 24);
 
 	// Set the backlight to 40%
 	error = UartWriteData(UART_2, BACKLIGHT_PERCENT, strlen(BACKLIGHT_PERCENT));

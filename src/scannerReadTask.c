@@ -13,6 +13,7 @@
 #include "queue.h"
 #include "gatewayRadioTask.h"
 #include "commands.h"
+#include "Delay.h"
 
 xTaskHandle gScannerReadTask = NULL;
 
@@ -42,13 +43,18 @@ void scannerReadTask(void *pvParameters) {
 		while ((UART2_REGS_P ->Urxcon != 0) && (gScanStringPos < MAX_SCAN_STRING_BYTES)) {
 			gScanString[gScanStringPos++] = UART2_REGS_P ->Udata;
 			gScanString[gScanStringPos] = NULL;
+
+			// If there's no characters - then wait 2ms to see if more will arrive.
+			if ((UART2_REGS_P ->Urxcon == 0)) {
+				DelayMs(4);
+			}
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
 
 		// Now send the scan string.
 		BufferCntType txBufferNum = lockTXBuffer();
-		createScanCommand(txBufferNum, &gScanString, gScanStringPos);
-		transmitPacketFromISR(txBufferNum);
+		createScanCommand(txBufferNum, &gScanString, gScanStringPos - 1);
+		transmitPacket(txBufferNum);
 
 	}
 }

@@ -354,7 +354,7 @@ void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStri
 
 	writeAsPString(gTXRadioBuffer[inTXBufferNum].bufferStorage + CMDPOS_CONTROL_DATA, (BufferStoragePtrType) inScanStringPtr, inScanStringLen);
 
-	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + inScanStringLen;
+	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + inScanStringLen + 2;
 }
 
 // --------------------------------------------------------------------------
