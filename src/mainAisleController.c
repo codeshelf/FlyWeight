@@ -76,10 +76,6 @@ void vMain( void ) {
 	MLMERadioInit();
 	//SetDemulatorMode(NCD);
 
-	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
-	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
-	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
-
 	IntEnableAll();
 	TmrInit();
 

@@ -65,7 +65,7 @@ void radioReceiveTask(void *pvParameters) {
 				gMsgHolder[gNextMsgToUse].msg.cbDataIndication = NULL;
 				gMsgHolder[gNextMsgToUse].bufferNum = rxBufferNum;
 
-				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 2500);
+				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 0);
 
 				gTotalPendingMsgs++;
 				gNextMsgToUse++;

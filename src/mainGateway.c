@@ -55,12 +55,16 @@ void vMain( void ) {
 	ResetMaca();
 	MLMERadioInit();
 	
-	// Doesn't exist in v2.0 ROMs.
-	//SetDemulatorMode(NCD);
+	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
+	SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
+	SetPowerLevelLockMode(TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction1_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction1_c, TRUE, TRUE);
+	SetComplementaryPAState(TRUE);
 
 	IntEnableAll();
 	LED_Init();
