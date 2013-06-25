@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-827576592
+Checksum=-431727592
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -25,4 +25,5 @@ Graph=0
 [Disassemble mode]
 mode=0
 [Breakpoints]
-Count=0
+Bp0=_ "STD_CODE" "{C:\eclipsework\FlyWeight\MC1322X\SMAC\Source\TransceiverConfigMngmnt.c}.350.2@1" 0 0 0 0 "" 0 "" 0
+Count=1

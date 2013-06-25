@@ -88,7 +88,7 @@
             </Window>
           </Windows>
         </PreferedWindows>
-      <Column0>100</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Locals>
+      <Column0>156</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Locals>
       <Register/>
       <SymbolicMemory>
         <PreferedWindows>
@@ -116,15 +116,15 @@
       <Memory>
         
         
-      <FindDirection>1</FindDirection><FindAsHex>0</FindAsHex></Memory>
-    <StaticWatch><Column0>100</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></StaticWatch></Static>
+      <PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><FindDirection>1</FindDirection><FindAsHex>0</FindAsHex></Memory>
+    <StaticWatch><Column0>122</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></StaticWatch></Static>
     <Windows>
       
       
       
       
       
-    <Wnd0>
+    <Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-4567-24253</Identity>
@@ -138,9 +138,9 @@
             <Factory>Build</Factory>
             <Session/>
           </Tab>
-        </Tabs>
+        <Tab><Identity>TabID-3572-32441</Identity><TabName>Memory</TabName><Factory>Memory</Factory><Session><ZoneNumber>0</ZoneNumber><SelectionAnchor>4229084</SelectionAnchor><SelectionEnd>4229084</SelectionEnd><UnitsPerGroup>4</UnitsPerGroup><EndianMode>0</EndianMode><DataCovEnabled>0</DataCovEnabled><DataCovShown>0</DataCovShown><AutoRefresh>0</AutoRefresh><HScroll>0</HScroll><VScroll>264313</VScroll></Session></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+      <SelectedTab>0</SelectedTab></Wnd3><Wnd4>
         <Tabs>
           <Tab>
             <Identity>TabID-15315-24257</Identity>
@@ -148,11 +148,11 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-AC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application/FlyWeight</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-AC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application/FlyWeight</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/SMAC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/SMAC/Source</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1><Wnd2>
+      <SelectedTab>0</SelectedTab></Wnd4><Wnd5>
         <Tabs>
           <Tab>
             <Identity>TabID-11702-20826</Identity>
@@ -160,7 +160,7 @@
             <Factory>CallStack</Factory>
             <Session/>
           </Tab>
-        <Tab><Identity>TabID-27019-19203</Identity><TabName>Locals</TabName><Factory>Locals</Factory><Session><Column0>100</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab><Identity>TabID-9767-19526</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab><Tab><Identity>TabID-31578-21574</Identity><TabName>Live Watch</TabName><Factory>StaticWatch</Factory><Session><TabId>0</TabId><Expressions><Expression><Expression>gMsgHolder[gCurMsg].msg</Expression></Expression></Expressions><Column0>100</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab>
+        <Tab><Identity>TabID-27019-19203</Identity><TabName>Locals</TabName><Factory>Locals</Factory><Session><Column0>156</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab><Identity>TabID-9767-19526</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab><Tab><Identity>TabID-31578-21574</Identity><TabName>Live Watch</TabName><Factory>StaticWatch</Factory><Session><Expressions><Expression><Expression>gRXRadioBuffer</Expression></Expression><Expression><Expression>gLedFlashData</Expression></Expression><Expression><Expression>gScanString</Expression></Expression><Expression><Expression>gTXRadioBuffer</Expression></Expression><Expression><Expression>gScanStringPos</Expression></Expression></Expressions><TabId>0</TabId><Column0>122</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab>
             <Identity>TabID-13438-20180</Identity>
             <TabName>Register</TabName>
             <Factory>Register</Factory>
@@ -172,41 +172,20 @@
             <REG1>0</REG1><REG2>0</REG2><Group>0</Group><States>0</States></Session>
           </Tab></Tabs>
         
-      <SelectedTab>2</SelectedTab></Wnd2><Wnd3>
-        <Tabs>
-          <Tab>
-            <Identity>TabID-19837-20879</Identity>
-            <TabName>Memory</TabName>
-            <Factory>Memory</Factory>
-            <Session>
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-            <ZoneNumber>3</ZoneNumber><SelectionAnchor>2147487784</SelectionAnchor><SelectionEnd>2147487784</SelectionEnd><UnitsPerGroup>4</UnitsPerGroup><EndianMode>0</EndianMode><DataCovEnabled>0</DataCovEnabled><DataCovShown>0</DataCovShown><AutoRefresh>0</AutoRefresh><HScroll>0</HScroll><VScroll>134217979</VScroll></Session>
-          </Tab>
-        </Tabs>
-        
-      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+      <SelectedTab>1</SelectedTab></Wnd5></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>54</YPos><SelStart>1857</SelStart><SelEnd>1857</SelEnd></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\aisleControllerTask.c</Filename><XPos>0</XPos><YPos>247</YPos><SelStart>10650</SelStart><SelEnd>10650</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Source\RadioManagement.c</Filename><XPos>0</XPos><YPos>441</YPos><SelStart>14930</SelStart><SelEnd>14930</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Drivers\Source\Delay.c</Filename><XPos>0</XPos><YPos>21</YPos><SelStart>1225</SelStart><SelEnd>1225</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\port.c</Filename><XPos>0</XPos><YPos>328</YPos><SelStart>12635</SelStart><SelEnd>12635</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\portasm.s79</Filename><XPos>0</XPos><YPos>17</YPos><SelStart>1122</SelStart><SelEnd>1122</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\tasks.c</Filename><XPos>0</XPos><YPos>1231</YPos><SelStart>39500</SelStart><SelEnd>39500</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainAisleController.c</Filename><XPos>0</XPos><YPos>140</YPos><SelStart>5055</SelStart><SelEnd>5055</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>109</YPos><SelStart>3740</SelStart><SelEnd>3740</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\aisleControllerTask.c</Filename><XPos>0</XPos><YPos>120</YPos><SelStart>4871</SelStart><SelEnd>4871</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteRadioTaskSMAC2.c</Filename><XPos>0</XPos><YPos>103</YPos><SelStart>3740</SelStart><SelEnd>3740</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\portable\IAR\MC1322x\port.c</Filename><XPos>0</XPos><YPos>329</YPos><SelStart>12913</SelStart><SelEnd>12913</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FreeRTOS\Source\tasks.c</Filename><XPos>0</XPos><YPos>1613</YPos><SelStart>50918</SelStart><SelEnd>50918</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\commands.c</Filename><XPos>0</XPos><YPos>332</YPos><SelStart>13697</SelStart><SelEnd>13697</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\remoteCommon.c</Filename><XPos>0</XPos><YPos>99</YPos><SelStart>4205</SelStart><SelEnd>4205</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Drivers\Source\Delay.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>1225</SelStart><SelEnd>1225</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Source\RadioManagement.c</Filename><XPos>0</XPos><YPos>431</YPos><SelStart>14810</SelStart><SelEnd>14810</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\mainAisleController.c</Filename><XPos>0</XPos><YPos>52</YPos><SelStart>1939</SelStart><SelEnd>1939</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\scannerReadTask.c</Filename><XPos>0</XPos><YPos>25</YPos><SelStart>1395</SelStart><SelEnd>1395</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\src\scannerReadTask.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>385</SelStart><SelEnd>385</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\SMAC\Source\TransceiverConfigMngmnt.c</Filename><XPos>0</XPos><YPos>336</YPos><SelStart>12239</SelStart><SelEnd>12239</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\eclipsework\FlyWeight\MC1322X\PLM\Source\Common\Sys\Init-IAR.S</Filename><XPos>0</XPos><YPos>48</YPos><SelStart>1857</SelStart><SelEnd>1857</SelEnd></Tab><ActiveTab>12</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00b0a728><key>iaridepm.enu1</key></Toolbar-00b0a728></Sizes></Row0><Row1><Sizes><Toolbar-04020008><key>debuggergui.enu1</key></Toolbar-04020008></Sizes></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>578</Bottom><Right>335</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>104167</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>175521</sizeVertCX><sizeVertCY>556622</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>578</Bottom><Right>414</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>104167</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>216667</sizeVertCX><sizeVertCY>556622</sizeVertCY></Rect></Wnd2></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1922</Right><x>-2</x><y>-2</y><xscreen>1924</xscreen><yscreen>200</yscreen><sizeHorzCX>1002083</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>104167</sizeVertCX><sizeVertCY>191939</sizeVertCY></Rect></Wnd0></Sizes></Row0><Row1><Sizes><Wnd3><Rect><Top>196</Top><Left>-2</Left><Bottom>396</Bottom><Right>1922</Right><x>-2</x><y>196</y><xscreen>1924</xscreen><yscreen>200</yscreen><sizeHorzCX>1002083</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>104167</sizeVertCX><sizeVertCY>191939</sizeVertCY></Rect></Wnd3></Sizes></Row1></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00b0a6e0><key>iaridepm.enu1</key></Toolbar-00b0a6e0></Sizes></Row0><Row1><Sizes><Toolbar-03906b50><key>debuggergui.enu1</key></Toolbar-03906b50></Sizes></Row1></Top><Left><Row0><Sizes><Wnd4><Rect><Top>-2</Top><Left>-2</Left><Bottom>776</Bottom><Right>335</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>104221</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>175612</sizeVertCX><sizeVertCY>746641</sizeVertCY></Rect></Wnd4></Sizes></Row0></Left><Right><Row0><Sizes><Wnd5><Rect><Top>-2</Top><Left>-2</Left><Bottom>776</Bottom><Right>505</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>104221</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>264200</sizeVertCX><sizeVertCY>746641</sizeVertCY></Rect></Wnd5></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1921</Right><x>-2</x><y>-2</y><xscreen>1923</xscreen><yscreen>200</yscreen><sizeHorzCX>1002084</sizeHorzCX><sizeHorzCY>191939</sizeHorzCY><sizeVertCX>104221</sizeVertCX><sizeVertCY>191939</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Project>
 
