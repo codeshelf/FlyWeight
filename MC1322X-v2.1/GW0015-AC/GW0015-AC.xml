@@ -146,13 +146,12 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
+          <state>GUID="00000003"</state>
+          <state>IS_CODESHELF</state>
           <state>F24MHZ</state>
           <state>SECURITY_ENABLED</state>
           <state>MC1322X</state>
           <state>MC1322X_IAR</state>
-          <state>IS_TOY_NETWORK</state>
-          <state>IS_GATEWAY</state>
-          <state>GUID="00000110"</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1633,6 +1632,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\remoteRadioTaskSMAC2.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\src\scannerReadTask.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\smacPort.c</name>
