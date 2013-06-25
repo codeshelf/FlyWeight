@@ -137,6 +137,10 @@ static void setupUart() {
 
 	// Set the backlight to 40%
 	error = UartWriteData(UART_2, BACKLIGHT_PERCENT, strlen(BACKLIGHT_PERCENT));
+
+	error = UartWriteData(UART_2, LINE1_POS1, strlen(LINE1_POS1));
+	error = UartWriteData(UART_2, "DISCONNECTED", 12);
+
 }
 
 // --------------------------------------------------------------------------

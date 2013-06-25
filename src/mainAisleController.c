@@ -74,36 +74,23 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
-	//SetDemulatorMode(NCD);
+	
+	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
+	SetDemulatorMode(NCD);
+
+	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
+	SetPowerLevelLockMode(TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction1_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction1_c, TRUE, TRUE);
+	SetComplementaryPAState(TRUE);
 
 	IntEnableAll();
-	TmrInit();
-
-//	LED_Init();
-
-	// Setup our LEDs.
-//	error = Gpio_SetPinFunction(gGpioPin22_c, gGpioNormalMode_c);
-//	error = Gpio_SetPinFunction(gGpioPin23_c, gGpioNormalMode_c);
-
-	// Disable the SPI mode for the pins that the SDCard bus will use.
-//	disableSPI();
-
-//	// Setup the DAT0 pull-up for SDCard mode.
-//	error = Gpio_SetPinFunction(SD_DAT0_PULLUP, gGpioNormalMode_c);
-//	error = Gpio_SetPinDir(SD_DAT0_PULLUP, gGpioDirIn_c);
-//	error = Gpio_EnPinPullup(SD_DAT0_PULLUP, FALSE);
-//
-//	// Setup the Bus switch.
-//	error = Gpio_SetPinFunction(BUS_SW_GPIO, gGpioNormalMode_c);
-//	error = Gpio_SetPinFunction(BUS_CARD_DETECT_GPIO, gGpioNormalMode_c);
-//	error = Gpio_SetPinDir(BUS_SW_GPIO, gGpioDirOut_c);
-//
-//	// Setup the Vcc switch.
-//	error = Gpio_SetPinFunction(VCC_SW_GPIO, gGpioNormalMode_c);
-//	error = Gpio_SetPinDir(VCC_SW_GPIO, gGpioDirOut_c);
-//	error = Gpio_SetPinFunction(VCC_HELPER_GPIO, gGpioNormalMode_c);\
+	LED_Init();
 
 	setupWatchdog();
+
 #endif
 
 	gLocalDeviceState = eLocalStateStarted;
