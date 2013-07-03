@@ -43,7 +43,7 @@ LedPositionType gNextSolidLedPosition;
 void gpioInit(void) {
 
 	register uint32_t tmpReg;
-	
+
 	// SSI
 	// Pull-up select: UP type
 	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
@@ -109,7 +109,7 @@ static void setupUart() {
 	UartErr_t error;
 	UartConfig_t uartconfig;
 	UartCallbackFunctions_t uartcb;
-	
+
 	// Where did ths function go?  It's in the API docs...
 	//Uart_Init();
 
@@ -169,7 +169,7 @@ static void setupSsi() {
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 6000000);
+	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 3000000);
 //	ssiClockConfig.bit.ssiDIV2 = 0x1;
 //	ssiClockConfig.bit.ssiPSR = 0x01;
 //	ssiClockConfig.bit.ssiPM = 0x0a;
@@ -308,22 +308,23 @@ void aisleControllerTask(void *pvParameters) {
 
 	// Create some fake test data.
 	LedDataStruct ledData;
-	ledData.position = 0;
 	ledData.channel = 1;
 	ledData.red = 0x2f;
 	ledData.green = 0x0;
 	ledData.blue = 0x0;
-	gLedFlashData[0] = ledData;
 
-	ledData.position = 1;
-	gLedFlashData[1] = ledData;
+	int index = 0;
+	for (int tube = 0; tube < 20; ++tube) {
+		ledData.position = tube * 48;
+		gLedFlashData[index++] = ledData;
 
-	ledData.position = 2;
-	gLedFlashData[2] = ledData;
+		ledData.position = tube * 48 + 47;
+		gLedFlashData[index++] = ledData;
+	}
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 48;
-	gTotalLedFlashDataElements = 3;
+	gTotalLedPositions = 20 * 48;
+	gTotalLedFlashDataElements = index;
 	gTotalLedSolidDataElements = 0;
 
 	gpioInit();
