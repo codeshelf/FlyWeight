@@ -37,13 +37,9 @@ LedPositionType gCurLedSolidDataElement;
 LedPositionType gTotalLedSolidDataElements;
 LedPositionType gNextSolidLedPosition;
 
-DisplayStringType gDisplayDataLine1;
-DisplayStringLenType gDisplayDataLine1Len;
-DisplayStringLenType gDisplayDataLine1Pos;
-
-DisplayStringType gDisplayDataLine2;
-DisplayStringLenType gDisplayDataLine2Len;
-DisplayStringLenType gDisplayDataLine2Pos;
+DisplayStringType gDisplayDataLine[2];
+DisplayStringLenType gDisplayDataLineLen[2];
+DisplayStringLenType gDisplayDataLinePos[2];
 
 // --------------------------------------------------------------------------
 
@@ -63,21 +59,32 @@ void UartWriteCallback(UartWriteCallbackArgs_t* args) {
 
 void displayScrollCallback(TmrNumber_t tmrNumber) {
 	gwUINT8 error;
+	gwUINT8 remainingSpace;
 
-	if (gDisplayDataLine1Len > 16) {
-		error = sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-		error = sendDisplayMessage(&(gDisplayDataLine1[gDisplayDataLine1Pos++]), getMin(16, (gDisplayDataLine1Len - gDisplayDataLine1Pos)));
-		if (gDisplayDataLine1Pos >= gDisplayDataLine1Len) {
-			gDisplayDataLine1Pos = 0;
-		}
-	}
+	for (int line = 0; line < 2; ++line) {
 
-	if (gDisplayDataLine2Len > 16) {
-		//error = sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-		error = sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-		error = sendDisplayMessage(&(gDisplayDataLine2[gDisplayDataLine2Pos+=3]), getMin(16, (gDisplayDataLine2Len - gDisplayDataLine2Pos)));
-		if (gDisplayDataLine2Pos >= gDisplayDataLine2Len) {
-			gDisplayDataLine2Pos = 0;
+		if (gDisplayDataLineLen[line] > 16) {
+			if (line == 0) {
+				error = sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+			} else {
+				error = sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+			}
+			error = sendDisplayMessage(&(gDisplayDataLine[line][gDisplayDataLinePos[line]]),
+					getMin(16, (gDisplayDataLineLen[line] - gDisplayDataLinePos[line])));
+
+			// If there's space at the end of the display then restart from the beginning of the message.
+			if ((gDisplayDataLineLen[line] - gDisplayDataLinePos[line]) < 16) {
+				remainingSpace = 16 - (gDisplayDataLineLen[line] - gDisplayDataLinePos[line]);
+				error = sendDisplayMessage("   ", getMin(3, remainingSpace));
+				if (remainingSpace > 3) {
+					error = sendDisplayMessage(&(gDisplayDataLine[line][0]), remainingSpace - 3);
+				}
+			}
+
+			gDisplayDataLinePos[line] += 3;
+			if (gDisplayDataLinePos[line] >= gDisplayDataLineLen[line]) {
+				gDisplayDataLinePos[line] = 0;
+			}
 		}
 	}
 }

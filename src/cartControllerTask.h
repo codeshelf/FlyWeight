@@ -23,8 +23,6 @@
 #define LED_OFF_TIME					500
 #define LED_ON_TIME						250
 
-#define DISPLAY_SETUP					BACKLIGHT_73PERCENT CURSOR_OFF
-
 #define	MAX_DRIFT						500
 
 #define	SCROLL_TIMER					gTmr1_c

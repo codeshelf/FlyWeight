@@ -890,34 +890,30 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 
 #ifdef IS_CODESHELF
 
-extern DisplayStringType gDisplayDataLine1;
-extern DisplayStringLenType gDisplayDataLine1Len;
-extern DisplayStringLenType gDisplayDataLine1Pos;
-
-extern DisplayStringType gDisplayDataLine2;
-extern DisplayStringLenType gDisplayDataLine2Len;
-extern DisplayStringLenType gDisplayDataLine2Pos;
+extern DisplayStringType gDisplayDataLine[2];
+extern DisplayStringLenType gDisplayDataLineLen[2];
+extern DisplayStringLenType gDisplayDataLinePos[2];
 
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
 
 	BufferStoragePtrType bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE;
-	gDisplayDataLine1Len = readAsPString(gDisplayDataLine1, bufferPtr);
+	gDisplayDataLineLen[0] = readAsPString(gDisplayDataLine[0], bufferPtr);
 
-	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + gDisplayDataLine1Len + 1;
-	gDisplayDataLine2Len = readAsPString(gDisplayDataLine2, bufferPtr);
+	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + gDisplayDataLineLen[0] + 1;
+	gDisplayDataLineLen[1] = readAsPString(gDisplayDataLine[1], bufferPtr);
 
 	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-	sendDisplayMessage(gDisplayDataLine1, getMin(16, strlen(gDisplayDataLine1)));
+	sendDisplayMessage(gDisplayDataLine[0], getMin(16, strlen(gDisplayDataLine[0])));
 
 	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-	sendDisplayMessage(gDisplayDataLine2, getMin(16, strlen(gDisplayDataLine2)));
+	sendDisplayMessage(gDisplayDataLine[1], getMin(16, strlen(gDisplayDataLine[1])));
 
-	if ((gDisplayDataLine2Len <= 16) && (gDisplayDataLine2Len <= 16)) {
+	if ((gDisplayDataLineLen[1] <= 16) && (gDisplayDataLineLen[1] <= 16)) {
 		stopScrolling();
 	} else {
-		gDisplayDataLine1Pos = 0;
-		gDisplayDataLine2Pos = 0;
+		gDisplayDataLinePos[0] = 0;
+		gDisplayDataLinePos[1] = 0;
 
 		startScrolling();
 	}

@@ -19,8 +19,8 @@
 // --------------------------------------------------------------------------
 // Defines
 
-#define		kAssocCheckTickCount	3000 //2.5 * portTICK_RATE_MS * 1000;
-#define		kNetCheckTickCount		60000  // 2 * kAssocCheckTickCount
+#define		kAssocCheckTickCount	3000 // 3 seconds
+#define		kNetCheckTickCount		4 * kAssocCheckTickCount  // four ACK packets missed then reset.
 
 // --------------------------------------------------------------------------
 // Functions prototypes.

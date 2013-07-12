@@ -95,7 +95,7 @@ void setutpGpio(void) {
 
 // --------------------------------------------------------------------------
 
-void setupUart2(void) {
+void setupUart(void) {
 	UartConfig_t uartConfig;
 	UartCallbackFunctions_t uartCallBack;
 	UartErr_t uartErr;
@@ -135,38 +135,6 @@ void setupUart2(void) {
 //	ITC_SetPriority(gUart1Int_c, gItcNormalPriority_c);
 	// Enable the interrupts corresponding to UART driver.
 //	ITC_EnableInterrupt(gUart1Int_c);
-}
-
-void setupUart() {
-
-	UartErr_t error;
-	UartConfig_t uartconfig;
-	UartCallbackFunctions_t uartcb;
-
-	// Where did ths function go?  It's in the API docs...
-	//Uart_Init();
-
-	//mount the interrupts corresponding to UART driver
-	IntAssignHandler(gUart2Int_c, (IntHandlerFunc_t) UartIsr2);
-	ITC_SetPriority(gUart2Int_c, gItcNormalPriority_c);
-	//enable the interrupts corresponding to UART driver
-	ITC_EnableInterrupt(gUart2Int_c);
-
-	UartOpen(UART_2, 24000);
-
-	uartconfig.UartBaudrate = 9600;
-	uartconfig.UartParity = gUartParityNone_c;
-	uartconfig.UartStopBits = gUartStopBits1_c;
-	uartconfig.UartFlowControlEnabled = FALSE;
-	UartSetConfig(UART_2, &uartconfig);
-
-//	uartcb.pfUartReadCallback = UartReadCallback;
-	uartcb.pfUartWriteCallback = UartWriteCallback;
-	UartSetCallbackFunctions(UART_2, &uartcb);
-
-	//UartSetCTSThreshold(UART_2, 24);
-	//UartSetTransmitterThreshold(UART_2, 8);
-	//UartSetReceiverThreshold(UART_2, 24);
 }
 
 // --------------------------------------------------------------------------
@@ -371,14 +339,17 @@ void vMain( void ) {
 
 	setutpGpio();
 	setupSsi();
-	setupUart2();
+	setupUart();
 	setupDisplayScroller();
 
-	// Set the backlight to 40%
-	sendDisplayMessage(DISPLAY_SETUP, strlen(DISPLAY_SETUP));
+	// The the display boot complete.
+	DelayMs(250);
 
-	// Display that the device is not connected.
-	//vTaskDelay(1000);
+	// Set the backlight to 40%
+	// Setting backlight, or any EEPROM param, causes the display to hang until POR.
+	//sendDisplayMessage(DISPLAY_SETUP, strlen(DISPLAY_SETUP));
+
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
 	sendDisplayMessage("DISCONNECTED", 12);
 
