@@ -95,7 +95,49 @@ void setutpGpio(void) {
 
 // --------------------------------------------------------------------------
 
-static void setupUart() {
+void setupUart2(void) {
+	UartConfig_t uartConfig;
+	UartCallbackFunctions_t uartCallBack;
+	UartErr_t uartErr;
+
+	//Uart_Init();
+	// GpioUart2Init();
+
+	uartConfig.UartBaudrate = 9600;
+	uartConfig.UartFlowControlEnabled = FALSE;
+	uartConfig.UartParity = gUartParityNone_c;
+	uartConfig.UartStopBits = gUartStopBits1_c;
+	uartConfig.UartRTSActiveHigh = FALSE;
+
+	uartErr = UartOpen(UART_2, 24000);
+	if (uartErr == gUartErrNoError_c) {
+		uartErr = UartSetConfig(UART_2, &uartConfig);
+		if (uartErr == gUartErrNoError_c) {
+
+			// Set the BAUD rate to precisely 1,250,000.
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+			//UART2_REGS_P->Ubr = 0xc34fea60;
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+
+			//set pCallback functions
+			uartCallBack.pfUartWriteCallback = NULL;//UartEventWrite1;
+			uartCallBack.pfUartReadCallback = NULL;//UartEventRead1;
+			//UartSetCallbackFunctions(UART_1, &uartCallBack);
+
+			UartSetCTSThreshold(UART_1, 24);
+			UartSetTransmitterThreshold(UART_1, 8);
+			UartSetReceiverThreshold(UART_1, 24);
+		}
+	}
+
+	// Setup the interrupts corresponding to UART driver.
+//	IntAssignHandler(gUart1Int_c, (IntHandlerFunc_t)UartIsr1);
+//	ITC_SetPriority(gUart1Int_c, gItcNormalPriority_c);
+	// Enable the interrupts corresponding to UART driver.
+//	ITC_EnableInterrupt(gUart1Int_c);
+}
+
+void setupUart() {
 
 	UartErr_t error;
 	UartConfig_t uartconfig;
@@ -125,9 +167,6 @@ static void setupUart() {
 	//UartSetCTSThreshold(UART_2, 24);
 	//UartSetTransmitterThreshold(UART_2, 8);
 	//UartSetReceiverThreshold(UART_2, 24);
-
-	// Set the backlight to 40%
-	error = UartWriteData(UART_2, BACKLIGHT_PERCENT, strlen(BACKLIGHT_PERCENT));
 }
 
 // --------------------------------------------------------------------------
@@ -332,11 +371,14 @@ void vMain( void ) {
 
 	setutpGpio();
 	setupSsi();
-	setupUart();
+	setupUart2();
 	setupDisplayScroller();
 
+	// Set the backlight to 40%
+	sendDisplayMessage(DISPLAY_SETUP, strlen(DISPLAY_SETUP));
+
 	// Display that the device is not connected.
-//	vTaskDelay(2000);
+	//vTaskDelay(1000);
 	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
 	sendDisplayMessage("DISCONNECTED", 12);
 

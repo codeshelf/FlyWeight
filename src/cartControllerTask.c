@@ -66,15 +66,16 @@ void displayScrollCallback(TmrNumber_t tmrNumber) {
 
 	if (gDisplayDataLine1Len > 16) {
 		error = sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-		error = sendDisplayMessage(&(gDisplayDataLine1[gDisplayDataLine1Pos++]), 16);
+		error = sendDisplayMessage(&(gDisplayDataLine1[gDisplayDataLine1Pos++]), getMin(16, (gDisplayDataLine1Len - gDisplayDataLine1Pos)));
 		if (gDisplayDataLine1Pos >= gDisplayDataLine1Len) {
 			gDisplayDataLine1Pos = 0;
 		}
 	}
 
 	if (gDisplayDataLine2Len > 16) {
+		//error = sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 		error = sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-		error = sendDisplayMessage(&(gDisplayDataLine2[gDisplayDataLine2Pos++]), 16);
+		error = sendDisplayMessage(&(gDisplayDataLine2[gDisplayDataLine2Pos+=3]), getMin(16, (gDisplayDataLine2Len - gDisplayDataLine2Pos)));
 		if (gDisplayDataLine2Pos >= gDisplayDataLine2Len) {
 			gDisplayDataLine2Pos = 0;
 		}

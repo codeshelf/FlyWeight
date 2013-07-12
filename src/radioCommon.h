@@ -139,8 +139,15 @@
 	gTXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
 
-#define LINE1_POS1 						"\x01\xFE\x80"
-#define LINE2_POS1 						"\x01\xFE\xC0"
+#define BACKLIGHT_LOW					"\x7C\x8C"
+#define BACKLIGHT_40PERCENT				"\x7C\x8C"
+#define BACKLIGHT_50PERCENT				"\x7C\x8E"
+#define BACKLIGHT_73PERCENT				"\x7C\x96"
+#define BACKLIGHT_100PERCENT			"\x7C\x9D"
+#define CURSOR_OFF						"\xFE\x0C"
+#define LINE1_POS1 						"\xFE\x80"
+#define LINE2_POS1 						"\xFE\xC0"
+#define CLEAR_DISPLAY					"\xFE\x01"
 
 #define MAX_DISPLAY_STRING_BYTES	64
 #define MAX_SCAN_STRING_BYTES		64
