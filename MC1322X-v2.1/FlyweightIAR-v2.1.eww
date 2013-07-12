@@ -10,7 +10,8 @@
    <project>
     <path>$WS_DIR$\GW0015-AC\GW0015-AC.xml</path>
   </project>
+   <project>
+    <path>$WS_DIR$\GW0015-CC\GW0015-CC.xml</path>
+  </project>
   <batchBuild/>
 </workspace>
-
-

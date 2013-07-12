@@ -139,6 +139,10 @@
 	gTXUsedBuffers--; \
 	GW_EXIT_CRITICAL(ccrHolder);
 
+#define LINE1_POS1 						"\x01\xFE\x80"
+#define LINE2_POS1 						"\x01\xFE\xC0"
+
+#define MAX_DISPLAY_STRING_BYTES	64
 #define MAX_SCAN_STRING_BYTES		64
 
 // --------------------------------------------------------------------------
@@ -277,6 +281,11 @@ typedef struct {
 		LedData				blue;
 } LedDataStruct;
 
+typedef gwUINT8				DisplayCharType;
+typedef DisplayCharType		DisplayStringType[MAX_DISPLAY_STRING_BYTES];
+typedef DisplayStringType*	DisplayStringPtrType;
+typedef gwUINT8				DisplayStringLenType;
+
 typedef gwUINT8				ScanCharType;
 typedef ScanCharType		ScanStringType[MAX_SCAN_STRING_BYTES];
 typedef ScanStringType*		ScanStringPtrType;
@@ -295,6 +304,7 @@ extern xTaskHandle			gRemoteManagementTask;
 //extern xTaskHandle			gHooBeeTask;
 //extern xTaskHandle			gPFCTask;
 extern xTaskHandle			gAisleControllerTask;
+extern xTaskHandle			gCartControllerTask;
 extern xTaskHandle			gScannerReadTask;
 
 /* The queue used to send data from the radio to the radio receive task. */

@@ -170,7 +170,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 		NetAddrType inDestAddr) {
 
 	// First clear the packet header.
-	memset((void * ) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMD_ID);
+	memset((void *) gTXRadioBuffer[inTXBufferNum].bufferStorage, 0, CMDPOS_CMD_ID);
 
 	// Write the packet header.
 	// (See the comments at the top of commandTypes.h.)
@@ -352,7 +352,8 @@ void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStri
 	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD] = eControlSubCmdScan;
 
-	writeAsPString(gTXRadioBuffer[inTXBufferNum].bufferStorage + CMDPOS_CONTROL_DATA, (BufferStoragePtrType) inScanStringPtr, inScanStringLen);
+	writeAsPString(gTXRadioBuffer[inTXBufferNum].bufferStorage + CMDPOS_CONTROL_DATA, (BufferStoragePtrType) inScanStringPtr,
+			inScanStringLen);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_STARTOFCMD + inScanStringLen + 2;
 }
@@ -422,7 +423,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 	// Set the sub-command.
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_SUBCMD] = eNetMgmtSubCmdNetIntfTest;
 	gTXRadioBuffer[txBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM] =
-			gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM];
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_TSTCMD_NUM];
 
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_NETM_TSTCMD_NUM + 1;
 
@@ -889,25 +890,55 @@ void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimesta
 
 #ifdef IS_CODESHELF
 
+extern DisplayStringType gDisplayDataLine1;
+extern DisplayStringLenType gDisplayDataLine1Len;
+extern DisplayStringLenType gDisplayDataLine1Pos;
+
+extern DisplayStringType gDisplayDataLine2;
+extern DisplayStringLenType gDisplayDataLine2Len;
+extern DisplayStringLenType gDisplayDataLine2Pos;
+
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
-	gwUINT8 stringLen;
-	BufferStorageType message1Str[MAX_MESSAGE_STRING_BYTES];
-	BufferStorageType message2Str[MAX_MESSAGE_STRING_BYTES];
 
 	BufferStoragePtrType bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE;
-	stringLen = readAsPString(message1Str, bufferPtr);
+	gDisplayDataLine1Len = readAsPString(gDisplayDataLine1, bufferPtr);
 
-	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + stringLen + 1;
-	stringLen = readAsPString(message2Str, bufferPtr);
+	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + gDisplayDataLine1Len + 1;
+	gDisplayDataLine2Len = readAsPString(gDisplayDataLine2, bufferPtr);
 
-	UartWriteData(UART_2, LINE1_POS1, strlen(LINE1_POS1));
-	UartWriteData(UART_2, message1Str, strlen(message1Str));
+	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+	sendDisplayMessage(gDisplayDataLine1, getMin(16, strlen(gDisplayDataLine1)));
 
-	UartWriteData(UART_2, LINE2_POS1, strlen(LINE2_POS1));
-	UartWriteData(UART_2, message2Str, strlen(message2Str));
+	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+	sendDisplayMessage(gDisplayDataLine2, getMin(16, strlen(gDisplayDataLine2)));
 
+	if ((gDisplayDataLine2Len <= 16) && (gDisplayDataLine2Len <= 16)) {
+		stopScrolling();
+	} else {
+		gDisplayDataLine1Pos = 0;
+		gDisplayDataLine2Pos = 0;
+
+		startScrolling();
+	}
 	return result;
+}
+
+// --------------------------------------------------------------------------
+
+gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen) {
+
+	gwUINT16 charsSent;
+
+	for (charsSent = 0; charsSent < inMsgLen; charsSent++) {
+		while (UART2_REGS_P ->Utxcon < 1) {
+			vTaskDelay(1);
+		}
+		UART2_REGS_P ->Udata = *isDisplayMsgPtr;
+		isDisplayMsgPtr++;
+	}
+
+	return gUartErrNoError_c;
 }
 
 // --------------------------------------------------------------------------
@@ -940,43 +971,45 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 
 		ledData.channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
 		//memcpy(&ledData.position, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 0)]), sizeof(ledData.position));
-		ledData.position = (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 0)] << 8;
-		ledData.position += (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 1)];
+		ledData.position = (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES
+				+ (sampleNum * LED_SAMPLE_BYTES + 0)] << 8;
+		ledData.position += (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES
+				+ (sampleNum * LED_SAMPLE_BYTES + 1)];
 		ledData.red = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 2)];
 		ledData.green = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 3)];
 		ledData.blue = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 4)];
 
 		switch (effect) {
-			case eLedEffectSolid:
-				if (ledData.position == ((gwUINT16) -1)) {
-					gTotalLedSolidDataElements = 0;
-					gCurLedSolidDataElement = 0;
-					gNextSolidLedPosition = 0;
-				} else {
-					gLedSolidData[gTotalLedSolidDataElements] = ledData;
-					gTotalLedSolidDataElements += 1;
-				}
-				break;
+		case eLedEffectSolid:
+			if (ledData.position == ((gwUINT16) -1)) {
+				gTotalLedSolidDataElements = 0;
+				gCurLedSolidDataElement = 0;
+				gNextSolidLedPosition = 0;
+			} else {
+				gLedSolidData[gTotalLedSolidDataElements] = ledData;
+				gTotalLedSolidDataElements += 1;
+			}
+			break;
 
-			case eLedEffectFlash:
-				if (ledData.position == ((gwUINT16) -1)) {
-					gTotalLedFlashDataElements = 0;
-					gCurLedFlashDataElement = 0;
-					gNextFlashLedPosition = 0;
-				} else {
-					gLedFlashData[gTotalLedFlashDataElements] = ledData;
-					gTotalLedFlashDataElements += 1;
-				}
-				break;
+		case eLedEffectFlash:
+			if (ledData.position == ((gwUINT16) -1)) {
+				gTotalLedFlashDataElements = 0;
+				gCurLedFlashDataElement = 0;
+				gNextFlashLedPosition = 0;
+			} else {
+				gLedFlashData[gTotalLedFlashDataElements] = ledData;
+				gTotalLedFlashDataElements += 1;
+			}
+			break;
 
-			case eLedEffectError:
-				break;
+		case eLedEffectError:
+			break;
 
-			case eLedEffectMotel:
-				break;
+		case eLedEffectMotel:
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 	}
 	return result;

@@ -62,8 +62,8 @@ void remoteMgmtTask( void *pvParameters ) {
 			if (transmitPacket(txBufferNum)) {
 			};
 
-			// Wait up to 200ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 200 * portTICK_RATE_MS) == pdPASS) {
+			// Wait up to 1000ms for a response.
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					// Check to see what kind of command we just got.
 					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);

@@ -19,6 +19,9 @@
 // --------------------------------------------------------------------------
 // Definitions.
 
+#define getMax(a,b)    (((a) > (b)) ? (a) : (b))
+#define getMin(a,b)    (((a) < (b)) ? (a) : (b))
+
 #define DEVICE_CONTROLLER			0
 #define DEVICE_GATEWAY				1
 #define DEVICE_REMOTE				2
@@ -27,18 +30,6 @@
 //#define MOTOR2_ENDPOINT			3
 
 #define LED_SAMPLE_BYTES			5
-// Include space for a null terminator.
-#define MAX_MESSAGE_STRING_BYTES	16 + 1
-
-#define LINE1_POS1 					"\x01\xFE\x80"
-#define LINE2_POS1 					"\x01\xFE\xC0"
-#define BACKLIGHT_LOW				"\x7C\x8C"
-#define BACKLIGHT_40PERCENT			"\x7C\x8C"
-#define BACKLIGHT_50PERCENT			"\x7C\x8E"
-#define BACKLIGHT_73PERCENT			"\x7C\x96"
-#define BACKLIGHT_100PERCENT		"\x7C\x9D"
-
-#define BACKLIGHT_PERCENT			BACKLIGHT_100PERCENT
 
 #if defined(GW0009R1)
 	#define LEDRedON	PTBD_PTBD1 = 1;
@@ -146,6 +137,7 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 //EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
 
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
+gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen);
 EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
