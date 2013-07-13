@@ -114,19 +114,19 @@ void setupWatchdog() {
 	copCntl.bit.copEn = TRUE;
 	copCntl.bit.copTimeOut = 20;
 	copCntl.bit.copWP = TRUE;
-#if (GW_DEBUG)
-	copCntl.bit.copOut = 1;		// 1 = CRM interrupt
-#else
-	copCntl.bit.copOut = 0;		// 0 = MCU reset
-#endif
+	#if (GW_DEBUG)
+		copCntl.bit.copOut = 1;		// 1 = CRM interrupt
+	#else
+		copCntl.bit.copOut = 0;		// 0 = MCU reset
+	#endif
 	CRM_CopCntl(copCntl);
 
-#if (GW_DEBUG)
-	IntAssignHandler(gCrmInt_c, (IntHandlerFunc_t) CRM_Isr);
-	ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gCrmInt_c);
-	CRM_RegisterISR(gCrmCOPTimeoutEvent_c, debugCrmCallback);
-#endif
+	#if (GW_DEBUG)
+		IntAssignHandler(gCrmInt_c, (IntHandlerFunc_t) CRM_Isr);
+		ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
+		ITC_EnableInterrupt(gCrmInt_c);
+		CRM_RegisterISR(gCrmCOPTimeoutEvent_c, debugCrmCallback);
+	#endif
 #endif
 }
 
@@ -140,7 +140,6 @@ void debugReset() {
 	__asm ("BGND")
 #endif
 }
-
 
 // --------------------------------------------------------------------------
 

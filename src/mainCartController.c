@@ -1,15 +1,14 @@
 /*
-   FlyWeight
-   © Copyright 2005, 2006 Jeffrey B. Williams
-   All rights reserved
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
 
-   $Id$
-   $Name$
-*/
+ $Id$
+ $Name$
+ */
 
 // --------------------------------------------------------------------------
 // Kernel includes
-
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -26,22 +25,22 @@
 #include "Ssi_Interface.h"
 
 #ifdef MC1322X
-    #include "MacaInterrupt.h"
-    #include "TransceiverConfigMngmnt.h"
-	#include "Leds.h"
-	#include "Delay.h"
-	#include "PortConfig.h"
-	#include "GPIO_Interface.h"
+#include "MacaInterrupt.h"
+#include "TransceiverConfigMngmnt.h"
+#include "Leds.h"
+#include "Delay.h"
+#include "PortConfig.h"
+#include "GPIO_Interface.h"
 #elif
-	#include "CPU.h"
-	#include "keyboardTask.h"
-	#include "keyboard.h"
+#include "CPU.h"
+#include "keyboardTask.h"
+#include "keyboard.h"
 #endif
 
 // --------------------------------------------------------------------------
 // Globals
 
-portTickType	gLastPacketReceivedTick;
+portTickType gLastPacketReceivedTick;
 
 // --------------------------------------------------------------------------
 
@@ -120,8 +119,8 @@ void setupUart(void) {
 			//uartErr = UartGetConfig(UART_1, &uartConfig);
 
 			//set pCallback functions
-			uartCallBack.pfUartWriteCallback = NULL;//UartEventWrite1;
-			uartCallBack.pfUartReadCallback = NULL;//UartEventRead1;
+			uartCallBack.pfUartWriteCallback = NULL;			//UartEventWrite1;
+			uartCallBack.pfUartReadCallback = NULL;			//UartEventRead1;
 			//UartSetCallbackFunctions(UART_1, &uartCallBack);
 
 			UartSetCTSThreshold(UART_1, 24);
@@ -281,13 +280,38 @@ void setupDisplayScroller() {
 //	IntAssignHandler(gTmrInt_c, (IntHandlerFunc_t) TmrIsr);
 //	ITC_SetPriority(gTmrInt_c, gItcNormalPriority_c);
 //	ITC_EnableInterrupt(gTmrInt_c);
-
 //	TmrSetMode(SCROLL_TIMER, gTmrCntRiseEdgPriSrc_c);
 }
 
 // --------------------------------------------------------------------------
 
-void vMain( void ) {
+void kbiInterruptCallback(void) {
+
+	// Clear the KBI int status bits (by writing "1" to them).
+	CRM_STATUS.extWuEvt = 0xf;
+
+}
+
+// --------------------------------------------------------------------------
+
+void setupKbi(void) {
+	// Setup the KBI handler.
+	CRM_RegisterISR(gCrmKB4WuEvent_c, kbiInterruptCallback);
+
+
+	crmWuCtrl_t wakeUpCtrl;
+	wakeUpCtrl.wuSource = gExtWu_c;
+	wakeUpCtrl.ctrl.ext.bit.kbi4IntEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi4WuEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi4WuEvent = 1; // wake on edge
+	wakeUpCtrl.ctrl.ext.bit.kbi4WuPol = 1; // wake on positive edge
+
+	CRM_WuCntl(&wakeUpCtrl);
+}
+
+// --------------------------------------------------------------------------
+
+void vMain(void) {
 
 #if defined(MC1321X) || defined(MC13192EVB)
 	// These got moved into PE pre-init, so that the RTI clock can use the EXTAL.
@@ -299,9 +323,9 @@ void vMain( void ) {
 	// Setup the SMAC glue.
 	initSMACRadioQueueGlue(gRadioReceiveQueue);
 
-	#ifdef XBEE
-		xbeeInit();
-	#endif
+#ifdef XBEE
+	xbeeInit();
+#endif
 #else
 
 	GpioErr_t error;
@@ -309,7 +333,7 @@ void vMain( void ) {
 	// We don't call this, because we don't want to mess with DPF settings at restart.
 	//PlatformPortInit();
 	// Setup the radio GPIOs. (Don't know why SMAC doesn't do this.)
-	GPIO_REGS_P->FuncSel2 = gFuncSel2Value_c;
+	GPIO_REGS_P ->FuncSel2 = gFuncSel2Value_c;
 
 	ITC_Init();
 	IntAssignHandler(gMacaInt_c, (IntHandlerFunc_t) MACA_Interrupt);
@@ -318,7 +342,7 @@ void vMain( void ) {
 	IntDisableAll();
 	ResetMaca();
 	MLMERadioInit();
-	
+
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
 	SetDemulatorMode(NCD);
 
@@ -334,6 +358,7 @@ void vMain( void ) {
 	LED_Init();
 
 	setupWatchdog();
+	setupKbi();
 
 #endif
 
@@ -355,16 +380,21 @@ void vMain( void ) {
 
 	gLocalDeviceState = eLocalStateStarted;
 	GW_RADIO_GAIN_ADJUST(15);
-	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS)
-		{}
+	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS) {
+	}
 
 	/* Start the task that will handle the radio */
-	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
-	xTaskCreate(radioReceiveTask, (const signed portCHAR * const) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask );
+	xTaskCreate(radioTransmitTask, (const signed portCHAR * const ) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY,
+			&gRadioTransmitTask);
+	xTaskCreate(radioReceiveTask, (const signed portCHAR * const ) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY,
+			&gRadioReceiveTask);
 	//xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
-	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask );
-	xTaskCreate(cartControllerTask, (const signed portCHAR * const) "LED", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gCartControllerTask );
-	xTaskCreate(scannerReadTask, (const signed portCHAR * const) "Scan", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gScannerReadTask );
+	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const ) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
+			&gRemoteManagementTask);
+	xTaskCreate(cartControllerTask, (const signed portCHAR * const ) "LED", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
+			&gCartControllerTask);
+	xTaskCreate(scannerReadTask, (const signed portCHAR * const ) "Scan", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
+			&gScannerReadTask);
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
@@ -382,18 +412,20 @@ void vMain( void ) {
 	vTaskStartScheduler();
 
 	/* Should not reach here! */
-	for ( ;; );
+	for (;;)
+		;
 }
 
 // --------------------------------------------------------------------------
 
-void vApplicationIdleHook( void ) {
+void vApplicationIdleHook(void) {
 
 	GW_WATCHDOG_RESET;
 
 	// If we haven't received a packet in by timeout seconds then reset.
 	portTickType ticks = xTaskGetTickCount();
 	if (ticks > (gLastPacketReceivedTick + kNetCheckTickCount)) {
-		GW_RESET_MCU();
+		GW_RESET_MCU()
+		;
 	}
 }
