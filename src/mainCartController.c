@@ -47,6 +47,7 @@ portTickType gLastPacketReceivedTick;
 void setutpGpio(void) {
 
 	register uint32_t tmpReg;
+	GpioErr_t gpioError;
 
 	// SSI
 	// Pull-up select: UP type
@@ -90,6 +91,34 @@ void setutpGpio(void) {
 	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
 	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
 
+	// KBI
+	gpioError = Gpio_SetPinDir(gGpioPin22_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin23_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin24_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin25_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin26_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin27_c, gGpioDirIn_c);
+
+	gpioError = Gpio_EnPinPullup(gGpioPin22_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin23_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin24_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin25_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin26_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin27_c, TRUE);
+
+	gpioError = Gpio_SelectPinPullup(gGpioPin22_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin23_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin24_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin25_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin26_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin27_c, gGpioPinPulldown_c);
+
+	gpioError = Gpio_SetPinReadSource(gGpioPin22_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin23_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin24_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin25_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin26_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin27_c, gGpioPinReadPad_c);
 }
 
 // --------------------------------------------------------------------------
@@ -286,6 +315,33 @@ void setupDisplayScroller() {
 // --------------------------------------------------------------------------
 
 void kbiInterruptCallback(void) {
+	char message[20];
+
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
+	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+	sendDisplayMessage("INTERRUPT", 9);
+
+	gwUINT8 buttonNum = 0;
+	while (buttonNum == 0) {
+		if (GPIO.DataLo & BIT22) {
+			buttonNum = 1;
+		} else if (GPIO.DataLo & BIT23) {
+			buttonNum = 2;
+		} else if (GPIO.DataLo & BIT24) {
+			buttonNum = 3;
+		} else if (GPIO.DataLo & BIT25) {
+			buttonNum = 4;
+		} else if (GPIO.DataLo & BIT26) {
+			buttonNum = 5;
+		}
+	}
+
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
+	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+	sendDisplayMessage("DISCONNECTED", 12);
+	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+	sprintf(message, "BUTTON %d", buttonNum);
+	sendDisplayMessage(message, strlen(message));
 
 	// Clear the KBI int status bits (by writing "1" to them).
 	CRM_STATUS.extWuEvt = 0xf;
@@ -296,15 +352,16 @@ void kbiInterruptCallback(void) {
 
 void setupKbi(void) {
 	// Setup the KBI handler.
-	CRM_RegisterISR(gCrmKB4WuEvent_c, kbiInterruptCallback);
+	CRM_RegisterISR(gCrmKB5WuEvent_c, kbiInterruptCallback);
 
 
 	crmWuCtrl_t wakeUpCtrl;
 	wakeUpCtrl.wuSource = gExtWu_c;
-	wakeUpCtrl.ctrl.ext.bit.kbi4IntEn = TRUE;
-	wakeUpCtrl.ctrl.ext.bit.kbi4WuEn = TRUE;
-	wakeUpCtrl.ctrl.ext.bit.kbi4WuEvent = 1; // wake on edge
-	wakeUpCtrl.ctrl.ext.bit.kbi4WuPol = 1; // wake on positive edge
+	wakeUpCtrl.ctrl.ext.word = 0;
+	wakeUpCtrl.ctrl.ext.bit.kbi5IntEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi5WuEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi5WuEvent = 1; // wake on edge
+	wakeUpCtrl.ctrl.ext.bit.kbi5WuPol = 1; // wake on positive edge
 
 	CRM_WuCntl(&wakeUpCtrl);
 }
