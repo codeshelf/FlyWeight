@@ -928,7 +928,8 @@ gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen) {
 
 	for (charsSent = 0; charsSent < inMsgLen; charsSent++) {
 		while (UART2_REGS_P ->Utxcon < 1) {
-			vTaskDelay(1);
+			// Temporarily (while we're calling this from the KBI ISR) we can't use vTaskDelay since it will reset the ISR.
+			DelayMs(1);
 		}
 		UART2_REGS_P ->Udata = *isDisplayMsgPtr;
 		isDisplayMsgPtr++;

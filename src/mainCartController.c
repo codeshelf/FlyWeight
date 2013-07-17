@@ -314,37 +314,54 @@ void setupDisplayScroller() {
 
 // --------------------------------------------------------------------------
 
+portTickType gLastButtonPressTick;
+
 void kbiInterruptCallback(void) {
 	char message[20];
 
-	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-	sendDisplayMessage("INTERRUPT", 9);
-
-	gwUINT8 buttonNum = 0;
-	while (buttonNum == 0) {
-		if (GPIO.DataLo & BIT22) {
-			buttonNum = 1;
-		} else if (GPIO.DataLo & BIT23) {
-			buttonNum = 2;
-		} else if (GPIO.DataLo & BIT24) {
-			buttonNum = 3;
-		} else if (GPIO.DataLo & BIT25) {
-			buttonNum = 4;
-		} else if (GPIO.DataLo & BIT26) {
-			buttonNum = 5;
-		}
-	}
-
-	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-	sendDisplayMessage("DISCONNECTED", 12);
-	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-	sprintf(message, "BUTTON %d", buttonNum);
-	sendDisplayMessage(message, strlen(message));
+	CRM_WuTimerInterruptDisable();
 
 	// Clear the KBI int status bits (by writing "1" to them).
-	CRM_STATUS.extWuEvt = 0xf;
+	CRM_STATUS .extWuEvt = 0x2;
+
+	// Don't allow any double-presses or switch bouncing for up to 1 sec after we register a good button.
+	if (xTaskGetTickCountNoCritical() > gLastButtonPressTick + 1000) {
+
+		gwUINT32 loops = 0;
+
+		gwUINT8 buttonNum = 0;
+		while ((buttonNum == 0) && (loops++ < 50000)) {
+			if (GPIO .DataLo & BIT22) {
+				buttonNum = 1;
+			} else if (GPIO .DataLo & BIT23) {
+				buttonNum = 2;
+			} else if (GPIO .DataLo & BIT24) {
+				buttonNum = 3;
+			} else if (GPIO .DataLo & BIT25) {
+				buttonNum = 4;
+			} else if (GPIO .DataLo & BIT26) {
+				buttonNum = 5;
+			}
+		}
+
+		if (buttonNum != 0) {
+			sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+			sprintf(message, "BUTTON %d", buttonNum);
+			sendDisplayMessage(message, strlen(message));
+
+			gLastButtonPressTick = xTaskGetTickCountNoCritical();
+
+		} else {
+			sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+			sendDisplayMessage("MISSED", strlen("MISSED"));
+		}
+
+		DelayMs(500);
+		sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
+		sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+		sendDisplayMessage("DISCONNECTED", 12);
+	}
+	CRM_WuTimerInterruptEnable();
 
 }
 
@@ -353,7 +370,6 @@ void kbiInterruptCallback(void) {
 void setupKbi(void) {
 	// Setup the KBI handler.
 	CRM_RegisterISR(gCrmKB5WuEvent_c, kbiInterruptCallback);
-
 
 	crmWuCtrl_t wakeUpCtrl;
 	wakeUpCtrl.wuSource = gExtWu_c;
