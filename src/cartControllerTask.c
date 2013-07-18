@@ -177,22 +177,18 @@ void cartControllerTask(void *pvParameters) {
 	// Create some fake test data.
 	LedDataStruct ledData;
 	ledData.channel = 1;
-	ledData.red = 0x2f;
+	ledData.red = 0xfe;
 	ledData.green = 0x0;
 	ledData.blue = 0x0;
 
-	int index = 0;
-	for (int tube = 0; tube < 20; ++tube) {
-		ledData.position = tube * 48;
-		gLedFlashData[index++] = ledData;
-
-		ledData.position = tube * 48 + 47;
-		gLedFlashData[index++] = ledData;
+	for (int cartPos = 0; cartPos < 5; ++cartPos) {
+		ledData.position = cartPos;
+		gLedFlashData[cartPos] = ledData;
 	}
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 20 * 48;
-	gTotalLedFlashDataElements = index;
+	gTotalLedPositions = 5;
+	gTotalLedFlashDataElements = 5;
 	gTotalLedSolidDataElements = 0;
 
 	for (;;) {

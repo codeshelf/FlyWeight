@@ -191,10 +191,10 @@ static void setupSsi() {
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 2000000);
-//	ssiClockConfig.bit.ssiDIV2 = 0x1;
-//	ssiClockConfig.bit.ssiPSR = 0x01;
-//	ssiClockConfig.bit.ssiPM = 0x0a;
+	//ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 3400000);
+	ssiClockConfig.bit.ssiDIV2 = 0x0; // 24M / 1
+	ssiClockConfig.bit.ssiPSR = 0x0; // 24M / 1
+	ssiClockConfig.bit.ssiPM = 24; // 24M / 24 ( /2) = 500K
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
@@ -317,7 +317,7 @@ void setupDisplayScroller() {
 portTickType gLastButtonPressTick;
 
 void kbiInterruptCallback(void) {
-	char message[20];
+	ScanStringType message;
 
 	CRM_WuTimerInterruptDisable();
 
@@ -331,35 +331,28 @@ void kbiInterruptCallback(void) {
 
 		gwUINT8 buttonNum = 0;
 		while ((buttonNum == 0) && (loops++ < 50000)) {
-			if (GPIO .DataLo & BIT22) {
+			if (GPIO .DataLo & BIT26) {
 				buttonNum = 1;
-			} else if (GPIO .DataLo & BIT23) {
+			} else if (GPIO .DataLo & BIT25) {
 				buttonNum = 2;
 			} else if (GPIO .DataLo & BIT24) {
 				buttonNum = 3;
-			} else if (GPIO .DataLo & BIT25) {
+			} else if (GPIO .DataLo & BIT23) {
 				buttonNum = 4;
-			} else if (GPIO .DataLo & BIT26) {
+			} else if (GPIO .DataLo & BIT22) {
 				buttonNum = 5;
 			}
 		}
 
 		if (buttonNum != 0) {
-			sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-			sprintf(message, "BUTTON %d", buttonNum);
-			sendDisplayMessage(message, strlen(message));
+			// Now send the scan string.
+			BufferCntType txBufferNum = lockTXBuffer();
+			sprintf(message, "B%%%d", buttonNum);
+			createScanCommand(txBufferNum, &message, strlen(message));
+			transmitPacketFromISR(txBufferNum);
 
 			gLastButtonPressTick = xTaskGetTickCountNoCritical();
-
-		} else {
-			sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-			sendDisplayMessage("MISSED", strlen("MISSED"));
 		}
-
-		DelayMs(500);
-		sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-		sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-		sendDisplayMessage("DISCONNECTED", 12);
 	}
 	CRM_WuTimerInterruptEnable();
 
