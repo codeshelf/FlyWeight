@@ -19,6 +19,8 @@ xTaskHandle gScannerReadTask = NULL;
 
 ScanStringType gScanString;
 ScanStringLenType gScanStringPos;
+extern LedPositionType gTotalLedSolidDataElements;
+extern LedPositionType gTotalLedFlashDataElements;
 
 // --------------------------------------------------------------------------
 
@@ -50,6 +52,10 @@ void scannerReadTask(void *pvParameters) {
 			}
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
+
+		// Disable all of the LEDs on the cart.
+		gTotalLedSolidDataElements = 0;
+		gTotalLedFlashDataElements = 0;
 
 		// Now send the scan string.
 		BufferCntType txBufferNum = lockTXBuffer();

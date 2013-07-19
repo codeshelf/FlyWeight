@@ -19,8 +19,8 @@
 // --------------------------------------------------------------------------
 // Defines
 
-#define		kAssocCheckTickCount	3000 // 3 seconds
-#define		kNetCheckTickCount		4 * kAssocCheckTickCount  // four ACK packets missed then reset.
+#define		kAssocCheckTickCount	6000 // 6 seconds
+#define		kNetCheckTickCount		5 * kAssocCheckTickCount  // five ACK packets missed then reset - 30sec.
 
 // --------------------------------------------------------------------------
 // Functions prototypes.
