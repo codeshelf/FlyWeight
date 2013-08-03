@@ -70,14 +70,17 @@ void setutpGpio(void) {
 			<< GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
 			<< GPIO_SSI_CLK_fnpos));
 
-	// SPI bus GPIOs
-//	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
+	// UART1
+	GPIO.PuSelLo |= (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit);  // Pull-up select: UP type
+	GPIO.PuEnLo  |= (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit);  // Pull-up enable
+	GPIO.InputDataSelLo &= ~(GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit); // read from pads
+	GPIO.DirResetLo = (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit); // inputs
+	GPIO.DirSetLo = (GPIO_UART1_CTS_bit | GPIO_UART1_TX_bit);  // outputs
 
-	// I2C
-//	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_UART1_RX_fnpos) | (FN_MASK << GPIO_UART1_TX_fnpos));
+	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_UART1_RX_fnpos) | (FN_ALT << GPIO_UART1_TX_fnpos));
+	tmpReg = GPIO.FuncSel1 & ~((FN_MASK << GPIO_UART1_CTS_fnpos) | (FN_MASK << GPIO_UART1_RTS_fnpos));
+	GPIO.FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART1_CTS_fnpos) | (FN_ALT << GPIO_UART1_RTS_fnpos));
 
 	// UART2
 	GPIO .PuSelLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up select: UP type
@@ -86,7 +89,7 @@ void setutpGpio(void) {
 	GPIO .DirResetLo = (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // inputs
 	GPIO .DirSetLo = (GPIO_UART2_CTS_bit | GPIO_UART2_TX_bit);  // outputs
 
-	tmpReg = GPIO .FuncSel1 & ~((FN_MASK << GPIO_UART2_CTS_fnpos)| (FN_MASK << GPIO_UART2_RTS_fnpos)
+	tmpReg = GPIO .FuncSel1 & ~((FN_MASK << GPIO_UART2_CTS_fnpos) | (FN_MASK << GPIO_UART2_RTS_fnpos)
 	| (FN_MASK << GPIO_UART2_RX_fnpos) | (FN_MASK << GPIO_UART2_TX_fnpos));
 	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
 	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
@@ -123,7 +126,50 @@ void setutpGpio(void) {
 
 // --------------------------------------------------------------------------
 
-void setupUart(void) {
+void setupUart1(void) {
+	UartConfig_t uartConfig;
+	UartCallbackFunctions_t uartCallBack;
+	UartErr_t uartErr;
+
+	//Uart_Init();
+	// GpioUart2Init();
+
+	uartConfig.UartBaudrate = 19200;
+	uartConfig.UartFlowControlEnabled = FALSE;
+	uartConfig.UartParity = gUartParityNone_c;
+	uartConfig.UartStopBits = gUartStopBits1_c;
+	uartConfig.UartRTSActiveHigh = FALSE;
+
+	uartErr = UartOpen(UART_1, 24000);
+	if (uartErr == gUartErrNoError_c) {
+		uartErr = UartSetConfig(UART_1, &uartConfig);
+		if (uartErr == gUartErrNoError_c) {
+
+			// Set the BAUD rate to precisely 1,250,000.
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+			//UART2_REGS_P->Ubr = 0xc34fea60;
+			//uartErr = UartGetConfig(UART_1, &uartConfig);
+
+			//set pCallback functions
+			uartCallBack.pfUartWriteCallback = NULL;			//UartEventWrite1;
+			uartCallBack.pfUartReadCallback = NULL;			//UartEventRead1;
+			//UartSetCallbackFunctions(UART_1, &uartCallBack);
+
+			UartSetCTSThreshold(UART_1, 24);
+			UartSetTransmitterThreshold(UART_1, 8);
+			UartSetReceiverThreshold(UART_1, 24);
+		}
+	}
+
+	// Setup the interrupts corresponding to UART driver.
+//	IntAssignHandler(gUart1Int_c, (IntHandlerFunc_t)UartIsr1);
+//	ITC_SetPriority(gUart1Int_c, gItcNormalPriority_c);
+	// Enable the interrupts corresponding to UART driver.
+//	ITC_EnableInterrupt(gUart1Int_c);
+}
+// --------------------------------------------------------------------------
+
+void setupUart2(void) {
 	UartConfig_t uartConfig;
 	UartCallbackFunctions_t uartCallBack;
 	UartErr_t uartErr;
@@ -152,9 +198,9 @@ void setupUart(void) {
 			uartCallBack.pfUartReadCallback = NULL;			//UartEventRead1;
 			//UartSetCallbackFunctions(UART_1, &uartCallBack);
 
-			UartSetCTSThreshold(UART_1, 24);
-			UartSetTransmitterThreshold(UART_1, 8);
-			UartSetReceiverThreshold(UART_1, 24);
+			UartSetCTSThreshold(UART_2, 24);
+			UartSetTransmitterThreshold(UART_2, 8);
+			UartSetReceiverThreshold(UART_2, 24);
 		}
 	}
 
@@ -410,15 +456,15 @@ void vMain(void) {
 	MLMERadioInit();
 
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
-	SetDemulatorMode(NCD);
+//	SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
-	SetPowerLevelLockMode(TRUE);
+//	SetPowerLevelLockMode(TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction1_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction1_c, TRUE, TRUE);
-	SetComplementaryPAState(TRUE);
+//	SetComplementaryPAState(TRUE);
 
 	IntEnableAll();
 	LED_Init();
@@ -429,8 +475,9 @@ void vMain(void) {
 #endif
 
 	setutpGpio();
-	setupSsi();
-	setupUart();
+	//setupSsi();
+	setupUart1();
+	setupUart2();
 	setupDisplayScroller();
 
 	// The the display boot complete.

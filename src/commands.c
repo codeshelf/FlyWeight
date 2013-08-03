@@ -940,6 +940,24 @@ gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen) {
 
 // --------------------------------------------------------------------------
 
+gwUINT8 sendRs485Message(char* isMsgPtr, gwUINT8 inMsgLen) {
+
+	gwUINT16 charsSent;
+
+	for (charsSent = 0; charsSent < inMsgLen; charsSent++) {
+		while (UART1_REGS_P ->Utxcon < 1) {
+			// Temporarily (while we're calling this from the KBI ISR) we can't use vTaskDelay since it will reset the ISR.
+			DelayMs(1);
+		}
+		UART1_REGS_P ->Udata = *isMsgPtr;
+		isMsgPtr++;
+	}
+
+	return gUartErrNoError_c;
+}
+
+// --------------------------------------------------------------------------
+
 extern LedPositionType gTotalLedPositions;
 
 extern LedDataStruct gLedFlashData[];

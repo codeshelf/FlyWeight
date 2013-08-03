@@ -174,10 +174,17 @@ void cartControllerTask(void *pvParameters) {
 
 	gwUINT8 ccrHolder;
 
+	gwUINT8 message[] = {0x00, 0x00};
+	serialTransmitFrame(message, 2);
+
+	vTaskDelay(100);
+	gwUINT8 message2[] = {0x02, 0x01, 0x02, 0x02, 0x02};
+	serialTransmitFrame(message2, 5);
+
 	// Create some fake test data.
 	LedDataStruct ledData;
 	ledData.channel = 1;
-	ledData.red = 0xfe;
+	ledData.red = 0x5e;
 	ledData.green = 0x0;
 	ledData.blue = 0x0;
 

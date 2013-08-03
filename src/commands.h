@@ -138,6 +138,7 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
 gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen);
+gwUINT8 sendRs485Message(char* isMsgPtr, gwUINT8 inMsgLen);
 EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);

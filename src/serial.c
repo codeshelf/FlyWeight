@@ -12,7 +12,7 @@
 #include "gwTypes.h"
 #include "gwSystemMacros.h"
 
-ELocalStatusType		gLocalDeviceState;
+//ELocalStatusType		gLocalDeviceState;
 
 // --------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 //	gwUINT8	status;
  	gwUINT16 	charsSent;
 
-	// Send the packet contents to the controller via the serial port.
+	// Send the frame contents to the controller via the serial port.
 	// First send the framing character.
 #pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
@@ -91,22 +91,22 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 
 // --------------------------------------------------------------------------
 
-BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxPacketSize) {
+BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
 
-	// Loop reading bytes until we put together a whole packet.
-	// Make sure not to copy them into the packet if we run out of room.
+	// Loop reading bytes until we put together a whole frame.
+	// Make sure not to copy them into the frame if we run out of room.
 
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
-	while (bytesReceived < inMaxPacketSize) {
+	while (bytesReceived < inMaxFrameSize) {
 
 		readOneChar(&nextByte);
 
 		{
 			switch (nextByte) {
 
-				// If it's an END character then we're done with the packet.
+				// If it's an END character then we're done with the frame.
 				case END:
 					if (bytesReceived)
 						return bytesReceived;
@@ -114,13 +114,13 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 						break;
 
 				/* If it's the same code as an ESC character, wait and get another character and then figure out
-				 * what to store in the packet based on that.
+				 * what to store in the frame based on that.
 				 */
 				case ESC:
 					readOneChar(&nextByte);
 
 					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
-					 * seems to be to leave the byte alone and just stuff it into the packet
+					 * seems to be to leave the byte alone and just stuff it into the frame
 					 */
 					switch (nextByte) {
 						case ESC_END:
@@ -134,7 +134,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 
 				// Here we fall into the default handler and let it store the character for us.
 				default:
-					if (bytesReceived < inMaxPacketSize)
+					if (bytesReceived < inMaxFrameSize)
 						inFramePtr[bytesReceived++] = nextByte;
 			}
 		}
