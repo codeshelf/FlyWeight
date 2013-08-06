@@ -71,16 +71,14 @@ void setutpGpio(void) {
 			<< GPIO_SSI_CLK_fnpos));
 
 	// UART1
-	GPIO.PuSelLo |= (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit);  // Pull-up select: UP type
-	GPIO.PuEnLo  |= (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit);  // Pull-up enable
-	GPIO.InputDataSelLo &= ~(GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit); // read from pads
-	GPIO.DirResetLo = (GPIO_UART1_RTS_bit | GPIO_UART1_RX_bit); // inputs
-	GPIO.DirSetLo = (GPIO_UART1_CTS_bit | GPIO_UART1_TX_bit);  // outputs
+	GPIO.PuSelLo |= (GPIO_UART1_RX_bit);  // Pull-up select: UP type
+	GPIO.PuEnLo  |= (GPIO_UART1_RX_bit);  // Pull-up enable
+	GPIO.InputDataSelLo &= ~(GPIO_UART1_RX_bit); // read from pads
+	GPIO.DirResetLo = (GPIO_UART1_RX_bit); // inputs
+	GPIO.DirSetLo = (GPIO_UART1_TX_bit);  // outputs
 
 	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_UART1_RX_fnpos) | (FN_MASK << GPIO_UART1_TX_fnpos));
 	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_UART1_RX_fnpos) | (FN_ALT << GPIO_UART1_TX_fnpos));
-	tmpReg = GPIO.FuncSel1 & ~((FN_MASK << GPIO_UART1_CTS_fnpos) | (FN_MASK << GPIO_UART1_RTS_fnpos));
-	GPIO.FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART1_CTS_fnpos) | (FN_ALT << GPIO_UART1_RTS_fnpos));
 
 	// UART2
 	GPIO .PuSelLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up select: UP type
@@ -93,6 +91,11 @@ void setutpGpio(void) {
 	| (FN_MASK << GPIO_UART2_RX_fnpos) | (FN_MASK << GPIO_UART2_TX_fnpos));
 	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
 	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
+
+	// RS485 Driver controller
+	gpioError = Gpio_SetPinFunction(gGpioPin17_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin17_c, gGpioDirOut_c);
+	gpioError = Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
 
 	// KBI
 	gpioError = Gpio_SetPinDir(gGpioPin22_c, gGpioDirIn_c);

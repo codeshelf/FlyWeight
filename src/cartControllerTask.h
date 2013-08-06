@@ -23,6 +23,9 @@
 #define LED_OFF_TIME					500
 #define LED_ON_TIME						250
 
+#define RS485_ON						Gpio_SetPinData(gGpioPin17_c, gGpioPinStateHigh_c);
+#define RS485_OFF						Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
+
 #define	MAX_DRIFT						500
 
 #define	SCROLL_TIMER					gTmr1_c
