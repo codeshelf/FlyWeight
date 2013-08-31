@@ -621,7 +621,7 @@ extern GpioErr_t Gpio_GetPinPullupSel(GpioPin_t gpioPin, GpioPinPullupSel_t* gpi
 
 @param  GpioPin_t gpioPin                   - input parameter: pin which will be affected by the function.
 
-@param  bool_t gpioEnPinPuKeep              - input parameter: pin pull-up keeper enable (TRUE for enabling 
+@param  bool_t gpioEnPinPuKeep              - input parameter: pin pull-up keeper enable (TRUE for enabling
                                               pull-up keeper, FALSE for disabling pull-up keeper).
 
 @return parameter of type GpioErr_t with following possible values:

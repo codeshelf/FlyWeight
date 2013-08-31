@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>5.30.1.51309</state>
+          <state>5.30.0.51236</state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -270,7 +270,7 @@
         <debug>1</debug>
         <option>
           <name>JLinkSpeed</name>
-          <state>2000</state>
+          <state>1000</state>
         </option>
         <option>
           <name>CCJLinkDoLogfile</name>
@@ -318,7 +318,7 @@
         </option>
         <option>
           <name>CCJLinkSpeedRadioV2</name>
-          <state>2</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCUSBDevice</name>

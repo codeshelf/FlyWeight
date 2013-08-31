@@ -14,7 +14,7 @@
 #include "queue.h"
 #include "gwTypes.h"
 #include "gwSystemMacros.h"
-#include "USB.h"
+#include "UART.h"
 #include "commands.h"
 
 // --------------------------------------------------------------------------
@@ -99,7 +99,7 @@ void radioReceiveTask(void *pvParameters) {
 //				}
 
 				// Send the packet to the controller.
-				serialTransmitFrame((gwUINT8*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
+				serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[rxBufferNum].bufferStorage), gRXRadioBuffer[rxBufferNum].bufferSize);
 				RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
 
 				// Blink LED2 to let us know we succeeded in receiving a packet buffer.

@@ -13,7 +13,7 @@
 #include "queue.h"
 #include "commands.h"
 #include "gatewayMgmtTask.h"
-#include "USB.h"
+#include "UART.h"
 
 // --------------------------------------------------------------------------
 // Global variables.
@@ -91,7 +91,7 @@ void radioReceiveTask(void *pvParameters) {
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
 						// Send the packet to the serial link.
 						gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferSize = gMsgHolder[gCurMsg].msg.u8BufSize;
-						serialTransmitFrame((gwUINT8*) (&gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferStorage),
+						serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferStorage),
 						        gMsgHolder[gCurMsg].msg.u8BufSize);
 						RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
 					} else {

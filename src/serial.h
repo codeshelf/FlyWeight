@@ -12,7 +12,7 @@
 
 #include "FreeRTOS.h"
 #include "queue.h"
-#include "usb.h"
+#include "UART.h"
 #include "radioCommon.h"
 
 // --------------------------------------------------------------------------
@@ -28,10 +28,10 @@
 // --------------------------------------------------------------------------
 // Functions prototypes.
 
-void sendOneChar(USB_TComData inDataPtr);
-void readOneChar(USB_TComData *outDataPtr);
-void serialReceiveTask(void *pvParameters);
-void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize);
-BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize);
+void sendOneChar(gwUINT8 portNum, UART_TComData inDataPtr);
+void readOneChar(gwUINT8 portNum, UART_TComData *outDataPtr);
+void serialReceiveTask(gwUINT8 portNum, void *pvParameters);
+void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inSize);
+BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize);
 
 #endif // SERIAL_H

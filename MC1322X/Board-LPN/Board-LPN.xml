@@ -529,7 +529,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>Board-AC.srec</state>
+          <state>Board-LPN.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -638,7 +638,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>Board-AC.out</state>
+          <state>Board-LPN.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1321,7 +1321,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>Board-AC.srec</state>
+          <state>Board-LPN.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1418,7 +1418,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>Board-AC.out</state>
+          <state>Board-LPN.out</state>
         </option>
         <option>
           <name>IlinkLibIOConfig</name>
@@ -1606,7 +1606,7 @@
     <group>
       <name>FlyWeight</name>
       <file>
-        <name>$PROJ_DIR$\..\..\src\aisleControllerTask.c</name>
+        <name>$PROJ_DIR$\..\..\src\cartControllerTask.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\commands.c</name>
@@ -1618,7 +1618,7 @@
         <name>$PROJ_DIR$\..\..\src\deviceQuery.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\src\mainAisleController.c</name>
+        <name>$PROJ_DIR$\..\..\src\mainCartController.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\src\radioCommon.c</name>
@@ -1636,7 +1636,13 @@
         <name>$PROJ_DIR$\..\..\src\scannerReadTask.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\src\serial.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\src\smacPort.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\src\USB-ARM7.c</name>
       </file>
     </group>
     <group>

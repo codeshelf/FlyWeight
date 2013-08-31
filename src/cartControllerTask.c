@@ -176,11 +176,11 @@ void cartControllerTask(void *pvParameters) {
 
 	RS485_ON;
 	gwUINT8 message[] = {0x00, 0x00};
-	serialTransmitFrame(message, 2);
+	serialTransmitFrame(UART_2, message, 2);
 
 	vTaskDelay(10);
 	gwUINT8 message2[] = {0x02, 0x01, 0x02, 0x00, 0x20};
-	serialTransmitFrame(message2, 5);
+	serialTransmitFrame(UART_2, message2, 5);
 
 	// Wait until all of the TX bytes have been sent.
 	while (UART1_REGS_P->Utxcon < 32) {

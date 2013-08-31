@@ -14,7 +14,7 @@
 		<path>$WS_DIR$\Board-NCB\Board-NCB.xml</path>
 	</project>
 	<project>
-		<path>$WS_DIR$\Board-AC\Board-AC.xml</path>
+		<path>$WS_DIR$\Board-LPN\Board-LPN.xml</path>
 	</project>
 <batchBuild/>
 </workspace>

@@ -16,9 +16,10 @@ $Name$
 #include "gwSystemMacros.h"
 #include "gwTypes.h"
 #include "commands.h"
-#include "USB.h"
+#include "UART.h"
 #include "serial.h"
 #include "string.h"
+#include "UartLowLevel.h"
 //#include "Delay.h"
 //#include "Leds.h"
 
@@ -36,7 +37,7 @@ void serialReceiveTask( void *pvParameters ) {
 	
 	// Setup the USB interface.
 	//DelayMs(100);
-	USB_Init();
+	UART_Init(UART_1, 1250000, TRUE);
 
 	// Send a net-setup command to the controller.
 	// It will respond with the channel that we should be using.

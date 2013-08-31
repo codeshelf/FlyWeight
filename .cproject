@@ -59,6 +59,7 @@
 		<pathentry base-path="FreeRTOS" include="Source/portable/CodeWarrior/HCS08" kind="inc" path="" system="true"/>
 		<pathentry kind="mac" name="IS_CODESHELF" path="" value="1"/>
 		<pathentry kind="mac" name="GUID" path="" value="0x00000000"/>
+		<pathentry kind="mac" name="MC1322X" path="" value="1"/>
 		<pathentry kind="src" path="project"/>
 		<pathentry kind="src" path="src"/>
 		<pathentry kind="out" path=""/>

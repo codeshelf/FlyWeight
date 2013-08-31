@@ -148,7 +148,7 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-AC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/Application/FlyWeight</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/SMAC</ExpandedNode><ExpandedNode>&lt;ws>/Board-AC/SMAC/Source</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/Board-LPN</ExpandedNode><ExpandedNode>&lt;ws>/Board-LPN/Application</ExpandedNode><ExpandedNode>&lt;ws>/Board-LPN/Application/FlyWeight</ExpandedNode><ExpandedNode>&lt;ws>/Board-LPN/SMAC</ExpandedNode><ExpandedNode>&lt;ws>/Board-LPN/SMAC/Source</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         

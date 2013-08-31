@@ -16,11 +16,11 @@
 
 // --------------------------------------------------------------------------
 
-void sendOneChar(USB_TComData inDataPtr) {
+void sendOneChar(gwUINT8 portNum, UART_TComData inDataPtr) {
 
 	// Send a character.
 	// (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	while (USB_SendChar(inDataPtr) != GW_USB_OK) {
+	while (UART_SendChar(portNum, inDataPtr) != GW_USB_OK) {
 		// Consider a timeout where we just reset the MCU.
 	};
 
@@ -28,13 +28,13 @@ void sendOneChar(USB_TComData inDataPtr) {
 
 // --------------------------------------------------------------------------
 
-void readOneChar(USB_TComData *outDataPtr) {
-	USB_ReadOneChar(outDataPtr);
+void readOneChar(gwUINT8 portNum, UART_TComData *outDataPtr) {
+	UART_ReadOneChar(portNum, outDataPtr);
 }
 
 // --------------------------------------------------------------------------
 
-void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
+void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inSize) {
 
 //	UINT16	bytesSent;
 	gwUINT16	totalBytesSent;
@@ -45,7 +45,7 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 	// First send the framing character.
 #pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
- 	sendOneChar(END);
+ 	sendOneChar(portNum, END);
 
 	totalBytesSent = 0;
 
@@ -62,8 +62,8 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 			 * receiver think we sent an END
 			 */
 			case END:
-				sendOneChar(ESC);
-				sendOneChar(ESC_END);
+				sendOneChar(portNum, ESC);
+				sendOneChar(portNum, ESC_END);
 				break;
 
 			/* if it's the same code as an ESC character,
@@ -71,27 +71,27 @@ void serialTransmitFrame(USB_TComData *inDataPtr, gwUINT16 inSize) {
 			 * to make the receiver think we sent an ESC
 			 */
 			case ESC:
-				sendOneChar(ESC);
-				sendOneChar(ESC_ESC);
+				sendOneChar(portNum, ESC);
+				sendOneChar(portNum, ESC_ESC);
 				break;
 
 			/* otherwise, we just send the character
 			 */
 			default:
-				sendOneChar(*inDataPtr);
+				sendOneChar(portNum, *inDataPtr);
 		}
 
 		inDataPtr++;
 	}
 
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
-	sendOneChar(END);
-	sendOneChar(END);
+	sendOneChar(portNum, END);
+	sendOneChar(portNum, END);
 }
 
 // --------------------------------------------------------------------------
 
-BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize) {
+BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize) {
 	BufferStorageType nextByte;
 	BufferCntType bytesReceived = 0;
 
@@ -101,7 +101,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 #pragma MESSAGE DISABLE C4000 /* WARNING C4000: condition always true. */
 	while (bytesReceived < inMaxFrameSize) {
 
-		readOneChar(&nextByte);
+		readOneChar(portNum, &nextByte);
 
 		{
 			switch (nextByte) {
@@ -117,7 +117,7 @@ BufferCntType serialReceiveFrame(BufferStoragePtrType inFramePtr, BufferCntType 
 				 * what to store in the frame based on that.
 				 */
 				case ESC:
-					readOneChar(&nextByte);
+					readOneChar(portNum, &nextByte);
 
 					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
 					 * seems to be to leave the byte alone and just stuff it into the frame

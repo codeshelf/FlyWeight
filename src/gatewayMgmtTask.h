@@ -13,7 +13,7 @@
 #include "gwTypes.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-#include "usb.h"
+#include "UART.h"
 #include "radioCommon.h"
 
 extern xQueueHandle	gGatewayMgmtQueue;

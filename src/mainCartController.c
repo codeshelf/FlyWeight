@@ -45,57 +45,33 @@ portTickType gLastPacketReceivedTick;
 // --------------------------------------------------------------------------
 
 void setutpGpio(void) {
-
-	register uint32_t tmpReg;
 	GpioErr_t gpioError;
 
-	// SSI
-	// Pull-up select: UP type
-	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// Pull-up enable
-	//GPIO.PuEnLo  |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// Data select sets these ports to read from pads.
-	GPIO .InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// inputs
-	GPIO .DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
-	// outputs
-	GPIO .DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Timer 1
+	gpioError = Gpio_SetPinFunction(gGpioPin9_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin9_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin9_c, gGpioPinReadPad_c);
 
-	// Setup the function enable pins.
-	tmpReg = GPIO .FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos)| (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK
-			<< GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK
-			<< GPIO_SSI_CLK_fnpos));
+	// TImer 3
+	gpioError = Gpio_SetPinFunction(gGpioPin11_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin11_c, gGpioDirOut_c);
 
-	GPIO .FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos)| (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
-			<< GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
-			<< GPIO_SSI_CLK_fnpos));
+	// SSI TX
+	gpioError = Gpio_SetPinFunction(gGpioPin0_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin0_c, gGpioDirOut_c);
 
-	// UART1
-	GPIO.PuSelLo |= (GPIO_UART1_RX_bit);  // Pull-up select: UP type
-	GPIO.PuEnLo  |= (GPIO_UART1_RX_bit);  // Pull-up enable
-	GPIO.InputDataSelLo &= ~(GPIO_UART1_RX_bit); // read from pads
-	GPIO.DirResetLo = (GPIO_UART1_RX_bit); // inputs
-	GPIO.DirSetLo = (GPIO_UART1_TX_bit);  // outputs
+	// SSI RX
+	gpioError = Gpio_SetPinFunction(gGpioPin1_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin1_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin1_c, gGpioPinReadPad_c);
 
-	tmpReg = GPIO.FuncSel0 & ~((FN_MASK << GPIO_UART1_RX_fnpos) | (FN_MASK << GPIO_UART1_TX_fnpos));
-	GPIO.FuncSel0 = tmpReg | ((FN_ALT << GPIO_UART1_RX_fnpos) | (FN_ALT << GPIO_UART1_TX_fnpos));
+	// SSI FSYNC
+	gpioError = Gpio_SetPinFunction(gGpioPin2_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin2_c, gGpioDirOut_c);
 
-	// UART2
-	GPIO .PuSelLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up select: UP type
-	GPIO .PuEnLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up enable
-	GPIO .InputDataSelLo &= ~(GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // read from pads
-	GPIO .DirResetLo = (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // inputs
-	GPIO .DirSetLo = (GPIO_UART2_CTS_bit | GPIO_UART2_TX_bit);  // outputs
-
-	tmpReg = GPIO .FuncSel1 & ~((FN_MASK << GPIO_UART2_CTS_fnpos) | (FN_MASK << GPIO_UART2_RTS_fnpos)
-	| (FN_MASK << GPIO_UART2_RX_fnpos) | (FN_MASK << GPIO_UART2_TX_fnpos));
-	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
-	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
-
-	// RS485 Driver controller
-	gpioError = Gpio_SetPinFunction(gGpioPin17_c, gGpioNormalMode_c);
-	gpioError = Gpio_SetPinDir(gGpioPin17_c, gGpioDirOut_c);
-	gpioError = Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
+	// SSI CLK
+	gpioError = Gpio_SetPinFunction(gGpioPin3_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin3_c, gGpioDirOut_c);
 
 	// KBI
 	gpioError = Gpio_SetPinDir(gGpioPin22_c, gGpioDirIn_c);
@@ -129,6 +105,18 @@ void setutpGpio(void) {
 
 // --------------------------------------------------------------------------
 
+void setupRS485() {
+	GpioErr_t gpioError;
+
+	// RS485 Driver controller signal.
+	gpioError = Gpio_SetPinFunction(gGpioPin17_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin17_c, gGpioDirOut_c);
+	gpioError = Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
+
+}
+
+// --------------------------------------------------------------------------
+
 void setupUart1(void) {
 	UartConfig_t uartConfig;
 	UartCallbackFunctions_t uartCallBack;
@@ -137,7 +125,7 @@ void setupUart1(void) {
 	//Uart_Init();
 	// GpioUart2Init();
 
-	uartConfig.UartBaudrate = 19200;
+	uartConfig.UartBaudrate = 9600;
 	uartConfig.UartFlowControlEnabled = FALSE;
 	uartConfig.UartParity = gUartParityNone_c;
 	uartConfig.UartStopBits = gUartStopBits1_c;
@@ -180,7 +168,7 @@ void setupUart2(void) {
 	//Uart_Init();
 	// GpioUart2Init();
 
-	uartConfig.UartBaudrate = 9600;
+	uartConfig.UartBaudrate = 19200;
 	uartConfig.UartFlowControlEnabled = FALSE;
 	uartConfig.UartParity = gUartParityNone_c;
 	uartConfig.UartStopBits = gUartStopBits1_c;
@@ -459,15 +447,15 @@ void vMain(void) {
 	MLMERadioInit();
 
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
-//	SetDemulatorMode(NCD);
+	SetDemulatorMode(NCD);
 
 	// The PA's Vreg needs to be "on" always. (Controlled by GPIO42.)
-//	SetPowerLevelLockMode(TRUE);
+	SetPowerLevelLockMode(TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction1_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction1_c, TRUE, TRUE);
-//	SetComplementaryPAState(TRUE);
+	SetComplementaryPAState(TRUE);
 
 	IntEnableAll();
 	LED_Init();
@@ -478,9 +466,11 @@ void vMain(void) {
 #endif
 
 	setutpGpio();
-	//setupSsi();
-	setupUart1();
-	setupUart2();
+//	setupUart1();
+//	setupUart2();
+	UART_Init(UART_1, 9600, FALSE);
+	UART_Init(UART_2, 19200, FALSE);
+	setupRS485();
 	setupDisplayScroller();
 
 	// The the display boot complete.

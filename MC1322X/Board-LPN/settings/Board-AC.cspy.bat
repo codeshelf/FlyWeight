@@ -22,7 +22,7 @@
 @REM but they are listed at the end of this file for reference.
 
 
-"C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armjlink.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\<libsupport_plugin>" --macro "C:\eclipsework\FlyWeight\MC1322X\Board-AC\..\PLM\FlashLoader\FlashMC1322x.mac" --backend -B "--endian=little" "--cpu=ARM7TDMI-S" "--fpu=None" "-p" "C:\eclipsework\FlyWeight\MC1322X\Board-AC\..\PLM\Icf\MC1322x.ddf" "--drv_verify_download" "--semihosting=none" "-d" "jlink" "--drv_communication=USB0" "--jlink_speed=adaptive" 
+"C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armjlink.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\<libsupport_plugin>" --macro "C:\eclipsework\FlyWeight\MC1322X\Board-LPN\..\PLM\FlashLoader\FlashMC1322x.mac" --backend -B "--endian=little" "--cpu=ARM7TDMI-S" "--fpu=None" "-p" "C:\eclipsework\FlyWeight\MC1322X\Board-LPN\..\PLM\Icf\MC1322x.ddf" "--drv_verify_download" "--semihosting=none" "-d" "jlink" "--drv_communication=USB0" "--jlink_speed=adaptive" 
 
 
 @REM Loaded plugins:
