@@ -44,7 +44,7 @@ portTickType gLastPacketReceivedTick;
 
 // --------------------------------------------------------------------------
 
-void setutpGpio(void) {
+void setupGpio(void) {
 	GpioErr_t gpioError;
 
 	// Timer 1
@@ -52,7 +52,7 @@ void setutpGpio(void) {
 	gpioError = Gpio_SetPinDir(gGpioPin9_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin9_c, gGpioPinReadPad_c);
 
-	// TImer 3
+	// Timer 3
 	gpioError = Gpio_SetPinFunction(gGpioPin11_c, gGpioNormalMode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin11_c, gGpioDirOut_c);
 
@@ -109,192 +109,10 @@ void setupRS485() {
 	GpioErr_t gpioError;
 
 	// RS485 Driver controller signal.
-	gpioError = Gpio_SetPinFunction(gGpioPin17_c, gGpioNormalMode_c);
-	gpioError = Gpio_SetPinDir(gGpioPin17_c, gGpioDirOut_c);
-	gpioError = Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
+	gpioError = Gpio_SetPinFunction(gGpioPin21_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin21_c, gGpioDirOut_c);
+	gpioError = Gpio_SetPinData(gGpioPin21_c, gGpioPinStateLow_c);
 
-}
-
-// --------------------------------------------------------------------------
-
-void setupUart1(void) {
-	UartConfig_t uartConfig;
-	UartCallbackFunctions_t uartCallBack;
-	UartErr_t uartErr;
-
-	//Uart_Init();
-	// GpioUart2Init();
-
-	uartConfig.UartBaudrate = 9600;
-	uartConfig.UartFlowControlEnabled = FALSE;
-	uartConfig.UartParity = gUartParityNone_c;
-	uartConfig.UartStopBits = gUartStopBits1_c;
-	uartConfig.UartRTSActiveHigh = FALSE;
-
-	uartErr = UartOpen(UART_1, 24000);
-	if (uartErr == gUartErrNoError_c) {
-		uartErr = UartSetConfig(UART_1, &uartConfig);
-		if (uartErr == gUartErrNoError_c) {
-
-			// Set the BAUD rate to precisely 1,250,000.
-			//uartErr = UartGetConfig(UART_1, &uartConfig);
-			//UART2_REGS_P->Ubr = 0xc34fea60;
-			//uartErr = UartGetConfig(UART_1, &uartConfig);
-
-			//set pCallback functions
-			uartCallBack.pfUartWriteCallback = NULL;			//UartEventWrite1;
-			uartCallBack.pfUartReadCallback = NULL;			//UartEventRead1;
-			//UartSetCallbackFunctions(UART_1, &uartCallBack);
-
-			UartSetCTSThreshold(UART_1, 24);
-			UartSetTransmitterThreshold(UART_1, 8);
-			UartSetReceiverThreshold(UART_1, 24);
-		}
-	}
-
-	// Setup the interrupts corresponding to UART driver.
-//	IntAssignHandler(gUart1Int_c, (IntHandlerFunc_t)UartIsr1);
-//	ITC_SetPriority(gUart1Int_c, gItcNormalPriority_c);
-	// Enable the interrupts corresponding to UART driver.
-//	ITC_EnableInterrupt(gUart1Int_c);
-}
-// --------------------------------------------------------------------------
-
-void setupUart2(void) {
-	UartConfig_t uartConfig;
-	UartCallbackFunctions_t uartCallBack;
-	UartErr_t uartErr;
-
-	//Uart_Init();
-	// GpioUart2Init();
-
-	uartConfig.UartBaudrate = 19200;
-	uartConfig.UartFlowControlEnabled = FALSE;
-	uartConfig.UartParity = gUartParityNone_c;
-	uartConfig.UartStopBits = gUartStopBits1_c;
-	uartConfig.UartRTSActiveHigh = FALSE;
-
-	uartErr = UartOpen(UART_2, 24000);
-	if (uartErr == gUartErrNoError_c) {
-		uartErr = UartSetConfig(UART_2, &uartConfig);
-		if (uartErr == gUartErrNoError_c) {
-
-			// Set the BAUD rate to precisely 1,250,000.
-			//uartErr = UartGetConfig(UART_1, &uartConfig);
-			//UART2_REGS_P->Ubr = 0xc34fea60;
-			//uartErr = UartGetConfig(UART_1, &uartConfig);
-
-			//set pCallback functions
-			uartCallBack.pfUartWriteCallback = NULL;			//UartEventWrite1;
-			uartCallBack.pfUartReadCallback = NULL;			//UartEventRead1;
-			//UartSetCallbackFunctions(UART_1, &uartCallBack);
-
-			UartSetCTSThreshold(UART_2, 24);
-			UartSetTransmitterThreshold(UART_2, 8);
-			UartSetReceiverThreshold(UART_2, 24);
-		}
-	}
-
-	// Setup the interrupts corresponding to UART driver.
-//	IntAssignHandler(gUart1Int_c, (IntHandlerFunc_t)UartIsr1);
-//	ITC_SetPriority(gUart1Int_c, gItcNormalPriority_c);
-	// Enable the interrupts corresponding to UART driver.
-//	ITC_EnableInterrupt(gUart1Int_c);
-}
-
-// --------------------------------------------------------------------------
-
-static void setupSsi() {
-
-	SsiErr_t error;
-	SsiConfig_t ssiConfig;
-	SsiClockConfig_t ssiClockConfig;
-	SsiTxRxConfig_t ssiTxRxConfig;
-
-	SSI_Init();
-
-	IntAssignHandler(gSsiInt_c, (IntHandlerFunc_t) ssiInterrupt);
-	ITC_SetPriority(gSsiInt_c, gItcNormalPriority_c);
-	ITC_EnableInterrupt(gSsiInt_c);
-
-	SSI_Enable(FALSE);
-
-	// Setup the SSI mode.
-	ssiConfig.ssiGatedRxClockMode = FALSE;
-	ssiConfig.ssiGatedTxClockMode = TRUE;
-	ssiConfig.ssiMode = gSsiNormalMode_c; // Normal mode
-	ssiConfig.ssiNetworkMode = FALSE; // Network mode
-	ssiConfig.ssiInterruptEn = FALSE; // Interrupts enabled
-	error = SSI_SetConfig(&ssiConfig);
-
-	// Setup the SSI clock.
-	//ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 3400000);
-	ssiClockConfig.bit.ssiDIV2 = 0x0; // 24M / 1
-	ssiClockConfig.bit.ssiPSR = 0x0; // 24M / 1
-	ssiClockConfig.bit.ssiPM = 24; // 24M / 24 ( /2) = 500K
-	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
-	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
-	error = SSI_SetClockConfig(&ssiClockConfig);
-
-	// Setup Tx.
-	ssiTxRxConfig.ssiTxRxConfigWord = 0;
-	ssiTxRxConfig.bit.ssiEFS = 0; // Early frame sync: 0 = off, 1 = on.
-	ssiTxRxConfig.bit.ssiFSL = 0; // Frame sync length: 0 = one word, 1 = one clock.
-	ssiTxRxConfig.bit.ssiFSI = 0; // Frame sync invert: 0 = active high, 1 = active low.
-	ssiTxRxConfig.bit.ssiSCKP = 0; // Data clocked: 0 = on rising edge, 1 = falling edge.
-	ssiTxRxConfig.bit.ssiSHFD = 0; // Data shift direction: 0 = MSB-first, 1 = LSB-first.
-	ssiTxRxConfig.bit.ssiCLKDIR = 1; // CLK source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFDIR = 1; // Frame sync source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFEN = 1; // Tx/Rx FIFO: 0 = disabled, 1 = enabled.
-	ssiTxRxConfig.bit.ssiBIT0 = 1; // Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
-	ssiTxRxConfig.bit.ssiRxEXT = 0; // Receive sign extension: 0 = off, 1 = on.
-	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeTx_c);
-
-	// Setup Rx.
-	ssiTxRxConfig.ssiTxRxConfigWord = 0;
-	ssiTxRxConfig.bit.ssiEFS = 0; // Early frame sync: 0 = off, 1 = on.
-	ssiTxRxConfig.bit.ssiFSL = 0; // Frame sync length: 0 = one word, 1 = one clock.
-	ssiTxRxConfig.bit.ssiFSI = 0; // Frame sync invert: 0 = active high, 1 = active low.
-	ssiTxRxConfig.bit.ssiSCKP = 0; // Data clocked: 0 = on rising edge, 1 = falling edge.
-	ssiTxRxConfig.bit.ssiSHFD = 0; // Data shift direction: 0 = MSB-first, 1 = LSB-first.
-	ssiTxRxConfig.bit.ssiCLKDIR = 1; // CLK source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFDIR = 1; // Frame sync source: 0 = external, 1 = internal.
-	ssiTxRxConfig.bit.ssiFEN = 1; // Tx/Rx FIFO: 0 = disabled, 1 = enabled.
-	ssiTxRxConfig.bit.ssiBIT0 = 1; // Tx/Rx bit0 of TSX/RSX: 0 = bit31, 1 = bit0.
-	ssiTxRxConfig.bit.ssiRxEXT = 0; // Receive sign extension: 0 = off, 1 = on.
-	error = SSI_SetTxRxConfig(&ssiTxRxConfig, gSsiOpTypeRx_c);
-
-	// Disable the last word of the frame.
-	// This is because of some stupid error that doesn't allow us to reliably send out the last
-	// word of the frame without causing an overrun.
-	//SSI_STMSK = 0x00;
-	//SSI_SRMSK = 0x00;
-
-	SSI_SFCSR_BIT .RFWM0 = 4;
-	SSI_SFCSR_BIT .TFWM0 = 5;
-
-	SSI_SCR_BIT .TFR_CLK_DIS = 0;
-	SSI_STCCR_BIT .DC = 0;
-
-	// Setup the SSI interrupts.
-	SSI_SIER_WORD = 0;
-	SSI_SIER_BIT .RIE = FALSE;
-	SSI_SIER_BIT .ROE_EN = FALSE;
-	SSI_SIER_BIT .RFRC_EN = FALSE;
-	SSI_SIER_BIT .RDR_EN = FALSE;
-	SSI_SIER_BIT .RLS_EN = FALSE;
-	SSI_SIER_BIT .RFS_EN = FALSE;
-	SSI_SIER_BIT .RFF_EN = FALSE;
-
-	SSI_SIER_BIT .TIE = FALSE;
-	SSI_SIER_BIT .TDE_EN = FALSE;
-	SSI_SIER_BIT .TFE_EN = FALSE;
-
-	// Enable Rx, and disable Tx.
-	SSI_SCR_BIT .TE = TRUE;
-	SSI_SCR_BIT .RE = FALSE;
-
-	SSI_Enable(TRUE);
 }
 
 // --------------------------------------------------------------------------
@@ -465,9 +283,7 @@ void vMain(void) {
 
 #endif
 
-	setutpGpio();
-//	setupUart1();
-//	setupUart2();
+	setupGpio();
 	UART_Init(UART_1, 9600, FALSE);
 	UART_Init(UART_2, 19200, FALSE);
 	setupRS485();

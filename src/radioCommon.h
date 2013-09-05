@@ -151,8 +151,25 @@
 
 #define DISPLAY_SETUP					BACKLIGHT_73PERCENT CURSOR_OFF
 
-#define MAX_DISPLAY_STRING_BYTES	64
-#define MAX_SCAN_STRING_BYTES		64
+#define MAX_DISPLAY_STRING_BYTES		64
+#define MAX_SCAN_STRING_BYTES			64
+
+#define RS485_TX_ON						Gpio_SetPinData(gGpioPin21_c, gGpioPinStateHigh_c);
+#define RS485_TX_OFF					Gpio_SetPinData(gGpioPin21_c, gGpioPinStateLow_c);
+
+#define POS_CTRL_INIT					0x00
+#define POS_CTRL_CLEAR					0x01
+#define POS_CTRL_DISPLAY				0x02
+
+#define POS_CTRL_ALL_POSITIONS			0x00
+
+#define MAX_LED_FLASH_POSITIONS 		50
+#define MAX_LED_SOLID_POSITIONS 		10
+
+#define	SCROLL_TIMER					gTmr1_c
+#define SCROLL_PRIMARY_SOURCE			gTmrPrimaryClkDiv128_c
+#define SCROLL_SECONDARY_SOURCE			gTmrSecondaryCnt0Input_c
+#define SCROLL_CLK_RATE					0xffff
 
 // --------------------------------------------------------------------------
 // Typedefs

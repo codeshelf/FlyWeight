@@ -23,15 +23,7 @@
 #define LED_OFF_TIME					500
 #define LED_ON_TIME						250
 
-#define RS485_ON						Gpio_SetPinData(gGpioPin17_c, gGpioPinStateHigh_c);
-#define RS485_OFF						Gpio_SetPinData(gGpioPin17_c, gGpioPinStateLow_c);
-
 #define	MAX_DRIFT						500
-
-#define	SCROLL_TIMER					gTmr1_c
-#define SCROLL_PRIMARY_SOURCE			gTmrPrimaryClkDiv128_c
-#define SCROLL_SECONDARY_SOURCE			gTmrSecondaryCnt0Input_c
-#define SCROLL_CLK_RATE					0xffff
 
 #define SSI_24BIT_WORD					0x0b
 #define SSI_20BIT_WORD					0x09
@@ -57,13 +49,7 @@ typedef union {
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
-void setupUart();
-void setupSsi();
 void cartControllerTask(void *pvParameters);
-void ssiInterrupt(void);
-gwUINT32 getNextSolidData(void);
-gwUINT32 getNextFlashData(void);
-LedDataStruct getNextDataStruct(void);
 void displayScrollCallback(TmrNumber_t tmrNumber);
 void UartReadCallback(UartReadCallbackArgs_t* args);
 void UartWriteCallback(UartWriteCallbackArgs_t* args);

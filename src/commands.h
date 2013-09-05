@@ -115,6 +115,7 @@ void createQueryCommand(BufferCntType inTXBufferNum, NetAddrType inRemoteAddr);
 //void createAudioCommand(BufferCntType inTXBufferNum);
 void createResponseCommand(BufferCntType inTXBufferNum, BufferOffsetType inResponseSize, NetAddrType inRemoteAddr);
 void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStringPtr, ScanStringLenType inScanStringLen);
+void createButtonCommand(BufferCntType inTXBufferNum, gwUINT8 inButtonNum, gwUINT8 inValue);
 #ifdef IS_GATEWAY
 void createOutboundNetSetup(void);
 #endif
@@ -129,17 +130,17 @@ void processAssocRespCommand(BufferCntType inRXBufferNum);
 void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 
-//EControlCmdAckStateType processMotorControlSubCommand(BufferCntType inRXBufferNum);
-//EControlCmdAckStateType processHooBeeSubCommand(BufferCntType inRXBufferNum);
-//EControlCmdAckStateType processSDCardModeSubCommand(BufferCntType inRXBufferNum, AckIDType inAckId, AckDataType inOutAckData);
-//EControlCmdAckStateType processSDCardUpdateSubCommand(BufferCntType inRXBufferNum);
-//EControlCmdAckStateType processSDCardUpdateCommitSubCommand(BufferCntType inRXBufferNum, AckDataType inOutAckData);
-//EControlCmdAckStateType processSDCardBlockCheckSubCommand(BufferCntType inRXBufferNum);
-
+#ifdef IS_CODESHELF
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processRequestQtySubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
+
+void startScrolling();
+void stopScrolling();
+
 gwUINT8 sendDisplayMessage(char* isDisplayMsgPtr, gwUINT8 inMsgLen);
 gwUINT8 sendRs485Message(char* isMsgPtr, gwUINT8 inMsgLen);
-EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
+#endif
 
 void createDataSampleCommand(BufferCntType inTXBufferNum, EndpointNumType inEndpoint);
 void addDataSampleToCommand(BufferCntType inTXBufferNum, TimestampType inTimestamp, DataSampleType inDataSample, char inUnitsByte);

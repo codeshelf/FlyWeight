@@ -127,6 +127,10 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							ackState = processLedSubCommand(inRxBufferNum);
 							break;
 
+						case eControlSubCmdRequestQty:
+							ackState = processRequestQtySubCommand(inRxBufferNum);
+							break;
+
 #endif
 
 #ifdef MOTOR_CONTROLLER

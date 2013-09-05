@@ -27,120 +27,49 @@ xTaskHandle gAisleControllerTask = NULL;
 
 LedCycle gLedCycle = eLedCycleOff;
 
-LedPositionType gTotalLedPositions;
+extern LedPositionType gTotalLedPositions;
 
-LedDataStruct gLedFlashData[MAX_LED_FLASH_POSITIONS];
-LedPositionType gCurLedFlashDataElement;
-LedPositionType gTotalLedFlashDataElements;
-LedPositionType gNextFlashLedPosition;
+extern LedDataStruct gLedFlashData[];
+extern LedPositionType gCurLedFlashDataElement;
+extern LedPositionType gTotalLedFlashDataElements;
+extern LedPositionType gNextFlashLedPosition;
 
-LedDataStruct gLedSolidData[MAX_LED_SOLID_POSITIONS];
-LedPositionType gCurLedSolidDataElement;
-LedPositionType gTotalLedSolidDataElements;
-LedPositionType gNextSolidLedPosition;
+extern LedDataStruct gLedSolidData[];
+extern LedPositionType gCurLedSolidDataElement;
+extern LedPositionType gTotalLedSolidDataElements;
+extern LedPositionType gNextSolidLedPosition;
 
 // --------------------------------------------------------------------------
 void gpioInit(void) {
 
 	register uint32_t tmpReg;
+	GpioErr_t gpioError;
 
-	// SSI
-	// Pull-up select: UP type
-	//GPIO.PuSelLo |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// Pull-up enable
-	//GPIO.PuEnLo  |= (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// Data select sets these ports to read from pads.
-	GPIO .InputDataSelLo &= ~(GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
-	// inputs
-	GPIO .DirResetLo = (GPIO_TIMER1_INOUT_bit | GPIO_SSI_RX_bit);
-	// outputs
-	GPIO .DirSetLo = (GPIO_TIMER3_INOUT_bit | GPIO_SSI_TX_bit | GPIO_SSI_FSYNC_bit | GPIO_SSI_CLK_bit);
+	// Timer 1
+	gpioError = Gpio_SetPinFunction(gGpioPin9_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin9_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin9_c, gGpioPinReadPad_c);
 
-	// Setup the function enable pins.
-	tmpReg = GPIO .FuncSel0 & ~((FN_MASK << GPIO_TIMER1_INOUT_fnpos)| (FN_MASK << GPIO_TIMER3_INOUT_fnpos) | (FN_MASK
-			<< GPIO_SSI_TX_fnpos) | (FN_MASK << GPIO_SSI_RX_fnpos) | (FN_MASK << GPIO_SSI_FSYNC_fnpos) | (FN_MASK
-			<< GPIO_SSI_CLK_fnpos));
+	// Timer 3
+	gpioError = Gpio_SetPinFunction(gGpioPin11_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin11_c, gGpioDirOut_c);
 
-	GPIO .FuncSel0 = tmpReg | ((FN_ALT << GPIO_TIMER1_INOUT_fnpos)| (FN_ALT << GPIO_TIMER3_INOUT_fnpos) | (FN_ALT
-			<< GPIO_SSI_TX_fnpos) | (FN_ALT << GPIO_SSI_RX_fnpos) | (FN_ALT << GPIO_SSI_FSYNC_fnpos) | (FN_ALT
-			<< GPIO_SSI_CLK_fnpos));
+	// SSI TX
+	gpioError = Gpio_SetPinFunction(gGpioPin0_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin0_c, gGpioDirOut_c);
 
-	// SPI bus GPIOs
-//	error = Gpio_SetPinDir(gGpioPin4_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin5_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin6_c, gGpioDirOut_c);
-//	error = Gpio_SetPinDir(gGpioPin7_c, gGpioDirOut_c);
+	// SSI RX
+	gpioError = Gpio_SetPinFunction(gGpioPin1_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin1_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin1_c, gGpioPinReadPad_c);
 
-	// I2C
-//	error = Gpio_SetPinDir(gGpioPin12_c, gGpioDirOut_c);
+	// SSI FSYNC
+	gpioError = Gpio_SetPinFunction(gGpioPin2_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin2_c, gGpioDirOut_c);
 
-	// UART2
-	GPIO .PuSelLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up select: UP type
-	GPIO .PuEnLo |= (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit);  // Pull-up enable
-	GPIO .InputDataSelLo &= ~(GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // read from pads
-	GPIO .DirResetLo = (GPIO_UART2_RTS_bit | GPIO_UART2_RX_bit); // inputs
-	GPIO .DirSetLo = (GPIO_UART2_CTS_bit | GPIO_UART2_TX_bit);  // outputs
-
-	tmpReg = GPIO .FuncSel1 & ~((FN_MASK << GPIO_UART2_CTS_fnpos)| (FN_MASK << GPIO_UART2_RTS_fnpos)
-	| (FN_MASK << GPIO_UART2_RX_fnpos) | (FN_MASK << GPIO_UART2_TX_fnpos));
-	GPIO .FuncSel1 = tmpReg | ((FN_ALT << GPIO_UART2_CTS_fnpos)| (FN_ALT << GPIO_UART2_RTS_fnpos)
-	| (FN_ALT << GPIO_UART2_RX_fnpos) | (FN_ALT << GPIO_UART2_TX_fnpos));
-
-}
-
-// --------------------------------------------------------------------------
-
-void UartReadCallback(UartReadCallbackArgs_t* args) {
-//	gu8SCIDataFlag = TRUE;
-//	gu16SCINumOfBytes = args->UartNumberBytesReceived;
-//	gu8SCIStatus = args->UartStatus;
-}
-
-// --------------------------------------------------------------------------
-
-void UartWriteCallback(UartWriteCallbackArgs_t* args) {
-//	args->UartNumberBytesSent = args->UartNumberBytesSent * 1;
-}
-
-// --------------------------------------------------------------------------
-
-static void setupUart() {
-
-	UartErr_t error;
-	UartConfig_t uartconfig;
-	UartCallbackFunctions_t uartcb;
-
-	// Where did ths function go?  It's in the API docs...
-	//Uart_Init();
-
-	//mount the interrupts corresponding to UART driver
-	IntAssignHandler(gUart2Int_c, (IntHandlerFunc_t) UartIsr2);
-	ITC_SetPriority(gUart2Int_c, gItcNormalPriority_c);
-	//enable the interrupts corresponding to UART driver
-	ITC_EnableInterrupt(gUart2Int_c);
-
-	UartOpen(UART_2, 24000);
-
-	uartconfig.UartBaudrate = 9600;
-	uartconfig.UartParity = gUartParityNone_c;
-	uartconfig.UartStopBits = gUartStopBits1_c;
-	uartconfig.UartFlowControlEnabled = FALSE;
-	UartSetConfig(UART_2, &uartconfig);
-
-//	uartcb.pfUartReadCallback = UartReadCallback;
-	uartcb.pfUartWriteCallback = UartWriteCallback;
-	UartSetCallbackFunctions(UART_2, &uartcb);
-
-	//UartSetCTSThreshold(UART_2, 24);
-	//UartSetTransmitterThreshold(UART_2, 8);
-	//UartSetReceiverThreshold(UART_2, 24);
-
-	// Set the backlight to 40%
-	error = UartWriteData(UART_2, BACKLIGHT_PERCENT, strlen(BACKLIGHT_PERCENT));
-
-	error = UartWriteData(UART_2, LINE1_POS1, strlen(LINE1_POS1));
-	error = UartWriteData(UART_2, "DISCONNECTED", 12);
-
+	// SSI CLK
+	gpioError = Gpio_SetPinFunction(gGpioPin3_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin3_c, gGpioDirOut_c);
 }
 
 // --------------------------------------------------------------------------
@@ -329,8 +258,6 @@ void aisleControllerTask(void *pvParameters) {
 
 	gpioInit();
 	setupSsi();
-	setupUart();
-//	setupTimers();
 
 	// Enable Rx, and disable Tx.
 	SSI_SCR_BIT .TE = TRUE;

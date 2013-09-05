@@ -8,10 +8,8 @@
  */
 
 #include "scannerReadTask.h"
-#include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "gatewayRadioTask.h"
 #include "commands.h"
 #include "Delay.h"
 
@@ -19,8 +17,6 @@ xTaskHandle gScannerReadTask = NULL;
 
 ScanStringType gScanString;
 ScanStringLenType gScanStringPos;
-extern LedPositionType gTotalLedSolidDataElements;
-extern LedPositionType gTotalLedFlashDataElements;
 
 // --------------------------------------------------------------------------
 
@@ -53,9 +49,8 @@ void scannerReadTask(void *pvParameters) {
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
 
-		// Disable all of the LEDs on the cart.
-		gTotalLedSolidDataElements = 0;
-		gTotalLedFlashDataElements = 0;
+		// Disable all of the position controllers on the cart.
+		// TODO
 
 		// Now send the scan string.
 		BufferCntType txBufferNum = lockTXBuffer();
