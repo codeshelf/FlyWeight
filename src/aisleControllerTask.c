@@ -55,20 +55,20 @@ void gpioInit(void) {
 	gpioError = Gpio_SetPinDir(gGpioPin11_c, gGpioDirOut_c);
 
 	// SSI TX
-	gpioError = Gpio_SetPinFunction(gGpioPin0_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinFunction(gGpioPin0_c, gGpioAlternate1Mode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin0_c, gGpioDirOut_c);
 
 	// SSI RX
-	gpioError = Gpio_SetPinFunction(gGpioPin1_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinFunction(gGpioPin1_c, gGpioAlternate1Mode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin1_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin1_c, gGpioPinReadPad_c);
 
 	// SSI FSYNC
-	gpioError = Gpio_SetPinFunction(gGpioPin2_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinFunction(gGpioPin2_c, gGpioAlternate1Mode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin2_c, gGpioDirOut_c);
 
 	// SSI CLK
-	gpioError = Gpio_SetPinFunction(gGpioPin3_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinFunction(gGpioPin3_c, gGpioAlternate1Mode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin3_c, gGpioDirOut_c);
 }
 
@@ -98,7 +98,7 @@ static void setupSsi() {
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 3000000);
+	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 500000);
 //	ssiClockConfig.bit.ssiDIV2 = 0x1;
 //	ssiClockConfig.bit.ssiPSR = 0x01;
 //	ssiClockConfig.bit.ssiPM = 0x0a;
@@ -159,6 +159,8 @@ static void setupSsi() {
 	SSI_SIER_BIT .TIE = FALSE;
 	SSI_SIER_BIT .TDE_EN = FALSE;
 	SSI_SIER_BIT .TFE_EN = FALSE;
+
+	//SSI_STCR_BIT.TSCKP = 1;
 
 	SSI_Enable(TRUE);
 }
@@ -238,7 +240,7 @@ void aisleControllerTask(void *pvParameters) {
 	// Create some fake test data.
 	LedDataStruct ledData;
 	ledData.channel = 1;
-	ledData.red = 0x2f;
+	ledData.red = 0x3e;
 	ledData.green = 0x0;
 	ledData.blue = 0x0;
 
@@ -252,7 +254,7 @@ void aisleControllerTask(void *pvParameters) {
 	}
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 20 * 48;
+	gTotalLedPositions = 2 * 48;
 	gTotalLedFlashDataElements = index;
 	gTotalLedSolidDataElements = 0;
 
@@ -304,7 +306,7 @@ void aisleControllerTask(void *pvParameters) {
 gwUINT32 getNextSolidData() {
 	// The default is to return zero for a blank LED.
 	ULedSampleType result;
-	result.word = 0;
+	result.word = 0x0;
 
 	// Check if there are any more solid LED values to display.
 	if (gCurLedSolidDataElement < gTotalLedSolidDataElements) {
@@ -325,7 +327,7 @@ gwUINT32 getNextSolidData() {
 gwUINT32 getNextFlashData() {
 	// The default is to return zero for a blank LED.
 	ULedSampleType result;
-	result.word = 0;
+	result.word = 0x0;
 
 	// Check if there are any more flash LED values to display.
 	if (gCurLedFlashDataElement < gTotalLedFlashDataElements) {
