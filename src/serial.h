@@ -30,7 +30,7 @@
 
 void sendOneChar(gwUINT8 portNum, UART_TComData inDataPtr);
 void readOneChar(gwUINT8 portNum, UART_TComData *outDataPtr);
-void serialReceiveTask(gwUINT8 portNum, void *pvParameters);
+void serialReceiveTask(void *pvParameters);
 void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inSize);
 BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePtr, BufferCntType inMaxFrameSize);
 

@@ -26,7 +26,9 @@
 // --------------------------------------------------------------------------
 // Globals
 
-extern void ResetMaca(void);
+extern void 		ResetMaca(void);
+
+ELocalStatusType	gLocalDeviceState;
 
 // --------------------------------------------------------------------------
 

@@ -296,7 +296,7 @@ void createOutboundNetSetup() {
 
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_NETM_SETCMD_CHANNEL + 1;
 
-	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	serialTransmitFrame(UART_1, (gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
 	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 	vTaskResume(gRadioReceiveTask);
@@ -399,7 +399,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_NETM_TSTCMD_NUM + 1;
 
-	serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+	serialTransmitFrame(UART_1, (gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
 	RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 	vTaskResume(gRadioReceiveTask);
@@ -467,7 +467,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 
 		gTXRadioBuffer[txBufferNum].bufferSize = CMDPOS_NETM_CHKCMD_LINKQ + 1;
 
-		serialTransmitFrame((gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
+		serialTransmitFrame(UART_1, (gwUINT8*) (&gTXRadioBuffer[txBufferNum].bufferStorage), gTXRadioBuffer[txBufferNum].bufferSize);
 		RELEASE_TX_BUFFER(txBufferNum, ccrHolder);
 
 		vTaskResume(gRadioReceiveTask);

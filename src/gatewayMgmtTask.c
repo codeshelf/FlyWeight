@@ -28,11 +28,11 @@ ControllerStateType		gControllerState;
 
 // --------------------------------------------------------------------------
 
-void serialReceiveTask( void *pvParameters ) {
+void serialReceiveTask(void *pvParameters ) {
 
-	ECommandGroupIDType			cmdID;
-	ENetMgmtSubCmdIDType		subCmdID;
-	BufferCntType				txBufferNum = 0;
+	ECommandGroupIDType		cmdID;
+	ENetMgmtSubCmdIDType	subCmdID;
+	BufferCntType			txBufferNum = 0;
 	gwUINT8					ccrHolder;
 	
 	// Setup the USB interface.
@@ -50,7 +50,7 @@ void serialReceiveTask( void *pvParameters ) {
 		// Acquire and lock a TX buffer.
 		txBufferNum = lockTXBuffer();
 
-		gTXRadioBuffer[txBufferNum].bufferSize = serialReceiveFrame(gTXRadioBuffer[txBufferNum].bufferStorage, TX_BUFFER_SIZE);
+		gTXRadioBuffer[txBufferNum].bufferSize = serialReceiveFrame(UART_1, gTXRadioBuffer[txBufferNum].bufferStorage, TX_BUFFER_SIZE);
 
 		if (gTXRadioBuffer[txBufferNum].bufferSize > 0) {
 

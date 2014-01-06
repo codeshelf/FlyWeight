@@ -14,6 +14,7 @@
 #include "commands.h"
 #include "gatewayMgmtTask.h"
 #include "UART.h"
+#include "UartLowLevel.h"
 
 // --------------------------------------------------------------------------
 // Global variables.
