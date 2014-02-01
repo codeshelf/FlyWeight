@@ -98,10 +98,10 @@ static void setupSsi() {
 	error = SSI_SetConfig(&ssiConfig);
 
 	// Setup the SSI clock.
-	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 500000);
-//	ssiClockConfig.bit.ssiDIV2 = 0x1;
-//	ssiClockConfig.bit.ssiPSR = 0x01;
-//	ssiClockConfig.bit.ssiPM = 0x0a;
+//	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 500000);
+	ssiClockConfig.bit.ssiDIV2 = 0x00;
+	ssiClockConfig.bit.ssiPSR = 0x01;
+	ssiClockConfig.bit.ssiPM = 0x40;
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
@@ -246,15 +246,15 @@ void aisleControllerTask(void *pvParameters) {
 
 	int index = 0;
 	for (int tube = 0; tube < 20; ++tube) {
-		ledData.position = tube * 48;
+		ledData.position = tube * 8;
 		gLedFlashData[index++] = ledData;
 
-		ledData.position = tube * 48 + 47;
+		ledData.position = tube * 8 + 7;
 		gLedFlashData[index++] = ledData;
 	}
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 2 * 48;
+	gTotalLedPositions = 20 * 32;
 	gTotalLedFlashDataElements = index;
 	gTotalLedSolidDataElements = 0;
 

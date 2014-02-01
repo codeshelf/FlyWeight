@@ -111,7 +111,7 @@ void cartControllerTask(void *pvParameters) {
 
 			// If there's no characters - then wait 2ms to see if more will arrive.
 			if ((UART2_REGS_P ->Urxcon == 0)) {
-				DelayMs(4);
+				DelayMs(10);
 			}
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
