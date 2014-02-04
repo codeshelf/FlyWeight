@@ -101,7 +101,7 @@ static void setupSsi() {
 //	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 500000);
 	ssiClockConfig.bit.ssiDIV2 = 0x00;
 	ssiClockConfig.bit.ssiPSR = 0x01;
-	ssiClockConfig.bit.ssiPM = 0x40;
+	ssiClockConfig.bit.ssiPM = 0x20;
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
@@ -235,7 +235,7 @@ void aisleControllerTask(void *pvParameters) {
 	 *
 	 */
 
-	gwUINT8 ccrHolder;
+  	gwUINT8 ccrHolder;
 
 	// Create some fake test data.
 	LedDataStruct ledData;
@@ -245,16 +245,18 @@ void aisleControllerTask(void *pvParameters) {
 	ledData.blue = 0x0;
 
 	int index = 0;
-	for (int tube = 0; tube < 20; ++tube) {
-		ledData.position = tube * 8;
+	for (int errorSet = 0; errorSet < TOTAL_ERROR_SETS; ++errorSet) {
+		// Light the first LED in this set.
+		ledData.position = errorSet * DISTANCE_BETWEEN_ERROR_LEDS;
 		gLedFlashData[index++] = ledData;
 
-		ledData.position = tube * 8 + 7;
+		// Light the last LED in this group.
+		ledData.position = errorSet * DISTANCE_BETWEEN_ERROR_LEDS + (DISTANCE_BETWEEN_ERROR_LEDS - 1);
 		gLedFlashData[index++] = ledData;
 	}
 
 	gLedCycle = eLedCycleOff;
-	gTotalLedPositions = 20 * 32;
+	gTotalLedPositions = TOTAL_ERROR_SETS * DISTANCE_BETWEEN_ERROR_LEDS;
 	gTotalLedFlashDataElements = index;
 	gTotalLedSolidDataElements = 0;
 
