@@ -186,10 +186,6 @@ void createAssocReqCommand(BufferCntType inTXBufferNum, RemoteUniqueIDPtrType in
 	// Set the system status register
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT] = GW_GET_SYSTEM_STATUS;
 
-	//	for( pos = 0; pos < 16; pos++ ) {
-	//		gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_ASSOCREQ_SYSSTAT + 1 + pos] = gFIFO[pos];
-	//	}
-
 	gTXRadioBuffer[inTXBufferNum].bufferSize = CMDPOS_ASSOCREQ_SYSSTAT + pos;
 }
 
@@ -546,12 +542,12 @@ EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
 	gDisplayDataLineLen[1] = readAsPString(gDisplayDataLine[1], bufferPtr);
 
 	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
-	sendDisplayMessage(gDisplayDataLine[0], getMin(16, strlen(gDisplayDataLine[0])));
+	sendDisplayMessage(gDisplayDataLine[0], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[0])));
 
 	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
-	sendDisplayMessage(gDisplayDataLine[1], getMin(16, strlen(gDisplayDataLine[1])));
+	sendDisplayMessage(gDisplayDataLine[1], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[1])));
 
-	if ((gDisplayDataLineLen[1] <= 16) && (gDisplayDataLineLen[1] <= 16)) {
+	if ((gDisplayDataLineLen[1] <= DISPLAY_WIDTH) && (gDisplayDataLineLen[1] <= DISPLAY_WIDTH)) {
 		stopScrolling();
 	} else {
 		gDisplayDataLinePos[0] = 0;

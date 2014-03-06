@@ -51,18 +51,18 @@ void displayScrollCallback(TmrNumber_t tmrNumber) {
 
 	for (int line = 0; line < 2; ++line) {
 
-		if (gDisplayDataLineLen[line] > 16) {
+		if (gDisplayDataLineLen[line] > DISPLAY_WIDTH) {
 			if (line == 0) {
 				error = sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
 			} else {
 				error = sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
 			}
 			error = sendDisplayMessage(&(gDisplayDataLine[line][gDisplayDataLinePos[line]]),
-					getMin(16, (gDisplayDataLineLen[line] - gDisplayDataLinePos[line])));
+					getMin(DISPLAY_WIDTH, (gDisplayDataLineLen[line] - gDisplayDataLinePos[line])));
 
 			// If there's space at the end of the display then restart from the beginning of the message.
-			if ((gDisplayDataLineLen[line] - gDisplayDataLinePos[line]) < 16) {
-				remainingSpace = 16 - (gDisplayDataLineLen[line] - gDisplayDataLinePos[line]);
+			if ((gDisplayDataLineLen[line] - gDisplayDataLinePos[line]) < DISPLAY_WIDTH) {
+				remainingSpace = DISPLAY_WIDTH - (gDisplayDataLineLen[line] - gDisplayDataLinePos[line]);
 				error = sendDisplayMessage("   ", getMin(3, remainingSpace));
 				if (remainingSpace > 3) {
 					error = sendDisplayMessage(&(gDisplayDataLine[line][0]), remainingSpace - 3);
