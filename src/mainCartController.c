@@ -296,6 +296,10 @@ void vMain(void) {
 	// Setting backlight, or any EEPROM param, causes the display to hang until POR.
 	//sendDisplayMessage(DISPLAY_SETUP, strlen(DISPLAY_SETUP));
 
+	// Ugh - the only means I have to reprogram the SparkFun LCD backpack.
+	// NB: The backpack hangs after each \x7c command string.  You have to run this once for each string.
+	//sendDisplayMessage("\x7c\x03", 2);
+	//sendDisplayMessage("\x7c\x05", 2);
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
 	sendDisplayMessage("DISCONNECTED", 12);

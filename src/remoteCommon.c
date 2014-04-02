@@ -40,6 +40,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 	gwUINT8 ccrHolder;
 	EControlCmdAckStateType ackState;
 	gwBoolean shouldReleasePacket;
+	BufferCntType txBufferNum;
 
 	shouldReleasePacket = TRUE;
 
@@ -202,7 +203,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 			// Send an ACK if necessary.
 			if ((ackState == eAckStateOk) && (ackId != 0)) {
-				BufferCntType txBufferNum = lockTXBuffer();
+				txBufferNum = lockTXBuffer();
 				createAckPacket(txBufferNum, ackId, ackData);
 				if (transmitPacket(txBufferNum)) {
 				}
