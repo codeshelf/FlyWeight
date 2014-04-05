@@ -1,11 +1,11 @@
 /*
-	FlyWeight
-	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
 
-	$Id$
-	$Name$
-*/
+ $Id$
+ $Name$
+ */
 
 #include "serial.h"
 #include "task.h"
@@ -37,15 +37,15 @@ void readOneChar(gwUINT8 portNum, UART_TComData *outDataPtr) {
 void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inSize) {
 
 //	UINT16	bytesSent;
-	gwUINT16	totalBytesSent;
+	gwUINT16 totalBytesSent;
 //	gwUINT8	status;
- 	gwUINT16 	charsSent;
+	gwUINT16 charsSent;
 
 	// Send the frame contents to the controller via the serial port.
 	// First send the framing character.
 #pragma MESSAGE DISABLE C2706 /* WARNING C2706: Octal # */
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
- 	sendOneChar(portNum, END);
+	sendOneChar(portNum, END);
 
 	totalBytesSent = 0;
 
@@ -56,7 +56,7 @@ void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inS
 
 	for (charsSent = 0; charsSent < inSize; charsSent++) {
 
-        switch(*inDataPtr) {
+		switch (*inDataPtr) {
 			/* if it's the same code as an END character, we send a
 			 * special two character code so as not to make the
 			 * receiver think we sent an END
@@ -66,21 +66,20 @@ void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inS
 				sendOneChar(portNum, ESC_END);
 				break;
 
-			/* if it's the same code as an ESC character,
-			 * we send a special two character code so as not
-			 * to make the receiver think we sent an ESC
-			 */
+				/* if it's the same code as an ESC character,
+				 * we send a special two character code so as not
+				 * to make the receiver think we sent an ESC
+				 */
 			case ESC:
 				sendOneChar(portNum, ESC);
 				sendOneChar(portNum, ESC_ESC);
 				break;
 
-			/* otherwise, we just send the character
-			 */
+				/* otherwise, we just send the character
+				 */
 			default:
 				sendOneChar(portNum, *inDataPtr);
 		}
-
 		inDataPtr++;
 	}
 
@@ -103,41 +102,33 @@ BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePt
 
 		readOneChar(portNum, &nextByte);
 
-		{
-			switch (nextByte) {
+		switch (nextByte) {
 
-				// If it's an END character then we're done with the frame.
-				case END:
-					if (bytesReceived)
-						return bytesReceived;
-					else
-						break;
-
-				/* If it's the same code as an ESC character, wait and get another character and then figure out
-				 * what to store in the frame based on that.
-				 */
-				case ESC:
-					readOneChar(portNum, &nextByte);
-
-					/* If "c" is not one of these two, then we have a protocol violation.  The best bet
-					 * seems to be to leave the byte alone and just stuff it into the frame
-					 */
-					switch (nextByte) {
-						case ESC_END:
-							nextByte = END;
-							break;
-						case ESC_ESC:
-							nextByte = ESC;
-							break;
-					}
+			case END:
+				if (bytesReceived)
+					return bytesReceived;
+				else
 					break;
 
-				// Here we fall into the default handler and let it store the character for us.
-				default:
-					if (bytesReceived < inMaxFrameSize)
-						inFramePtr[bytesReceived++] = nextByte;
-			}
+			case ESC:
+				readOneChar(portNum, &nextByte);
+
+				switch (nextByte) {
+					case ESC_END:
+						nextByte = END;
+						break;
+					case ESC_ESC:
+						nextByte = ESC;
+						break;
+				}
+				break;
+
+			default:
+				break;
 		}
+
+		if (bytesReceived < inMaxFrameSize)
+			inFramePtr[bytesReceived++] = nextByte;
 	}
 }
 

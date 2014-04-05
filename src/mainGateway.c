@@ -100,5 +100,7 @@ void vMain( void ) {
 // --------------------------------------------------------------------------
 
 void vApplicationIdleHook( void ) {
-	GW_WATCHDOG_RESET;
+  	// Turns out this is a not a good idea.
+  	// It's better to reset when we receive packets.
+	//GW_WATCHDOG_RESET;
 }

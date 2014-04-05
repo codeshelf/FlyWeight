@@ -163,6 +163,11 @@ void radioTransmitTask(void *pvParameters) {
 				txMsgNum = gNextMsgToUse;
 
 				funcErr = MCPSDataRequest(&(gMsgHolder[gNextMsgToUse].msg));
+				
+				// If the radio can't TX then we're in big trouble.  Just reset.
+				if (funcErr != gSuccess_c) {
+				  GW_RESET_MCU();
+				}
 
 				gTotalPendingMsgs++;
 				gNextMsgToUse++;
@@ -172,8 +177,11 @@ void radioTransmitTask(void *pvParameters) {
 
 				while (TX_MESSAGE_PENDING(gMsgHolder[txMsgNum].msg)) {
 					// Wait until this TX message is done, before we start another.
-					//vTaskDelay(1);
+					//vTaskDelay(0);
 				}
+				GW_ENTER_CRITICAL(ccrHolder);
+				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 0);
+				GW_EXIT_CRITICAL(ccrHolder);
 			} else {
 
 			}

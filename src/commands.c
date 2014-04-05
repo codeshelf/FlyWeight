@@ -272,7 +272,7 @@ void createOutboundNetSetup() {
 
 	txBufferNum = lockTXBuffer();
 
-	vTaskSuspend(gRadioReceiveTask);
+	//vTaskSuspend(gRadioReceiveTask);
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -374,7 +374,7 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 
 	txBufferNum = lockTXBuffer();
 
-	vTaskSuspend(gRadioReceiveTask);
+	//vTaskSuspend(gRadioReceiveTask);
 
 	// This command gets setup in the TX buffers, because it only gets sent back to the controller via
 	// the serial interface.  This command never comes from the air.  It's created by the gateway (dongle)
@@ -410,7 +410,7 @@ void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	BufferCntType txBufferNum;
 	ChannelNumberType channel;
 
-	vTaskSuspend(gRadioReceiveTask);
+	//vTaskSuspend(gRadioReceiveTask);
 
 	// Switch to the channel requested in the outbound net-check.
 	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_CHKCMD_CHANNEL];

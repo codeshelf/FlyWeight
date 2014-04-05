@@ -99,9 +99,10 @@ static void setupSsi() {
 
 	// Setup the SSI clock.
 //	ssiClockConfig.ssiClockConfigWord = SSI_SET_BIT_CLOCK_FREQ(24000000, 500000);
+	// Clock rate is clk = sys-f / (div + 1) * ((7 * PSR) + 1) * ((PM + 1) * 2)
 	ssiClockConfig.bit.ssiDIV2 = 0x00;
-	ssiClockConfig.bit.ssiPSR = 0x01;
-	ssiClockConfig.bit.ssiPM = 0x10;
+	ssiClockConfig.bit.ssiPSR = 0x01; 
+	ssiClockConfig.bit.ssiPM = 0x06;
 	ssiClockConfig.bit.ssiDC = SSI_FRAME_LEN2; // Two words in each frame.  (Frame divide control.)
 	ssiClockConfig.bit.ssiWL = SSI_24BIT_WORD; // 3 - 8 bits, 7 = 16 bits, 9 = 20 bits, b = 24 bits
 	error = SSI_SetClockConfig(&ssiClockConfig);
