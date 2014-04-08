@@ -33,10 +33,8 @@ xQueueHandle gRadioTransmitQueue = NULL;
 extern RadioBufferStruct gRXRadioBuffer[RX_BUFFER_COUNT];
 extern RadioBufferStruct gTXRadioBuffer[TX_BUFFER_COUNT];
 
-EMessageHolderType gMsgHolder[MAX_NUM_MSG];
-gwUINT8 gNextMsgToUse = 0;
-gwUINT8 gCurMsg = 0;
-gwUINT8 gTotalPendingMsgs = 0;
+EMessageHolderType gRxMsgHolder;
+EMessageHolderType gTxMsgHolder;
 
 NetAddrType gMainRemote = INVALID_REMOTE;
 
@@ -51,68 +49,38 @@ void radioReceiveTask(void *pvParameters) {
 	if (gRadioReceiveQueue) {
 		for (;;) {
 
-			GW_WATCHDOG_RESET;
+			// Setup for the next RX cycle.
+			rxBufferNum = lockRXBuffer();
 
-			GW_ENTER_CRITICAL(ccrHolder);
-			if (gCurMsg == gNextMsgToUse) {
+			gRxMsgHolder.msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[rxBufferNum].bufferRadioHeader);
+			gRxMsgHolder.msg.u8BufSize = RX_BUFFER_SIZE;
+			gRxMsgHolder.msg.u8Status.msg_type = RX;
+			gRxMsgHolder.msg.u8Status.msg_state = MSG_RX_RQST;
+			gRxMsgHolder.msg.cbDataIndication = NULL;
+			gRxMsgHolder.bufferNum = rxBufferNum;
 
-				// Setup for the next RX cycle.
-				rxBufferNum = lockRXBuffer();
+			funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
 
-				gMsgHolder[gNextMsgToUse].msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[rxBufferNum].bufferRadioHeader);
-				gMsgHolder[gNextMsgToUse].msg.u8BufSize = RX_BUFFER_SIZE;
-				gMsgHolder[gNextMsgToUse].msg.u8Status.msg_type = RX;
-				gMsgHolder[gNextMsgToUse].msg.u8Status.msg_state = MSG_RX_RQST;
-				gMsgHolder[gNextMsgToUse].msg.cbDataIndication = NULL;
-				gMsgHolder[gNextMsgToUse].bufferNum = rxBufferNum;
+			int delayCheck = 0;
+			do {
+				funcErr = process_radio_msg();
 
-				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 0);
-
-				gTotalPendingMsgs++;
-				gNextMsgToUse++;
-				if (gNextMsgToUse >= MAX_NUM_MSG)
-					gNextMsgToUse = 0;
-			}
-			GW_EXIT_CRITICAL(ccrHolder);
-
-			// Keep looping until we've processed all of the messages that we've entered into the queue.
-			while (gCurMsg != gNextMsgToUse) {
-				if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
-					int delayCheck = 0;
-					do {
-						funcErr = process_radio_msg();
-
-						// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
-						if (delayCheck++ == kDelayCheckCount) {
-							vTaskDelay(1);
-							delayCheck = 0;
-						}
-					} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
-
-					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
-						// Send the packet to the serial link.
-						gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferSize = gMsgHolder[gCurMsg].msg.u8BufSize;
-						serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[gMsgHolder[gCurMsg].bufferNum].bufferStorage),
-						        gMsgHolder[gCurMsg].msg.u8BufSize);
-						RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
-					} else {
-						// Probably failed or aborted, release it.
-						RELEASE_RX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
-					}
-
-				} else if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == TX) {
-					do {
-						funcErr = process_radio_msg();
-					} while ((funcErr != gSuccess_c) || (TX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
-					RELEASE_TX_BUFFER(gMsgHolder[gCurMsg].bufferNum, ccrHolder);
+				// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
+				if (delayCheck++ == kDelayCheckCount) {
+					vTaskDelay(1);
+					delayCheck = 0;
 				}
+			} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
 
-				GW_ENTER_CRITICAL(ccrHolder);
-				gTotalPendingMsgs--;
-				gCurMsg++;
-				if (gCurMsg >= MAX_NUM_MSG)
-					gCurMsg = 0;
-				GW_EXIT_CRITICAL(ccrHolder);
+			if (gRxMsgHolder.msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
+				// Send the packet to the serial link.
+				gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferSize = gRxMsgHolder.msg.u8BufSize;
+				serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferStorage),
+						gRxMsgHolder.msg.u8BufSize);
+				RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
+			} else {
+				// Probably failed or aborted, release it.
+				RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
 			}
 		}
 	}
@@ -126,7 +94,6 @@ void radioReceiveTask(void *pvParameters) {
 void radioTransmitTask(void *pvParameters) {
 	BufferCntType txBufferNum;
 	FuncReturn_t funcErr;
-	gwUINT8 txMsgNum;
 	gwUINT8 ccrHolder;
 
 	if (gRadioTransmitQueue) {
@@ -137,51 +104,33 @@ void radioTransmitTask(void *pvParameters) {
 		for (;;) {
 
 			// Wait until the UART controller signals us that we have a buffer to transmit.
-			if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
-
-				while (gTotalPendingMsgs >= MAX_NUM_MSG) {
-					// There's no message space in the queue, so wait.
-					//vTaskDelay(1);
-				}
-
-				GW_ENTER_CRITICAL(ccrHolder);
-				// Disable a pending RX to prepare for TX.
-				if (gMsgHolder[gCurMsg].msg.u8Status.msg_type == RX) {
-					MLMERXDisableRequest(&(gMsgHolder[gCurMsg].msg));
-//					do {
-//						funcErr = process_radio_msg();
-//					} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
-				}
+			if (xQueueReceive(gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
 
 				// Setup for TX.
-				gMsgHolder[gNextMsgToUse].msg.pu8Buffer = (smac_pdu_t *) ((gTXRadioBuffer[txBufferNum].bufferRadioHeader) + 1);
-				gMsgHolder[gNextMsgToUse].msg.u8BufSize = gTXRadioBuffer[txBufferNum].bufferSize;
-				gMsgHolder[gNextMsgToUse].msg.u8Status.msg_type = TX;
-				gMsgHolder[gNextMsgToUse].msg.u8Status.msg_state = MSG_TX_RQST;
-				gMsgHolder[gNextMsgToUse].msg.cbDataIndication = NULL;
-				gMsgHolder[gNextMsgToUse].bufferNum = txBufferNum;
-				txMsgNum = gNextMsgToUse;
+				gTxMsgHolder.msg.pu8Buffer = (smac_pdu_t *) ((gTXRadioBuffer[txBufferNum].bufferRadioHeader) + 1);
+				gTxMsgHolder.msg.u8BufSize = gTXRadioBuffer[txBufferNum].bufferSize;
+				gTxMsgHolder.msg.u8Status.msg_type = TX;
+				gTxMsgHolder.msg.u8Status.msg_state = MSG_TX_RQST;
+				gTxMsgHolder.msg.cbDataIndication = NULL;
+				gTxMsgHolder.bufferNum = txBufferNum;
 
-				funcErr = MCPSDataRequest(&(gMsgHolder[gNextMsgToUse].msg));
-				
+				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
+				funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
+
 				// If the radio can't TX then we're in big trouble.  Just reset.
 				if (funcErr != gSuccess_c) {
-				  GW_RESET_MCU();
+					GW_RESET_MCU()
+					;
 				}
 
-				gTotalPendingMsgs++;
-				gNextMsgToUse++;
-				if (gNextMsgToUse >= MAX_NUM_MSG)
-					gNextMsgToUse = 0;
-				GW_EXIT_CRITICAL(ccrHolder);
-
-				while (TX_MESSAGE_PENDING(gMsgHolder[txMsgNum].msg)) {
+				while (TX_MESSAGE_PENDING(gTxMsgHolder.msg)) {
 					// Wait until this TX message is done, before we start another.
-					//vTaskDelay(0);
+					funcErr = process_radio_msg();
 				}
-				GW_ENTER_CRITICAL(ccrHolder);
-				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 0);
-				GW_EXIT_CRITICAL(ccrHolder);
+				RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
+
+				// Re-enable the RX.
+				funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
 			} else {
 
 			}

@@ -14,8 +14,6 @@
 #include "commands.h"
 #include "remoteCommon.h"
 
-void setupAudioLoader(void);
-void setupPWM(void);
 // --------------------------------------------------------------------------
 // Global variables.
 
@@ -39,7 +37,7 @@ extern gwBoolean gShouldSleep;
 extern gwUINT8 gSleepCount;
 extern gwUINT8 gButtonPressed;
 extern gwUINT8 gCCRHolder;
-gwUINT8 gAssocCheckCount = 0;
+gwUINT8 gAssocCheckCount = 1;
 
 // Radio buffers
 // There's a 2-byte ID on the front of every packet.
@@ -59,16 +57,12 @@ void radioReceiveTask(void *pvParameters) {
 	BufferCntType rxBufferNum;
 	gwUINT8 ccrHolder;
 	FuncReturn_t funcErr;
+	portTickType lastAssocCheck;
 
 	// The radio receive task will return a pointer to a radio data packet.
 	if (gRadioReceiveQueue) {
 
 		gSleepCount = 0;
-
-#ifdef USE_AUDIO
-		setupAudioLoader();
-		setupPWM();
-#endif
 		gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 
 		for (;;) {
@@ -104,25 +98,14 @@ void radioReceiveTask(void *pvParameters) {
 					do {
 						funcErr = process_radio_msg();
 
-						// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
-						if (delayCheck++ == kDelayCheckCount) {
-							// If we're running then send an AssocCheck every 5 seconds.
-							if (gLocalDeviceState == eLocalStateRun) {
-								if (gLastAssocCheckTickCount < xTaskGetTickCount()) {
-									gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-									BufferCntType txBufferNum = lockTXBuffer();
-									createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
-									if (transmitPacket(txBufferNum)) {
-									}
-									gAssocCheckCount++;
-									if (gAssocCheckCount > 10) {
-										//	GW_RESET_MCU;
-									}
-								}
+						if ((gAssocCheckCount > 0) && (xTaskGetTickCount() - lastAssocCheck > 200)) {
+							BufferCntType txBufferNum = lockTXBuffer();
+							createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
+							if (transmitPacket(txBufferNum)) {
 							}
-							vTaskDelay(1);
-							delayCheck = 0;
+							lastAssocCheck = xTaskGetTickCount();
 						}
+
 					} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gMsgHolder[gCurMsg].msg)));
 
 					if (gMsgHolder[gCurMsg].msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
@@ -158,9 +141,6 @@ void radioReceiveTask(void *pvParameters) {
 
 // --------------------------------------------------------------------------
 
-extern gwBoolean gAudioModeRX;
-extern SampleRateType gMasterSampleRate;
-
 void radioTransmitTask(void *pvParameters) {
 	BufferCntType txBufferNum;
 	FuncReturn_t funcErr;
@@ -171,7 +151,7 @@ void radioTransmitTask(void *pvParameters) {
 		for (;;) {
 
 			// Wait until the management thread signals us that we have a full buffer to transmit.
-			if (xQueueReceive( gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
+			if (xQueueReceive(gRadioTransmitQueue, &txBufferNum, portMAX_DELAY) == pdPASS) {
 
 				gShouldSleep = FALSE;
 
@@ -200,6 +180,12 @@ void radioTransmitTask(void *pvParameters) {
 
 				funcErr = MCPSDataRequest(&(gMsgHolder[gNextMsgToUse].msg));
 
+				// If the radio can't TX then we're in big trouble.  Just reset.
+				if (funcErr != gSuccess_c) {
+					GW_RESET_MCU()
+					;
+				}
+
 				gTotalPendingMsgs++;
 				gNextMsgToUse++;
 				if (gNextMsgToUse >= MAX_NUM_MSG)
@@ -210,6 +196,9 @@ void radioTransmitTask(void *pvParameters) {
 					// Wait until this TX message is done, before we start another.
 					vTaskDelay(1);
 				}
+//				GW_ENTER_CRITICAL(ccrHolder);
+//				funcErr = MLMERXEnableRequest(&(gMsgHolder[gNextMsgToUse].msg), 0);
+//				GW_EXIT_CRITICAL(ccrHolder);
 			} else {
 
 			}

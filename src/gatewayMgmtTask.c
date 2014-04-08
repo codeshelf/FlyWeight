@@ -45,8 +45,6 @@ void serialReceiveTask(void *pvParameters ) {
 	
 	for ( ;; ) {
 	
-		GW_WATCHDOG_RESET;
-
 		// Acquire and lock a TX buffer.
 		txBufferNum = lockTXBuffer();
 

@@ -50,7 +50,6 @@ BufferCntType lockRXBuffer() {
 	// Wait until there is a free buffer.
 	while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
-		GW_WATCHDOG_RESET;
 	}
 
 	// The buffers are a shared, critical resource, so we have to protect them before we update.
@@ -83,7 +82,6 @@ BufferCntType lockTXBuffer() {
 	// Wait until there is a free buffer.
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
-		GW_WATCHDOG_RESET;
 	}
 
 	// The buffers are a shared, critical resource, so we have to protect them before we update.
@@ -112,7 +110,7 @@ void setupWatchdog() {
 	// Setup the COP to interrupt (so that we can catch them and figure out where they come  from.)
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = TRUE;
-	copCntl.bit.copTimeOut = 20;
+	copCntl.bit.copTimeOut = 40;
 	copCntl.bit.copWP = TRUE;
 	#if (GW_DEBUG)
 		copCntl.bit.copOut = 1;		// 1 = CRM interrupt

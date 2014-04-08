@@ -86,6 +86,8 @@ void serialTransmitFrame(gwUINT8 portNum, UART_TComData *inDataPtr, gwUINT16 inS
 	// Send another framing character. (For some stupid reason the USB routine doesn't try very hard, so we have to loop until it succeeds.)
 	sendOneChar(portNum, END);
 	sendOneChar(portNum, END);
+
+	GW_WATCHDOG_RESET;
 }
 
 // --------------------------------------------------------------------------

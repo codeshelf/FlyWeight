@@ -491,6 +491,12 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 		gMyAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR];
 		gMyNetworkID = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_NET];
 		gLocalDeviceState = eLocalStateAssociated;
+
+		BufferCntType txBufferNum = lockTXBuffer();
+		createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
+		if (transmitPacket(txBufferNum)) {
+		}
+
 	}
 }
 // --------------------------------------------------------------------------
