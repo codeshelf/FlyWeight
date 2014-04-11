@@ -107,10 +107,12 @@ BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePt
 		switch (nextByte) {
 
 			case END:
-				if (bytesReceived)
+				if (bytesReceived) {
+					GW_WATCHDOG_RESET;
 					return bytesReceived;
-				else
+				} else {
 					break;
+				}
 
 			case ESC:
 				readOneChar(portNum, &nextByte);
@@ -122,7 +124,7 @@ BufferCntType serialReceiveFrame(gwUINT8 portNum, BufferStoragePtrType inFramePt
 					case ESC_ESC:
 						nextByte = ESC;
 						break;
-				}
+					}
 				break;
 
 			default:

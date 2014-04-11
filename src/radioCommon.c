@@ -78,10 +78,15 @@ BufferCntType lockTXBuffer() {
 
 	BufferCntType result;
 	gwUINT8 ccrHolder;
+	portTickType waitTicks;
 	
 	// Wait until there is a free buffer.
+	gwUINT8 retries = 0;
 	while (gTXRadioBuffer[gTXCurBufferNum].bufferStatus == eBufferStateInUse) {
 		vTaskDelay(1);
+		if (retries++ > 100) {
+			GW_RESET_MCU();
+		}
 	}
 
 	// The buffers are a shared, critical resource, so we have to protect them before we update.

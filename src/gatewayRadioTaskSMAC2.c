@@ -65,11 +65,11 @@ void radioReceiveTask(void *pvParameters) {
 			do {
 				funcErr = process_radio_msg();
 
-				// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
-				if (delayCheck++ == kDelayCheckCount) {
-					vTaskDelay(1);
-					delayCheck = 0;
-				}
+//				// Every kDelayCheckCount checks we should delay one 1ms, so that the OS idle tasks gets called.
+//				if (delayCheck++ == kDelayCheckCount) {
+//					vTaskDelay(1);
+//					delayCheck = 0;
+//				}
 			} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
 
 			if (gRxMsgHolder.msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
@@ -77,11 +77,8 @@ void radioReceiveTask(void *pvParameters) {
 				gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferSize = gRxMsgHolder.msg.u8BufSize;
 				serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferStorage),
 						gRxMsgHolder.msg.u8BufSize);
-				RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
-			} else {
-				// Probably failed or aborted, release it.
-				RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
 			}
+			RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
 		}
 	}
 	/* Will only get here if the queue could not be created. */
@@ -114,23 +111,30 @@ void radioTransmitTask(void *pvParameters) {
 				gTxMsgHolder.msg.cbDataIndication = NULL;
 				gTxMsgHolder.bufferNum = txBufferNum;
 
+				GW_ENTER_CRITICAL(ccrHolder);
 				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
-				funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
+				vTaskSuspend(gRadioReceiveTask);
+				GW_EXIT_CRITICAL(ccrHolder);
 
-				// If the radio can't TX then we're in big trouble.  Just reset.
-				if (funcErr != gSuccess_c) {
-					GW_RESET_MCU()
-					;
-				}
+				do {
+					funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
 
-				while (TX_MESSAGE_PENDING(gTxMsgHolder.msg)) {
-					// Wait until this TX message is done, before we start another.
-					funcErr = process_radio_msg();
-				}
+					// If the radio can't TX then we're in big trouble.  Just reset.
+					if (funcErr != gSuccess_c) {
+						GW_RESET_MCU()
+					}
+
+					do {
+						// Wait until this TX message is done, before we start another.
+						funcErr = process_radio_msg();
+					} while (TX_MESSAGE_PENDING(gTxMsgHolder.msg));
+				} while (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL);
+
 				RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
-
-				// Re-enable the RX.
+				gRxMsgHolder.msg.u8Status.msg_state = MSG_RX_RQST;
 				funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
+				vTaskResume(gRadioReceiveTask);
+
 			} else {
 
 			}

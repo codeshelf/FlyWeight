@@ -38,14 +38,14 @@
 	#define RX_QUEUE_HIGH_WATER		RX_QUEUE_SIZE - 2
 #else
 	#ifdef MC1322X
-		#define RX_QUEUE_SIZE			20
+		#define RX_QUEUE_SIZE			10
 	#else
-		#define RX_QUEUE_SIZE			15
+		#define RX_QUEUE_SIZE			10
 	#endif
 	#define RX_QUEUE_LOW_WATER		2
 	#define RX_QUEUE_HIGH_WATER		RX_QUEUE_SIZE - 2
 //	#define RX_QUEUE_BALANCE		4
-	#define TX_QUEUE_SIZE			3
+	#define TX_QUEUE_SIZE			10
 #endif
 
 #define RX_BUFFER_COUNT			RX_QUEUE_SIZE
@@ -245,7 +245,7 @@ typedef union UnixTimeUnionType {
 		|| (msg.u8Status.msg_state == MSG_RX_PASSED_TO_DEVICE) \
 		|| (msg.u8Status.msg_state == MSG_RX_ACTION_STARTED) \
 		|| (msg.u8Status.msg_state == MSG_RX_SYNC_FOUND) \
-		|| (msg.u8Status.msg_state == MSG_RX_RQST_ABORT)  \
+		/* || (msg.u8Status.msg_state == MSG_RX_RQST_ABORT) */ \
 	)
 
 #define TX_MESSAGE_PENDING(msg) ( \

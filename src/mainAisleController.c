@@ -129,12 +129,12 @@ void vMain( void ) {
 
 void vApplicationIdleHook( void ) {
 
-	GW_WATCHDOG_RESET;
-
-	// If we haven't received a packet in by timeout seconds then reset.
-	portTickType ticks = xTaskGetTickCount();
-	if (ticks > (gLastPacketReceivedTick + kNetCheckTickCount)) {
-		GW_RESET_MCU();
-	}
-	//vTaskDelay(100);
+//	GW_WATCHDOG_RESET;
+//
+//	// If we haven't received a packet in by timeout seconds then reset.
+//	portTickType ticks = xTaskGetTickCount();
+//	if (ticks > (gLastPacketReceivedTick + kNetCheckTickCount)) {
+//		GW_RESET_MCU();
+//	}
+//	//vTaskDelay(100);
 }

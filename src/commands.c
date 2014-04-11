@@ -54,9 +54,15 @@ gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum) {
 }
 // --------------------------------------------------------------------------
 
-AckIDType getAckId(BufferCntType inRXBufferNum) {
+AckIDType getAckId(BufferStoragePtrType inBufferPtr) {
 	// We know we need to ACK if the command ID is not zero.
-	return (gRXRadioBuffer[inRXBufferNum].bufferStorage[PCKPOS_ACK_ID]);
+	return (inBufferPtr[PCKPOS_ACK_ID]);
+}
+// --------------------------------------------------------------------------
+
+void setAckId(BufferStoragePtrType inBufferPtr) {
+	portTickType ticks = xTaskGetTickCount();
+	inBufferPtr[PCKPOS_ACK_ID] = (&ticks)[0];
 }
 // --------------------------------------------------------------------------
 
@@ -305,6 +311,7 @@ void createOutboundNetSetup() {
 void createScanCommand(BufferCntType inTXBufferNum, ScanStringPtrType inScanStringPtr, ScanStringLenType inScanStringLen) {
 
 	createPacket(inTXBufferNum, eCommandControl, gMyNetworkID, gMyAddr, ADDR_CONTROLLER);
+	setAckId(gTXRadioBuffer[inTXBufferNum].bufferStorage);
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CONTROL_SUBCMD] = eControlSubCmdScan;
 
 	writeAsPString(gTXRadioBuffer[inTXBufferNum].bufferStorage + CMDPOS_CONTROL_DATA, (BufferStoragePtrType) inScanStringPtr,

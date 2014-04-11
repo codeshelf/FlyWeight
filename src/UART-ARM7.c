@@ -21,7 +21,7 @@ UartReadStatus_t gu8SCIStatus = gUartReadStatusComplete_c;
 uint8_t gu8SCIDataFlag = FALSE;
 uint16_t gu16SCINumOfBytes = 0;
 
-uint8_t gCircularBuffer[BUFFER_SIZE];
+uint8_t gCircularBuffer[BUFFER_SIZE + 1];
 uint8_t gCircularBufferPos;
 uint8_t gCircularBufferEnd = BUFFER_SIZE + 1;
 gwBoolean gCircularBufferIsEmpty = TRUE;

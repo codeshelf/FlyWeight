@@ -92,7 +92,8 @@ gwUINT8 transmitPacketFromISR(BufferCntType inTXBufferNum);
 gwBoolean getAckRequired(BufferStoragePtrType inBufferPtr);
 ECommandGroupIDType getCommandID(BufferStoragePtrType inBufferPtr);
 NetworkIDType getNetworkID(BufferCntType inRXBufferNum);
-AckIDType getAckId(BufferCntType inRXBufferNum);
+AckIDType getAckId(BufferStoragePtrType inBufferPtr);
+void setAckId(BufferStoragePtrType inBufferPtr);
 
 ENetMgmtSubCmdIDType getNetMgmtSubCommand(BufferStoragePtrType inBufferPtr);
 ECmdAssocType getAssocSubCommand(BufferCntType inRXBufferNum);
