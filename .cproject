@@ -52,6 +52,7 @@
 			</scannerInfoProvider>
 		</profile>
 	</storageModule>
+	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="org.eclipse.cdt.core.pathentry">
 		<pathentry base-path="FlyWeight" include="project/CODE" kind="inc" path="" system="true"/>
 		<pathentry base-path="FreeRTOS" include="Source/include" kind="inc" path="" system="true"/>
@@ -64,6 +65,5 @@
 		<pathentry kind="src" path="src"/>
 		<pathentry kind="out" path=""/>
 		<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
-		<pathentry kind="prj" path="/SMAC"/>
 	</storageModule>
 </cproject>

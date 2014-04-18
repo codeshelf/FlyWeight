@@ -290,7 +290,7 @@ void vMain(void) {
 	setupDisplayScroller();
 
 	// The the display boot complete.
-	DelayMs(250);
+	DelayMs(1000);
 
 	// Set the backlight to 40%
 	// Setting backlight, or any EEPROM param, causes the display to hang until POR.

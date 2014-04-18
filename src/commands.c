@@ -702,10 +702,12 @@ EControlCmdAckStateType processRequestQtySubCommand(BufferCntType inRXBufferNum)
 	gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_REQ_QTY];
 	gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MIN_QTY];
 	gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MAX_QTY];
+	gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_FREQ];
+	gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_DUTYCYCLE];
 
 	RS485_TX_ON;
-	gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty};
-	serialTransmitFrame(UART_2, message, 5);
+	gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
+	serialTransmitFrame(UART_2, message, 7);
 
 	// Wait until all of the TX bytes have been sent.
 	while (UART1_REGS_P->Utxcon < 32) {
