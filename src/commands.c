@@ -167,6 +167,7 @@ void createPacket(BufferCntType inTXBufferNum, ECommandGroupIDType inCmdID, Netw
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_NET_NUM] |= (inNetworkID << SHIFTBITS_PKT_NET_NUM);
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_SRC_ADDR] = inSrcAddr;
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_DST_ADDR] = inDestAddr;
+	gTXRadioBuffer[inTXBufferNum].bufferStorage[PCKPOS_ACK_ID] = 0;
 	gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_CMD_ID] = (inCmdID << SHIFTBITS_CMD_ID);
 
 	gTXRadioBuffer[inTXBufferNum].bufferSize += 4;

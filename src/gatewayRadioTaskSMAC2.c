@@ -52,6 +52,8 @@ void radioReceiveTask(void *pvParameters) {
 			// Setup for the next RX cycle.
 			rxBufferNum = lockRXBuffer();
 
+			gRXRadioBuffer[rxBufferNum].bufferStorage[0] = 0xff;
+			
 			gRxMsgHolder.msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[rxBufferNum].bufferRadioHeader);
 			gRxMsgHolder.msg.u8BufSize = RX_BUFFER_SIZE;
 			gRxMsgHolder.msg.u8Status.msg_type = RX;
@@ -72,7 +74,8 @@ void radioReceiveTask(void *pvParameters) {
 //				}
 			} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
 
-			if (gRxMsgHolder.msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
+			if ((gRxMsgHolder.msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) 
+				&& (gRXRadioBuffer[rxBufferNum].bufferStorage[0] != 0xff)) {
 				// Send the packet to the serial link.
 				gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferSize = gRxMsgHolder.msg.u8BufSize;
 				serialTransmitFrame(UART_1, (gwUINT8*) (&gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferStorage),
