@@ -133,7 +133,8 @@ void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAdd
 
 #ifdef IS_CODESHELF
 EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
-EControlCmdAckStateType processRequestQtySubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);
 
 void startScrolling();

@@ -696,7 +696,7 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-EControlCmdAckStateType processRequestQtySubCommand(BufferCntType inRXBufferNum) {
+EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
 
 	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMSPOS_POSITION];
@@ -709,6 +709,26 @@ EControlCmdAckStateType processRequestQtySubCommand(BufferCntType inRXBufferNum)
 	RS485_TX_ON;
 	gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
 	serialTransmitFrame(UART_2, message, 7);
+
+	// Wait until all of the TX bytes have been sent.
+	while (UART1_REGS_P->Utxcon < 32) {
+		vTaskDelay(1);
+	}
+	vTaskDelay(25);
+
+	RS485_TX_OFF;
+
+	return result;
+}
+
+EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBufferNum) {
+	EControlCmdAckStateType result = eAckStateOk;
+
+	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMSPOS_POSITION];
+
+	RS485_TX_ON;
+	gwUINT8 message[] = {POS_CTRL_CLEAR, pos};
+	serialTransmitFrame(UART_2, message, 2);
 
 	// Wait until all of the TX bytes have been sent.
 	while (UART1_REGS_P->Utxcon < 32) {

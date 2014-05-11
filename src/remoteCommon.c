@@ -131,8 +131,12 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 				ackState = processLedSubCommand(inRxBufferNum);
 				break;
 
-				case eControlSubCmdRequestQty:
-				ackState = processRequestQtySubCommand(inRxBufferNum);
+				case eControlSubCmdSetPosController:
+				ackState = processSetPosControllerSubCommand(inRxBufferNum);
+				break;
+
+				case eControlSubCmdClearPosController:
+				ackState = processClearPosControllerSubCommand(inRxBufferNum);
 				break;
 
 #endif

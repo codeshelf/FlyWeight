@@ -276,8 +276,9 @@ typedef enum {
 	eControlSubCmdScan = 0,
 	eControlSubCmdMessage = 1,
 	eControlSubCmdLight = 2,
-	eControlSubCmdRequestQty = 3,
-	eControlSubCmdButton = 4
+	eControlSubCmdSetPosController = 3,
+	eControlSubCmdClearPosController = 4,
+	eControlSubCmdButton = 5
 //	eControlSubCmdEndpointAdj = 1,
 //	eControlSubCmdMotor = 2,
 //	eControlSubCmdButton = 3,
