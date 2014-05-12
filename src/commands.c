@@ -540,14 +540,14 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-#ifdef IS_CODESHELF
+DisplayStringType gDisplayDataLine[4];
+DisplayStringLenType gDisplayDataLineLen[4];
+DisplayStringLenType gDisplayDataLinePos[4];
 
-DisplayStringType gDisplayDataLine[2];
-DisplayStringLenType gDisplayDataLineLen[2];
-DisplayStringLenType gDisplayDataLinePos[2];
-
-EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
+EControlCmdAckStateType processDisplayMsgSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
+
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 
 	BufferStoragePtrType bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE;
 	gDisplayDataLineLen[0] = readAsPString(gDisplayDataLine[0], bufferPtr);
@@ -555,10 +555,10 @@ EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum) {
 	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + gDisplayDataLineLen[0] + 1;
 	gDisplayDataLineLen[1] = readAsPString(gDisplayDataLine[1], bufferPtr);
 
-	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+	sendDisplayMessage(LINE1_FIRST_POS, strlen(LINE1_FIRST_POS));
 	sendDisplayMessage(gDisplayDataLine[0], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[0])));
 
-	sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+	sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
 	sendDisplayMessage(gDisplayDataLine[1], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[1])));
 
 	if ((gDisplayDataLineLen[1] <= DISPLAY_WIDTH) && (gDisplayDataLineLen[1] <= DISPLAY_WIDTH)) {
@@ -698,18 +698,24 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 
 EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
-
-	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMSPOS_POSITION];
-	gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_REQ_QTY];
-	gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MIN_QTY];
-	gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_MAX_QTY];
-	gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_FREQ];
-	gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_DUTYCYCLE];
+	gwUINT8 instructionNum;
+	gwUINT8 instructionCount;
 
 	RS485_TX_ON;
-	gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
-	serialTransmitFrame(UART_2, message, 7);
 
+	instructionCount = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTION_COUNT];
+	for (instructionNum = 0; instructionNum < instructionCount; ++instructionNum) {
+		gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_POS)];
+		gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_REQ_QTY)];
+		gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MIN_QTY)];
+		gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MAX_QTY)];
+		gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_FREQ)];
+		gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_DUTY_CYCLE)];
+
+		gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
+		serialTransmitFrame(UART_2, message, 7);
+
+	}
 	// Wait until all of the TX bytes have been sent.
 	while (UART1_REGS_P->Utxcon < 32) {
 		vTaskDelay(1);
@@ -724,7 +730,7 @@ EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBuff
 EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBufferNum) {
 	EControlCmdAckStateType result = eAckStateOk;
 
-	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMSPOS_POSITION];
+	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CLEAR_POS];
 
 	RS485_TX_ON;
 	gwUINT8 message[] = {POS_CTRL_CLEAR, pos};
@@ -740,6 +746,3 @@ EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBu
 
 	return result;
 }
-
-
-#endif

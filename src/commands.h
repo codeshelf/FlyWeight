@@ -30,6 +30,7 @@
 //#define MOTOR2_ENDPOINT			3
 
 #define LED_SAMPLE_BYTES			5
+#define POS_INSTRUCTION_BYTES		6
 
 #if defined(GW0009R1)
 	#define LEDRedON	PTBD_PTBD1 = 1;
@@ -132,7 +133,7 @@ void processQueryCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 void processResponseCommand(BufferCntType inRXBufferNum, NetAddrType inRemoteAddr);
 
 #ifdef IS_CODESHELF
-EControlCmdAckStateType processMessageSubCommand(BufferCntType inRXBufferNum);
+EControlCmdAckStateType processDisplayMsgSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBufferNum);
 EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum);

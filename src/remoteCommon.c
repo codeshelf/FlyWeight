@@ -119,83 +119,25 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 //						case eControlSubCmdEndpointAdj:
 //							break;
 
-#ifdef IS_CODESHELF
 				case eControlSubCmdScan:
-				break;
+					break;
 
 				case eControlSubCmdMessage:
-				ackState = processMessageSubCommand(inRxBufferNum);
-				break;
+					ackState = processDisplayMsgSubCommand(inRxBufferNum);
+					break;
 
 				case eControlSubCmdLight:
-				ackState = processLedSubCommand(inRxBufferNum);
-				break;
+					ackState = processLedSubCommand(inRxBufferNum);
+					break;
 
 				case eControlSubCmdSetPosController:
-				ackState = processSetPosControllerSubCommand(inRxBufferNum);
-				break;
+					ackState = processSetPosControllerSubCommand(inRxBufferNum);
+					break;
 
 				case eControlSubCmdClearPosController:
-				ackState = processClearPosControllerSubCommand(inRxBufferNum);
-				break;
+					ackState = processClearPosControllerSubCommand(inRxBufferNum);
+					break;
 
-#endif
-
-#ifdef MOTOR_CONTROLLER
-				case eControlSubCmdMotor:
-				processMotorControlSubCommand(inRxBufferNum);
-				break;
-#endif
-
-#ifdef IS_HOOBEE
-				case eControlSubCmdHooBee:
-				ackState = processHooBeeSubCommand(inRxBufferNum);
-				break;
-#endif
-
-#ifdef IS_WALKIETALKIE
-				case eCommandAudio:
-				// Audio commands are handled by an interrupt routine.
-				break;
-#endif
-
-#ifdef IS_PFC
-				case eControlSubCmdSDCardUpdate:
-				// By processing the SDCard updates in the critical region,
-				// it prevents the gateway from sending another update until this
-				// one completes, because we wont send an ACK until it completes.
-				GW_ENTER_CRITICAL(ccrHolder);
-				ackState = processSDCardUpdateSubCommand(inRxBufferNum);
-				GW_EXIT_CRITICAL(ccrHolder);
-				break;
-
-				case eControlSubCmdSDCardUpdateCommit:
-				// By processing the SDCard updates in the critical region,
-				// it prevents the gateway from sending another update until this
-				// one completes, because we wont send an ACK until it completes.
-				GW_ENTER_CRITICAL(ccrHolder);
-				ackState = processSDCardUpdateCommitSubCommand(inRxBufferNum, ackData);
-				GW_EXIT_CRITICAL(ccrHolder);
-				break;
-
-				case eControlSubCmdSDCardModeControl:
-				// By processing the SDCard mode control in the critical region,
-				// it prevents the gateway from sending another update until this
-				// one completes, because we wont send an ACK until it completes.
-				GW_ENTER_CRITICAL(ccrHolder);
-				ackState = processSDCardModeSubCommand(inRxBufferNum, ackId, ackData);
-				GW_EXIT_CRITICAL(ccrHolder);
-				break;
-
-				case eControlSubCmdSDCardBlockCheck:
-				// By processing the SDCard checks in the critical region,
-				// it prevents the gateway from sending another update until this
-				// one completes, because we wont send an ACK until it completes.
-				GW_ENTER_CRITICAL(ccrHolder);
-				ackState = processSDCardBlockCheckSubCommand(inRxBufferNum);
-				GW_EXIT_CRITICAL(ccrHolder);
-				break;
-#endif
 				default:
 					// Bogus command.
 					// Immediately free this command buffer since we'll never do anything with it.

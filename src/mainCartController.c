@@ -301,7 +301,7 @@ void vMain(void) {
 	//sendDisplayMessage("\x7c\x03", 2);
 	//sendDisplayMessage("\x7c\x05", 2);
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+	sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
 	sendDisplayMessage("DISCONNECTED", 12);
 
 	gLocalDeviceState = eLocalStateStarted;

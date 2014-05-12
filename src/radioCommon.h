@@ -145,15 +145,17 @@
 #define BACKLIGHT_73PERCENT				"\x7C\x96"
 #define BACKLIGHT_100PERCENT			"\x7C\x9D"
 #define CURSOR_OFF						"\xFE\x0C"
-#define LINE1_POS1 						"\xFE\x80"
-#define LINE2_POS1 						"\xFE\xC0"
+#define LINE1_FIRST_POS 				"\xFE\x80"
+#define LINE2_FIRST_POS 				"\xFE\xC0"
+#define LINE3_FIRST_POS 				"\xFE\x94"
+#define LINE4_FIRST_POS 				"\xFE\xD4"
 #define CLEAR_DISPLAY					"\xFE\x01"
 
 #define DISPLAY_SETUP					BACKLIGHT_73PERCENT CURSOR_OFF
 
 #define DISPLAY_WIDTH					20
 
-#define MAX_DISPLAY_STRING_BYTES		64
+#define MAX_DISPLAY_STRING_BYTES		40
 #define MAX_SCAN_STRING_BYTES			64
 
 #define RS485_TX_ON						Gpio_SetPinData(gGpioPin21_c, gGpioPinStateHigh_c);

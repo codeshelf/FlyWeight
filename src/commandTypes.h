@@ -100,13 +100,18 @@
 #define CMDPOS_LED_SAMPLE_COUNT		CMDPOS_LED_EFFECT + 1
 #define CMDPOS_LED_SAMPLES			CMDPOS_LED_SAMPLE_COUNT + 1
 
-// Request Quantity Command
-#define CMSPOS_POSITION				CMDPOS_CONTROL_DATA
-#define CMDPOS_REQ_QTY				CMSPOS_POSITION + 1
-#define CMDPOS_MIN_QTY				CMDPOS_REQ_QTY + 1
-#define CMDPOS_MAX_QTY				CMDPOS_MIN_QTY + 1
-#define CMDPOS_FREQ					CMDPOS_MAX_QTY + 1
-#define CMDPOS_DUTYCYCLE			CMDPOS_FREQ + 1
+// Position controller set command
+#define CMDPOS_INSTRUCTION_COUNT	CMDPOS_CONTROL_DATA
+#define CMDPOS_INSTRUCTIONS			CMDPOS_INSTRUCTION_COUNT + 1
+#define CMDPOS_POS	 				0
+#define CMDPOS_REQ_QTY 				1
+#define CMDPOS_MIN_QTY 				2
+#define CMDPOS_MAX_QTY 				3
+#define CMDPOS_FREQ 				4
+#define CMDPOS_DUTY_CYCLE 			5
+
+// Position controller clear command
+#define CMDPOS_CLEAR_POS			CMDPOS_CONTROL_DATA
 
 // Command masks
 #define PACKETMASK_VERSION		0xc0    /* 0b11000000 */

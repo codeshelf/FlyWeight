@@ -53,9 +53,9 @@ void displayScrollCallback(TmrNumber_t tmrNumber) {
 
 		if (gDisplayDataLineLen[line] > DISPLAY_WIDTH) {
 			if (line == 0) {
-				error = sendDisplayMessage(LINE1_POS1, strlen(LINE1_POS1));
+				error = sendDisplayMessage(LINE1_FIRST_POS, strlen(LINE1_FIRST_POS));
 			} else {
-				error = sendDisplayMessage(LINE2_POS1, strlen(LINE2_POS1));
+				error = sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
 			}
 			error = sendDisplayMessage(&(gDisplayDataLine[line][gDisplayDataLinePos[line]]),
 					getMin(DISPLAY_WIDTH, (gDisplayDataLineLen[line] - gDisplayDataLinePos[line])));
