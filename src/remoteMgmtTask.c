@@ -52,6 +52,8 @@ void remoteMgmtTask(void *pvParameters) {
 		associated = FALSE;
 		while (!associated) {
 
+			GW_WATCHDOG_RESET;
+
 			// Set the channel to the current channel we're testing.
 			MLMESetChannelRequest(channel);
 
@@ -99,6 +101,7 @@ void remoteMgmtTask(void *pvParameters) {
 
 		checked = FALSE;
 		for (;;) {
+
 			if (!checked) {
 				BufferCntType txBufferNum = lockTXBuffer();
 				createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);

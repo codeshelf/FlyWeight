@@ -105,8 +105,8 @@ NetAddrType getCommandSrcAddr(BufferCntType inRXBufferNum);
 NetAddrType getCommandDstAddr(BufferCntType inRXBufferNum);
 
 gwUINT8 getLEDVaue(gwUINT8 inLEDNum, BufferCntType inRXBufferNum);
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringLen);
-gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr);
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, gwUINT8 inStringLen);
+gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr, gwUINT8 inMaxBytes);
 
 void createNetCheckRespInboundCommand(BufferCntType inRXBufferNum);
 void createAckPacket(BufferCntType inTXBufferNum, AckIDType inAckId, AckDataType inAckData);

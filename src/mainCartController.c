@@ -285,7 +285,7 @@ void vMain(void) {
 
 	setupGpio();
 	UART_Init(UART_1, 9600, FALSE);
-	UART_Init(UART_2, 9600, FALSE);
+	UART_Init(UART_2, 19200, FALSE);
 	setupRS485();
 	setupDisplayScroller();
 

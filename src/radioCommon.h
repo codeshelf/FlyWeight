@@ -155,7 +155,7 @@
 
 #define DISPLAY_WIDTH					20
 
-#define MAX_DISPLAY_STRING_BYTES		40
+#define MAX_DISPLAY_STRING_BYTES		42
 #define MAX_SCAN_STRING_BYTES			64
 
 #define RS485_TX_ON						Gpio_SetPinData(gGpioPin21_c, gGpioPinStateHigh_c);

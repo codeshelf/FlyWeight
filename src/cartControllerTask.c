@@ -49,13 +49,17 @@ void displayScrollCallback(TmrNumber_t tmrNumber) {
 	gwUINT8 error;
 	gwUINT8 remainingSpace;
 
-	for (int line = 0; line < 2; ++line) {
+	for (int line = 0; line < 4; ++line) {
 
 		if (gDisplayDataLineLen[line] > DISPLAY_WIDTH) {
 			if (line == 0) {
 				error = sendDisplayMessage(LINE1_FIRST_POS, strlen(LINE1_FIRST_POS));
-			} else {
+			} else if (line == 1) {
 				error = sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
+			} else if (line == 2) {
+				error = sendDisplayMessage(LINE3_FIRST_POS, strlen(LINE3_FIRST_POS));
+			} else if (line == 3) {
+				error = sendDisplayMessage(LINE4_FIRST_POS, strlen(LINE4_FIRST_POS));
 			}
 			error = sendDisplayMessage(&(gDisplayDataLine[line][gDisplayDataLinePos[line]]),
 					getMin(DISPLAY_WIDTH, (gDisplayDataLineLen[line] - gDisplayDataLinePos[line])));

@@ -139,15 +139,15 @@ EControlSubCmdIDType getControlSubCommand(BufferCntType inRXBufferNum) {
 
 // --------------------------------------------------------------------------
 
-void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, size_t inStringLen) {
+void writeAsPString(BufferStoragePtrType inDestPtr, const BufferStoragePtrType inStringPtr, gwUINT8 inStringLen) {
 	inDestPtr[0] = (gwUINT8) inStringLen;
 	memcpy(inDestPtr + 1, inStringPtr, (gwUINT8) inStringLen);
 }
 
 // --------------------------------------------------------------------------
 
-gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr) {
-	gwUINT8 stringLen = (gwUINT8) inSrcPtr[0];
+gwUINT8 readAsPString(BufferStoragePtrType inDestStringPtr, const BufferStoragePtrType inSrcPtr, gwUINT8 inMaxBytes) {
+	gwUINT8 stringLen = getMin((gwUINT8) inSrcPtr[0], inMaxBytes);
 	memcpy(inDestStringPtr, inSrcPtr + 1, (gwUINT8) stringLen);
 	inDestStringPtr[stringLen] = (gwUINT8) NULL;
 	return stringLen;
@@ -417,12 +417,18 @@ void processNetIntfTestCommand(BufferCntType inTXBufferNum) {
 void processNetCheckOutboundCommand(BufferCntType inTXBufferNum) {
 	BufferCntType txBufferNum;
 	ChannelNumberType channel;
+	ChannelNumberType newChannel;
 
 	//vTaskSuspend(gRadioReceiveTask);
 
 	// Switch to the channel requested in the outbound net-check.
-	channel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_CHKCMD_CHANNEL];
-	//	MLMESetChannelRequest(channel);
+	channel = MLMEGetChannelRequest();
+	newChannel = gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_CHKCMD_CHANNEL];
+
+	if (channel != newChannel) {
+		MLMESetChannelRequest(newChannel);
+		channel = newChannel;
+	}
 
 	// We need to put the gateway (dongle) GUID into the outbound packet before it gets transmitted.
 	memcpy(&(gTXRadioBuffer[inTXBufferNum].bufferStorage[CMDPOS_NETM_CHKCMD_GUID]), GUID, UNIQUE_ID_BYTES);
@@ -538,6 +544,8 @@ EMotorCommandType getMotorCommand(BufferCntType inRXBufferNum) {
 	return result;
 }
 
+#ifdef IS_CODESHELF
+
 // --------------------------------------------------------------------------
 
 DisplayStringType gDisplayDataLine[4];
@@ -549,24 +557,42 @@ EControlCmdAckStateType processDisplayMsgSubCommand(BufferCntType inRXBufferNum)
 
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 
+	// First display line.
 	BufferStoragePtrType bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE;
-	gDisplayDataLineLen[0] = readAsPString(gDisplayDataLine[0], bufferPtr);
-
-	bufferPtr = gRXRadioBuffer[inRXBufferNum].bufferStorage + CMDPOS_MESSAGE + gDisplayDataLineLen[0] + 1;
-	gDisplayDataLineLen[1] = readAsPString(gDisplayDataLine[1], bufferPtr);
+	gDisplayDataLineLen[0] = readAsPString(gDisplayDataLine[0], bufferPtr, MAX_DISPLAY_STRING_BYTES);
 
 	sendDisplayMessage(LINE1_FIRST_POS, strlen(LINE1_FIRST_POS));
 	sendDisplayMessage(gDisplayDataLine[0], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[0])));
 
+	// Second display line.
+	bufferPtr += gDisplayDataLineLen[0] + 1;
+	gDisplayDataLineLen[1] = readAsPString(gDisplayDataLine[1], bufferPtr, MAX_DISPLAY_STRING_BYTES);
+
 	sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
 	sendDisplayMessage(gDisplayDataLine[1], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[1])));
 
-	if ((gDisplayDataLineLen[1] <= DISPLAY_WIDTH) && (gDisplayDataLineLen[1] <= DISPLAY_WIDTH)) {
+	// Third display line.
+	bufferPtr += gDisplayDataLineLen[1] + 1;
+	gDisplayDataLineLen[2] = readAsPString(gDisplayDataLine[2], bufferPtr, MAX_DISPLAY_STRING_BYTES);
+
+	sendDisplayMessage(LINE3_FIRST_POS, strlen(LINE3_FIRST_POS));
+	sendDisplayMessage(gDisplayDataLine[2], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[2])));
+
+	// Fourth display line.
+	bufferPtr += gDisplayDataLineLen[2] + 1;
+	gDisplayDataLineLen[3] = readAsPString(gDisplayDataLine[3], bufferPtr, MAX_DISPLAY_STRING_BYTES);
+
+	sendDisplayMessage(LINE4_FIRST_POS, strlen(LINE4_FIRST_POS));
+	sendDisplayMessage(gDisplayDataLine[3], getMin(DISPLAY_WIDTH, strlen(gDisplayDataLine[3])));
+
+	if ((gDisplayDataLineLen[0] <= DISPLAY_WIDTH) && (gDisplayDataLineLen[1] <= DISPLAY_WIDTH)
+			&& (gDisplayDataLineLen[2] <= DISPLAY_WIDTH) && (gDisplayDataLineLen[3] <= DISPLAY_WIDTH)) {
 		stopScrolling();
 	} else {
 		gDisplayDataLinePos[0] = 0;
 		gDisplayDataLinePos[1] = 0;
-
+		gDisplayDataLinePos[2] = 0;
+		gDisplayDataLinePos[3] = 0;
 		startScrolling();
 	}
 	return result;
@@ -701,28 +727,37 @@ EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBuff
 	gwUINT8 instructionNum;
 	gwUINT8 instructionCount;
 
-	RS485_TX_ON;
+	RS485_TX_ON
+	;
 
 	instructionCount = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTION_COUNT];
 	for (instructionNum = 0; instructionNum < instructionCount; ++instructionNum) {
-		gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_POS)];
-		gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_REQ_QTY)];
-		gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MIN_QTY)];
-		gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MAX_QTY)];
-		gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_FREQ)];
-		gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS + (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_DUTY_CYCLE)];
+		gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_POS)];
+		gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_REQ_QTY)];
+		gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MIN_QTY)];
+		gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MAX_QTY)];
+		gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_FREQ)];
+		gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
+				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_DUTY_CYCLE)];
 
-		gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
+		gwUINT8 message[] = { POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle };
 		serialTransmitFrame(UART_2, message, 7);
 
+		// Wait until all of the TX bytes have been sent.
+		while (UART2_REGS_P ->Utxcon < 32) {
+			vTaskDelay(1);
+		}
+		vTaskDelay(2);
 	}
-	// Wait until all of the TX bytes have been sent.
-	while (UART1_REGS_P->Utxcon < 32) {
-		vTaskDelay(1);
-	}
-	vTaskDelay(25);
+	vTaskDelay(10);
 
-	RS485_TX_OFF;
+	RS485_TX_OFF
+	;
 
 	return result;
 }
@@ -732,17 +767,20 @@ EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBu
 
 	gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_CLEAR_POS];
 
-	RS485_TX_ON;
-	gwUINT8 message[] = {POS_CTRL_CLEAR, pos};
+	RS485_TX_ON
+	;
+	gwUINT8 message[] = { POS_CTRL_CLEAR, pos };
 	serialTransmitFrame(UART_2, message, 2);
 
 	// Wait until all of the TX bytes have been sent.
-	while (UART1_REGS_P->Utxcon < 32) {
+	while (UART1_REGS_P ->Utxcon < 32) {
 		vTaskDelay(1);
 	}
 	vTaskDelay(25);
 
-	RS485_TX_OFF;
+	RS485_TX_OFF
+	;
 
 	return result;
 }
+#endif
