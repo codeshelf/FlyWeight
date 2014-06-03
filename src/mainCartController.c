@@ -38,6 +38,15 @@
 #endif
 
 // --------------------------------------------------------------------------
+// Defines
+
+void setupKbi();
+void lcdOff();
+void lcdOn();
+pfCallback_t preSleep();
+void kbiSleepCallback(void);
+
+// --------------------------------------------------------------------------
 // Globals
 
 portTickType gLastPacketReceivedTick;
@@ -73,34 +82,53 @@ void setupGpio(void) {
 	gpioError = Gpio_SetPinFunction(gGpioPin3_c, gGpioNormalMode_c);
 	gpioError = Gpio_SetPinDir(gGpioPin3_c, gGpioDirOut_c);
 
-	// KBI
+	// Micrel power switch to LCD
+	gpioError = Gpio_SetPinFunction(gGpioPin13_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin13_c, gGpioDirOut_c);
+	gpioError = Gpio_SetPinData(gGpioPin13_c, gGpioPinStateHigh_c);
+
+	// KBI (except KBI4 and KBI7)
 	gpioError = Gpio_SetPinDir(gGpioPin22_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinDir(gGpioPin23_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinDir(gGpioPin24_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinDir(gGpioPin25_c, gGpioDirIn_c);
-	gpioError = Gpio_SetPinDir(gGpioPin26_c, gGpioDirIn_c);
+//	gpioError = Gpio_SetPinDir(gGpioPin26_c, gGpioDirIn_c);
 	gpioError = Gpio_SetPinDir(gGpioPin27_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin28_c, gGpioDirIn_c);
+	gpioError = Gpio_SetPinDir(gGpioPin29_c, gGpioDirIn_c);
 
 	gpioError = Gpio_EnPinPullup(gGpioPin22_c, TRUE);
 	gpioError = Gpio_EnPinPullup(gGpioPin23_c, TRUE);
 	gpioError = Gpio_EnPinPullup(gGpioPin24_c, TRUE);
 	gpioError = Gpio_EnPinPullup(gGpioPin25_c, TRUE);
-	gpioError = Gpio_EnPinPullup(gGpioPin26_c, TRUE);
+//	gpioError = Gpio_EnPinPullup(gGpioPin26_c, TRUE);
 	gpioError = Gpio_EnPinPullup(gGpioPin27_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin28_c, TRUE);
+	gpioError = Gpio_EnPinPullup(gGpioPin29_c, TRUE);
 
 	gpioError = Gpio_SelectPinPullup(gGpioPin22_c, gGpioPinPulldown_c);
 	gpioError = Gpio_SelectPinPullup(gGpioPin23_c, gGpioPinPulldown_c);
 	gpioError = Gpio_SelectPinPullup(gGpioPin24_c, gGpioPinPulldown_c);
 	gpioError = Gpio_SelectPinPullup(gGpioPin25_c, gGpioPinPulldown_c);
-	gpioError = Gpio_SelectPinPullup(gGpioPin26_c, gGpioPinPulldown_c);
+//	gpioError = Gpio_SelectPinPullup(gGpioPin26_c, gGpioPinPulldown_c);
 	gpioError = Gpio_SelectPinPullup(gGpioPin27_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin28_c, gGpioPinPulldown_c);
+	gpioError = Gpio_SelectPinPullup(gGpioPin29_c, gGpioPinPulldown_c);
 
 	gpioError = Gpio_SetPinReadSource(gGpioPin22_c, gGpioPinReadPad_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin23_c, gGpioPinReadPad_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin24_c, gGpioPinReadPad_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin25_c, gGpioPinReadPad_c);
-	gpioError = Gpio_SetPinReadSource(gGpioPin26_c, gGpioPinReadPad_c);
+//	gpioError = Gpio_SetPinReadSource(gGpioPin26_c, gGpioPinReadPad_c);
 	gpioError = Gpio_SetPinReadSource(gGpioPin27_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin28_c, gGpioPinReadPad_c);
+	gpioError = Gpio_SetPinReadSource(gGpioPin29_c, gGpioPinReadPad_c);
+
+	// KBI4 is an output enabled at doze
+	gpioError = Gpio_SetPinFunction(gGpioPin26_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinDir(gGpioPin26_c, gGpioDirOut_c);
+	gpioError = Gpio_SetPinData(gGpioPin26_c, gGpioPinStateHigh_c);
+
 }
 
 // --------------------------------------------------------------------------
@@ -169,65 +197,82 @@ void setupDisplayScroller() {
 
 // --------------------------------------------------------------------------
 
-portTickType gLastButtonPressTick;
+void kbiSleepCallback(void) {
+}
 
-void kbiInterruptCallback(void) {
-	ScanStringType message;
+// --------------------------------------------------------------------------
 
-	CRM_WuTimerInterruptDisable();
+void lcdOff() {
+	// Turn off the LCD;
+	GpioErr_t gpioError;
+	gpioError = Gpio_SetPinData(gGpioPin13_c, gGpioPinStateLow_c);
 
-	// Clear the KBI int status bits (by writing "1" to them).
-	CRM_STATUS .extWuEvt = 0x2;
+	// Pull the UART1 TX pin low.
+	gpioError = Gpio_SetPinFunction(gGpioPin14_c, gGpioNormalMode_c);
+	gpioError = Gpio_SetPinData(gGpioPin21_c, gGpioPinStateLow_c);
+}
 
-	// Don't allow any double-presses or switch bouncing for up to 1 sec after we register a good button.
-	if (xTaskGetTickCountNoCritical() > gLastButtonPressTick + 1000) {
+// --------------------------------------------------------------------------
 
-		gwUINT32 loops = 0;
+void lcdOn() {
+	// Turn off the LCD;
+	GpioErr_t gpioError;
+	gpioError = Gpio_SetPinData(gGpioPin13_c, gGpioPinStateHigh_c);
 
-		gwUINT8 buttonNum = 0;
-		while ((buttonNum == 0) && (loops++ < 50000)) {
-			if (GPIO .DataLo & BIT26) {
-				buttonNum = 1;
-			} else if (GPIO .DataLo & BIT25) {
-				buttonNum = 2;
-			} else if (GPIO .DataLo & BIT24) {
-				buttonNum = 3;
-			} else if (GPIO .DataLo & BIT23) {
-				buttonNum = 4;
-			} else if (GPIO .DataLo & BIT22) {
-				buttonNum = 5;
-			}
-		}
+	// Restore the UART1 TX pin.
+	gpioError = Gpio_SetPinFunction(gGpioPin14_c, gGpioAlternate1Mode_c);
+}
 
-		if (buttonNum != 0) {
-			// Now send the scan string.
-			BufferCntType txBufferNum = lockTXBuffer();
-			sprintf(message, "B%%%d", buttonNum);
-			createScanCommand(txBufferNum, &message, strlen(message));
-			transmitPacketFromISR(txBufferNum);
+// --------------------------------------------------------------------------
 
-			gLastButtonPressTick = xTaskGetTickCountNoCritical();
-		}
-	}
-	CRM_WuTimerInterruptEnable();
+pfCallback_t preSleep() {
+	setupKbi();
 
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
+	sendDisplayMessage("SLEEP1", 6);
+	DelayMs(500);
+	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
+	sendDisplayMessage("SLEEP2", 6);
+	DelayMs(500);
+	lcdOff();
+	DelayMs(500);
+}
+
+// --------------------------------------------------------------------------
+
+void kbiWakeInterruptCallback(void) {
+	// Reset the device.
+	lcdOn();
+	DelayMs(750);
+	sendDisplayMessage("WAKE", 4);
+	GW_RESET_MCU()
+	;
 }
 
 // --------------------------------------------------------------------------
 
 void setupKbi(void) {
+	crmErr_t crmError;
+	ItcErr_t itcError;
+
 	// Setup the KBI handler.
-	CRM_RegisterISR(gCrmKB5WuEvent_c, kbiInterruptCallback);
+	crmError = CRM_RegisterISR(gCrmKB7WuEvent_c, kbiWakeInterruptCallback);
 
 	crmWuCtrl_t wakeUpCtrl;
 	wakeUpCtrl.wuSource = gExtWu_c;
 	wakeUpCtrl.ctrl.ext.word = 0;
-	wakeUpCtrl.ctrl.ext.bit.kbi5IntEn = TRUE;
-	wakeUpCtrl.ctrl.ext.bit.kbi5WuEn = TRUE;
-	wakeUpCtrl.ctrl.ext.bit.kbi5WuEvent = 1; // wake on edge
-	wakeUpCtrl.ctrl.ext.bit.kbi5WuPol = 1; // wake on positive edge
+	wakeUpCtrl.ctrl.ext.bit.kbi7IntEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi7WuEn = TRUE;
+	wakeUpCtrl.ctrl.ext.bit.kbi7WuEvent = 1; // wake on edge
+	wakeUpCtrl.ctrl.ext.bit.kbi7WuPol = 1; // wake on positive edge
+	wakeUpCtrl.ctrl.timer.timeOut = 0;
+	wakeUpCtrl.ctrl.rtc.timeOut = 0;
 
-	CRM_WuCntl(&wakeUpCtrl);
+	crmError = CRM_WuCntl(&wakeUpCtrl);
+
+	itcError = ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
+	itcError= ITC_EnableInterrupt(gCrmInt_c);
+
 }
 
 // --------------------------------------------------------------------------
@@ -261,8 +306,8 @@ void vMain(void) {
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c
 	ITC_EnableInterrupt(gMacaInt_c);
 	IntDisableAll();
-	ResetMaca();
 	MLMERadioInit();
+	ResetMaca();
 
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
 	SetDemulatorMode(NCD);
@@ -279,8 +324,6 @@ void vMain(void) {
 	LED_Init();
 
 	setupWatchdog();
-	setupKbi();
-
 #endif
 
 	setupGpio();
@@ -289,19 +332,33 @@ void vMain(void) {
 	setupRS485();
 	setupDisplayScroller();
 
-	// The the display boot complete.
-	DelayMs(1000);
+	lcdOff();
+	DelayMs(50);
+	lcdOn();
+//	// Reset to 9600B
+//	sendDisplayMessage("\x7c\x12", 2);
+//	lcdOff();
+//	DelayMs(100);
+//	lcdOn();
+//	// Set the backlight to 25%
+//	sendDisplayMessage("\x7c\x88", 2);
+//	lcdOff();
+//	DelayMs(100);
+//	lcdOn();
+//	// Set to 20 chars.
+//	sendDisplayMessage("\x7c\x03", 2);
+//	lcdOff();
+//	DelayMs(100);
+//	lcdOn();
+//	// Set to 4 lines.
+//	sendDisplayMessage("\x7c\x05", 2);
+//	lcdOff();
+//	DelayMs(100);
+//	lcdOn();
 
-	// Set the backlight to 40%
-	// Setting backlight, or any EEPROM param, causes the display to hang until POR.
-	//sendDisplayMessage(DISPLAY_SETUP, strlen(DISPLAY_SETUP));
+	DelayMs(750);
 
-	// Ugh - the only means I have to reprogram the SparkFun LCD backpack.
-	// NB: The backpack hangs after each \x7c command string.  You have to run this once for each string.
-	//sendDisplayMessage("\x7c\x03", 2);
-	//sendDisplayMessage("\x7c\x05", 2);
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage(LINE2_FIRST_POS, strlen(LINE2_FIRST_POS));
 	sendDisplayMessage("DISCONNECTED", 12);
 
 	gLocalDeviceState = eLocalStateStarted;

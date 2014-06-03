@@ -142,6 +142,14 @@ void UART_Init(gwUINT8 uartNum, gwUINT32 baudrate, gwBoolean enableFlowControl) 
 }
 
 /*
+ * Close the UART port.
+ */
+void UART_Close(gwUINT8 uartNum) {
+	UartErr_t uartErr;
+	uartErr = UartClose(uartNum);
+}
+
+/*
  * Read one character from the UART port.
  */
 void UART_ReadOneChar(gwUINT8 uartNum, UART_TComData *outChr) {

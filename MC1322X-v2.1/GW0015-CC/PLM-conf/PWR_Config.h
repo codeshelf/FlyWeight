@@ -24,17 +24,17 @@
 // TRUE =  1: Use Low Power functions (Normal)
 // FALSE = 0: Don't use Low Power. Will cut variables and code out. But
 //     functions still exist. Useful for debugging and test purposes
-#define gUseLowPowerMode_c        FALSE
+#define gUseLowPowerMode_c        TRUE
 
 // To configure the MCU retention mode used during sleep
 //   0:          No MCU retention
 //   1:          MCU retention is On during sleep
-#define gMCURetentionMode_c       TRUE
+#define gMCURetentionMode_c       FALSE
 
 // To configure the MCU Pad retention mode used during sleep (if MCU retention configured)
 //   0:          No Pad retention
 //   1:          MCU Pad retention on id MCU retention was configured also 
-#define gMCUPadRetentionMode_c    TRUE
+#define gMCUPadRetentionMode_c    FALSE
 
 
 // To configure the RAM retention mode used during sleep

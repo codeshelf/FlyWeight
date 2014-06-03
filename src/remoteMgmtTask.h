@@ -1,11 +1,11 @@
 /*
-	FlyWeight
-	© Copyright 2005, 2006 Jeffrey B. Williams
-	All rights reserved
+ FlyWeight
+ © Copyright 2005, 2006 Jeffrey B. Williams
+ All rights reserved
 
-	$Id$
-	$Name$
-*/
+ $Id$
+ $Name$
+ */
 
 #ifndef REMOTEMGMTTASK_H
 #define REMOTEMGMTTASK_H
@@ -15,14 +15,15 @@
 #include "queue.h"
 #include "radioCommon.h"
 
-extern xQueueHandle				gRemoteMgmtQueue;
-extern NetAddrType				gMyAddr;
-extern NetworkIDType			gMyNetworkID;
+extern xQueueHandle gRemoteMgmtQueue;
+extern NetAddrType gMyAddr;
+extern NetworkIDType gMyNetworkID;
 
 // --------------------------------------------------------------------------
 // Local functions prototypes.
 
-void remoteMgmtTask( void *pvParameters );
-void sleepThisRemote( gwUINT8 inSleepMillis );
+void remoteMgmtTask(void *pvParameters);
+void sleep();
+//void sleep(gwUINT8 inSleepMillis);
 
 #endif /* REMOTEMGMTTASK_H */

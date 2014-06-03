@@ -84,12 +84,13 @@
 
 #define UART_GetCharsInRxBuf() (UART_InpLen)                           /* Return number of chars in receive buffer */
 
-  extern gwUINT8 UART_OutLen;                /* Length of the output buffer content */
+extern gwUINT8 UART_OutLen;                /* Length of the output buffer content */
 extern gwUINT8 UART_InpLen;                /* Length of the input buffer content */
 
 void getFromRXBuffer(void);
 
 void UART_Init(gwUINT8 uartNum, gwUINT32 baudrate, gwBoolean enableFlowControl);
+void UART_Close(gwUINT8 uartNum);
 void UART_ReadOneChar(gwUINT8 portNum, UART_TComData *outDataPtr);
 gwUINT8 UART_SendChar(gwUINT8 portNum, UART_TComData Chr);
 

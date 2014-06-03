@@ -22,6 +22,7 @@
 RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
 NetAddrType gMyAddr = INVALID_REMOTE;
 NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
+BufferStorageType gLastTxAckId = 1;
 
 // --------------------------------------------------------------------------
 // Local function prototypes
@@ -62,7 +63,7 @@ AckIDType getAckId(BufferStoragePtrType inBufferPtr) {
 
 void setAckId(BufferStoragePtrType inBufferPtr) {
 	portTickType ticks = xTaskGetTickCount();
-	inBufferPtr[PCKPOS_ACK_ID] = (&ticks)[0];
+	inBufferPtr[PCKPOS_ACK_ID] = gLastTxAckId++;
 }
 // --------------------------------------------------------------------------
 

@@ -16,6 +16,7 @@
 #include "gwSystemMacros.h"
 #include "gwTypes.h"
 #include "commands.h"
+#include "TransceiverPowerMngmnt.h"
 
 xQueueHandle gRemoteMgmtQueue;
 ELocalStatusType gLocalDeviceState;
@@ -24,6 +25,7 @@ gwBoolean gShouldSleep;
 gwUINT8 gSleepCount;
 extern gwUINT8 gAssocCheckCount;
 extern gwUINT8 gCCRHolder;
+void preSleep();
 
 // --------------------------------------------------------------------------
 
@@ -90,7 +92,7 @@ void remoteMgmtTask(void *pvParameters) {
 					channel = 0;
 					assocAttempts++;
 					if (assocAttempts % 2) {
-						sleepThisRemote(5);
+						//sleep(5);
 					}
 				}
 				// Delay 100ms before changing channels.
@@ -133,55 +135,78 @@ void remoteMgmtTask(void *pvParameters) {
 		;
 }
 
+void sleep() {
+	crmSleepCtrl_t sleepCtl;
+	gwUINT8 ccrHolder;
+	FuncReturn_t funcRet;
+
+	sleepCtl.sleepType = gHibernate_c;
+	sleepCtl.mcuRet = gMcuRet_c;
+	sleepCtl.ramRet = gRamRet96k_c;
+	sleepCtl.digPadRet = 1;
+	sleepCtl.pfToDoBeforeSleep = &preSleep;
+
+	GW_ENTER_CRITICAL(ccrHolder);
+
+	TmrSetMode(gTmr0_c, gTmrNoOperation_c);
+	ITC_DisableInterrupt(gTmrInt_c);
+
+//	CRM_GoToSleep(&sleepCtl);
+	funcRet = MLMEHibernateRequest(gRingOsc2khz_c, sleepCtl);
+	GW_RESET_MCU();
+
+	GW_EXIT_CRITICAL(ccrHolder);
+}
+
 // Define this if the MCU should really sleep (hibernate in FSL parlance).
 //#define REAL_SLEEP
 
-void sleepThisRemote(gwUINT8 inSleepMillis) {
-
-#ifdef REAL_SLEEP
-	gwUINT8 ccrHolder;
-	gwUINT8 i;
-	gwUINT8 saveLoaderState;
-	gwUINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
-#endif
-
-#ifndef REAL_SLEEP
-	// "Fake sleep" for HooBeez
-	vTaskDelay(inSleepMillis * portTICK_RATE_MS);
-#else
-	// Real sleep for RocketPhones
-	EnterCriticalArg(ccrHolder);
-	gIsSleeping = TRUE;
-	Cpu_SetSlowSpeed();
-	MLMEHibernateRequest();
-	//TPMIE_PWM = 0;
-	saveLoaderState = TPMIE_AUDIO_LOADER;
-	TPMIE_AUDIO_LOADER = 0;
-	SRTISC_RTICLKS = 0;
-	//SRTISC_RTIS = 0;
-	// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
-	SRTISC_RTIS = 2;// 1 = 8ms, 2 = 32ms, 3 = 64, 4 = 128, 5 = 256, 6 = 1024ms;
-	ExitCriticalArg(ccrHolder);
-
-	for (i = 0; i < sleepCycles; i++) {
-		__asm("STOP");
-
-		// If a KBI woke us up then don't keep sleeping.
-		if (KBI1SC_KBF) {
-			break;
-		}
-	}
-
-	EnterCriticalArg(ccrHolder);
-	gIsSleeping = FALSE;
-	MLMEWakeRequest();
-	// Wait for the MC13192's modem ClkO to warm up.
-	Cpu_Delay100US(100);
-	Cpu_SetHighSpeed();
-	SRTISC_RTICLKS = 1;
-	SRTISC_RTIS = 4;
-	//TPMIE_PWM = 1;
-	TPMIE_AUDIO_LOADER = saveLoaderState;
-	ExitCriticalArg(ccrHolder);
-#endif
-}
+//void sleep(gwUINT8 inSleepMillis) {
+//
+//#ifdef REAL_SLEEP
+//	gwUINT8 ccrHolder;
+//	gwUINT8 i;
+//	gwUINT8 saveLoaderState;
+//	gwUINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
+//#endif
+//
+//#ifndef REAL_SLEEP
+//	// "Fake sleep" for HooBeez
+//	vTaskDelay(inSleepMillis * portTICK_RATE_MS);
+//#else
+//	// Real sleep for RocketPhones
+//	EnterCriticalArg(ccrHolder);
+//	gIsSleeping = TRUE;
+//	Cpu_SetSlowSpeed();
+//	MLMEHibernateRequest();
+//	//TPMIE_PWM = 0;
+//	saveLoaderState = TPMIE_AUDIO_LOADER;
+//	TPMIE_AUDIO_LOADER = 0;
+//	SRTISC_RTICLKS = 0;
+//	//SRTISC_RTIS = 0;
+//	// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
+//	SRTISC_RTIS = 2;// 1 = 8ms, 2 = 32ms, 3 = 64, 4 = 128, 5 = 256, 6 = 1024ms;
+//	ExitCriticalArg(ccrHolder);
+//
+//	for (i = 0; i < sleepCycles; i++) {
+//		__asm("STOP");
+//
+//		// If a KBI woke us up then don't keep sleeping.
+//		if (KBI1SC_KBF) {
+//			break;
+//		}
+//	}
+//
+//	EnterCriticalArg(ccrHolder);
+//	gIsSleeping = FALSE;
+//	MLMEWakeRequest();
+//	// Wait for the MC13192's modem ClkO to warm up.
+//	Cpu_Delay100US(100);
+//	Cpu_SetHighSpeed();
+//	SRTISC_RTICLKS = 1;
+//	SRTISC_RTIS = 4;
+//	//TPMIE_PWM = 1;
+//	TPMIE_AUDIO_LOADER = saveLoaderState;
+//	ExitCriticalArg(ccrHolder);
+//#endif
+//}

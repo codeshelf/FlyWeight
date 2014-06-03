@@ -38,6 +38,8 @@ extern gwUINT8 gSleepCount;
 extern gwUINT8 gButtonPressed;
 extern gwUINT8 gCCRHolder;
 gwUINT8 gAssocCheckCount = 1;
+extern NetAddrType gMyAddr;
+extern NetworkIDType gMyNetworkID;
 
 // Radio buffers
 // There's a 2-byte ID on the front of every packet.
@@ -105,7 +107,11 @@ void radioReceiveTask(void *pvParameters) {
 void radioTransmitTask(void *pvParameters) {
 	BufferCntType txBufferNum;
 	FuncReturn_t funcErr;
+	ECommandGroupIDType cmdId;
 	gwBoolean shouldRetry;
+	gwUINT8 retryCount;
+	NetAddrType cmdDstAddr;
+	NetworkIDType networkID;
 	gwUINT8 ccrHolder;
 
 	if (gRadioTransmitQueue) {
@@ -130,6 +136,7 @@ void radioTransmitTask(void *pvParameters) {
 				GW_EXIT_CRITICAL(ccrHolder);
 
 				shouldRetry = FALSE;
+				retryCount = 0;
 				do {
 					funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
 
@@ -144,23 +151,28 @@ void radioTransmitTask(void *pvParameters) {
 						funcErr = process_radio_msg();
 					}
 
-//					if (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL) {
-//						shouldRetry = TRUE;
-//					} else if (getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) != 0) {
-//						// If the TX packet had an ACK id then retry TX until we get the ACK or reset.
-//
-//						// We'll simply use the RX packet from the suspended task.
-//						funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
-//
-//						int delayCheck = 0;
-//						do {
-//							funcErr = process_radio_msg();
-//						} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
-//
-//						if (getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) != getAckId(gRXRadioBuffer[gRXCurBufferNum].bufferStorage)) {
-//							shouldRetry = TRUE;
-//						}
-//					}
+					if (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL) {
+						shouldRetry = TRUE;
+					} else if ((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) != 0)
+							&& (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) != eCommandNetMgmt)) {
+						// If the TX packet had an ACK id then retry TX until we get the ACK or reset.
+
+						// We'll simply use the RX packet from the suspended task.
+						funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
+
+						int delayCheck = 0;
+						do {
+							funcErr = process_radio_msg();
+						} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
+
+						networkID = getNetworkID(gRxMsgHolder.bufferNum);
+						cmdDstAddr = getCommandDstAddr(gRxMsgHolder.bufferNum);
+						if ((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) == getAckId(gRXRadioBuffer[gRXCurBufferNum].bufferStorage))
+								&& (networkID == gMyNetworkID)
+								&& (cmdDstAddr == gMyAddr)) {
+							shouldRetry = TRUE;
+						}
+					}
 				} while (shouldRetry);
 
 				RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
