@@ -23,6 +23,8 @@
 #include "PortConfig.h"
 #include "UartLowLevel.h"
 #include "Ssi_Interface.h"
+#include "string.h"
+#include "stdlib.h"
 
 #ifdef MC1322X
 #include "MacaInterrupt.h"
@@ -229,13 +231,9 @@ pfCallback_t preSleep() {
 	setupKbi();
 
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage("SLEEP1", 6);
-	DelayMs(500);
-	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
-	sendDisplayMessage("SLEEP2", 6);
+	sendDisplayMessage("SLEEP", 6);
 	DelayMs(500);
 	lcdOff();
-	DelayMs(500);
 }
 
 // --------------------------------------------------------------------------
@@ -271,7 +269,7 @@ void setupKbi(void) {
 	crmError = CRM_WuCntl(&wakeUpCtrl);
 
 	itcError = ITC_SetPriority(gCrmInt_c, gItcNormalPriority_c);
-	itcError= ITC_EnableInterrupt(gCrmInt_c);
+	itcError = ITC_EnableInterrupt(gCrmInt_c);
 
 }
 
@@ -293,8 +291,6 @@ void vMain(void) {
 	xbeeInit();
 #endif
 #else
-
-	GpioErr_t error;
 
 	// We don't call this, because we don't want to mess with DPF settings at restart.
 	//PlatformPortInit();
@@ -367,17 +363,12 @@ void vMain(void) {
 	}
 
 	/* Start the task that will handle the radio */
-	xTaskCreate(radioTransmitTask, (const signed portCHAR * const ) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY,
-			&gRadioTransmitTask);
-	xTaskCreate(radioReceiveTask, (const signed portCHAR * const ) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY,
-			&gRadioReceiveTask);
+	xTaskCreate(radioTransmitTask, (signed portCHAR *) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask);
+	xTaskCreate(radioReceiveTask, (signed portCHAR *) "RadioRX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioReceiveTask);
 	//xTaskCreate(keyboardTask, (const signed portCHAR * const) "Keyboard", configMINIMAL_STACK_SIZE, NULL, KEYBOARD_PRIORITY, &gKeyboardTask );
-	xTaskCreate(remoteMgmtTask, (const signed portCHAR * const ) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
-			&gRemoteManagementTask);
-	xTaskCreate(cartControllerTask, (const signed portCHAR * const ) "LED", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
-			&gCartControllerTask);
-	xTaskCreate(scannerReadTask, (const signed portCHAR * const ) "Scan", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY,
-			&gScannerReadTask);
+	xTaskCreate(remoteMgmtTask, (signed portCHAR *) "Mgmt", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gRemoteManagementTask);
+	xTaskCreate(cartControllerTask, (signed portCHAR *) "LED", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gCartControllerTask);
+	xTaskCreate(scannerReadTask, (signed portCHAR *) "Scan", configMINIMAL_STACK_SIZE, NULL, MGMT_PRIORITY, &gScannerReadTask);
 
 	gRadioReceiveQueue = xQueueCreate(RX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));
 	gRadioTransmitQueue = xQueueCreate(TX_QUEUE_SIZE, (unsigned portBASE_TYPE) sizeof(BufferCntType));

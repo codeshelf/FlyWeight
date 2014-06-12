@@ -3,7 +3,7 @@ WatchCond=_ 0
 Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 [DebugChecksum]
-Checksum=1263342475
+Checksum=-216951081
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -11,6 +11,10 @@ State 1=_ 1
 Enabled=_ 0
 [CodeCoverage]
 Enabled=_ 0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -18,11 +22,13 @@ LogFile=_ ""
 Enabled=0
 Source=2
 Graph=0
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
 [Disassemble mode]
 mode=0
 [Breakpoints]
-Count=0
+Bp0=_ "STD_CODE" "0x004046B0" 0 0 0 0 "" 0 "" 0
+Bp1=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FreeRTOS\Source\tasks.c}.1426.1@1" 0 0 0 0 "" 0 "" 0
+Bp2=_ "EMUL_DATA" "0x00407B4C" 0 0 0 148 0 "" 0 ""
+Bp3=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FlyWeight\src\radioCommon.c}.141.2@1" 1 0 0 0 "" 0 "" 0
+Bp4=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FlyWeight\src\radioCommon.c}.52.3@1" 1 0 0 0 "" 0 "" 0
+Bp5=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FlyWeight\src\radioCommon.c}.152.2@1" 1 0 0 0 "" 0 "" 0
+Count=6

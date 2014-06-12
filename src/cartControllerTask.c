@@ -19,8 +19,8 @@
 #define getMin(a,b)    (((a) < (b)) ? (a) : (b))
 
 xTaskHandle gCartControllerTask = NULL;
-//xQueueHandle gCartControllerQueue;
 
+extern portTickType gLastUserAction;
 extern DisplayStringType gDisplayDataLine[2];
 extern DisplayStringLenType gDisplayDataLineLen[2];
 extern DisplayStringLenType gDisplayDataLinePos[2];
@@ -120,8 +120,8 @@ void cartControllerTask(void *pvParameters) {
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
 
-		// Disable all of the position controllers on the cart.
-		// TODO
+		// Indicate a user operation
+		gLastUserAction = xTaskGetTickCount();
 
 		// Now send the scan string.
 		BufferCntType txBufferNum = lockTXBuffer();
