@@ -27,10 +27,28 @@ LogFile=_ ""
 Enabled=0
 Source=2
 Graph=0
-[Disassemble mode]
-mode=0
 [Breakpoints]
 Bp0=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.135.2@1" 1 0 0 0 "" 0 "" 0
 Bp1=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.145.1@1" 1 0 0 0 "" 0 "" 0
 Bp2=_ "STD_CODE" "{C:\eclipsework\FlyWeight\src\radioCommon.c}.150.2@1" 1 0 0 0 "" 0 "" 0
 Count=3
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
+[Aliases]
+Count=0
+SuppressDialog=0
+[SfrWindow]
+Show=1 1
+Sort=4 0

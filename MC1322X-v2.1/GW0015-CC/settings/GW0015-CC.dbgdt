@@ -37,7 +37,7 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/GW0015-CC</ExpandedNode><ExpandedNode>&lt;ws>/GW0015-CC/Application</ExpandedNode><ExpandedNode>&lt;ws>/GW0015-CC/Application/FlyWeight</ExpandedNode><ExpandedNode>GW0015-CC</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-CC</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-CC/Application</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-CC/Application/FlyWeight</ExpandedNode><ExpandedNode>GW0015-CC</ExpandedNode></NodeDict></Session>
           </Tab></Tabs><SelectedTab>1</SelectedTab></Wnd2><Wnd5><Tabs><Tab><Identity>TabID-21586-9612</Identity><TabName>Statics</TabName><Factory>Statics</Factory><Session><SelectedVars/><Column0>198</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3><ShowAllVars>1</ShowAllVars></Session></Tab><Tab><Identity>TabID-9792-9628</Identity><TabName>Locals</TabName><Factory>Locals</Factory><Session><Column0>166</Column0><Column1>167</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab><Identity>TabID-23276-28448</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab><Tab><Identity>TabID-3762-21974</Identity><TabName>Register</TabName><Factory>Register</Factory><Session><REG1>0</REG1><REG2>0</REG2><Group>0</Group><States>0</States></Session></Tab></Tabs><SelectedTab>2</SelectedTab></Wnd5></Windows>
     <Editor>
       

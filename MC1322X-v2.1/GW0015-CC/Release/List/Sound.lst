@@ -1,0 +1,239 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        10/Jun/2014  12:14:10
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Sound.c
+#    Command line =  
+#        "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Sound.c"
+#        -D NDEBUG -D F24MHZ -D SECURITY_ENABLED -lC "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\"
+#        --diag_suppress Pe940,Pe951,Pe911 -o "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\"
+#        --endian=little --cpu=ARM7TDMI-S -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.0\arm\INC\c\DLib_Config_Normal.h" -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\SMAC\Drivers\Interface\"
+#        -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\PLM\Interface\"
+#        --interwork --cpu_mode thumb -Oh --use_c++_inline
+#    List file    =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\Sound.lst
+#    Object file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\Sound.o
+#
+###############################################################################
+
+C:\Users\Rafael Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Sound.c
+      1          /************************************************************************************
+      2          * Kaibab Buzzer routines
+      3          *
+      4          * Author(s):
+      5          *   
+      6          *
+      7          * (c) Copyright 2008, Freescale, Inc.  All rights reserved.
+      8          *
+      9          * Freescale Confidential Proprietary
+     10          *
+     11          * No part of this document must be reproduced in any form - including copied,
+     12          * transcribed, printed or by any electronic means - without specific written
+     13          * permission from Freescale.
+     14          *
+     15          * Last Inspected:
+     16          * Last Tested:
+     17          ************************************************************************************/
+     18          #include "../../../PLM/Interface/EmbeddedTypes.h"
+     19          #include "../../../PLM/LibInterface/Timer.h"
+     20          #include "../../../PLM/LibInterface/I2C_Interface.h"
+     21          #include "../../../PLM/LibInterface/GPIO_Interface.h"
+     22          
+     23          #include "Sound.h"
+     24          #if gHaveBuzzer_c
+     25          /************************************************************************************
+     26          *************************************************************************************
+     27          * Private macros
+     28          *************************************************************************************
+     29          ************************************************************************************/
+     30          #define mBeepFreqinKHz_c  4
+     31          #define mToggleCompareValue_c  (SYSTEM_CLOCK/(mBeepFreqinKHz_c * 2))
+     32          #define  mSLAVE_DEV_ADDRESS_c  0x50
+     33          #define  mVREG_CMD_c           0x11
+     34          #define  gGpioBeepTimer_c     ((GpioPin_t)((uint8_t)gGpioPin8_c + (uint8_t)gBeepTimer_c))
+     35          /************************************************************************************
+     36          *************************************************************************************
+     37          * Private type definitions
+     38          
+     39          *************************************************************************************
+     40          ************************************************************************************/
+     41          
+     42          /************************************************************************************
+     43          *************************************************************************************
+     44          * Private prototypes
+     45          *************************************************************************************
+     46          ************************************************************************************/
+     47          
+     48          static void BuzzerTimerCallBack(TmrNumber_t tmrNumber);
+     49          static void Llc_VolumeInit(void);
+     50          static void Llc_VolumeSet(uint8_t volume);
+     51          /************************************************************************************
+     52          *************************************************************************************
+     53          * Public memory declarations
+     54          *************************************************************************************
+     55          ************************************************************************************/
+     56          
+     57          /************************************************************************************
+     58          *************************************************************************************
+     59          * Private memory declarations
+     60          *************************************************************************************
+     61          ************************************************************************************/
+     62          uint32_t mMsCounter;
+     63          uint32_t mBeepDuration;
+     64          
+     65          /************************************************************************************
+     66          *************************************************************************************
+     67          * Public functions
+     68          *************************************************************************************
+     69          ************************************************************************************/
+     70          
+     71          bool_t BuzzerInit(void)
+     72          {
+     73            TmrConfig_t tmrConfig;
+     74            TmrStatusCtrl_t tmrStatusCtrl;
+     75            TmrComparatorStatusCtrl_t tmrComparatorStatusCtrl;
+     76            /* Enable hw timer 1 */
+     77            TmrEnable(gBeepTimer_c);
+     78            /* Don't stat the timer yet */ 
+     79            if (gTmrErrNoError_c != TmrSetMode(gBeepTimer_c, gTmrNoOperation_c)) /*set timer mode no operation*/
+     80            {
+     81              return FALSE;
+     82            }
+     83            /* Register the callback executed when an interrupt occur */
+     84            if(gTmrErrNoError_c != TmrSetCallbackFunction(gBeepTimer_c, gTmrComp1Event_c, BuzzerTimerCallBack))
+     85            {
+     86              return FALSE;
+     87            }
+     88            tmrStatusCtrl.uintValue = 0x0000;
+     89            tmrStatusCtrl.bitFields.OEN = 1;    //output enable
+     90            if (gTmrErrNoError_c != TmrSetStatusControl(gBeepTimer_c, &tmrStatusCtrl))
+     91            {
+     92              return FALSE;
+     93            }  
+     94            tmrComparatorStatusCtrl.uintValue = 0x0000;
+     95            tmrComparatorStatusCtrl.bitFields.TCF1EN = TRUE; /* Enable Compare 1 interrupt */
+     96            if (gTmrErrNoError_c != TmrSetCompStatusControl(gBeepTimer_c, &tmrComparatorStatusCtrl))
+     97            {
+     98              return FALSE;
+     99            }
+    100            tmrConfig.tmrOutputMode = gTmrToggleOF_c; 
+    101            tmrConfig.tmrCoInit = FALSE;  /*co-chanel counter/timers can not force a re-initialization of this counter/timer*/
+    102            tmrConfig.tmrCntDir = FALSE;  /*count-up*/
+    103            tmrConfig.tmrCntLen = TRUE;  /*count until compare*/
+    104            tmrConfig.tmrCntOnce = FALSE;   /*count repeatedly*/
+    105            tmrConfig.tmrSecondaryCntSrc = gTmrSecondaryCnt0Input_c;    /*secondary count source not needed*/
+    106            tmrConfig.tmrPrimaryCntSrc = gTmrPrimaryClkDiv1_c;    /*primary count source is IP BUS clock divide by 1 prescaler*/
+    107            if (gTmrErrNoError_c != TmrSetConfig(gBeepTimer_c, &tmrConfig))  /*set timer configuration */
+    108            {
+    109              return FALSE;
+    110            }
+    111            /* Config timer to raise interrupts each 0.1 ms */
+    112            SetComp1Val(gBeepTimer_c, mToggleCompareValue_c);
+    113            /* Config timer to start from 0 after compare event */
+    114            SetLoadVal(gBeepTimer_c, 0);
+    115            I2c_Init();
+    116            Gpio_SetPinFunction(gGpioBeepTimer_c, gGpioAlternate1Mode_c); 
+    117            Gpio_SetPinFunction(gGpioPin12_c, gGpioAlternate1Mode_c);
+    118            Gpio_SetPinFunction(gGpioPin13_c, gGpioAlternate1Mode_c);
+    119            return TRUE;
+    120          }
+    121          
+    122          /***********************************************************************************/
+    123          
+    124          bool_t BuzzerBeep (uint16_t u16BeepDurationInMs) 
+    125          {
+    126            if( u16BeepDurationInMs == 0 )
+    127              return FALSE;
+    128            if (gTmrErrNoError_c != TmrSetMode(gBeepTimer_c, gTmrNoOperation_c)) /*set timer mode no operation*/
+    129            {
+    130              return FALSE;
+    131            }
+    132            mMsCounter = 0;
+    133            mBeepDuration = u16BeepDurationInMs;
+    134            SetCntrVal(gBeepTimer_c, 0) ; /*clear counter*/
+    135            Llc_VolumeInit();
+    136            Llc_VolumeSet(gBeepVolumeInPrc_c);   
+    137            if (gTmrErrNoError_c != TmrSetMode(gBeepTimer_c, gTmrCntRiseEdgPriSrc_c))
+    138            {
+    139              return FALSE;
+    140            }
+    141            return TRUE;
+    142          }
+    143          
+    144          /************************************************************************************
+    145          *************************************************************************************
+    146          * Private functions
+    147          *************************************************************************************
+    148          ************************************************************************************/
+    149          
+    150          static void BuzzerTimerCallBack(TmrNumber_t tmrNumber)
+    151          {
+    152            mMsCounter++;
+    153            if(mMsCounter >= mBeepFreqinKHz_c<<1)
+    154            {
+    155              mMsCounter = 0;
+    156              mBeepDuration --;
+    157              if(mBeepDuration == 0)
+    158              {
+    159                TmrSetMode(gBeepTimer_c, gTmrNoOperation_c);    //stop timer  
+    160              }
+    161            }
+    162          }
+    163          
+    164          /***********************************************************************************/
+    165          
+    166          static void Llc_VolumeInit(void)
+    167          {
+    168            I2cConfig_t i2cConfig;
+    169            I2c_Enable();
+    170            i2cConfig.i2cBroadcastEn = FALSE;
+    171            i2cConfig.freqDivider   = 0x20;
+    172            i2cConfig.saplingRate   = 0x01;
+    173            i2cConfig.slaveAddress   = 0x00;
+    174            i2cConfig.i2cInterruptEn = FALSE; 
+    175            I2c_SetConfig(&i2cConfig);
+    176          }
+    177          
+    178          /***********************************************************************************/
+    179          
+    180          static void Llc_VolumeSet(uint8_t volume)
+    181          {
+    182            uint8_t buffer[2];
+    183            if(volume > (uint8_t)100)
+    184            {
+    185              volume = 100; /* Limit volume to 100% */
+    186            }
+    187            /* Scale down the volume value to 0 - 31 range */
+    188            volume = (volume * 31) / 100;
+    189            buffer[0] = mVREG_CMD_c;
+    190            buffer[1] = (volume & 0xFF) << 3;
+    191            I2c_SendData(mSLAVE_DEV_ADDRESS_c, &buffer[0], 2, gI2cMstrReleaseBus_c);
+    192          }
+    193          
+    194          #endif 
+    195           
+    196           
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

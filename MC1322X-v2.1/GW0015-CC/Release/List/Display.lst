@@ -1,0 +1,1411 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        10/Jun/2014  12:14:09
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Display.c
+#    Command line =  
+#        "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Display.c"
+#        -D NDEBUG -D F24MHZ -D SECURITY_ENABLED -lC "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\"
+#        --diag_suppress Pe940,Pe951,Pe911 -o "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\"
+#        --endian=little --cpu=ARM7TDMI-S -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.0\arm\INC\c\DLib_Config_Normal.h" -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\SMAC\Drivers\Interface\"
+#        -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\PLM\Interface\"
+#        --interwork --cpu_mode thumb -Oh --use_c++_inline
+#    List file    =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\Display.lst
+#    Object file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\Display.o
+#
+###############################################################################
+
+C:\Users\Rafael Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Utilities\Display.c
+      1          /************************************************************************************
+      2          * This is the source file for Display Driver.
+      3          *
+      4          *
+      5          * (c) Copyright 2008, Freescale, Inc.  All rights reserved.
+      6          *
+      7          *
+      8          * No part of this document must be reproduced in any form - including copied,
+      9          * transcribed, printed or by any electronic means - without specific written
+     10          * permission from Freescale Semiconductor.
+     11          ************************************************************************************/
+     12          
+     13          #include "../../PLM/Interface/EmbeddedTypes.h"
+     14          #include "../../PLM/LibInterface/GPIO_Interface.h"
+     15          #include "../../SMAC/Drivers/Interface/Delay.h"
+     16          #include "Display.h"
+     17          #define gLcdBackLightEnabled_d 1
+     18          #if (gLCDSupported_d)
+     19          
+     20          
+     21          
+     22          /************************************************************************************
+     23          *************************************************************************************
+     24          * Private macros
+     25          *************************************************************************************
+     26          ************************************************************************************/
+     27          
+     28          /* pin defines */
+     29          
+     30          /* D0  = SPI_SS    (GPIO  4) , PORT LO */
+     31          /* D1  = SPI_MISO  (GPIO  5) , PORT LO */
+     32          /* D2  = SPI_MOSI  (GPIO  6) , PORT LO */
+     33          /* D3  = SPI_SCK   (GPIO  7) , PORT LO */
+     34          /* D4  = ADC2      (GPIO  32), PORT HI */
+     35          /* D5  = ADC3      (GPIO  33), PORT HI */
+     36          /* D6  = ADC4      (GPIO  34), PORT HI */
+     37          /* D7  = ADC5      (GPIO  35), PORT HI */
+     38          #define LCD_D0  gGpioPin4_c
+     39          #define LCD_D1  gGpioPin5_c
+     40          #define LCD_D2  gGpioPin6_c
+     41          #define LCD_D3  gGpioPin7_c
+     42          #define LCD_D4  gGpioPin32_c
+     43          #define LCD_D5  gGpioPin33_c
+     44          #define LCD_D6  gGpioPin34_c
+     45          #define LCD_D7  gGpioPin35_c
+     46          
+     47          #define LCD_DATA_LO_MASK  0x000000F0
+     48          #define LCD_DATA_LO_PORT  gGpioPort0_c
+     49          #define LCD_DATA_LO_WRITE(x) (x)<<4
+     50          #define LCD_DATA_LO_READ(x)  (x)>>4
+     51          
+     52          #define LCD_DATA_HI_MASK  0x0000000F
+     53          #define LCD_DATA_HI_PORT  gGpioPort1_c
+     54          #define LCD_DATA_HI_WRITE(x) (x)>>4
+     55          #define LCD_DATA_HI_READ(x)  (x)<<4
+     56          
+     57          /* A0     = UART2_RTS (GPIO  21)   inverted, 0-data, 1-command */
+     58          /* RD     = TMR0      (GPIO  8)    double inverted, active high */
+     59          /* WR     = TMR1      (GPIO  9)    double inverted, active high */
+     60          /* CS     = UART2_CTS (GPIO  20)   double inverted, active high */
+     61          /* BL_PWM = TMR2      (GPIO  10)   1 - light, 0 - dark or PWM variable duty cycle */
+     62          /* RST    = RX_ON     (GPIO  45)   active low */
+     63          /* RST    = UART2_RX  (GPIO  19)   active low */
+     64          #define LCD_A0          gGpioPin21_c
+     65          #define LCD_RD          gGpioPin8_c
+     66          #define LCD_WR          gGpioPin9_c
+     67          #define LCD_CS          gGpioPin20_c
+     68          #define LCD_BL_PWM      gGpioPin10_c
+     69          #define LCD_RSTN        gGpioPin45_c
+     70          #define LCD_RSTN_debug  gGpioPin19_c
+     71          
+     72          
+     73          /* pin states */
+     74          #define LCD_A0_COMMAND  gGpioPinStateHigh_c
+     75          #define LCD_A0_DATA     gGpioPinStateLow_c
+     76          #define LCD_CS_ACTIVE   gGpioPinStateHigh_c
+     77          #define LCD_CS_INACTIVE gGpioPinStateLow_c
+     78          #define LCD_WR_ACTIVE   gGpioPinStateHigh_c
+     79          #define LCD_WR_INACTIVE gGpioPinStateLow_c
+     80          #define LCD_RD_ACTIVE   gGpioPinStateHigh_c
+     81          #define LCD_RD_INACTIVE gGpioPinStateLow_c
+     82          #define LCD_BL_ON       gGpioPinStateHigh_c
+     83          #define LCD_BL_OFF      gGpioPinStateLow_c
+     84          #define LCD_RSTN_IDLE   gGpioPinStateHigh_c
+     85          #define LCD_RSTN_RESET  gGpioPinStateLow_c
+     86          
+     87          #define ON                      1
+     88          #define OFF                     0
+     89          
+     90          #define mFontOffset_c          32
+     91          
+     92          /* number of columns to be cleared in LCD_Task */
+     93          #define mMaxDeleteColumns_c    32
+     94          #define mMaxLineNumber_c        8
+     95          #define mMaxQueueEntries_c     10
+     96          #define mEmptyQueue_c          0xFF
+     97          
+     98          /* number of characters to be displayed in LCD_Task */
+     99          #define mNumberOfCharToWrite_c  19
+    100          
+    101          /************************************************************************************
+    102          *************************************************************************************
+    103          * Private type definitions
+    104          *************************************************************************************
+    105          ************************************************************************************/
+    106          /* #pragma pack(1) */
+    107          
+    108          typedef struct displayParams_tag{
+    109            uint8_t currentXCoord;
+    110            uint8_t currentYCoord;
+    111            uint8_t currentLine;
+    112            /* Bitmask: 
+    113            *       line i is cleared, bit i from writtenLines is 0
+    114            *       line i is written, bit i from writtenLines is 1 
+    115            */
+    116            uint8_t writtenLines;
+    117            /* Bitmask: 
+    118            *       line i will not be written, bit i from linesToWrite is 0
+    119            *       line i will be written, bit i from linesToWrite is 1 
+    120            */
+    121            uint8_t linesToWrite;  
+    122            uint8_t linesWidthWritten[mMaxLineNumber_c];
+    123            uint8_t currentFontType;
+    124            uint8_t currentStringIndex;
+    125            uint8_t currentString[mMaxLineNumber_c][gMAX_LCD_CHARS_c];
+    126          }displayParams_t;
+    127          
+    128          typedef struct lineParams_tag{
+    129            uint8_t xCoord;
+    130            uint8_t yCoord;
+    131            uint8_t page;  
+    132          }lineParams_t;
+    133          
+    134          typedef struct pageParams_tag{
+    135            uint8_t xStartCoord;
+    136            uint8_t xEndCoord;
+    137            uint8_t yCoord;
+    138            uint8_t line;
+    139          }pageParams_t;
+    140          
+    141          typedef enum operation_tag{
+    142            gLCD_WriteOp_c = 0,
+    143            gLCD_ClearDisplayOp_c,
+    144            gLCD_ClearLineOp_c,
+    145            gLCD_MaxOp_c = 0xFF
+    146          }operation_t;
+    147          
+    148          typedef struct opLine_tag{
+    149            operation_t opQueue;
+    150            uint8_t lineQueue;  
+    151          }opLine_t;
+    152          
+    153          typedef struct queue_tag{
+    154            uint8_t head;
+    155            uint8_t tail;
+    156            opLine_t opLine[mMaxQueueEntries_c];
+    157          }queue_t;
+    158          
+    159          /* #pragma pack() */
+    160          
+    161          /************************************************************************************
+    162          *************************************************************************************
+    163          * Private prototypes
+    164          *************************************************************************************
+    165          ************************************************************************************/
+    166          
+    167          void LCD_SetBacklight(uint8_t brightnessValue);
+    168          void LCD_ClearPage(uint8_t startXCoord, uint8_t endXCoord, uint8_t yCoord);
+    169          uint8_t LCD_ClearLine(uint8_t line);
+    170          static void SendData(uint8_t data);
+    171          static void SetHiZ(void);
+    172          static void SetOutput(void);
+    173          static void InitDisplayWrite(uint8_t xStartCoord, uint8_t yStartCoord);
+    174          static uint8_t ReadData(void);
+    175          static uint8_t GetData(void);
+    176          static uint8_t GetStrlen(const uint8_t *pString);
+    177          
+    178          
+    179          /************************************************************************************
+    180          *************************************************************************************
+    181          * Private memory declarations
+    182          *************************************************************************************
+    183          ************************************************************************************/
+    184          
+    185          static displayParams_t mDisplayParams = {
+    186            /* currentXCoord */
+    187            0x00,
+    188            /* currentYCoord */
+    189            0x00,
+    190            /* currentLine */
+    191            0x00,
+    192            /* writtenLines */
+    193            0xFF,
+    194            /* linesToWrite */
+    195            0x00,
+    196            /* linesWidthWritten */
+    197            0x00,
+    198            /* currentFontType */
+    199            0x00,
+    200            /* currentStringIndex */
+    201            0x00,  
+    202            /* currentString */
+    203            0x00
+    204          };
+    205          
+    206          static lineParams_t mLineParams[mMaxLineNumber_c] = {
+    207            {0, 0, 0},
+    208            {0, 8, 1},
+    209            {0, 16, 2},
+    210            {0, 24, 3},
+    211            {0, 32, 4},
+    212            {0, 40, 5},
+    213            {0, 48, 6},
+    214            {0, 56, 7},
+    215          };  
+    216          
+    217          
+    218          /* after initialization, all LCD lines must be erased */
+    219          static bool_t mIsLcdInitialized = FALSE;
+    220          
+    221          /* error indicator, used for error reporting */
+    222          static volatile lcdError_t mErrorIndicator = gLCD_NoError_c;
+    223          
+    224          /******************************************************************************
+    225          *******************************************************************************
+    226          * Public memory definitions
+    227          *******************************************************************************
+    228          ******************************************************************************/
+    229          
+    230          const uint8_t gaHexValue[] = "0123456789ABCDEF";
+    231          
+    232          const font_t aLCDFont[gLCDNumFonts_c] = 
+    233          {
+    234            /* character font with fixed width */ 
+    235            {gLCDNormalIndex,  gLCDNormalFont,  1},
+    236            /* character font with variable width */ 
+    237            {gLCDVerdanaIndex, gLCDVerdanaFont, 2}   
+    238          };
+    239          
+    240          /************************************************************************************
+    241          *************************************************************************************
+    242          * Public functions
+    243          *************************************************************************************
+    244          ************************************************************************************/
+    245          
+    246          /******************************************************************************
+    247          * This function initializes the display
+    248          *
+    249          * Interface assumptions:
+    250          *
+    251          *
+    252          * Return value:
+    253          * None
+    254          *
+    255          ******************************************************************************/
+    256          void LCD_Init(void)
+    257          {
+    258          
+    259              Gpio_SetPinFunction(LCD_WR, gGpioNormalMode_c);
+    260              Gpio_SetPinFunction(LCD_CS, gGpioNormalMode_c);
+    261              Gpio_SetPinFunction(LCD_RD, gGpioNormalMode_c);
+    262              Gpio_SetPinFunction(LCD_A0, gGpioNormalMode_c);
+    263              Gpio_SetPinFunction(LCD_RSTN, gGpioNormalMode_c);
+    264              Gpio_SetPinFunction(LCD_RSTN_debug, gGpioNormalMode_c);
+    265          
+    266              Gpio_SetPinData(LCD_WR, LCD_WR_INACTIVE);
+    267              Gpio_SetPinData(LCD_CS, LCD_CS_INACTIVE);
+    268              Gpio_SetPinData(LCD_RD, LCD_RD_INACTIVE);
+    269              Gpio_SetPinData(LCD_A0, LCD_A0_COMMAND);
+    270              Gpio_SetPinData(LCD_RSTN, LCD_RSTN_IDLE);
+    271              Gpio_SetPinData(LCD_RSTN_debug, LCD_RSTN_IDLE);
+    272          
+    273              /* define the LCD pins as output pins */
+    274              (void)Gpio_SetPinReadSource(LCD_CS,     gGpioPinReadReg_c);
+    275              (void)Gpio_SetPinReadSource(LCD_A0,     gGpioPinReadReg_c);
+    276              (void)Gpio_SetPinReadSource(LCD_RD,     gGpioPinReadReg_c);
+    277              (void)Gpio_SetPinReadSource(LCD_WR,     gGpioPinReadReg_c);
+    278              (void)Gpio_SetPinReadSource(LCD_BL_PWM, gGpioPinReadReg_c);
+    279              (void)Gpio_SetPinReadSource(LCD_RSTN,   gGpioPinReadReg_c);
+    280              (void)Gpio_SetPinReadSource(LCD_RSTN_debug,   gGpioPinReadReg_c);
+    281          
+    282              (void)Gpio_SetPinDir(LCD_CS,     gGpioDirOut_c);
+    283              (void)Gpio_SetPinDir(LCD_A0,     gGpioDirOut_c);
+    284              (void)Gpio_SetPinDir(LCD_RD,     gGpioDirOut_c);
+    285              (void)Gpio_SetPinDir(LCD_WR,     gGpioDirOut_c);
+    286              (void)Gpio_SetPinDir(LCD_BL_PWM, gGpioDirOut_c);
+    287              (void)Gpio_SetPinDir(LCD_RSTN,   gGpioDirOut_c);
+    288              (void)Gpio_SetPinDir(LCD_RSTN_debug,   gGpioDirOut_c);
+    289          
+    290              /* data pins */
+    291          #if gLCDGpioPinMode_c
+    292              (void)Gpio_SetPinFunction(LCD_D0,      gGpioNormalMode_c);
+    293              (void)Gpio_SetPinFunction(LCD_D1,      gGpioNormalMode_c);
+    294              (void)Gpio_SetPinFunction(LCD_D2,      gGpioNormalMode_c);
+    295              (void)Gpio_SetPinFunction(LCD_D3,      gGpioNormalMode_c);
+    296              (void)Gpio_SetPinFunction(LCD_D4,      gGpioNormalMode_c);
+    297              (void)Gpio_SetPinFunction(LCD_D5,      gGpioNormalMode_c);
+    298              (void)Gpio_SetPinFunction(LCD_D6,      gGpioNormalMode_c);
+    299              (void)Gpio_SetPinFunction(LCD_D7,      gGpioNormalMode_c);
+    300          
+    301              /* define data pins as inputs */
+    302              (void)Gpio_EnPinPullup(LCD_D0,      TRUE);
+    303              (void)Gpio_EnPinPullup(LCD_D1,      TRUE);
+    304              (void)Gpio_EnPinPullup(LCD_D2,      TRUE);
+    305              (void)Gpio_EnPinPullup(LCD_D3,      TRUE);
+    306              (void)Gpio_EnPinPullup(LCD_D4,      TRUE);
+    307              (void)Gpio_EnPinPullup(LCD_D5,      TRUE);
+    308              (void)Gpio_EnPinPullup(LCD_D6,      TRUE);
+    309              (void)Gpio_EnPinPullup(LCD_D7,      TRUE);
+    310          
+    311              (void)Gpio_SelectPinPullup(LCD_D0,      gGpioPinPullup_c);
+    312              (void)Gpio_SelectPinPullup(LCD_D1,      gGpioPinPullup_c);
+    313              (void)Gpio_SelectPinPullup(LCD_D2,      gGpioPinPullup_c);
+    314              (void)Gpio_SelectPinPullup(LCD_D3,      gGpioPinPullup_c);
+    315              (void)Gpio_SelectPinPullup(LCD_D4,      gGpioPinPullup_c);
+    316              (void)Gpio_SelectPinPullup(LCD_D5,      gGpioPinPullup_c);
+    317              (void)Gpio_SelectPinPullup(LCD_D6,      gGpioPinPullup_c);
+    318              (void)Gpio_SelectPinPullup(LCD_D7,      gGpioPinPullup_c);
+    319          
+    320              (void)Gpio_EnPinPuKeeper(LCD_D0,      TRUE);
+    321              (void)Gpio_EnPinPuKeeper(LCD_D1,      TRUE);
+    322              (void)Gpio_EnPinPuKeeper(LCD_D2,      TRUE);
+    323              (void)Gpio_EnPinPuKeeper(LCD_D3,      TRUE);
+    324              (void)Gpio_EnPinPuKeeper(LCD_D4,      TRUE);
+    325              (void)Gpio_EnPinPuKeeper(LCD_D5,      TRUE);
+    326              (void)Gpio_EnPinPuKeeper(LCD_D6,      TRUE);
+    327              (void)Gpio_EnPinPuKeeper(LCD_D7,      TRUE);
+    328          
+    329              (void)Gpio_SetPinReadSource(LCD_D0,      gGpioPinReadPad_c);
+    330              (void)Gpio_SetPinReadSource(LCD_D1,      gGpioPinReadPad_c);
+    331              (void)Gpio_SetPinReadSource(LCD_D2,      gGpioPinReadPad_c);
+    332              (void)Gpio_SetPinReadSource(LCD_D3,      gGpioPinReadPad_c);
+    333              (void)Gpio_SetPinReadSource(LCD_D4,      gGpioPinReadPad_c);
+    334              (void)Gpio_SetPinReadSource(LCD_D5,      gGpioPinReadPad_c);
+    335              (void)Gpio_SetPinReadSource(LCD_D6,      gGpioPinReadPad_c);
+    336              (void)Gpio_SetPinReadSource(LCD_D7,      gGpioPinReadPad_c);
+    337          
+    338              (void)Gpio_SetPinDir(LCD_D0,      gGpioDirIn_c);
+    339              (void)Gpio_SetPinDir(LCD_D1,      gGpioDirIn_c);
+    340              (void)Gpio_SetPinDir(LCD_D2,      gGpioDirIn_c);
+    341              (void)Gpio_SetPinDir(LCD_D3,      gGpioDirIn_c);
+    342              (void)Gpio_SetPinDir(LCD_D4,      gGpioDirIn_c);
+    343              (void)Gpio_SetPinDir(LCD_D5,      gGpioDirIn_c);
+    344              (void)Gpio_SetPinDir(LCD_D6,      gGpioDirIn_c);
+    345              (void)Gpio_SetPinDir(LCD_D7,      gGpioDirIn_c);
+    346          #else /* gLCDGpioPinMode_c */
+    347              Gpio_SetPortFunction(LCD_DATA_LO_PORT, gGpioNormalMode_c, LCD_DATA_LO_MASK);
+    348              Gpio_SetPortFunction(LCD_DATA_HI_PORT, gGpioNormalMode_c, LCD_DATA_HI_MASK);
+    349          
+    350              Gpio_WrPortSetting(LCD_DATA_LO_PORT, gGpioPullUpEnAttr_c, LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);
+    351              Gpio_WrPortSetting(LCD_DATA_HI_PORT, gGpioPullUpEnAttr_c, LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);
+    352          
+    353              Gpio_WrPortSetting(LCD_DATA_LO_PORT, gGpioPullUpSelAttr_c, LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);
+    354              Gpio_WrPortSetting(LCD_DATA_HI_PORT, gGpioPullUpSelAttr_c, LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);
+    355          
+    356              Gpio_WrPortSetting(LCD_DATA_LO_PORT, gGpioPullUpKeepAttr_c, LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);
+    357              Gpio_WrPortSetting(LCD_DATA_HI_PORT, gGpioPullUpKeepAttr_c, LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);
+    358              
+    359              Gpio_WrPortSetting(LCD_DATA_LO_PORT, gGpioInputDataSelAttr_c, ~LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);
+    360              Gpio_WrPortSetting(LCD_DATA_HI_PORT, gGpioInputDataSelAttr_c, ~LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);
+    361              
+    362              Gpio_SetPortDir(LCD_DATA_LO_PORT, ~LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);
+    363              Gpio_SetPortDir(LCD_DATA_HI_PORT, ~LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);
+    364          #endif /* gLCDGpioPinMode_c */
+    365          
+    366          
+    367            Gpio_SetPinData(LCD_RSTN, LCD_RSTN_RESET);
+    368            Gpio_SetPinData(LCD_RSTN_debug, LCD_RSTN_RESET);
+    369            DelayUs(10);
+    370            Gpio_SetPinData(LCD_RSTN, LCD_RSTN_IDLE);
+    371            Gpio_SetPinData(LCD_RSTN_debug, LCD_RSTN_IDLE);
+    372            DelayMs(1);
+    373          
+    374              /* Turn ON the VDD-VSS power keeping the RES pin = LOW for 0.5us */
+    375              /* When power is stabilized, relese the RES pin (RES pin = HIGH) */
+    376              
+    377              /* Default initialized state: 
+    378               - Display off
+    379          	   - Normal display (COM0 --> COM63)
+    380          	   - ADC select: normal (RAM column address n <-> SEGn)
+    381          	   - Power control register: Booster circuit OFF, Voltage regulator circuit OFF, Voltage follower circuit OFF
+    382          	   - LCD power supply bias rate = 1/9
+    383          	   - All-indicator lamps-on OFF
+    384          	   - Power saving clear
+    385          	   - V5 voltage regulator internal resistors Ra and Rb separation
+    386          	   - Output conditions of SEG and COM terminals SEG:V2/V3; COM: V1/V4
+    387          	   - Read modify write OFF
+    388          	   - Static indicator OFF
+    389          	   - Display start line set to first line
+    390          	   - Column address set to Address 0
+    391          	   - Page address set to Page 0
+    392          	   - Common output status normal
+    393          	   - V5 voltage regulator internal resistor ratio set mode clear
+    394          	   - Electronic volume register set mode clear
+    395          	   - Test mode clear 
+    396              */
+    397          
+    398              /* reset display */
+    399              LCD_WriteCommand(gLCDResetCommand_c);
+    400              DelayUs(10);
+    401          
+    402              /* set LCD bias to 1/9 */
+    403              LCD_WriteCommand(gLCD19BiasCommand_c);
+    404          
+    405              /* set ADC selection to normal: RAM column address n <-> SEGn */
+    406              /* LCD_WriteCommand(gLCDADCNormalCommand_c); */
+    407              LCD_WriteCommand(gLCDADCReverseCommand_c);
+    408          
+    409              /* set scan direction of the COM to normal: COM0 --> COM63 */
+    410              LCD_WriteCommand(gLCDComNormalCommand_c);
+    411          
+    412              /* set the Rb/Ra ratio for V5 to medium (D2D1D0 = 0b100) */
+    413              LCD_WriteCommand( gLCDDefaultRatioCommand_c | (gLCDRatioValue_c & 0x07) );
+    414          
+    415              /* enable the electronic volume register set command */
+    416              /* this command must always be followed by an electronic volume register set command */
+    417              LCD_WriteCommand(gLCDElectronicVolumeModeSetCommand_c);
+    418              
+    419              LCD_WriteCommand(gLCDElectronicVolumeInitCommand_c);
+    420          
+    421          
+    422              /* disable booster circuit, disable voltage regulator circuit, disable voltage follower circuit */
+    423              LCD_WriteCommand(0x2F);
+    424              DelayUs(10);
+    425              /** turn ON */
+    426              LCD_WriteCommand(gLCDDisplayOnCommand_c);
+    427              DelayUs(10);
+    428              
+    429              /* turn on the backlight */
+    430              LCD_SetBacklight(gLCDDefaultBrightnessValue_c);
+    431              
+    432              /* set default font */
+    433              (void)LCD_SetFont(gLCD_NormalFont_c);
+    434          
+    435              mIsLcdInitialized = FALSE;
+    436          }
+    437          
+    438          /******************************************************************************
+    439          * This function clears the display. In case an error occured during add to queue
+    440          * operation, the clear display operation will not execute.
+    441          *
+    442          * Interface assumptions:
+    443          *
+    444          *
+    445          * Return value:
+    446          * None
+    447          *
+    448          ******************************************************************************/
+    449          void LCD_ClearDisplay(void)
+    450          {
+    451          
+    452            static uint8_t linesToClear = 0x00;
+    453            uint8_t line, deleteWriteLines = 0xFF;
+    454            
+    455            /* clear the error indicator */
+    456            mErrorIndicator = gLCD_NoError_c;
+    457            
+    458              
+    459           /* determine the lines that were written and need to be cleared */   
+    460            linesToClear = mDisplayParams.writtenLines;  
+    461            if(mIsLcdInitialized == TRUE)
+    462            {
+    463           /* determine if there are lines that need to be erased and after need to be written */
+    464              deleteWriteLines = linesToClear & mDisplayParams.linesToWrite;
+    465              if(deleteWriteLines)
+    466              { /* if there are */
+    467               /* mark that lines as deleted and jump over them */
+    468                linesToClear &= ~(deleteWriteLines);  
+    469              }
+    470            }
+    471             line = 0;
+    472             /* find the first written line */
+    473             
+    474            do
+    475            {
+    476              while((!((linesToClear>>line)&0x01))&&(line<mMaxLineNumber_c))
+    477              {
+    478                line++;
+    479              }
+    480             
+    481              if(line!= mMaxLineNumber_c)
+    482              {
+    483               /* in case at least a line is written */
+    484                if(TRUE == LCD_ClearLine(line))
+    485                {
+    486                 /* mark line as cleared */
+    487                  mDisplayParams.writtenLines &= ~(1 << line);
+    488                  linesToClear &= ~(1 << line);
+    489                 /* check if there are other lines written */
+    490                }
+    491              }
+    492            }while(line!= mMaxLineNumber_c);
+    493          }
+    494          
+    495          /******************************************************************************
+    496          * This function writes a string to the display. In case an error occured 
+    497          * during add to queue operation, the write string operation will not execute.
+    498          *
+    499          * Interface assumptions:
+    500          *
+    501          *
+    502          * Return value:
+    503          * None
+    504          *
+    505          *
+    506          ******************************************************************************/
+    507          
+    508          void LCD_WriteString_NormalFont(uint8_t line, uint8_t *pstr){
+    509           
+    510           uint8_t len; 
+    511           mDisplayParams.currentXCoord = mLineParams[line].xCoord;;  
+    512           mDisplayParams.currentYCoord = mLineParams[line].yCoord;   
+    513           len = GetStrlen(pstr);
+    514           
+    515           for(uint8_t i=0; ((i< len) && (i < gMAX_LCD_CHARS_c)); i++)
+    516           {
+    517             LCD_WriteCharacter(*pstr,mDisplayParams.currentXCoord, mDisplayParams.currentYCoord);   
+    518             mDisplayParams.currentXCoord += 6;
+    519            pstr++;
+    520           }
+    521          }
+    522          
+    523          /******************************************************************************
+    524          * This function write a string and a value in decimal or hexdecimal
+    525          * to the display
+    526          *
+    527          * Interface assumptions:
+    528          * The pstr must be zero-terminated.
+    529          *
+    530          * Return value:
+    531          * None
+    532          *
+    533          *
+    534          ******************************************************************************/
+    535          void LCD_WriteStringValue
+    536            (
+    537            uint8_t *pstr,     /* IN: Pointer to text string */
+    538            uint16_t value,    /* IN: Value */
+    539            uint8_t line, 	   /* IN: Line in display */
+    540            LCD_t numberFormat /* IN: Value to show in HEX or DEC */
+    541            )
+    542          {
+    543          
+    544            int16_t divDec=10000, divHex=16;
+    545            uint8_t loop=5, i=0,counter=0, aH[6], aHex[6];
+    546            uint8_t aDec[6], aString[17];
+    547            
+    548            /* clear the error indicator */
+    549            mErrorIndicator = gLCD_NoError_c;
+    550          
+    551           if(numberFormat == gLCD_DecFormat_c) {
+    552              if(value < 100) {
+    553                loop = 2;
+    554                divDec = 10;
+    555              }
+    556              else if(value >= 100 && value <1000) {
+    557                loop = 3;
+    558                divDec = 100;
+    559              }
+    560              else if(value >= 1000 && value <9999) {
+    561                loop = 4;
+    562                divDec = 1000;
+    563              }
+    564          
+    565              for(i=0; i<loop; i++) {
+    566                if((value/divDec)!= 0) {
+    567                  aDec[counter++] = (value/divDec) + 0x30;
+    568                  value = value % divDec;
+    569                }
+    570                else {
+    571                  aDec[counter++] = 0x30;
+    572                }
+    573                divDec = divDec/10;
+    574              }
+    575              aDec[counter]='\0';
+    576              counter=0;
+    577              while (*pstr != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    578                aString[counter++]=*pstr;
+    579                pstr++;
+    580              }
+    581              i=0;
+    582              while (aDec[i] != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    583                aString[counter++]=aDec[i++];
+    584              }
+    585              aString[counter]='\0';
+    586              LCD_WriteString_NormalFont( line, aString );
+    587            }
+    588            else if(numberFormat == gLCD_HexFormat_c) {
+    589              do{
+    590                aH[i]=gaHexValue[value % divHex];
+    591                value=value / divHex;
+    592                i++;
+    593              }
+    594              while(value > 15);
+    595              aH[i]=gaHexValue[value];
+    596              counter=0;
+    597              while(i > 0){
+    598                aHex[counter++]=aH[i--];
+    599              }
+    600          
+    601              aHex[counter++]=aH[0];
+    602              aHex[counter]='\0';
+    603          
+    604              counter=0;
+    605              while (*pstr != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    606                aString[counter++]=*pstr;
+    607                pstr++;
+    608              }
+    609              i=0;
+    610              while (aHex[i] != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    611                aString[counter++]=aHex[i++];
+    612              }
+    613              aString[counter]='\0';
+    614              LCD_WriteString_NormalFont( line, aString );
+    615            }
+    616            else {
+    617              LCD_WriteString_NormalFont( line, "Format unknow" );
+    618            }
+    619          }
+    620          
+    621          void LCD_WriteStringDecValue
+    622            (
+    623            uint8_t *pstr,     /* IN: Pointer to text string */
+    624            uint16_t value,    /* IN: Value */
+    625            uint8_t line, 	   /* IN: Line in display */
+    626            LCD_t numberFormat /* IN: Value to show in HEX or DEC */
+    627            )
+    628          {
+    629          
+    630            int16_t divDec=10000, divHex=16;
+    631            uint8_t loop=5, i=0,counter=0, aH[6], aHex[6];
+    632            uint8_t aDec[6], aString[17] = {0};
+    633            uint8_t u8TempVal;
+    634            uint8_t u8Count;
+    635           
+    636            
+    637            /* clear the error indicator */
+    638            mErrorIndicator = gLCD_NoError_c;
+    639          
+    640           if(numberFormat == gLCD_DecFormat_c) {
+    641              u8TempVal = (value >> 8);
+    642              
+    643              for( u8Count= 0;  u8Count < 2;  u8Count++)
+    644              {
+    645                if(u8TempVal < 100) 
+    646                {
+    647                  loop = 2;
+    648                  divDec = 10;
+    649                }
+    650                else if(u8TempVal >= 100 && u8TempVal < 255) {
+    651                  loop = 3;
+    652                  divDec = 100;
+    653                }
+    654                for(i=0; i<loop; i++) {
+    655                  if((u8TempVal/divDec)!= 0) 
+    656                  {
+    657                    aDec[counter++] = (u8TempVal/divDec) + 0x30;
+    658                    u8TempVal = u8TempVal % divDec;
+    659                  }
+    660                  else {
+    661                    aDec[counter++] = 0x30;
+    662                  }
+    663                  divDec = divDec/10;
+    664                }
+    665                if(u8Count < 1)
+    666                {  
+    667                  aDec[counter++] = '.';
+    668                }
+    669                u8TempVal = value;
+    670              } 
+    671                
+    672              aDec[counter]='\0';
+    673              counter=0;
+    674              
+    675              while (*pstr != '\0' && counter <gMAX_LCD_CHARS_c ) 
+    676              {
+    677                aString[counter++]=*pstr;
+    678                pstr++;
+    679              }
+    680              i=0;
+    681          
+    682              while (aDec[i] != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    683                aString[counter++]=aDec[i++];
+    684              }
+    685              LCD_WriteString_NormalFont( line, aString );
+    686            }
+    687           
+    688            else if(numberFormat == gLCD_HexFormat_c) {
+    689              do{
+    690                aH[i]=gaHexValue[value % divHex];
+    691                value=value / divHex;
+    692                i++;
+    693              }
+    694              while(value > 15);
+    695              aH[i]=gaHexValue[value];
+    696              counter=0;
+    697              while(i > 0){
+    698                aHex[counter++]=aH[i--];
+    699              }
+    700          
+    701              aHex[counter++]=aH[0];
+    702              aHex[counter]='\0';
+    703          
+    704              counter=0;
+    705              while (*pstr != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    706                aString[counter++]=*pstr;
+    707                pstr++;
+    708              }
+    709              i=0;
+    710              while (aHex[i] != '\0' && counter <gMAX_LCD_CHARS_c ) {
+    711                aString[counter++]=aHex[i++];
+    712              }
+    713              aString[counter]='\0';
+    714              LCD_WriteString_NormalFont( line, aString );
+    715            }
+    716            else {
+    717              LCD_WriteString_NormalFont( line,"Format unknow"); 
+    718            }
+    719          }
+    720          
+    721          
+    722          
+    723          /******************************************************************************
+    724          * This functions allows to write raw bytes to the LCD, the maximum number of bytes
+    725          *	capable per line is 8, this functions transfors every hex simbol in a byte to a char.
+    726          *
+    727          * Interface assumptions:
+    728          *	IN: The pointer to the label to print with the bytes.
+    729          *	IN: The bytes to print.
+    730          *	IN: The line in the LCD where the bytes with the label.
+    731          *	IN: The number of bytes to print in the LCD.
+    732          *
+    733          * Return value:
+    734          * None
+    735          *
+    736          *
+    737          ******************************************************************************/
+    738          void LCD_WriteBytes
+    739          (
+    740          	uint8_t   *pstr,   /* IN: The pointer to the label to print with the bytes. */
+    741          	uint8_t   *value,  /* IN: The bytes to print in hex. */
+    742          	uint8_t   line,    /* IN: The line in the LCD where the bytes with the label. */
+    743          	uint8_t   length   /* IN: The number of bytes to print in the LCD. */
+    744          )
+    745          {
+    746          
+    747          	uint8_t i=0,counter=0, cIndex,auxIndex;
+    748          	uint8_t aString[17];
+    749          
+    750          	uint8_t  hexIndex;
+    751          	uint8_t aHex[gMAX_LCD_CHARS_c]={'S','i','z','e',' ','N','o','t',' ','V','a','l','i','d','*','*'};
+    752          
+    753            /* clear the error indicator */
+    754            mErrorIndicator = gLCD_NoError_c;
+    755            
+    756          	counter=0;
+    757          	while (*pstr != '\0' && counter <gMAX_LCD_CHARS_c )
+    758          	{
+    759          		aString[counter++]=*pstr;
+    760          		pstr++;
+    761          	}
+    762          	if ((((length*2)+counter) <= gMAX_LCD_CHARS_c) && ((length*2) > 0))
+    763          	{
+    764          		for (cIndex =0,auxIndex = 0; cIndex < length; cIndex++,auxIndex+=2)
+    765          		{
+    766          			hexIndex = value[cIndex]&0xf0;
+    767          			hexIndex = hexIndex>>4;
+    768          			aHex[auxIndex] = gaHexValue[hexIndex];
+    769          			hexIndex = value[cIndex] & 0x0f;
+    770          			aHex[auxIndex + 1] = gaHexValue[hexIndex];
+    771          		}
+    772          		aHex[(length * 2)]='\0';
+    773          	}
+    774          	else
+    775          		counter = 0;
+    776          
+    777          	i=0;
+    778          	while (aHex[i] != '\0' && counter <gMAX_LCD_CHARS_c )
+    779          		aString[counter++]=aHex[i++];
+    780          
+    781          	aString[counter]='\0';
+    782          	LCD_WriteString( line, aString );
+    783          }
+    784          
+    785          /******************************************************************************
+    786          * This function sends a command to the display controller
+    787          *
+    788          * Interface assumptions:
+    789          *
+    790          *
+    791          * Return value:
+    792          * None
+    793          *
+    794          *
+    795          ******************************************************************************/
+    796          void LCD_WriteCommand(uint8_t command)
+    797          {
+    798            /* clear the error indicator */
+    799            mErrorIndicator = gLCD_NoError_c;
+    800            
+    801            Gpio_SetPinData(LCD_A0, LCD_A0_COMMAND);
+    802            SetOutput();
+    803            Gpio_SetPinData(LCD_CS, LCD_CS_ACTIVE);
+    804            Gpio_SetPinData(LCD_WR, LCD_WR_ACTIVE);
+    805            SendData(command);
+    806            DelayUs(1);
+    807            Gpio_SetPinData(LCD_WR, LCD_WR_INACTIVE);
+    808            Gpio_SetPinData(LCD_CS, LCD_CS_INACTIVE);
+    809            SetHiZ();
+    810            DelayUs(1);
+    811          }
+    812          
+    813          /******************************************************************************
+    814          * This function sends a data to the display controller
+    815          *
+    816          * Interface assumptions:
+    817          *
+    818          *
+    819          * Return value:
+    820          * None
+    821          *
+    822          *
+    823          ******************************************************************************/
+    824          void LCD_WriteData(uint8_t data)
+    825          {
+    826            /* clear the error indicator */
+    827            mErrorIndicator = gLCD_NoError_c;
+    828          
+    829            Gpio_SetPinData(LCD_A0, LCD_A0_DATA);
+    830            Gpio_SetPinData(LCD_CS, LCD_CS_ACTIVE);
+    831            SetOutput();
+    832            SendData(data);
+    833            Gpio_SetPinData(LCD_WR, LCD_WR_ACTIVE);
+    834            DelayUs(1);
+    835            Gpio_SetPinData(LCD_WR, LCD_WR_INACTIVE);
+    836            Gpio_SetPinData(LCD_CS, LCD_CS_INACTIVE);
+    837            SetHiZ();
+    838            DelayUs(1);  
+    839           
+    840          }
+    841          
+    842          /******************************************************************************
+    843          * This function sets the font received as parameter as default font
+    844          *
+    845          * Interface assumptions:
+    846          *
+    847          *
+    848          * Return value:
+    849          *      TRUE:  when the font is correctly set
+    850          *      FALSE: when an unsupported font is received as parameter
+    851          * char
+    852          *
+    853          *
+    854          ******************************************************************************/
+    855          bool_t LCD_SetFont(lcdFontType_t font)
+    856          {
+    857            /* clear the error indicator */
+    858            mErrorIndicator = gLCD_NoError_c;
+    859          
+    860            if(gLCDNumFonts_c > font)
+    861            {
+    862              mDisplayParams.currentFontType = font;
+    863              return TRUE;
+    864            }
+    865            else
+    866            {
+    867              return FALSE;
+    868            }
+    869          }
+    870          
+    871          /******************************************************************************
+    872          * This function checks if an error occured during an interface function call.
+    873          * User must always call this function to verify if an interface function executed 
+    874          * successufully.
+    875          *
+    876          * Interface assumptions:
+    877          *
+    878          *
+    879          * Return value:  lcdError_t
+    880          *      gLCD_NoError_c:   no error
+    881          *      gLCD_QueueFull_c: queue is full
+    882          *
+    883          *
+    884          ******************************************************************************/
+    885          lcdError_t LCD_CheckError(void)
+    886          {
+    887            return mErrorIndicator;
+    888          }
+    889          
+    890          /************************************************************************************
+    891          *************************************************************************************
+    892          * Private functions
+    893          *************************************************************************************
+    894          ************************************************************************************/
+    895          
+    896          
+    897          /******************************************************************************
+    898          * This function enables/disables the backlight
+    899          *
+    900          * Interface assumptions:
+    901          *   0 - disable backlight
+    902          *   >0 - enables backlight
+    903          *
+    904          *
+    905          * Return value:
+    906          * None
+    907          *
+    908          *
+    909          ******************************************************************************/
+    910          void LCD_SetBacklight(uint8_t brightnessValue)
+    911          {
+    912              GpioPinState_t backLightState;
+    913              backLightState = (0 != brightnessValue) ? gGpioPinStateHigh_c : gGpioPinStateLow_c;
+    914              Gpio_SetPinData(LCD_BL_PWM,  backLightState);
+    915          }
+    916          
+    917          /******************************************************************************
+    918          * This function sets/ clears the pixel from (XStartCoord, YStartCoord)
+    919          *
+    920          * Interface assumptions:
+    921          *
+    922          *
+    923          * Return value:
+    924          * None
+    925          *
+    926          *
+    927          ******************************************************************************/
+    928          void LCD_WritePixel(uint8_t xStartCoord, uint8_t yStartCoord, bool_t mode)
+    929          {
+    930            uint8_t page;
+    931            uint8_t read;
+    932          
+    933            if (xStartCoord>=gLCDMaxColumns_c || yStartCoord>=gLCDMaxLines_c)
+    934            {
+    935              return; /* if pixel out of screen exit */
+    936            }
+    937          
+    938            page = yStartCoord >> 3;
+    939            yStartCoord %= 8;
+    940          
+    941            LCD_WriteCommand(gLCDDisplayStartLineDefaultCommand_c);
+    942            LCD_WriteCommand(gLCDPageAddressDefaultCommand_c + page);
+    943            LCD_WriteCommand(gLCDNibble0ColumnAddressDefaultCommand_c | ((xStartCoord & 0xF0)>>4));
+    944            LCD_WriteCommand(gLCDNibble1ColumnAddressDefaultCommand_c | (xStartCoord & 0x0F));       
+    945          
+    946            read = ReadData(); // Dummy read
+    947            read = ReadData();
+    948          
+    949            LCD_WriteCommand(gLCDDisplayStartLineDefaultCommand_c);
+    950            LCD_WriteCommand(gLCDPageAddressDefaultCommand_c + page);
+    951            LCD_WriteCommand(gLCDNibble0ColumnAddressDefaultCommand_c | ((xStartCoord & 0xF0)>>4));
+    952            LCD_WriteCommand(gLCDNibble1ColumnAddressDefaultCommand_c | (xStartCoord & 0x0F));
+    953          
+    954            if( TRUE == mode )
+    955            {
+    956              LCD_WriteData((read | (1 << yStartCoord)));
+    957            }
+    958            else
+    959            {  
+    960              LCD_WriteData((read & ~(1 << yStartCoord)));  
+    961            }
+    962          }
+    963          
+    964          /******************************************************************************
+    965          * This function displays a character starting with xCoord and yCoord
+    966          *
+    967          * Interface assumptions:
+    968          *  yCoord is a multiple of 8
+    969          *
+    970          *
+    971          * Return value:
+    972          * None
+    973          *
+    974          *
+    975          ******************************************************************************/
+    976          void LCD_WriteCharacter(uint8_t symbol, uint8_t xCoord, uint8_t yCoord)
+    977          {
+    978            uint16_t arrayLocation=0; 
+    979            uint8_t i, maxLength;
+    980           
+    981            /* if pixel out of screen, exit */
+    982            if((xCoord >= gLCDMaxColumns_c) && (yCoord >= gLCDMaxLines_c))
+    983            {
+    984              return;
+    985            }
+    986              
+    987            arrayLocation = symbol - mFontOffset_c;
+    988            maxLength = aLCDFont[mDisplayParams.currentFontType].fontHeight;
+    989            /* each character has: 
+    990            *  (aLCDFont[mDisplayParams.currentFontType].pFontIndex[arrayLocation+1] - 
+    991            *   aLCDFont[mDisplayParams.currentFontType].pFontIndex[arrayLocation]) pixels as width 
+    992            *  (aLCDFont[mDisplayParams.currentFontType].fontHeight * 8) pixels as height 
+    993            */
+    994            while(maxLength > 0)
+    995            {
+    996              maxLength--;      
+    997              InitDisplayWrite(xCoord,yCoord);        
+    998              /* mark line as written */
+    999              mDisplayParams.writtenLines |= (1<<(yCoord>>3));   
+   1000              for(i = 0;
+   1001                  i < ((aLCDFont[mDisplayParams.currentFontType].pFontIndexTable[arrayLocation+1] - 
+   1002                        aLCDFont[mDisplayParams.currentFontType].pFontIndexTable[arrayLocation]) *
+   1003                        aLCDFont[mDisplayParams.currentFontType].fontHeight);
+   1004                  i += aLCDFont[mDisplayParams.currentFontType].fontHeight)        
+   1005              {
+   1006                /* in case the character is representd on multiple lines,
+   1007                 * (aLCDFont[mDisplayParams.currentFontType].fontHeight > 1),
+   1008                 * display first the upper part of the character and after the lower part 
+   1009                 */
+   1010                LCD_WriteData(aLCDFont[mDisplayParams.currentFontType].pFontCharTable[aLCDFont[mDisplayParams.currentFontType].pFontIndexTable[arrayLocation]*aLCDFont[mDisplayParams.currentFontType].fontHeight + i + maxLength]);
+   1011              }
+   1012              yCoord += 8;
+   1013            }    
+   1014          }
+   1015          
+   1016          /****************************************************************************************
+   1017          * This function clears the pixels between startXCoord and endXCoord within a single page
+   1018          * (page located at yCoord)
+   1019          *
+   1020          * Interface assumptions:
+   1021          *
+   1022          *
+   1023          * Return value:
+   1024          * None
+   1025          *
+   1026          *
+   1027          ******************************************************************************/
+   1028          void LCD_ClearPage(uint8_t startXCoord, uint8_t endXCoord, uint8_t yCoord)
+   1029          {
+   1030            uint8_t i;
+   1031            
+   1032            InitDisplayWrite(startXCoord, yCoord);
+   1033            for(i = startXCoord; i < endXCoord; i++)
+   1034            {
+   1035              LCD_WriteData(OFF);    
+   1036            }    
+   1037          }
+   1038          
+   1039          /****************************************************************************************
+   1040          * This function clears an entire LCD line
+   1041          *
+   1042          * Interface assumptions:
+   1043          *     char line = 0..7
+   1044          *
+   1045          *
+   1046          * Return value:
+   1047          *     TRUE if the line was cleared
+   1048          *     FALSE if the line is not cleared yet
+   1049          *     0xFF  if the line parameter is not valid
+   1050          * None
+   1051          *
+   1052          *
+   1053          ******************************************************************************/
+   1054          uint8_t LCD_ClearLine(uint8_t line)
+   1055          {
+   1056            static pageParams_t pageToDelete;
+   1057            static bool_t isPageDeleted = TRUE;
+   1058            
+   1059            if(line < gLCDMaxRamDataPages_c)
+   1060            {
+   1061              /* save the page coordinates */
+   1062              if(isPageDeleted)
+   1063              {
+   1064                pageToDelete.xStartCoord = mLineParams[line].xCoord;
+   1065                pageToDelete.xEndCoord   = gLCDMaxColumns_c;
+   1066                pageToDelete.yCoord      = mLineParams[line].yCoord;
+   1067                pageToDelete.line        = line; 
+   1068              }
+   1069              
+   1070              /* delete only mMaxDeleteColumns_c columns once because of time constraints */
+   1071              if(((pageToDelete.xEndCoord - pageToDelete.xStartCoord) >= mMaxDeleteColumns_c))
+   1072              {
+   1073                /* the page will be deleted with (gLCDMaxColumns_c/mMaxDeleteColumns_c) consecutive operations */
+   1074                isPageDeleted            = FALSE;
+   1075                LCD_ClearPage(pageToDelete.xStartCoord, 
+   1076                              pageToDelete.xStartCoord + mMaxDeleteColumns_c, 
+   1077                              pageToDelete.yCoord); 
+   1078                /* compute the new xStartCoord for the current page */
+   1079                pageToDelete.xStartCoord = pageToDelete.xStartCoord + mMaxDeleteColumns_c;        
+   1080                return FALSE;  
+   1081              }
+   1082              else
+   1083              {    
+   1084                LCD_ClearPage(pageToDelete.xStartCoord, 
+   1085                              pageToDelete.xEndCoord, 
+   1086                              pageToDelete.yCoord);
+   1087                isPageDeleted            = TRUE;
+   1088                return TRUE;  
+   1089              } 
+   1090            }
+   1091            else
+   1092            {
+   1093              return 0xFF;
+   1094            }
+   1095          }
+   1096          
+   1097          /******************************************************************************
+   1098          * This function process an LCD operation (clear, write string).
+   1099          *
+   1100          * Interface assumptions:
+   1101          *
+   1102          *
+   1103          * Return value:
+   1104          * None
+   1105          *
+   1106          *
+   1107          ******************************************************************************/
+   1108          
+   1109          
+   1110          /******************************************************************************
+   1111          * This function sets a certain value to the LCD DATA pins
+   1112          *
+   1113          * Interface assumptions:
+   1114          *
+   1115          *
+   1116          * Return value:
+   1117          * None
+   1118          *
+   1119          *
+   1120          ******************************************************************************/
+   1121          static void SendData(uint8_t data)
+   1122          {
+   1123          #if gLCDGpioPinMode_c
+   1124              /* bit |7|6|5|4|3|2|1|0| */
+   1125              (void)Gpio_SetPinData(LCD_D0, (data & 0x01)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1126              (void)Gpio_SetPinData(LCD_D1, (data & 0x02)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1127              (void)Gpio_SetPinData(LCD_D2, (data & 0x04)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1128              (void)Gpio_SetPinData(LCD_D3, (data & 0x08)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1129              (void)Gpio_SetPinData(LCD_D4, (data & 0x10)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1130              (void)Gpio_SetPinData(LCD_D5, (data & 0x20)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1131              (void)Gpio_SetPinData(LCD_D6, (data & 0x40)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1132              (void)Gpio_SetPinData(LCD_D7, (data & 0x80)? gGpioPinStateHigh_c : gGpioPinStateLow_c);
+   1133          #else /* gLCDGpioPinMode_c */    
+   1134              Gpio_SetPortData(LCD_DATA_LO_PORT, LCD_DATA_LO_WRITE(data), LCD_DATA_LO_MASK); 
+   1135              Gpio_SetPortData(LCD_DATA_HI_PORT, LCD_DATA_HI_WRITE(data), LCD_DATA_HI_MASK);
+   1136              
+   1137          #endif /* gLCDGpioPinMode_c */     
+   1138          }
+   1139          
+   1140          /******************************************************************************
+   1141          * This function sets the LCD DATA pins as inputs
+   1142          *
+   1143          * Interface assumptions:
+   1144          *
+   1145          *
+   1146          * Return value:
+   1147          * None
+   1148          *
+   1149          *
+   1150          ******************************************************************************/
+   1151          static void SetHiZ(void)
+   1152          {
+   1153              /* change data pins direction back to input */
+   1154          #if gLCDGpioPinMode_c
+   1155              (void)Gpio_SetPinDir(LCD_D0,      gGpioDirIn_c);
+   1156              (void)Gpio_SetPinDir(LCD_D1,      gGpioDirIn_c);
+   1157              (void)Gpio_SetPinDir(LCD_D2,      gGpioDirIn_c);
+   1158              (void)Gpio_SetPinDir(LCD_D3,      gGpioDirIn_c);
+   1159              (void)Gpio_SetPinDir(LCD_D4,      gGpioDirIn_c);
+   1160              (void)Gpio_SetPinDir(LCD_D5,      gGpioDirIn_c);
+   1161              (void)Gpio_SetPinDir(LCD_D6,      gGpioDirIn_c);
+   1162              (void)Gpio_SetPinDir(LCD_D7,      gGpioDirIn_c);
+   1163          #else /* gLCDGpioPinMode_c */ 
+   1164              Gpio_SetPortDir(LCD_DATA_LO_PORT, ~LCD_DATA_LO_MASK, LCD_DATA_LO_MASK); 
+   1165              Gpio_SetPortDir(LCD_DATA_HI_PORT, ~LCD_DATA_HI_MASK, LCD_DATA_HI_MASK); 
+   1166              
+   1167          #endif /* gLCDGpioPinMode_c */
+   1168          
+   1169          }
+   1170          
+   1171          /******************************************************************************
+   1172          * This function sets the LCD DATA pins as outputs
+   1173          *
+   1174          * Interface assumptions:
+   1175          *
+   1176          *
+   1177          * Return value:
+   1178          * None
+   1179          *
+   1180          *
+   1181          ******************************************************************************/
+   1182          static void SetOutput(void)
+   1183          {
+   1184            /* change data pins direction to output */
+   1185          #if gLCDGpioPinMode_c
+   1186            (void)Gpio_SetPinDir(LCD_D0,      gGpioDirOut_c);
+   1187            (void)Gpio_SetPinDir(LCD_D1,      gGpioDirOut_c);
+   1188            (void)Gpio_SetPinDir(LCD_D2,      gGpioDirOut_c);
+   1189            (void)Gpio_SetPinDir(LCD_D3,      gGpioDirOut_c);
+   1190            (void)Gpio_SetPinDir(LCD_D4,      gGpioDirOut_c);
+   1191            (void)Gpio_SetPinDir(LCD_D5,      gGpioDirOut_c);
+   1192            (void)Gpio_SetPinDir(LCD_D6,      gGpioDirOut_c);
+   1193            (void)Gpio_SetPinDir(LCD_D7,      gGpioDirOut_c);
+   1194          #else /* gLCDGpioPinMode_c */
+   1195             
+   1196              Gpio_SetPortDir(LCD_DATA_LO_PORT, LCD_DATA_LO_MASK, LCD_DATA_LO_MASK);      
+   1197              Gpio_SetPortDir(LCD_DATA_HI_PORT, LCD_DATA_HI_MASK, LCD_DATA_HI_MASK);         
+   1198              
+   1199          #endif /* gLCDGpioPinMode_c */
+   1200          
+   1201          }
+   1202          
+   1203          /******************************************************************************
+   1204          * This function initilizes the display for a data write (line, page, column)
+   1205          *
+   1206          * Interface assumptions:
+   1207          *
+   1208          *
+   1209          * Return value:
+   1210          * None
+   1211          *
+   1212          *
+   1213          ******************************************************************************/
+   1214          static void InitDisplayWrite(uint8_t xStartCoord, uint8_t yStartCoord)
+   1215          {
+   1216          
+   1217            uint8_t page;  
+   1218            
+   1219            page = yStartCoord >> 3;
+   1220          
+   1221            LCD_WriteCommand(gLCDDisplayStartLineDefaultCommand_c);
+   1222            LCD_WriteCommand(gLCDPageAddressDefaultCommand_c + page);
+   1223            LCD_WriteCommand(gLCDNibble0ColumnAddressDefaultCommand_c | ((xStartCoord & 0xF0)>>4));
+   1224            LCD_WriteCommand(gLCDNibble1ColumnAddressDefaultCommand_c | (xStartCoord & 0x0F));         
+   1225          }
+   1226          
+   1227          /******************************************************************************
+   1228          * This function reads the current location from display data RAM
+   1229          *
+   1230          * Interface assumptions:
+   1231          *
+   1232          *
+   1233          * Return value:
+   1234          * None
+   1235          *
+   1236          *
+   1237          ******************************************************************************/
+   1238          static uint8_t ReadData(void)
+   1239          {
+   1240            uint8_t ReturnValue;
+   1241            Gpio_SetPinData(LCD_A0, LCD_A0_DATA);
+   1242            Gpio_SetPinData(LCD_CS, LCD_CS_ACTIVE);
+   1243            DelayUs(1);
+   1244            Gpio_SetPinData(LCD_RD, LCD_RD_ACTIVE);
+   1245            DelayUs(1);
+   1246            ReturnValue = GetData();
+   1247            Gpio_SetPinData(LCD_RD, LCD_RD_INACTIVE);
+   1248            Gpio_SetPinData(LCD_CS, LCD_CS_INACTIVE);
+   1249            DelayUs(1);
+   1250            return ReturnValue;
+   1251          }
+   1252          
+   1253          /******************************************************************************
+   1254          * This function sets the data from the current RAM display location
+   1255          * to LCD DATA pins
+   1256          *
+   1257          * Interface assumptions:
+   1258          *
+   1259          *
+   1260          * Return value:
+   1261          * unsigned 8 bit
+   1262          *
+   1263          *
+   1264          ******************************************************************************/
+   1265          static uint8_t GetData(void)
+   1266          {
+   1267              uint8_t        ReturnValue = 0;
+   1268          #if gLCDGpioPinMode_c
+   1269              GpioPinState_t Bitdata;
+   1270              /* bit |7|6|5|4|3|2|1|0| */
+   1271              Gpio_GetPinData(LCD_D7, &Bitdata);
+   1272              ReturnValue = (Bitdata)? (1<<7) : 0;
+   1273              Gpio_GetPinData(LCD_D6, &Bitdata);
+   1274              ReturnValue |= (Bitdata)? (1<<6) : 0;
+   1275              Gpio_GetPinData(LCD_D5, &Bitdata);
+   1276              ReturnValue |= (Bitdata)? (1<<5) : 0;
+   1277              Gpio_GetPinData(LCD_D4, &Bitdata);
+   1278              ReturnValue |= (Bitdata)? (1<<4) : 0;
+   1279              Gpio_GetPinData(LCD_D3, &Bitdata);
+   1280              ReturnValue |= (Bitdata)? (1<<3) : 0;
+   1281              Gpio_GetPinData(LCD_D2, &Bitdata);
+   1282              ReturnValue |= (Bitdata)? (1<<2) : 0;
+   1283              Gpio_GetPinData(LCD_D1, &Bitdata);
+   1284              ReturnValue |= (Bitdata)? (1<<1) : 0;
+   1285              Gpio_GetPinData(LCD_D0, &Bitdata);
+   1286              ReturnValue |= (Bitdata)? (1<<0) : 0;
+   1287              
+   1288          #else /* gLCDGpioPinMode_c */
+   1289              uint32_t temp;
+   1290              Gpio_GetPortData(LCD_DATA_LO_PORT, &temp);
+   1291              ReturnValue = LCD_DATA_LO_READ(LCD_DATA_LO_MASK & temp);
+   1292              Gpio_GetPortData(LCD_DATA_HI_PORT, &temp);
+   1293              ReturnValue |= LCD_DATA_HI_READ(LCD_DATA_HI_MASK & temp);
+   1294          
+   1295          #endif /* gLCDGpioPinMode_c */
+   1296              
+   1297              return ReturnValue;
+   1298          }
+   1299          
+   1300          /******************************************************************************
+   1301          * This function gets the length of a string and return the length
+   1302          *
+   1303          * Interface assumptions:
+   1304          *
+   1305          *
+   1306          * Return value:
+   1307          * char
+   1308          *
+   1309          *
+   1310          ******************************************************************************/
+   1311          static uint8_t GetStrlen
+   1312            (
+   1313            const uint8_t *pString /* IN: Pointer to text string */
+   1314            )
+   1315          {
+   1316            int8_t count=0, length=0;
+   1317          
+   1318            while (*pString != '\0' && count <gMAX_LCD_CHARS_c ) {
+   1319              count++;
+   1320              length++;
+   1321              pString++;
+   1322            }
+   1323          
+   1324            /* Check boundries */
+   1325            if ( length > gMAX_LCD_CHARS_c ) {
+   1326              length = gMAX_LCD_CHARS_c;
+   1327            }
+   1328          
+   1329            return length;
+   1330          }
+   1331          
+   1332          /******************************************************************************
+   1333          * This function draws a 24x24 pixels Icon
+   1334          *
+   1335          * Interface assumptions:
+   1336          *
+   1337          *
+   1338          * Return value:
+   1339          * char
+   1340          *
+   1341          *
+   1342          ******************************************************************************/
+   1343          void LCD_DrawIcon(uint8_t u8XCoord, uint8_t u8YPage, uint8_t * pu8Icon)
+   1344          {
+   1345            uint8_t u8i;
+   1346            uint8_t u8j;
+   1347            
+   1348            if (u8XCoord >= gLCDMaxColumns_c || u8YPage >= gLCDMaxRamDataPages_c)
+   1349            {
+   1350              return; /* if pixel out of screen exit */
+   1351            }
+   1352          
+   1353            for(u8i = 0; u8i < 3; u8i++)
+   1354            {
+   1355              LCD_WriteCommand(gLCDDisplayStartLineDefaultCommand_c);
+   1356              LCD_WriteCommand(gLCDPageAddressDefaultCommand_c + u8YPage++);
+   1357              LCD_WriteCommand(gLCDNibble0ColumnAddressDefaultCommand_c | ((u8XCoord & 0xF0)>>4));
+   1358              LCD_WriteCommand(gLCDNibble1ColumnAddressDefaultCommand_c | (u8XCoord & 0x0F));
+   1359              for(u8j = 0; u8j < 24; u8j++)
+   1360              {
+   1361                LCD_WriteData(*pu8Icon); 
+   1362                pu8Icon++;
+   1363              }
+   1364            }
+   1365            
+   1366          }
+   1367          
+   1368          #endif /* (gLCDSupported_d == 1) */
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

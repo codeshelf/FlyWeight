@@ -1,0 +1,142 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        10/Jun/2014  12:14:09
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\SMAC\Drivers\Source\maca.c
+#    Command line =  
+#        "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\SMAC\Drivers\Source\maca.c"
+#        -D NDEBUG -D F24MHZ -D SECURITY_ENABLED -lC "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\"
+#        --diag_suppress Pe940,Pe951,Pe911 -o "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\"
+#        --endian=little --cpu=ARM7TDMI-S -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.0\arm\INC\c\DLib_Config_Normal.h" -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\SMAC\Drivers\Interface\"
+#        -I "C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\..\PLM\Interface\"
+#        --interwork --cpu_mode thumb -Oh --use_c++_inline
+#    List file    =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\List\maca.lst
+#    Object file  =  
+#        C:\Users\Rafael
+#        Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\GW0015-CC\Release\Obj\maca.o
+#
+###############################################################################
+
+C:\Users\Rafael Send\Documents\GitHub\FlyWeight\MC1322X-v2.1\SMAC\Drivers\Source\maca.c
+      1          /************************************************************************************
+      2          * maca funcions implementation 
+      3          *
+      4          * (c) Copyright 2008, Freescale, Inc.  All rights reserved.
+      5          *
+      6          * No part of this document must be reproduced in any form - including copied,
+      7          * transcribed, printed or by any electronic means - without specific written
+      8          * permission from Freescale.
+      9          *
+     10          * Last Inspected:
+     11          * Last Tested:
+     12          ************************************************************************************/
+     13          
+     14          #include "../Interface/ghdr/maca.h"
+     15          
+     16          
+     17          /************************************************************************************
+     18          *************************************************************************************
+     19          * Private macros
+     20          *************************************************************************************
+     21          ************************************************************************************/
+     22          
+     23          /************************************************************************************
+     24          *************************************************************************************
+     25          * Private prototypes
+     26          *************************************************************************************
+     27          ************************************************************************************/
+     28          void ResetMaca(void);
+     29          
+     30          /************************************************************************************
+     31          *************************************************************************************
+     32          * Private type definitions
+     33          *************************************************************************************
+     34          ************************************************************************************/
+     35          
+     36          /************************************************************************************
+     37          *************************************************************************************
+     38          * Private memory declarations
+     39          *************************************************************************************
+     40          ************************************************************************************/
+     41          
+     42          /************************************************************************************
+     43          *************************************************************************************
+     44          * Public functions
+     45          *************************************************************************************
+     46          ************************************************************************************/
+     47          
+     48          /************************************************************************************
+     49          * main ResetMaca
+     50          *
+     51          * Resets MACA module.
+     52          *
+     53          ************************************************************************************/
+
+   \                                 In section .text, align 4, keep-with-next
+     54          void ResetMaca(void)
+     55          {
+     56            uint32_t tmp;
+     57            MACA_WRITE(maca_control, control_seq_nop); 
+   \                     ResetMaca: (+1)
+   \   00000000   0x4805             LDR      R0,??ResetMaca_0  ;; 0x8000400c
+   \   00000002   0x2100             MOVS     R1,#+0
+   \   00000004   0x6001             STR      R1,[R0, #+0]
+   \   00000006   0x210F             MOVS     R1,#+15
+     58            do
+     59            {
+     60              tmp = MACA_READ(maca_status);
+   \                     ??ResetMaca_1: (+1)
+   \   00000008   0x6842             LDR      R2,[R0, #+4]
+     61            }
+     62            while ((tmp & maca_status_cc_mask) == cc_not_completed);
+   \   0000000A   0x400A             ANDS     R2,R2,R1
+   \   0000000C   0x2A0E             CMP      R2,#+14
+   \   0000000E   0xD0FB             BEQ      ??ResetMaca_1
+     63           
+     64            /* Clear all interrupts. */
+     65            MACA_WRITE(maca_clrirq,   0xFFFF);
+   \   00000010   0x4802             LDR      R0,??ResetMaca_0+0x4  ;; 0xffff
+   \   00000012   0x4903             LDR      R1,??ResetMaca_0+0x8  ;; 0x800040c4
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+     66          }
+   \   00000016   0x4770             BX       LR               ;; return
+   \                     ??ResetMaca_0:
+   \   00000018   0x8000400C         DC32     0x8000400c
+   \   0000001C   0x0000FFFF         DC32     0xffff
+   \   00000020   0x800040C4         DC32     0x800040c4
+     67          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   ResetMaca
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      36  ResetMaca
+
+ 
+ 36 bytes in section .text
+ 
+ 36 bytes of CODE memory
+
+Errors: none
+Warnings: none
