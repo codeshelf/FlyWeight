@@ -403,3 +403,27 @@ void vApplicationIdleHook(void) {
 //		;
 //	}
 }
+
+void sleep() {
+	crmSleepCtrl_t sleepCtl;
+	gwUINT8 ccrHolder;
+	FuncReturn_t funcRet;
+
+	sleepCtl.sleepType = gHibernate_c;
+	sleepCtl.mcuRet = gMcuRet_c;
+	sleepCtl.ramRet = gRamRet96k_c;
+	sleepCtl.digPadRet = 1;
+	sleepCtl.pfToDoBeforeSleep = &preSleep;
+
+	GW_ENTER_CRITICAL(ccrHolder);
+
+	TmrSetMode(gTmr0_c, gTmrNoOperation_c);
+	ITC_DisableInterrupt(gTmrInt_c);
+
+//	CRM_GoToSleep(&sleepCtl);
+	funcRet = MLMEHibernateRequest(gRingOsc2khz_c, sleepCtl);
+	GW_RESET_MCU()
+	;
+
+	GW_EXIT_CRITICAL(ccrHolder);
+}

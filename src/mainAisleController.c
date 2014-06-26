@@ -43,6 +43,12 @@ portTickType	gLastPacketReceivedTick;
 
 // --------------------------------------------------------------------------
 
+pfCallback_t preSleep() {
+	// Don't sleep aisle controllers.
+}
+
+// --------------------------------------------------------------------------
+
 void vMain( void ) {
 
 #if defined(MC1321X) || defined(MC13192EVB)
@@ -137,4 +143,7 @@ void vApplicationIdleHook( void ) {
 //		GW_RESET_MCU();
 //	}
 //	//vTaskDelay(100);
+}
+
+void sleep() {
 }
