@@ -28,12 +28,7 @@
 // Global variables.
 
 gwUINT8 			gu8RTxMode;
-extern gwBoolean	gIsSleeping;
-extern gwBoolean	gShouldSleep;
-extern gwUINT8		gSleepCount;
 extern gwUINT8		gButtonPressed;
-extern gwUINT8		gCCRHolder;
-extern portTickType	gLastPacketReceivedTick;
 
 xTaskHandle			gRadioReceiveTask = NULL;
 xTaskHandle			gRadioTransmitTask = NULL;
@@ -56,19 +51,13 @@ extern BufferCntType		gRXUsedBuffers;
 extern RadioBufferStruct	gTXRadioBuffer[TX_BUFFER_COUNT];
 extern BufferCntType		gTXUsedBuffers;
 gwUINT8 gu8RTxMode;
-extern gwBoolean gIsSleeping;
-extern gwBoolean gShouldSleep;
-extern gwUINT8 gSleepCount;
 extern gwUINT8 gButtonPressed;
-extern gwUINT8 gCCRHolder;
 gwUINT8			        	gAssocCheckCount = 0;
 
 // Radio buffers
 // There's a 2-byte ID on the front of every packet.
 extern RadioBufferStruct gRXRadioBuffer[RX_BUFFER_COUNT];
 extern RadioBufferStruct gTXRadioBuffer[TX_BUFFER_COUNT];
-
-portTickType gLastAssocCheckTickCount;
 
 // The master sound sample rate.  It's the bus clock rate divided by the natural sample rate.
 // For example 20Mhz / 10K samples/sec, or 2000.
@@ -108,9 +97,7 @@ void radioReceiveTask(void *pvParameters) {
 		for (;;) {
 
 			// Wait until we receive a queue message from the radio receive ISR.
-			if (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 50 * portTICK_RATE_MS) == pdPASS) {
-
-				//WATCHDOG_RESET;
+			if ((gLocalDeviceState == eLocalStateRun) && (xQueueReceive(gRadioReceiveQueue, &rxBufferNum, 50 * portTICK_RATE_MS) == pdPASS)) {
 
 				// Don't try to RX if there is no free buffer.
 				while (gRXRadioBuffer[gRXCurBufferNum].bufferStatus == eBufferStateInUse)
@@ -125,44 +112,17 @@ void radioReceiveTask(void *pvParameters) {
 					gRxPacket.pu8Data = (gwUINT8 *) &(gRXRadioBuffer[gRXCurBufferNum].bufferStorage);
 					gRxPacket.u8MaxDataLength = RX_BUFFER_SIZE;
 					gRxPacket.u8Status = 0;
-
-					/*	if (gShouldSleep) {
-					rxDelay = 25 * SMAC_TICKS_PER_MS;
-					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 25 * SMAC_TICKS_PER_MS);
-				} else {
-					rxDelay = 1000 * SMAC_TICKS_PER_MS;
-					//MLMERXEnableRequest(&gsRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
-				}
-				rxDelay = 50; */
 					MLMERXEnableRequest(&gRxPacket, (UINT32) 1000 * SMAC_TICKS_PER_MS);
 				}
 
 				if ((rxBufferNum == 255) && (!gButtonPressed)) {
-
 					if (!gShouldSleep) {
 						// We're not sleeping for now until we figure out a better way.
 						//gShouldSleep = TRUE;
 					} else {
 						// We didn't get any packets before the RX timeout.  This is probably a quiet period, so pause for a while.
-						sleepThisRemote(50);
+						sleep();
 					}
-
-					// Every 10th time we wake from sleep send an AssocCheckCommand to the controller.
-					//					gSleepCount++;
-					//					if (gSleepCount >= 9) {
-					//						gSleepCount = 0;
-					//						lastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
-					//						BufferCntType txBufferNum = lockTXBuffer();
-					//						createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
-					//						if (transmitPacket(txBufferNum)){
-					//						};
-					//						gAssocCheckCount++;
-					//						if (gAssocCheckCount > 10) {
-					//							RESET_MCU;
-					//						}
-					//					}
-					// Send an AssocCheck every 5 seconds.
-
 				} else {
 					processRxPacket(rxBufferNum);
 				}

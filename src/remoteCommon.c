@@ -18,12 +18,9 @@
 extern portTickType gLastPacketReceivedTick;
 UnixTimeType gUnixTime;
 
-extern gwBoolean gShouldSleep;
 extern NetAddrType gMyAddr;
 extern NetworkIDType gMyNetworkID;
 extern xQueueHandle gRemoteMgmtQueue;
-extern portTickType gLastAssocCheckTickCount;
-extern portTickType gLastAssocCheckTickCount;
 extern gwUINT8 gAssocCheckCount;
 
 // --------------------------------------------------------------------------
@@ -42,9 +39,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 	BufferCntType txBufferNum;
 
 	shouldReleasePacket = TRUE;
-
-	// The last read got a packet, so we're active.
-	gShouldSleep = FALSE;
 
 	// We just received a valid packet.
 	networkID = getNetworkID(inRxBufferNum);
@@ -75,8 +69,6 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 				if (assocSubCmd == eCmdAssocInvalid) {
 					// Do nothing.
 				} else if (assocSubCmd == eCmdAssocRESP) {
-					// Reset the clock on the assoc check.
-					gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 					// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
 					if (gLocalDeviceState != eLocalStateRun) {
 						if (xQueueSend(gRemoteMgmtQueue, &inRxBufferNum, (portTickType) 0)) {

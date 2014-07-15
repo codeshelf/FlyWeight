@@ -19,12 +19,11 @@
 #include "TransceiverPowerMngmnt.h"
 
 xQueueHandle gRemoteMgmtQueue;
+portTickType gLastUserAction;
 ELocalStatusType gLocalDeviceState;
-gwBoolean gIsSleeping;
-gwBoolean gShouldSleep;
-gwUINT8 gSleepCount;
 extern gwUINT8 gAssocCheckCount;
 extern gwUINT8 gCCRHolder;
+extern portTickType gSleepWaitMillis;
 void preSleep();
 
 // --------------------------------------------------------------------------
@@ -40,6 +39,7 @@ void remoteMgmtTask(void *pvParameters) {
 	gwUINT8 assocAttempts = 0;
 	ECommandGroupIDType cmdID;
 	ECmdAssocType assocSubCmd;
+	portTickType ticksSinceLastUserEvent;
 
 	if (gRemoteMgmtQueue) {
 
@@ -91,122 +91,54 @@ void remoteMgmtTask(void *pvParameters) {
 				if (channel > 16) {
 					channel = 0;
 					assocAttempts++;
-					if (assocAttempts % 2) {
-						//sleep(5);
+					if (assocAttempts % 4) {
+						sleep();
 					}
 				}
-				// Delay 100ms before changing channels.
-				//vTaskDelay(250 * portTICK_RATE_MS);
 			}
 		}
 		gLocalDeviceState = eLocalStateRun;
 
+		// Check for sleep time.
+		gLastUserAction = xTaskGetTickCount();
+
 		checked = FALSE;
 		for (;;) {
-
 			if (!checked) {
 				BufferCntType txBufferNum = lockTXBuffer();
 				createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
 				if (transmitPacket(txBufferNum)) {
 				}
+
+				// Wait up to 1000ms for a response.
+				if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
+					if (rxBufferNum != 255) {
+						// Check to see what kind of command we just got.
+						cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
+						if (cmdID == eCommandAssoc) {
+							assocSubCmd = getAssocSubCommand(rxBufferNum);
+							if (assocSubCmd == eCmdAssocACK) {
+								checked = TRUE;
+							}
+						}
+						RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
+					}
+				}
+				vTaskDelay(50);
 			}
 
-			// Wait up to 1000ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
-				if (rxBufferNum != 255) {
-					// Check to see what kind of command we just got.
-					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
-					if (cmdID == eCommandAssoc) {
-						assocSubCmd = getAssocSubCommand(rxBufferNum);
-						if (assocSubCmd == eCmdAssocACK) {
-							checked = TRUE;
-						}
-					}
-					RELEASE_RX_BUFFER(rxBufferNum, ccrHolder);
-				}
+			vTaskDelay(100);
+
+			ticksSinceLastUserEvent = xTaskGetTickCount() - gLastUserAction;
+			if ((gSleepWaitMillis != 0) && (ticksSinceLastUserEvent > gSleepWaitMillis)) {
+				sleep();
 			}
-			vTaskDelay(50);
 		}
-		//vTaskSuspend(gRemoteManagementTask);
 	}
+
+	//vTaskSuspend(gRemoteManagementTask);
 
 	/* Will only get here if the queue could not be created. */
 	for (;;)
 		;
 }
-
-void sleep() {
-	crmSleepCtrl_t sleepCtl;
-	gwUINT8 ccrHolder;
-	FuncReturn_t funcRet;
-
-	sleepCtl.sleepType = gHibernate_c;
-	sleepCtl.mcuRet = gMcuRet_c;
-	sleepCtl.ramRet = gRamRet96k_c;
-	sleepCtl.digPadRet = 1;
-	sleepCtl.pfToDoBeforeSleep = &preSleep;
-
-	GW_ENTER_CRITICAL(ccrHolder);
-
-	TmrSetMode(gTmr0_c, gTmrNoOperation_c);
-	ITC_DisableInterrupt(gTmrInt_c);
-
-//	CRM_GoToSleep(&sleepCtl);
-	funcRet = MLMEHibernateRequest(gRingOsc2khz_c, sleepCtl);
-	GW_RESET_MCU();
-
-	GW_EXIT_CRITICAL(ccrHolder);
-}
-
-// Define this if the MCU should really sleep (hibernate in FSL parlance).
-//#define REAL_SLEEP
-
-//void sleep(gwUINT8 inSleepMillis) {
-//
-//#ifdef REAL_SLEEP
-//	gwUINT8 ccrHolder;
-//	gwUINT8 i;
-//	gwUINT8 saveLoaderState;
-//	gwUINT8 sleepCycles = inSleepMillis >> 6;  // Divide by SRTICS_RTIS value below.
-//#endif
-//
-//#ifndef REAL_SLEEP
-//	// "Fake sleep" for HooBeez
-//	vTaskDelay(inSleepMillis * portTICK_RATE_MS);
-//#else
-//	// Real sleep for RocketPhones
-//	EnterCriticalArg(ccrHolder);
-//	gIsSleeping = TRUE;
-//	Cpu_SetSlowSpeed();
-//	MLMEHibernateRequest();
-//	//TPMIE_PWM = 0;
-//	saveLoaderState = TPMIE_AUDIO_LOADER;
-//	TPMIE_AUDIO_LOADER = 0;
-//	SRTISC_RTICLKS = 0;
-//	//SRTISC_RTIS = 0;
-//	// Using the internal osc, "6" on RTIS will cause the MCU to sleep for 1024ms.
-//	SRTISC_RTIS = 2;// 1 = 8ms, 2 = 32ms, 3 = 64, 4 = 128, 5 = 256, 6 = 1024ms;
-//	ExitCriticalArg(ccrHolder);
-//
-//	for (i = 0; i < sleepCycles; i++) {
-//		__asm("STOP");
-//
-//		// If a KBI woke us up then don't keep sleeping.
-//		if (KBI1SC_KBF) {
-//			break;
-//		}
-//	}
-//
-//	EnterCriticalArg(ccrHolder);
-//	gIsSleeping = FALSE;
-//	MLMEWakeRequest();
-//	// Wait for the MC13192's modem ClkO to warm up.
-//	Cpu_Delay100US(100);
-//	Cpu_SetHighSpeed();
-//	SRTISC_RTICLKS = 1;
-//	SRTISC_RTIS = 4;
-//	//TPMIE_PWM = 1;
-//	TPMIE_AUDIO_LOADER = saveLoaderState;
-//	ExitCriticalArg(ccrHolder);
-//#endif
-//}

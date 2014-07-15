@@ -18,8 +18,6 @@
 
 #define CART_CONTROLLER_QUEUE_SIZE		2
 
-#define MAX_LED_FLASH_POSITIONS 		50
-#define MAX_LED_SOLID_POSITIONS 		10
 #define LED_OFF_TIME					500
 #define LED_ON_TIME						250
 

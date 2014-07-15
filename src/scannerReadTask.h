@@ -17,4 +17,4 @@
 
 void scannerReadTask(void *pvParameters);
 
-#endif SCANREADTASK_H
+#endif // SCANREADTASK_H

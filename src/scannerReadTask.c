@@ -18,6 +18,8 @@ xTaskHandle gScannerReadTask = NULL;
 ScanStringType gScanString;
 ScanStringLenType gScanStringPos;
 
+extern portTickType gLastUserAction;
+
 // --------------------------------------------------------------------------
 
 void scannerReadTask(void *pvParameters) {
@@ -49,8 +51,8 @@ void scannerReadTask(void *pvParameters) {
 		}
 		GW_EXIT_CRITICAL(ccrHolder);
 
-		// Disable all of the position controllers on the cart.
-		// TODO
+		// Indicate a user operation
+		gLastUserAction = xTaskGetTickCount();
 
 		// Now send the scan string.
 		BufferCntType txBufferNum = lockTXBuffer();

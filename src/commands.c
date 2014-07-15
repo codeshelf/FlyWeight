@@ -22,6 +22,7 @@
 RemoteDescStruct gRemoteStateTable[MAX_REMOTES];
 NetAddrType gMyAddr = INVALID_REMOTE;
 NetworkIDType gMyNetworkID = BROADCAST_NET_NUM;
+portTickType gSleepWaitMillis;
 BufferStorageType gLastTxAckId = 1;
 
 // --------------------------------------------------------------------------
@@ -505,6 +506,9 @@ void processAssocRespCommand(BufferCntType inRXBufferNum) {
 		// The destination address is the third half-byte of the command.
 		gMyAddr = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_ADDR];
 		gMyNetworkID = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_NET];
+		gSleepWaitMillis = (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_SLEEP + 0] << 8;
+		gSleepWaitMillis += (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_ASSOCRESP_SLEEP + 1];
+		gSleepWaitMillis *= 1000;
 		gLocalDeviceState = eLocalStateAssociated;
 
 		BufferCntType txBufferNum = lockTXBuffer();
@@ -678,15 +682,15 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 		ledData.channel = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_CHANNEL];
 		//memcpy(&ledData.position, (void *) &(gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 0)]), sizeof(ledData.position));
 		ledData.position = (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES
-				+ (sampleNum * LED_SAMPLE_BYTES + 0)] << 8;
+		+ (sampleNum * LED_SAMPLE_BYTES + 0)] << 8;
 		ledData.position += (gwUINT16) gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES
-				+ (sampleNum * LED_SAMPLE_BYTES + 1)];
+		+ (sampleNum * LED_SAMPLE_BYTES + 1)];
 		ledData.red = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 2)];
 		ledData.green = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 3)];
 		ledData.blue = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_LED_SAMPLES + (sampleNum * LED_SAMPLE_BYTES + 4)];
 
 		switch (effect) {
-		case eLedEffectSolid:
+			case eLedEffectSolid:
 			if (ledData.position == ((gwUINT16) -1)) {
 				gTotalLedSolidDataElements = 0;
 				gCurLedSolidDataElement = 0;
@@ -697,7 +701,7 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 			}
 			break;
 
-		case eLedEffectFlash:
+			case eLedEffectFlash:
 			if (ledData.position == ((gwUINT16) -1)) {
 				gTotalLedFlashDataElements = 0;
 				gCurLedFlashDataElement = 0;
@@ -708,13 +712,13 @@ EControlCmdAckStateType processLedSubCommand(BufferCntType inRXBufferNum) {
 			}
 			break;
 
-		case eLedEffectError:
+			case eLedEffectError:
 			break;
 
-		case eLedEffectMotel:
+			case eLedEffectMotel:
 			break;
 
-		default:
+			default:
 			break;
 		}
 	}
@@ -734,19 +738,19 @@ EControlCmdAckStateType processSetPosControllerSubCommand(BufferCntType inRXBuff
 	instructionCount = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTION_COUNT];
 	for (instructionNum = 0; instructionNum < instructionCount; ++instructionNum) {
 		gwUINT8 pos = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_POS)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_POS)];
 		gwUINT8 reqQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_REQ_QTY)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_REQ_QTY)];
 		gwUINT8 minQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MIN_QTY)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MIN_QTY)];
 		gwUINT8 maxQty = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MAX_QTY)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_MAX_QTY)];
 		gwUINT8 freq = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_FREQ)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_FREQ)];
 		gwUINT8 dutyCycle = gRXRadioBuffer[inRXBufferNum].bufferStorage[CMDPOS_INSTRUCTIONS
-				+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_DUTY_CYCLE)];
+		+ (instructionNum * POS_INSTRUCTION_BYTES + CMDPOS_DUTY_CYCLE)];
 
-		gwUINT8 message[] = { POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle };
+		gwUINT8 message[] = {POS_CTRL_DISPLAY, pos, reqQty, minQty, maxQty, freq, dutyCycle};
 		serialTransmitFrame(UART_2, message, 7);
 
 		// Wait until all of the TX bytes have been sent.
@@ -770,7 +774,7 @@ EControlCmdAckStateType processClearPosControllerSubCommand(BufferCntType inRXBu
 
 	RS485_TX_ON
 	;
-	gwUINT8 message[] = { POS_CTRL_CLEAR, pos };
+	gwUINT8 message[] = {POS_CTRL_CLEAR, pos};
 	serialTransmitFrame(UART_2, message, 2);
 
 	// Wait until all of the TX bytes have been sent.
