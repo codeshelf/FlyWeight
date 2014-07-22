@@ -18,30 +18,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-<<<<<<< HEAD
-[Breakpoints]
-Count=0
-[Stack]
-FillEnabled=0
-OverflowWarningsEnabled=1
-WarningThreshold=90
-SpWarningsEnabled=1
-WarnLogOnly=1
-UseTrigger=1
-TriggerName=main
-LimitSize=0
-ByteLimit=50
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Count=0
-[Aliases]
-Count=0
-SuppressDialog=0
-[SfrWindow]
-Show=1 1
-Sort=4 0
-=======
 [DriverProfiling]
 Enabled=0
 Source=2
@@ -53,4 +29,3 @@ Bp0=_ "STD_CODE" "0x00402E9A" 0 0 0 0 "" 0 "" 0
 Bp1=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FlyWeight\src\radioCommon.c}.141.2@1" 1 0 0 0 "" 0 "" 0
 Bp2=_ "STD_CODE" "{C:\Documents and Settings\jeffw\git\FlyWeight\src\radioCommon.c}.152.2@1" 1 0 0 0 "" 0 "" 0
 Count=3
->>>>>>> origin/master

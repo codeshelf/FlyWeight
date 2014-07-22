@@ -25,6 +25,7 @@
 #include "Ssi_Interface.h"
 #include "string.h"
 #include "stdlib.h"
+#include "TransceiverPowerMngmnt.h"
 
 #ifdef MC1322X
 #include "MacaInterrupt.h"
@@ -45,7 +46,7 @@
 void setupKbi();
 void lcdOff();
 void lcdOn();
-pfCallback_t preSleep();
+void preSleep();
 void kbiSleepCallback(void);
 
 // --------------------------------------------------------------------------
@@ -227,7 +228,7 @@ void lcdOn() {
 
 // --------------------------------------------------------------------------
 
-pfCallback_t preSleep() {
+void preSleep() {
 	setupKbi();
 
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
@@ -302,9 +303,9 @@ void vMain(void) {
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c
 	ITC_EnableInterrupt(gMacaInt_c);
 	IntDisableAll();
-	MLMERadioInit();
 	ResetMaca();
-
+	MLMERadioInit();
+        
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
 	SetDemulatorMode(NCD);
 
@@ -312,9 +313,13 @@ void vMain(void) {
 	SetPowerLevelLockMode(TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT1_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
 	ConfigureRfCtlSignals(gRfSignalANT2_c, gRfSignalFunctionGPIO_c, TRUE, TRUE);
-	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction1_c, TRUE, TRUE);
-	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction1_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalTXON_c, gRfSignalFunction2_c, TRUE, TRUE);
+	ConfigureRfCtlSignals(gRfSignalRXON_c, gRfSignalFunction2_c, TRUE, TRUE);
 	SetComplementaryPAState(TRUE);
+
+	GW_RADIO_PA_ADJUST(0x0c);
+	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS) {
+	}
 
 	IntEnableAll();
 	LED_Init();
@@ -358,9 +363,6 @@ void vMain(void) {
 	sendDisplayMessage("DISCONNECTED", 12);
 
 	gLocalDeviceState = eLocalStateStarted;
-	GW_RADIO_GAIN_ADJUST(15);
-	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS) {
-	}
 
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (signed portCHAR *) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask);

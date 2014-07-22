@@ -76,7 +76,7 @@ void vMain( void ) {
 #endif
 
 	gControllerState = eControllerStateInit;
-	GW_RADIO_GAIN_ADJUST(15);
+	GW_RADIO_PA_ADJUST(0x0c);
 	GW_SET_RADIO_CHANNEL(CHANNEL11);
 
 	/* Start the task that will handle the radio */

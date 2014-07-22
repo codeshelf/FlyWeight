@@ -118,6 +118,9 @@ void radioTransmitTask(void *pvParameters) {
 				GW_ENTER_CRITICAL(ccrHolder);
 				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
 				vTaskSuspend(gRadioReceiveTask);
+//				do {
+//					funcErr = process_radio_msg();
+//				} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
 				GW_EXIT_CRITICAL(ccrHolder);
 
 				shouldRetry = FALSE;
@@ -133,6 +136,7 @@ void radioTransmitTask(void *pvParameters) {
 					while (TX_MESSAGE_PENDING(gTxMsgHolder.msg)) {
 						// Wait until this TX message is done, before we start another.
 						funcErr = process_radio_msg();
+						vTaskDelay(1);
 					}
 
 					if (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL) {

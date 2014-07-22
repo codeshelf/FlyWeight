@@ -37,13 +37,8 @@
             <Factory>Workspace</Factory>
             <Session>
               
-<<<<<<< HEAD
-            <NodeDict><ExpandedNode>&lt;ws&gt;</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-AC</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-AC/Application</ExpandedNode><ExpandedNode>&lt;ws&gt;/GW0015-AC/Application/FlyWeight</ExpandedNode><ExpandedNode>GW0015-AC</ExpandedNode></NodeDict></Session>
-          </Tab></Tabs><SelectedTab>1</SelectedTab></Wnd3><Wnd4><Tabs><Tab><Identity>TabID-21586-9612</Identity><TabName>Statics</TabName><Factory>Statics</Factory><Session><SelectedVars/><Column0>157</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3><ShowAllVars>1</ShowAllVars></Session></Tab><Tab><Identity>TabID-9792-9628</Identity><TabName>Locals</TabName><Factory>Locals</Factory><Session><Column0>100</Column0><Column1>130</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab><Identity>TabID-23276-28448</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab></Tabs><SelectedTab>2</SelectedTab></Wnd4></Windows>
-=======
             <NodeDict><ExpandedNode>&lt;ws></ExpandedNode><ExpandedNode>&lt;ws>/GW0015-AC</ExpandedNode><ExpandedNode>&lt;ws>/GW0015-AC/Application</ExpandedNode><ExpandedNode>&lt;ws>/GW0015-AC/Application/FlyWeight</ExpandedNode><ExpandedNode>GW0015-AC</ExpandedNode></NodeDict></Session>
           </Tab></Tabs><SelectedTab>1</SelectedTab></Wnd3><Wnd4><Tabs><Tab><Identity>TabID-21586-9612</Identity><TabName>Statics</TabName><Factory>Statics</Factory><Session><SelectedVars/><Column0>157</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3><ShowAllVars>1</ShowAllVars></Session></Tab><Tab><Identity>TabID-9792-9628</Identity><TabName>Locals</TabName><Factory>Locals</Factory><Session><Column0>100</Column0><Column1>130</Column1><Column2>100</Column2><Column3>100</Column3></Session></Tab><Tab><Identity>TabID-23276-28448</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab><Tab><Identity>TabID-26410-4623</Identity><TabName>Register</TabName><Factory>Register</Factory><Session><REG1>0</REG1><REG2>0</REG2><Group>0</Group><States>0</States></Session></Tab></Tabs><SelectedTab>2</SelectedTab></Wnd4></Windows>
->>>>>>> origin/master
     <Editor>
       
       

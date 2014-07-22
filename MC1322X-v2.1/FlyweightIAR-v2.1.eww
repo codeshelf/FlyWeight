@@ -4,10 +4,10 @@
   <project>
     <path>$WS_DIR$\Board-GW0011\Board-GW0011.xml</path>
   </project>
-   <project>
+  <project>
     <path>$WS_DIR$\Board-GW0015\Board-GW0015.xml</path>
   </project>
-   <project>
+  <project>
     <path>$WS_DIR$\GW0015-AC\GW0015-AC.xml</path>
   </project>
    <project>
@@ -15,3 +15,5 @@
   </project>
   <batchBuild/>
 </workspace>
+
+

@@ -16,7 +16,6 @@
 #include "gwSystemMacros.h"
 #include "gwTypes.h"
 #include "commands.h"
-#include "TransceiverPowerMngmnt.h"
 
 xQueueHandle gRemoteMgmtQueue;
 portTickType gLastUserAction;
@@ -24,7 +23,7 @@ ELocalStatusType gLocalDeviceState;
 extern gwUINT8 gAssocCheckCount;
 extern gwUINT8 gCCRHolder;
 extern portTickType gSleepWaitMillis;
-void preSleep();
+void sleep();
 
 // --------------------------------------------------------------------------
 
@@ -65,8 +64,8 @@ void remoteMgmtTask(void *pvParameters) {
 			if (transmitPacket(txBufferNum)) {
 			};
 
-			// Wait up to 1000ms for a response.
-			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
+			// Wait up to 100ms for a response.
+			if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 100 * portTICK_RATE_MS) == pdPASS) {
 				if (rxBufferNum != 255) {
 					// Check to see what kind of command we just got.
 					cmdID = getCommandID(gRXRadioBuffer[rxBufferNum].bufferStorage);
@@ -91,7 +90,7 @@ void remoteMgmtTask(void *pvParameters) {
 				if (channel > 16) {
 					channel = 0;
 					assocAttempts++;
-					if (assocAttempts % 4) {
+					if (assocAttempts > 4) {
 						sleep();
 					}
 				}
@@ -109,6 +108,7 @@ void remoteMgmtTask(void *pvParameters) {
 				createAssocCheckCommand(txBufferNum, (RemoteUniqueIDPtrType) GUID);
 				if (transmitPacket(txBufferNum)) {
 				}
+			}
 
 				// Wait up to 1000ms for a response.
 				if (xQueueReceive(gRemoteMgmtQueue, &rxBufferNum, 1000 * portTICK_RATE_MS) == pdPASS) {
@@ -125,9 +125,8 @@ void remoteMgmtTask(void *pvParameters) {
 					}
 				}
 				vTaskDelay(50);
-			}
 
-			vTaskDelay(100);
+//			vTaskDelay(100);
 
 			ticksSinceLastUserEvent = xTaskGetTickCount() - gLastUserAction;
 			if ((gSleepWaitMillis != 0) && (ticksSinceLastUserEvent > gSleepWaitMillis)) {
