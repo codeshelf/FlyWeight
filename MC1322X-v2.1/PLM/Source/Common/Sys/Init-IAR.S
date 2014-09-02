@@ -69,7 +69,7 @@ __SUP_stack_size     EQU   64*4
     CODE32 
 
 _start_vector_
-    B       __start_                      ; // reset
+      B       __start_                      ; // reset
 
 #ifdef NO_USE_EXCEPTIONS
     B       __reserved_                   ; // reserved

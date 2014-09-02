@@ -22,11 +22,9 @@
 @REM but they are listed at the end of this file for reference.
 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\common\bin\cspybat" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armproc.dll" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armsim.dll"  %1 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\<libsupport_plugin>" --backend -B "--endian=little" "--cpu=ARM7TDMI-S" "--fpu=None" "--semihosting=none" "-d" "sim" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\common\bin\cspybat" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armproc.dll" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armjlink.dll"  %1 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\<libsupport_plugin>" --macro "C:\Users\jeffw\git\FlyWeight\MC1322X-v2.1\Board-GW0015\..\PLM\FlashLoader\FlashMC1322x.mac" --backend -B "--endian=little" "--cpu=ARM7TDMI-S" "--fpu=None" "-p" "C:\Users\jeffw\git\FlyWeight\MC1322X-v2.1\Board-GW0015\..\PLM\Icf\MC1322x.ddf" "--drv_verify_download" "--semihosting=none" "-d" "jlink" "--drv_communication=USB0" "--jlink_speed=auto" "--jlink_initial_speed=32" 
 
 
 @REM Loaded plugins:
 @REM    C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\arm\bin\armlibsupport.dll
-@REM    C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\common\plugins\Profiling\Profiling.dll
-@REM    C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\common\plugins\stack\stack.dll
 @REM    C:\Program Files (x86)\IAR Systems\Embedded Workbench 5.4 Kickstart\common\plugins\SymList\SymList.dll
