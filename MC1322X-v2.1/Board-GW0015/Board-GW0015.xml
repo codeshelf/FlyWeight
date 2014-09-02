@@ -152,7 +152,7 @@
           <state>MC1322X_IAR</state>
           <state>IS_TOY_NETWORK</state>
           <state>IS_GATEWAY</state>
-          <state>GUID="00000101"</state>
+          <state>GUID="00000028"</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1632,7 +1632,7 @@
         <name>$PROJ_DIR$\..\..\src\smacPort.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\src\USB-ARM7.c</name>
+        <name>$PROJ_DIR$\..\..\src\UART-ARM7.c</name>
       </file>
     </group>
     <group>
