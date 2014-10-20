@@ -72,8 +72,8 @@ void vMain( void ) {
 	ITC_SetPriority(gMacaInt_c, gItcFastPriority_c); // gItcNormalPriority_c
 	ITC_EnableInterrupt(gMacaInt_c);
 	IntDisableAll();
-	ResetMaca();
 	MLMERadioInit();
+	ResetMaca();
 	
 	// Setup the CEL Freestar radio controls for PA and Tx/Rx.
 	SetDemulatorMode(NCD);

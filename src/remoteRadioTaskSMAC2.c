@@ -67,8 +67,6 @@ void radioReceiveTask(void *pvParameters) {
 
 		for (;;) {
 
-			GW_WATCHDOG_RESET;
-
 			// Setup for the next RX cycle.
 			gRXCurBufferNum = lockRXBuffer();
 
@@ -79,7 +77,7 @@ void radioReceiveTask(void *pvParameters) {
 			gRxMsgHolder.msg.cbDataIndication = NULL;
 			gRxMsgHolder.bufferNum = gRXCurBufferNum;
 
-			funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
+			funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 1000);
 
 			int delayCheck = 0;
 			do {

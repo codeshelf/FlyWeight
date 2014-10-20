@@ -90,8 +90,8 @@
 //		#define GW_RESET_MCU()					CRM_SoftReset()
 //	#endif
 
-	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableAll()
-	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreAll(restoreState)
+	#define GW_ENTER_CRITICAL(saveState)		saveState = IntDisableIRQ()
+	#define GW_EXIT_CRITICAL(restoreState)		IntRestoreIRQ(restoreState)
     #define GW_GET_SYSTEM_STATUS                0
 
 	#define	GW_WATCHDOG_RESET					CRM_CopReset()

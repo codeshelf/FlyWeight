@@ -115,7 +115,7 @@ void setupWatchdog() {
 	// Setup the COP to interrupt (so that we can catch them and figure out where they come  from.)
 	crmCopCntl_t copCntl;
 	copCntl.bit.copEn = TRUE;
-	copCntl.bit.copTimeOut = 40;
+	copCntl.bit.copTimeOut = 0x32;
 	copCntl.bit.copWP = TRUE;
 	#if (GW_DEBUG)
 		copCntl.bit.copOut = 1;		// 1 = CRM interrupt

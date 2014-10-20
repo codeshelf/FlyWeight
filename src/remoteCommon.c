@@ -69,6 +69,11 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 
 			switch (cmdID) {
 
+			case eCommandNetMgmt:
+				// We've received a beacon, so reset the watchdog timer.
+				GW_WATCHDOG_RESET;
+				break;
+
 			case eCommandAssoc:
 				// This will only return sub-commands if the command GUID matches out GUID
 				assocSubCmd = getAssocSubCommand(inRxBufferNum);

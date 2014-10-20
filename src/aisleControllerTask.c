@@ -170,7 +170,6 @@ static void setupSsi() {
 void ssiInterrupt(void) {
 
 	// The Tx FIFO queue is below the watermark, so provide more output data if we haven't transmitted all the bits yet.
-
 	if (SSI_SISR_BIT .TFE) {
 		if (gLedCycle == eLedCycleOff) {
 			while ((SSI_SFCSR_BIT .TFCNT0 < 8) && (gNextSolidLedPosition < gTotalLedPositions)) {
