@@ -243,7 +243,7 @@ pfCallback_t preSleep() {
 void kbiWakeInterruptCallback(void) {
 	// Reset the device.
 	lcdOn();
-	DelayMs(750);
+//	DelayMs(750);
 	sendDisplayMessage("WAKE", 4);
 	GW_RESET_MCU()
 	;
@@ -356,7 +356,7 @@ void vMain(void) {
 //	DelayMs(100);
 //	lcdOn();
 
-	DelayMs(750);
+	DelayMs(100);
 
 	sendDisplayMessage(CLEAR_DISPLAY, strlen(CLEAR_DISPLAY));
 	sendDisplayMessage("DISCONNECTED", 12);
