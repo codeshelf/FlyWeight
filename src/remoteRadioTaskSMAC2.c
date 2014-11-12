@@ -13,6 +13,7 @@
 #include "queue.h"
 #include "commands.h"
 #include "remoteCommon.h"
+#include "ghdr/maca.h"
 
 // --------------------------------------------------------------------------
 // Global variables.
@@ -151,6 +152,7 @@ void radioTransmitTask(void *pvParameters) {
 
 					if (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL) {
 						shouldRetry = TRUE;
+						vTaskDelay(maca_random & 0xff);
 					} else if ((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) != 0)
 							&& (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) != eCommandNetMgmt)) {
 						// If the TX packet had an ACK id then retry TX until we get the ACK or reset.

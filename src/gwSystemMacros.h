@@ -106,7 +106,7 @@
 	#define	GW_SMAC_SUCCESS						gSuccess_c
 	#define	GW_ENERGY_DETECT(channel)			portMLMEEnergyDetect(channel)
 //	#define GW_RADIO_GAIN_ADJUST(val)			MLMEFEGainAdjust(val)
-	#define GW_RADIO_GAIN_ADJUST(val)			MLMEPAOutputAdjust(val)
+	#define GW_RADIO_POWER_ADJUST(val)			MLMEPAOutputAdjust(val)
 	#define GW_SET_RADIO_CHANNEL(channel)		MLMESetChannelRequest(channel)
 
 	#define GW_PREP_ATD(saveATD1, saveATD1SC)	Adc_StartManualConv(gAdcPrimary_c, gAdcBatt_c)

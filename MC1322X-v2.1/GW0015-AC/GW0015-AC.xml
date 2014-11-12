@@ -146,7 +146,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>GUID="00000004"</state>
+          <state>GUID="00000027"</state>
           <state>IS_CODESHELF</state>
           <state>F24MHZ</state>
           <state>SECURITY_ENABLED</state>

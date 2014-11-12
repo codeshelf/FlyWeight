@@ -22,6 +22,8 @@
 #include "spi.h"
 #include "commands.h"
 #include "PortConfig.h"
+#include "ghdr/maca.h"
+#include "Delay.h"
 
 #ifdef MC1322X
     #include "MacaInterrupt.h"
@@ -94,9 +96,12 @@ void vMain( void ) {
 #endif
 
 	gLocalDeviceState = eLocalStateStarted;
-	GW_RADIO_GAIN_ADJUST(15);
-	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS)
-		{}
+	GW_RADIO_POWER_ADJUST(0x0c);
+	GW_SET_RADIO_CHANNEL(0);
+	// FIne turne radios that need it.
+	//set_xtal_fine_tune(0x10);
+	maca_random = (gwUINT32) ((GUID[4]<<3) + (GUID[5]<<2) + (GUID[6]<<1) + GUID[7]);
+	DelayMs(maca_random & 0xff);
 
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );

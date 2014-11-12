@@ -278,8 +278,11 @@ for (;;) {
 		gLedCycle = eLedCycleOn;
 	} else {
 		// Write 8 words into the FIFO - that will cause the FIFO low watermark ISR to execute.
-		gCurLedFlashDataElement = 0;
+		if (gCurLedFlashDataElement >= gTotalLedFlashDataElements) {
+			gCurLedFlashDataElement = 0;
+		}
 		gNextFlashLedPosition = 0;
+
 		GW_ENTER_CRITICAL(ccrHolder);
 		while ((SSI_SFCSR_BIT .TFCNT0 < 8) && (gNextFlashLedPosition < gTotalLedPositions)) {
 			SSI_STX = getNextFlashData();

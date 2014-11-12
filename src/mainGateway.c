@@ -76,8 +76,10 @@ void vMain( void ) {
 #endif
 
 	gControllerState = eControllerStateInit;
-	GW_RADIO_GAIN_ADJUST(15);
+	GW_RADIO_POWER_ADJUST(0x0c);
 	GW_SET_RADIO_CHANNEL(CHANNEL11);
+	// FIne turne radios that need it.
+	set_xtal_fine_tune(0x10);
 
 	/* Start the task that will handle the radio */
 	xTaskCreate(radioTransmitTask, (const signed portCHAR * const) "RadioTX", configMINIMAL_STACK_SIZE, NULL, RADIO_PRIORITY, &gRadioTransmitTask );
