@@ -68,7 +68,7 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 			ackState = eAckStateNotNeeded;
 			memset(ackData, 0, ACK_DATA_BYTES);
 
-			if ((ackId > gLastAckId) || (ackId == 1) || (ackId == 0)) {
+			if ((ackId != gLastAckId) || (ackId == 0)) {
 
 				if (ackId != 0) {
 					gLastAckId = ackId;
