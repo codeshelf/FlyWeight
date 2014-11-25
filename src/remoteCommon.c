@@ -162,13 +162,12 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 						break;
 				}
 			}
-
-			// Send an ACK if necessary.
-			if ((ackState == eAckStateOk) && (ackId != 0)) {
-				txBufferNum = lockTXBuffer();
-				createAckPacket(txBufferNum, ackId, ackData);
-				if (transmitPacket(txBufferNum)) {
-				}
+		}
+		// Send an ACK if necessary.
+		if ((ackState == eAckStateOk) && (ackId != 0)) {
+			txBufferNum = lockTXBuffer();
+			createAckPacket(txBufferNum, ackId, ackData);
+			if (transmitPacket(txBufferNum)) {
 			}
 		}
 	}
