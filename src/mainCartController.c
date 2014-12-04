@@ -362,7 +362,7 @@ void vMain(void) {
 	sendDisplayMessage("DISCONNECTED", 12);
 
 	gLocalDeviceState = eLocalStateStarted;
-	GW_RADIO_GAIN_ADJUST(15);
+	GW_RADIO_POWER_ADJUST(0x0c);
 	if (GW_SET_RADIO_CHANNEL(0) == GW_SMAC_SUCCESS) {
 	}
 
