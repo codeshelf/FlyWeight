@@ -91,9 +91,11 @@ void processRxPacket(BufferCntType inRxBufferNum) {
 							gLastAssocCheckTickCount = xTaskGetTickCount() + kAssocCheckTickCount;
 							// If we're not already running then signal the mgmt task that we just got a command ASSOC resp.
 							if (gLocalDeviceState != eLocalStateRun) {
-								if (xQueueSend(gRemoteMgmtQueue, &inRxBufferNum, (portTickType ) 0)) {
-									// The management task will handle this packet.
-									shouldReleasePacket = FALSE;
+								if (memcmp(GUID, &(gRXRadioBuffer[inRxBufferNum].bufferStorage[CMDPOS_ASSOC_GUID]), UNIQUE_ID_BYTES) == 0) {
+									if (xQueueSend(gRemoteMgmtQueue, &inRxBufferNum, (portTickType ) 0)) {
+										// The management task will handle this packet.
+										shouldReleasePacket = FALSE;
+									}
 								}
 							}
 						} else if (assocSubCmd == eCmdAssocACK) {

@@ -254,7 +254,7 @@ typedef union UnixTimeUnionType {
 	   (msg.u8Status.msg_state == MSG_TX_RQST) \
 		|| (msg.u8Status.msg_state == MSG_TX_PASSED_TO_DEVICE) \
 		|| (msg.u8Status.msg_state == MSG_TX_ACTION_STARTED) \
-		|| (msg.u8Status.msg_state == MSG_TX_RQST_ABORT) \
+		/* || (msg.u8Status.msg_state == MSG_TX_RQST_ABORT) */ \
 	)
 
 typedef struct {

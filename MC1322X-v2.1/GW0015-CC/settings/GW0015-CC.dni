@@ -1,9 +1,9 @@
 [JLinkDriver]
 WatchCond=_ 0
-Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
-Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+Watch0=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
+Watch1=_ 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 "0x00000000" 0 0 0 0
 [DebugChecksum]
-Checksum=1103192107
+Checksum=796836537
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -11,6 +11,14 @@ State 1=_ 1
 Enabled=_ 0
 [CodeCoverage]
 Enabled=_ 0
+[Disassemble mode]
+mode=0
+[Breakpoints]
+Bp0=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.143.2@1" 1 0 0 0 "" 0 "" 0
+Bp1=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.154.2@1" 1 0 0 0 "" 0 "" 0
+Bp2=_ "EMUL_DATA" "0x80004050" 0 0 0 148 0 "" 0 ""
+Bp3=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\remoteRadioTaskSMAC2.c}.190.7@1" 1 0 0 0 "" 0 "" 0
+Count=4
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -22,10 +30,3 @@ LogFile=_ ""
 Enabled=0
 Source=2
 Graph=0
-[Disassemble mode]
-mode=0
-[Breakpoints]
-Bp0=_ "EMUL_DATA" "0x8000B000@4" 0 0 0 116 0 "" 0 ""
-Bp1=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.141.2@1" 1 0 0 0 "" 0 "" 0
-Bp2=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.152.2@1" 1 0 0 0 "" 0 "" 0
-Count=3

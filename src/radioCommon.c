@@ -59,13 +59,14 @@ BufferCntType lockRXBuffer() {
 
 	gRXRadioBuffer[result].bufferStatus = eBufferStateInUse;
 		
-		// Advance to the next buffer.
-		gRXCurBufferNum++;
-		if (gRXCurBufferNum >= (RX_BUFFER_COUNT))
-			gRXCurBufferNum = 0;
+	// Advance to the next buffer.
+	gRXCurBufferNum++;
+	if (gRXCurBufferNum >= (RX_BUFFER_COUNT)) {
+		gRXCurBufferNum = 0;
+	}
 		
-		// Account for the number of used buffers.
-		gRXUsedBuffers++;
+	// Account for the number of used buffers.
+	gRXUsedBuffers++;
 		
 	GW_EXIT_CRITICAL(ccrHolder);
 
@@ -92,16 +93,17 @@ BufferCntType lockTXBuffer() {
 	// The buffers are a shared, critical resource, so we have to protect them before we update.
 	GW_ENTER_CRITICAL(ccrHolder);
 	
-		result = gTXCurBufferNum;
-		gTXRadioBuffer[result].bufferStatus = eBufferStateInUse;
+	result = gTXCurBufferNum;
+	gTXRadioBuffer[result].bufferStatus = eBufferStateInUse;
 		
-		// Advance to the next buffer.
-		gTXCurBufferNum++;
-		if (gTXCurBufferNum >= (TX_BUFFER_COUNT))
-			gTXCurBufferNum = 0;
+	// Advance to the next buffer.
+	gTXCurBufferNum++;
+	if (gTXCurBufferNum >= (TX_BUFFER_COUNT)) {
+		gTXCurBufferNum = 0;
+	}
 		
-		// Account for the number of used buffers.
-		gTXUsedBuffers++;
+	// Account for the number of used buffers.
+	gTXUsedBuffers++;
 		
 	GW_EXIT_CRITICAL(ccrHolder);
 

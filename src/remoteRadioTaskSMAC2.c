@@ -59,6 +59,7 @@ void radioReceiveTask(void *pvParameters) {
 	gwUINT8 ccrHolder;
 	FuncReturn_t funcErr;
 	portTickType lastAssocCheck;
+	BufferCntType lockedBufferNum;
 
 	// The radio receive task will return a pointer to a radio data packet.
 	if (gRadioReceiveQueue) {
@@ -69,18 +70,17 @@ void radioReceiveTask(void *pvParameters) {
 		for (;;) {
 
 			// Setup for the next RX cycle.
-			gRXCurBufferNum = lockRXBuffer();
+			lockedBufferNum = lockRXBuffer();
 
-			gRxMsgHolder.msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[gRXCurBufferNum].bufferRadioHeader);
+			gRxMsgHolder.msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[lockedBufferNum].bufferRadioHeader);
 			gRxMsgHolder.msg.u8BufSize = RX_BUFFER_SIZE;
 			gRxMsgHolder.msg.u8Status.msg_type = RX;
 			gRxMsgHolder.msg.u8Status.msg_state = MSG_RX_RQST;
 			gRxMsgHolder.msg.cbDataIndication = NULL;
-			gRxMsgHolder.bufferNum = gRXCurBufferNum;
+			gRxMsgHolder.bufferNum = lockedBufferNum;
 
-			funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 1000);
+			funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 1000 * 250000);
 
-			int delayCheck = 0;
 			do {
 				funcErr = process_radio_msg();
 			} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
@@ -108,10 +108,11 @@ void radioTransmitTask(void *pvParameters) {
 	FuncReturn_t funcErr;
 	ECommandGroupIDType cmdId;
 	gwBoolean shouldRetry;
-	gwUINT8 retryCount;
+	portTickType retryTickCount;
 	NetAddrType cmdDstAddr;
 	NetworkIDType networkID;
 	gwUINT8 ccrHolder;
+	BufferCntType lockedBufferNum;
 
 	if (gRadioTransmitQueue) {
 		for (;;) {
@@ -130,54 +131,67 @@ void radioTransmitTask(void *pvParameters) {
 				gTxMsgHolder.bufferNum = txBufferNum;
 
 				GW_ENTER_CRITICAL(ccrHolder);
-				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
 				vTaskSuspend(gRadioReceiveTask);
+				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
 				GW_EXIT_CRITICAL(ccrHolder);
 
 				shouldRetry = FALSE;
-				retryCount = 0;
+				retryTickCount = xTaskGetTickCount();
 				do {
 					funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
-
-					// If the radio can't TX then we're in big trouble.  Just reset.
-					if (funcErr != gSuccess_c) {
-						GW_RESET_MCU()
-						;
-					}
-
-					while (TX_MESSAGE_PENDING(gTxMsgHolder.msg)) {
+					do {
 						// Wait until this TX message is done, before we start another.
 						funcErr = process_radio_msg();
-					}
+					} while ((funcErr != gSuccess_c) || (TX_MESSAGE_PENDING(gTxMsgHolder.msg)));
 
-					if (gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_FAIL) {
+					if (!(gTxMsgHolder.msg.u8Status.msg_state == MSG_TX_ACTION_COMPLETE_SUCCESS)) {
 						shouldRetry = TRUE;
+						RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
 						vTaskDelay(maca_random & 0xff);
 					} else if ((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) != 0)
 							&& (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) != eCommandNetMgmt)) {
 						// If the TX packet had an ACK id then retry TX until we get the ACK or reset.
 
 						// We'll simply use the RX packet from the suspended task.
+						RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
+
+						// Setup for the next RX cycle.
+						lockedBufferNum = lockRXBuffer();
+
+						gRxMsgHolder.msg.pu8Buffer = (smac_pdu_t*) (gRXRadioBuffer[lockedBufferNum].bufferRadioHeader);
+						gRxMsgHolder.msg.u8BufSize = RX_BUFFER_SIZE;
+						gRxMsgHolder.msg.u8Status.msg_type = RX;
+						gRxMsgHolder.msg.u8Status.msg_state = MSG_RX_RQST;
+						gRxMsgHolder.msg.cbDataIndication = NULL;
+						gRxMsgHolder.bufferNum = lockedBufferNum;
+
 						funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
 
-						int delayCheck = 0;
 						do {
 							funcErr = process_radio_msg();
 						} while ((funcErr != gSuccess_c) || (RX_MESSAGE_PENDING(gRxMsgHolder.msg)));
 
-						networkID = getNetworkID(gRxMsgHolder.bufferNum);
-						cmdDstAddr = getCommandDstAddr(gRxMsgHolder.bufferNum);
-						if ((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) == getAckId(gRXRadioBuffer[gRXCurBufferNum].bufferStorage))
-								&& (networkID == gMyNetworkID)
-								&& (cmdDstAddr == gMyAddr)) {
+						if (gRxMsgHolder.msg.u8Status.msg_state == MSG_RX_ACTION_COMPLETE_SUCCESS) {
+							networkID = getNetworkID(gRxMsgHolder.bufferNum);
+							cmdDstAddr = getCommandDstAddr(gRxMsgHolder.bufferNum);
+							if (!((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) == getAckId(gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferStorage))
+									&& (networkID == gMyNetworkID) && (cmdDstAddr == gMyAddr))) {
+								shouldRetry = TRUE;
+							}
+						} else {
 							shouldRetry = TRUE;
+							RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
+							//vTaskDelay(50);
 						}
+					}
+					
+					// If the radio can't TX then we're in big trouble.  Just reset.
+					if (((shouldRetry) && ((xTaskGetTickCount() - retryTickCount) > 500)) || (funcErr != gSuccess_c)) {
+						GW_RESET_MCU()
 					}
 				} while (shouldRetry);
 
 				RELEASE_TX_BUFFER(gTxMsgHolder.bufferNum, ccrHolder);
-				gRxMsgHolder.msg.u8Status.msg_state = MSG_RX_RQST;
-				funcErr = MLMERXEnableRequest(&(gRxMsgHolder.msg), 0);
 				vTaskResume(gRadioReceiveTask);
 
 			} else {
