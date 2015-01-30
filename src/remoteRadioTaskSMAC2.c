@@ -152,7 +152,6 @@ void radioTransmitTask(void *pvParameters) {
 							&& (getCommandID(gTXRadioBuffer[txBufferNum].bufferStorage) != eCommandNetMgmt)) {
 						// If the TX packet had an ACK id then retry TX until we get the ACK or reset.
 
-						// We'll simply use the RX packet from the suspended task.
 						RELEASE_RX_BUFFER(gRxMsgHolder.bufferNum, ccrHolder);
 
 						// Setup for the next RX cycle.
@@ -175,7 +174,8 @@ void radioTransmitTask(void *pvParameters) {
 							networkID = getNetworkID(gRxMsgHolder.bufferNum);
 							cmdDstAddr = getCommandDstAddr(gRxMsgHolder.bufferNum);
 							if (!((getAckId(gTXRadioBuffer[txBufferNum].bufferStorage) == getAckId(gRXRadioBuffer[gRxMsgHolder.bufferNum].bufferStorage))
-									&& (networkID == gMyNetworkID) && (cmdDstAddr == gMyAddr))) {
+									&& (networkID == gMyNetworkID) 
+									&& (cmdDstAddr == gMyAddr))) {
 								shouldRetry = TRUE;
 							}
 						} else {
