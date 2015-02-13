@@ -3,7 +3,7 @@ WatchCond=_ 0
 Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 [DebugChecksum]
-Checksum=2127269172
+Checksum=643486108
 [DisAssemblyWindow]
 NumStates=_ 1
 State 1=_ 1
@@ -28,8 +28,7 @@ mode=0
 Bp0=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.143.2@1" 1 0 0 0 "" 0 "" 0
 Bp1=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.154.2@1" 1 0 0 0 "" 0 "" 0
 Bp2=_ "EMUL_DATA" "0x80004050" 0 0 0 148 0 "" 0 ""
-Bp3=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.52.3@1" 1 0 0 0 "" 0 "" 0
-Bp4=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.87.3@1" 1 0 0 0 "" 0 "" 0
-Bp5=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\remoteRadioTaskSMAC2.c}.190.7@1" 1 0 0 0 "" 0 "" 0
-Bp6=_ "EMUL_DATA" "gRXRadioBuffer[2].bufferStatus" 0 0 0 148 0 "" 0 ""
-Count=7
+Bp3=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\radioCommon.c}.87.3@1" 1 0 0 0 "" 0 "" 0
+Bp4=_ "STD_CODE" "{C:\Users\jeffw\git\FlyWeight\src\remoteRadioTaskSMAC2.c}.190.7@1" 1 0 0 0 "" 0 "" 0
+Bp5=_ "EMUL_DATA" "gRXRadioBuffer[2].bufferStatus" 0 0 0 148 0 "" 0 ""
+Count=6

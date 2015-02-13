@@ -135,9 +135,9 @@ void radioTransmitTask(void *pvParameters) {
 				funcErr = MLMERXDisableRequest(&(gRxMsgHolder.msg));
 				GW_EXIT_CRITICAL(ccrHolder);
 
-				shouldRetry = FALSE;
 				retryTickCount = xTaskGetTickCount();
 				do {
+					shouldRetry = FALSE;
 					funcErr = MCPSDataRequest(&(gTxMsgHolder.msg));
 					do {
 						// Wait until this TX message is done, before we start another.

@@ -91,8 +91,8 @@ void remoteMgmtTask(void *pvParameters) {
 				if (channel > 16) {
 					channel = 0;
 					assocAttempts++;
-					if (assocAttempts % 2) {
-						//sleep(5);
+					if (assocAttempts > 320) {
+						GW_RESET_MCU()
 					}
 				}
 				// Delay 100ms before changing channels.
